@@ -109,15 +109,6 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""PickItem"",
-                    ""type"": ""Button"",
-                    ""id"": ""852140f2-7766-474d-8707-702459ba45f3"",
-                    ""expectedControlType"": """",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -250,28 +241,6 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": "";Gamepad"",
                     ""action"": ""PlaceBomb"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""fd000439-38a8-4289-8061-8f6b88bbba47"",
-                    ""path"": ""<Mouse>/rightButton"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": "";Keyboard&Mouse"",
-                    ""action"": ""PickItem"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""0e395338-f253-46bc-a2b7-d38bf007f95c"",
-                    ""path"": ""<Gamepad>/buttonEast"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": "";Gamepad"",
-                    ""action"": ""PickItem"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -861,7 +830,6 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         m_Player = asset.FindActionMap("Player", throwIfNotFound: true);
         m_Player_Move = m_Player.FindAction("Move", throwIfNotFound: true);
         m_Player_PlaceBomb = m_Player.FindAction("PlaceBomb", throwIfNotFound: true);
-        m_Player_PickItem = m_Player.FindAction("PickItem", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -957,7 +925,6 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
     private List<IPlayerActions> m_PlayerActionsCallbackInterfaces = new List<IPlayerActions>();
     private readonly InputAction m_Player_Move;
     private readonly InputAction m_Player_PlaceBomb;
-    private readonly InputAction m_Player_PickItem;
     /// <summary>
     /// Provides access to input actions defined in input action map "Player".
     /// </summary>
@@ -977,10 +944,6 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Player/PlaceBomb".
         /// </summary>
         public InputAction @PlaceBomb => m_Wrapper.m_Player_PlaceBomb;
-        /// <summary>
-        /// Provides access to the underlying input action "Player/PickItem".
-        /// </summary>
-        public InputAction @PickItem => m_Wrapper.m_Player_PickItem;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -1013,9 +976,6 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
             @PlaceBomb.started += instance.OnPlaceBomb;
             @PlaceBomb.performed += instance.OnPlaceBomb;
             @PlaceBomb.canceled += instance.OnPlaceBomb;
-            @PickItem.started += instance.OnPickItem;
-            @PickItem.performed += instance.OnPickItem;
-            @PickItem.canceled += instance.OnPickItem;
         }
 
         /// <summary>
@@ -1033,9 +993,6 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
             @PlaceBomb.started -= instance.OnPlaceBomb;
             @PlaceBomb.performed -= instance.OnPlaceBomb;
             @PlaceBomb.canceled -= instance.OnPlaceBomb;
-            @PickItem.started -= instance.OnPickItem;
-            @PickItem.performed -= instance.OnPickItem;
-            @PickItem.canceled -= instance.OnPickItem;
         }
 
         /// <summary>
@@ -1350,13 +1307,6 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnPlaceBomb(InputAction.CallbackContext context);
-        /// <summary>
-        /// Method invoked when associated input action "PickItem" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
-        /// </summary>
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnPickItem(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "UI" which allows adding and removing callbacks.
