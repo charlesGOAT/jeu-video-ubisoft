@@ -11,13 +11,11 @@ public class CoordinateLabeler : MonoBehaviour
 
     private TextMeshPro _label;
     private Vector2Int _coordinates = new Vector2Int();
-    private GridManager _gridManager; 
 
     private void Awake()
     {
         _label = GetComponent<TextMeshPro>();
         _label.enabled = false;
-        _gridManager = FindFirstObjectByType<GridManager>();
     }
 
     void Update()
@@ -37,8 +35,8 @@ public class CoordinateLabeler : MonoBehaviour
 
     private void DisplayCoordinates() 
     {
-        _coordinates.x = Mathf.RoundToInt(transform.parent.position.x / _gridManager.UnityGridSize);
-        _coordinates.y = Mathf.RoundToInt(transform.parent.position.z / _gridManager.UnityGridSize);
+        _coordinates.x = Mathf.RoundToInt(transform.parent.position.x / GridManager.UNITY_GRID_SIZE);
+        _coordinates.y = Mathf.RoundToInt(transform.parent.position.z / GridManager.UNITY_GRID_SIZE);
         _label.color = _color;
         _label.text = _coordinates.ToString();
     }

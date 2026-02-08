@@ -12865,6 +12865,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ba897b9391615746bc4a541f387552b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GridManager
+  UnityGridSize: 2
 --- !u!4 &1884890869 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 9017637209094971560, guid: 48d0be96f349ccc4983f8cc4ead433ad, type: 3}

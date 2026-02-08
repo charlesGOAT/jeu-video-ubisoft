@@ -7,8 +7,6 @@ public class Tile : MonoBehaviour
     [SerializeField]
     public bool isObstacle = false;
 
-    private GridManager _gridManager;
-
     public Color TileColor
     {
         get => GetComponentInChildren<Renderer>().material.color;
@@ -20,11 +18,10 @@ public class Tile : MonoBehaviour
 
     void Start()
     {
-        _gridManager = FindFirstObjectByType<GridManager>();
 
         TileCoordinates = new Vector2Int(
-            Mathf.RoundToInt(transform.position.x / _gridManager.UnityGridSize), 
-            Mathf.RoundToInt(transform.position.z / _gridManager.UnityGridSize)
+            Mathf.RoundToInt(transform.position.x / GridManager.UNITY_GRID_SIZE), 
+            Mathf.RoundToInt(transform.position.z / GridManager.UNITY_GRID_SIZE)
         );
 
     }

@@ -1,9 +1,6 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;
-using UnityEngine.UIElements;
 
 public class Bomb : MonoBehaviour
 {
@@ -11,9 +8,6 @@ public class Bomb : MonoBehaviour
     private float _timer = 3.0f;
 
     private Color _explosionColor = Color.red;
-
-    [SerializeField]
-    public int UnityGridSize = 2;
 
     [SerializeField]
     private int _explosionRange = 3;
@@ -65,8 +59,8 @@ public class Bomb : MonoBehaviour
     private void Explode()
     {
         Vector2Int bombCoordinates = new Vector2Int(
-            Mathf.RoundToInt(transform.position.x / UnityGridSize),
-            Mathf.RoundToInt(transform.position.z / UnityGridSize)
+            Mathf.RoundToInt(transform.position.x / GridManager.UNITY_GRID_SIZE),
+            Mathf.RoundToInt(transform.position.z / GridManager.UNITY_GRID_SIZE)
         );
         
         Vector2Int[] directions = new Vector2Int[] {
