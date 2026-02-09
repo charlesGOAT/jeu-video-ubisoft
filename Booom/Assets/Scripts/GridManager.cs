@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class GridManager : MonoBehaviour
@@ -83,14 +84,24 @@ public class GridManager : MonoBehaviour
         return new Vector3(cell.x * tileSize, 0f, cell.y * tileSize) + transform.position;
     }
 
+    public bool IsInBounds(Vector2Int cell)
+    {
+        return cell.x >= 0 && cell.x < width && cell.y >= 0 && cell.y < height;
+    }
+
+    public float TileSize => tileSize;
+
     public bool IsCellOccupied(Vector2Int cell)
     {
-        return _occupiedCells != null && _occupiedCells[cell.x, cell.y];
+        if (_occupiedCells == null) return false;
+        if (cell.x < 0 || cell.x >= width || cell.y < 0 || cell.y >= height) return false;
+        return _occupiedCells[cell.x, cell.y];
     }
 
     public bool TryOccupyCell(Vector2Int cell)
     {
         if (_occupiedCells == null) return false;
+        if (cell.x < 0 || cell.x >= width || cell.y < 0 || cell.y >= height) return false;
         if (_occupiedCells[cell.x, cell.y]) return false;
 
         _occupiedCells[cell.x, cell.y] = true;
@@ -103,5 +114,33 @@ public class GridManager : MonoBehaviour
         if (cell.x < 0 || cell.x >= width || cell.y < 0 || cell.y >= height) return;
 
         _occupiedCells[cell.x, cell.y] = false;
+    }
+
+    public void PaintCell(Vector2Int cell, Color color, float duration)
+    {
+        if (_grid == null) return;
+        if (!IsInBounds(cell)) return;
+
+        GameObject tile = _grid[cell.x, cell.y];
+        if (tile == null) return;
+
+        var renderer = tile.GetComponent<Renderer>();
+        if (renderer == null) return;
+
+        // Use instance material to avoid modifying shared material
+        Material mat = renderer.material;
+        Color original = mat.color;
+        mat.color = color;
+
+        StartCoroutine(RevertPaint(renderer, original, duration));
+    }
+
+    private IEnumerator RevertPaint(Renderer renderer, Color original, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        if (renderer != null)
+        {
+            renderer.material.color = original;
+        }
     }
 }
