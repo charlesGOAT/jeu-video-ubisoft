@@ -16,7 +16,7 @@ public abstract class GridManagerStategy : MonoBehaviour
     public int Height { get; protected set; } = 0;
 
     [SerializeField]
-    protected Camera _mainCamera;
+    protected Camera mainCamera;
 
     public Tile GetTileAtCoordinates(Vector2Int vector2Int)
     {
@@ -44,13 +44,13 @@ public abstract class GridManagerStategy : MonoBehaviour
     //Je peut le faire dans un autre task
     protected void PositionCamera()
     {
-        if (_mainCamera == null) return;
+        if (mainCamera == null) return;
 
         float centerX = (MapUpperLimit.x - ((MapUpperLimit.x - MapLowerLimit.x) / 2f)) * UNITY_GRID_SIZE;
         float centerZ = (MapUpperLimit.y - ((MapUpperLimit.y - MapLowerLimit.y) / 2f)) * UNITY_GRID_SIZE;
 
-        _mainCamera.transform.position = new Vector3(centerX, ((Width + Height) * UNITY_GRID_SIZE) / 2f, (centerZ - (Height * UNITY_GRID_SIZE)) / 2f);
-        _mainCamera.transform.rotation = Quaternion.Euler(65f, 0f, 0f);
+        mainCamera.transform.position = new Vector3(centerX, ((Width + Height) * UNITY_GRID_SIZE) / 2f, (centerZ - (Height * UNITY_GRID_SIZE)) / 2f);
+        mainCamera.transform.rotation = Quaternion.Euler(65f, 0f, 0f);
     }
 }
 

@@ -7,7 +7,7 @@ using UnityEngine;
 public class CoordinateLabeler : MonoBehaviour
 {
     [SerializeField]
-    private Color _color = Color.white;
+    private Color color = Color.white;
 
     private TextMeshPro _label;
     private Vector2Int _coordinates = new Vector2Int();
@@ -36,7 +36,7 @@ public class CoordinateLabeler : MonoBehaviour
     private void DisplayCoordinates() 
     {
         _coordinates = GridManagerStategy.WorldToGridCoordinates(transform.parent.position);
-        _label.color = _color;
+        _label.color = color;
         _label.text = _coordinates.ToString();
     }
     private void UpdateObjectName() 

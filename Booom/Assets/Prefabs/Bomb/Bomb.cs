@@ -5,12 +5,12 @@ using UnityEngine;
 public class Bomb : MonoBehaviour
 {
     [SerializeField]
-    private float _timer = 3.0f;
+    private float timer = 3.0f;
 
     private Color _explosionColor = Color.red;
 
     [SerializeField]
-    private int _explosionRange = 3;
+    private int explosionRange = 3;
 
     private GridManagerStategy _gridManager;
 
@@ -33,7 +33,7 @@ public class Bomb : MonoBehaviour
 
     private IEnumerator CountdownAndExplode()
     {
-        yield return new WaitForSeconds(_timer);
+        yield return new WaitForSeconds(timer);
         Explode();
     }
 
@@ -45,7 +45,7 @@ public class Bomb : MonoBehaviour
     private void PaintTilesForDirection(Vector2Int bombCoordinates, Vector2Int direction) 
     {
 
-        for (int rangeCounter = 0; rangeCounter <= _explosionRange; ++rangeCounter)
+        for (int rangeCounter = 0; rangeCounter <= explosionRange; ++rangeCounter)
         {
             
             Tile tile = _gridManager.GetTileAtCoordinates(bombCoordinates);
