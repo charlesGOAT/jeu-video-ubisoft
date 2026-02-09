@@ -3267,10 +3267,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c958c5a9dfd264d4098046c6d10b0ebd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GridManagerDemo
-  _mainCamera: {fileID: 722509299}
-  _demoWidth: 10
-  _demoHeight: 10
-  _tilePrefab: {fileID: 3024078105062584004, guid: 48d0be96f349ccc4983f8cc4ead433ad, type: 3}
+  mainCamera: {fileID: 722509299}
+  demoWidth: 10
+  demoHeight: 10
+  tilePrefab: {fileID: 3024078105062584004, guid: 48d0be96f349ccc4983f8cc4ead433ad, type: 3}
 --- !u!1001 &348312930
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -16775,7 +16775,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ccf427dc7e39e7c4a92ea4b407453d68, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GridManagerLevel
-  _mainCamera: {fileID: 722509299}
+  mainCamera: {fileID: 722509299}
 --- !u!4 &1884964991 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 9017637209094971560, guid: 48d0be96f349ccc4983f8cc4ead433ad, type: 3}
