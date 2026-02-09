@@ -7,22 +7,17 @@ public class Tile : MonoBehaviour
     [SerializeField]
     public bool isObstacle = false;
 
-    public Color TileColor
+    private Renderer TileRenderer;
+
+    public void ChangeTileColor(Color color) 
     {
-        get => GetComponentInChildren<Renderer>().material.color;
-        set => GetComponentInChildren<Renderer>().material.color = value;
+        TileRenderer.material.color = color;
     }
 
-    [SerializeField]
-    public int UnityGridSize = 2;
-
-    void Start()
+    void Awake()
     {
-
-        TileCoordinates = new Vector2Int(
-            Mathf.RoundToInt(transform.position.x / GridManager.UNITY_GRID_SIZE), 
-            Mathf.RoundToInt(transform.position.z / GridManager.UNITY_GRID_SIZE)
-        );
+        TileRenderer = GetComponentInChildren<Renderer>();
+        TileCoordinates = GridManagerStategy.WorldToGridCoordinates(transform.position);
 
     }
 

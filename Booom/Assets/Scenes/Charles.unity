@@ -3223,6 +3223,54 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 0}
   m_SourcePrefab: {fileID: 100100000, guid: 48d0be96f349ccc4983f8cc4ead433ad, type: 3}
+--- !u!1 &348060383
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 348060385}
+  - component: {fileID: 348060386}
+  m_Layer: 0
+  m_Name: WorldGrid2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &348060385
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 348060383}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.04339, y: -0, z: 2.69123}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &348060386
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 348060383}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c958c5a9dfd264d4098046c6d10b0ebd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GridManagerDemo
+  _mainCamera: {fileID: 722509299}
+  _demoWidth: 10
+  _demoHeight: 10
+  _tilePrefab: {fileID: 3024078105062584004, guid: 48d0be96f349ccc4983f8cc4ead433ad, type: 3}
 --- !u!1001 &348312930
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6113,13 +6161,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 722509297}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.38268322, y: -0, z: -0, w: 0.9238797}
-  m_LocalPosition: {x: 0, y: 6.414213, z: -9.414214}
+  m_LocalRotation: {x: -0.0000014156102, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 3.3084018, z: 2.1769009}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 45, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &722509301
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16444,7 +16492,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1884758606
 Transform:
   m_ObjectHideFlags: 0
@@ -16724,9 +16772,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1884758605}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8ba897b9391615746bc4a541f387552b, type: 3}
+  m_Script: {fileID: 11500000, guid: ccf427dc7e39e7c4a92ea4b407453d68, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::GridManager
+  m_EditorClassIdentifier: Assembly-CSharp::GridManagerLevel
+  _mainCamera: {fileID: 722509299}
 --- !u!4 &1884964991 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 9017637209094971560, guid: 48d0be96f349ccc4983f8cc4ead433ad, type: 3}
@@ -19315,7 +19364,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6539345820531006645, guid: 1008e97cfb9b5d848ab9dc400ca27aa3, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.1
+      value: 12.1
       objectReference: {fileID: 0}
     - target: {fileID: 6539345820531006645, guid: 1008e97cfb9b5d848ab9dc400ca27aa3, type: 3}
       propertyPath: m_LocalPosition.y
@@ -19323,7 +19372,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6539345820531006645, guid: 1008e97cfb9b5d848ab9dc400ca27aa3, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -1.34071
+      value: 6.6592903
       objectReference: {fileID: 0}
     - target: {fileID: 6539345820531006645, guid: 1008e97cfb9b5d848ab9dc400ca27aa3, type: 3}
       propertyPath: m_LocalRotation.w
@@ -19366,3 +19415,4 @@ SceneRoots:
   - {fileID: 1626589858}
   - {fileID: 8894749719247257131}
   - {fileID: 1884758606}
+  - {fileID: 348060385}

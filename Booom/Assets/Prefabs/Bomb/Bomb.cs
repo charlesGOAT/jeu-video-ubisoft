@@ -12,16 +12,29 @@ public class Bomb : MonoBehaviour
     [SerializeField]
     private int _explosionRange = 3;
 
-    private GridManager _gridManager;
+    private GridManagerStategy _gridManager;
+
+    private readonly Vector2Int[] _directions = new Vector2Int[] {
+            Vector2Int.up,
+            Vector2Int.down,
+            Vector2Int.left,
+            Vector2Int.right
+        };
 
     void Start()
     {
-        _gridManager = FindFirstObjectByType<GridManager>();
+        _gridManager = FindFirstObjectByType<GridManagerStategy>();
     }
 
     public void Fuse()
     {
         StartCoroutine(CountdownAndExplode());
+    }
+
+    private IEnumerator CountdownAndExplode()
+    {
+        yield return new WaitForSeconds(_timer);
+        Explode();
     }
 
     /// <summary>
@@ -31,24 +44,22 @@ public class Bomb : MonoBehaviour
     /// <param name="direction"></param>
     private void PaintTilesForDirection(Vector2Int bombCoordinates, Vector2Int direction) 
     {
-        bool isExplosionBlocked = false;
-        int rangeCounter = 0;
 
-        for (Vector2Int nextCoordinates = bombCoordinates; !isExplosionBlocked; nextCoordinates += direction)
+        for (int rangeCounter = 0; rangeCounter <= _explosionRange; ++rangeCounter)
         {
-               
-                Tile tile = _gridManager.GetTileAtCoordinates(nextCoordinates);
+            
+            Tile tile = _gridManager.GetTileAtCoordinates(bombCoordinates);
 
-                if (tile != null && !tile.isObstacle && rangeCounter <= _explosionRange)
-                {
-                    tile.TileColor = _explosionColor;
-                }
-                else
-                {
-                    isExplosionBlocked = true;
-                }
+            if (tile != null && !tile.isObstacle)
+            {
+                tile.ChangeTileColor(_explosionColor);
+            }
+            else
+            {
+                return;
+            }
 
-            rangeCounter++;
+            bombCoordinates += direction;
         }
 
     }
@@ -58,31 +69,15 @@ public class Bomb : MonoBehaviour
     /// </summary>
     private void Explode()
     {
-        Vector2Int bombCoordinates = new Vector2Int(
-            Mathf.RoundToInt(transform.position.x / GridManager.UNITY_GRID_SIZE),
-            Mathf.RoundToInt(transform.position.z / GridManager.UNITY_GRID_SIZE)
-        );
-        
-        Vector2Int[] directions = new Vector2Int[] {
-            Vector2Int.up,
-            Vector2Int.down,
-            Vector2Int.left,
-            Vector2Int.right
-        };
+        Vector2Int bombCoordinates = GridManagerStategy.WorldToGridCoordinates(transform.position);
 
-        foreach (Vector2Int direction in directions)
+        foreach (Vector2Int direction in _directions)
         {
             PaintTilesForDirection(bombCoordinates, direction);
         }
 
         Destroy(gameObject);
 
-    }
-
-    private IEnumerator CountdownAndExplode()
-    {
-        yield return new WaitForSeconds(_timer);
-        Explode();
     }
 
     private void Awake()

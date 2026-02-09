@@ -35,8 +35,7 @@ public class CoordinateLabeler : MonoBehaviour
 
     private void DisplayCoordinates() 
     {
-        _coordinates.x = Mathf.RoundToInt(transform.parent.position.x / GridManager.UNITY_GRID_SIZE);
-        _coordinates.y = Mathf.RoundToInt(transform.parent.position.z / GridManager.UNITY_GRID_SIZE);
+        _coordinates = GridManagerStategy.WorldToGridCoordinates(transform.parent.position);
         _label.color = _color;
         _label.text = _coordinates.ToString();
     }
