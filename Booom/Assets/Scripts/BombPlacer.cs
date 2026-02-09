@@ -7,7 +7,9 @@ public class BombPlacer : MonoBehaviour
     [SerializeField]
     private GameObject bombPrefab;
     [SerializeField]
-    private float cooldownSeconds = 3f;
+    private float cooldownSeconds = 3f; // time between drops
+    [SerializeField]
+    private float bombFuseSeconds = 3f; // time until bomb explodes
     [SerializeField]
     private KeyCode dropKey = KeyCode.Space;
 
@@ -40,7 +42,7 @@ public class BombPlacer : MonoBehaviour
             bomb = bombObject.AddComponent<Bomb>();
         }
 
-        bomb.Init(gridManager, cell, cooldownSeconds);
+        bomb.Init(gridManager, cell, bombFuseSeconds);
         _nextDropTime = Time.time + cooldownSeconds;
     }
 
