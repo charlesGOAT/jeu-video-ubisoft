@@ -73,10 +73,7 @@ public class Player : MonoBehaviour
     
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            TryPlaceBomb();
-        }
+        TryPlaceBomb();
 
         Vector2 curMoveInput = _moveInput.normalized;
 
