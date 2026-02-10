@@ -79,7 +79,11 @@ public class Player : MonoBehaviour
     private void Update()
     {
         TryPlaceBomb();
+        UpdateMovement();
+    }
 
+    private void UpdateMovement()
+    {
         Vector2 curMoveInput = _moveInput.normalized;
 
         Vector2 move = curMoveInput * (speed * Time.deltaTime);

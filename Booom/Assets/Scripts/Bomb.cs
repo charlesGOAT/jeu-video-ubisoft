@@ -108,16 +108,6 @@ public class Bomb : MonoBehaviour
     /// </summary>
     private void Explode()
     {
-        if (_gridManager == null)
-        {
-            _gridManager = FindFirstObjectByType<GridManagerStategy>();
-            if (_gridManager == null)
-            {
-                Destroy(gameObject);
-                return;
-            }
-        }
-
         Vector2Int bombCoordinates = _bombCoordinates;
 
         foreach (Vector2Int direction in _directions)
@@ -126,16 +116,10 @@ public class Bomb : MonoBehaviour
         }
 
         Destroy(gameObject);
-
     }
 
     private void Awake()
     {
-        if (_gridManager == null)
-        {
-            _gridManager = FindFirstObjectByType<GridManagerStategy>();
-        }
-
         _initialScale = transform.localScale;
         _bombCoordinates = GridManagerStategy.WorldToGridCoordinates(transform.position);
         ActiveBombs.Add(_bombCoordinates);

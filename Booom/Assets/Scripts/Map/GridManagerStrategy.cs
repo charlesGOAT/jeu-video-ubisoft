@@ -14,8 +14,8 @@ public abstract class GridManagerStategy : MonoBehaviour
 
     public int Width { get; protected set; } = 0;
     public int Height { get; protected set; } = 0;
-    
-    public readonly int[] tilesPerPlayer = new int[] { 0, 0 }; // only 2 for the moment, add game constants and generate dynamically?
+
+    public readonly int[] tilesPerPlayer = new int[GameConstants.NB_PLAYERS];
 
     [SerializeField]
     protected Camera mainCamera;
