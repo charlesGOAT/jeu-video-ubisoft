@@ -6,12 +6,6 @@ public class Player : MonoBehaviour
 {
     [SerializeField]
     private float speed = 5f;
-
-    [SerializeField]
-    private Bomb bombPrefab;
-
-    [SerializeField]
-    private float bombCooldown = 3f;
     
     [SerializeField]
     private Color playerColor = Color.red;
@@ -24,7 +18,6 @@ public class Player : MonoBehaviour
     private float _nextBombAllowedTime = 0f;
     private GridManagerStategy _gridManager;
     
-
     private void Start()
     {
         _gridManager = FindFirstObjectByType<GridManagerStategy>();
@@ -51,6 +44,9 @@ public class Player : MonoBehaviour
 
     public void OnBomb(InputAction.CallbackContext ctx)
     {
+        /*
+         *  TODO: Bomb creation logic (We can keep the explosion logic in Bomb.cs)
+         */
         if (ctx.performed)
         {
             TryPlaceBomb();

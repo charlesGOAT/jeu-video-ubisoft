@@ -1,29 +1,16 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Bomb : MonoBehaviour
 {
-    private static readonly HashSet<Vector2Int> ActiveBombs = new HashSet<Vector2Int>();
-
     [SerializeField]
     private float timer = 3.0f;
-
-    [SerializeField]
-    private float pulseAmplitude = 0.2f;
-
-    [SerializeField]
-    private float pulseSpeed = 8f;
 
     [SerializeField]
     private int explosionRange = 3;
 
     private GridManagerStategy _gridManager;
-
-    private Vector2Int _bombCoordinates;
-
-    private Vector3 _initialScale;
     
     public Color explosionColor = new Color(0.2f, 1f, 0.6f, 1f);
     public PlayerEnum associatedPlayer = PlayerEnum.None;
@@ -45,11 +32,6 @@ public class Bomb : MonoBehaviour
         }
     }
 
-    public static bool IsBombAt(Vector2Int gridCoordinates)
-    {
-        return ActiveBombs.Contains(gridCoordinates);
-    }
-
     public void Fuse()
     {
         StartCoroutine(CountdownAndExplode());
@@ -57,19 +39,12 @@ public class Bomb : MonoBehaviour
 
     private IEnumerator CountdownAndExplode()
     {
-        float elapsed = 0f;
-        while (elapsed < timer)
-        {
-            float pulse = 1f + (Mathf.Abs(Mathf.Sin(elapsed * pulseSpeed)) * pulseAmplitude);
-            transform.localScale = _initialScale * pulse;
-            elapsed += Time.deltaTime;
-            yield return null;
-        }
+        yield return new WaitForSeconds(timer);
         Explode();
     }
 
     /// <summary>
-    /// Peindre les cases dans une direction jusqu'� ce qu'une case bloquante soit rencontr�e
+    /// Peindre les cases dans une direction jusqu'à ce qu'une case bloquante soit rencontrée
     /// </summary>
     /// <param name="bombCoordinates"></param>
     /// <param name="direction"></param>
@@ -108,7 +83,7 @@ public class Bomb : MonoBehaviour
     /// </summary>
     private void Explode()
     {
-        Vector2Int bombCoordinates = _bombCoordinates;
+        Vector2Int bombCoordinates = GridManagerStategy.WorldToGridCoordinates(transform.position);
 
         foreach (Vector2Int direction in _directions)
         {
@@ -121,20 +96,7 @@ public class Bomb : MonoBehaviour
 
     private void Awake()
     {
-        if (_gridManager == null)
-        {
-            _gridManager = FindFirstObjectByType<GridManagerStategy>();
-        }
-
-        _initialScale = transform.localScale;
-        _bombCoordinates = GridManagerStategy.WorldToGridCoordinates(transform.position);
-        ActiveBombs.Add(_bombCoordinates);
         Fuse();
-    }
-
-    private void OnDestroy()
-    {
-        ActiveBombs.Remove(_bombCoordinates);
     }
 
 }
