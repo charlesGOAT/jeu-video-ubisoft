@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -23,7 +24,9 @@ public class Player : MonoBehaviour
 
     private float _nextBombAllowedTime = 0f;
     private GridManagerStategy _gridManager;
-    
+
+    public static readonly Dictionary<PlayerEnum, Color> PlayerColorDict = new Dictionary<PlayerEnum, Color>();  // make it the other way around if we want to test color spreading
+
     private void Start()
     {
         _gridManager = FindFirstObjectByType<GridManagerStategy>();
@@ -39,7 +42,17 @@ public class Player : MonoBehaviour
             enabled = false;
         }
 
-        bombPrefab.explosionColor = playerColor;
+        if (playerNb == PlayerEnum.None)
+        {
+            throw new Exception("Player cannot be set to PlayerEnum.None");
+        }
+
+        if (PlayerColorDict.ContainsKey(playerNb))
+        {
+            throw new Exception("Two players can't have the same player number.");
+        }
+
+        PlayerColorDict[playerNb] = playerColor;
         bombPrefab.associatedPlayer = playerNb;
     }
 
@@ -78,12 +91,29 @@ public class Player : MonoBehaviour
     
     private void Update()
     {
-        TryPlaceBomb();
+        UpdateMovement();
+    }
 
+    private void UpdateMovement()
+    {
         Vector2 curMoveInput = _moveInput.normalized;
 
-        Vector2 move = curMoveInput * (speed * Time.deltaTime);
+        float boost = CheckIfOnOwnColor() ? GameConstants.COLOR_BOOST : 1;
+
+        Vector2 move = curMoveInput * (speed * Time.deltaTime * boost);
         transform.position += new Vector3(move.y, 0, -move.x);
+    }
+
+    private bool CheckIfOnOwnColor()
+    {
+        Vector2Int gridCoordinates = GridManagerStategy.WorldToGridCoordinates(transform.position);
+        Tile tile = _gridManager.GetTileAtCoordinates(gridCoordinates);
+        if (tile == null)
+        {
+            return false;
+        }
+
+        return tile.CurrentTileOwner == playerNb;
     }
 }
 

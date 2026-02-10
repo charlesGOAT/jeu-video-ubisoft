@@ -30,7 +30,4 @@ public class GridManagerDemo : GridManagerStategy
         Width = demoWidth;
         Height = demoHeight;
     }
-
-
-
 }
