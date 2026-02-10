@@ -64,7 +64,7 @@ public class Bomb : MonoBehaviour
                 PlayerEnum currentTileOwner = tile.CurrentTileOwner;
                 if (currentTileOwner != associatedPlayer)
                 {
-                    if (currentTileOwner != PlayerEnum.None && currentTileOwner != associatedPlayer)
+                    if (currentTileOwner != PlayerEnum.None)
                         _gridManager.tilesPerPlayer[(int)currentTileOwner - 1]--;
                 
                     _gridManager.tilesPerPlayer[(int)associatedPlayer - 1]++;
