@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 6003852953096131984}
   - component: {fileID: 7148449890927070707}
   - component: {fileID: 1141182974104389932}
+  - component: {fileID: 2946444551040455851}
   m_Layer: 8
   m_Name: Player
   m_TagString: Untagged
@@ -159,6 +160,7 @@ MonoBehaviour:
   bombCooldown: 3
   playerColor: {r: 1, g: 0, b: 0, a: 1}
   playerNb: 0
+  itemsManager: {fileID: 2946444551040455851}
 --- !u!114 &1141182974104389932
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -261,3 +263,15 @@ MonoBehaviour:
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
+--- !u!114 &2946444551040455851
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8693886412537445449}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8bfe7f3768ca4f01a33d5bca26b111b1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ItemsManager

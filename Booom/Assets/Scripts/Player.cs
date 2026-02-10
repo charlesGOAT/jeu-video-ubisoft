@@ -1,7 +1,9 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+[RequireComponent(typeof(ItemsManager))]
 public class Player : MonoBehaviour
 {
     [SerializeField]
@@ -19,10 +21,19 @@ public class Player : MonoBehaviour
     [SerializeField] 
     private PlayerEnum playerNb = PlayerEnum.None;
     
+    [SerializeField]
+    private ItemsManager itemsManager;
+
     private Vector2 _moveInput;
 
     private float _nextBombAllowedTime = 0f;
     private GridManagerStategy _gridManager;
+    
+    private void Awake()
+    {
+        if (itemsManager == null)
+            itemsManager = gameObject.GetComponent<ItemsManager>();
+    }
     
     private void Start()
     {
@@ -84,6 +95,14 @@ public class Player : MonoBehaviour
 
         Vector2 move = curMoveInput * (speed * Time.deltaTime);
         transform.position += new Vector3(move.y, 0, -move.x);
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (!other.tag.Equals("Item") || !other.gameObject.TryGetComponent(out Item item)) return;
+        
+        itemsManager.AddNewItem(item);
+        Destroy(other.gameObject);
     }
 }
 
