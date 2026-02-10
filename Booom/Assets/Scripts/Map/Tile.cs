@@ -11,10 +11,12 @@ public class Tile : MonoBehaviour
     private Renderer _tileRenderer;
 
     public PlayerEnum CurrentTileOwner { get; private set; } = PlayerEnum.None;
+
+    private Color _neutralColor;
     
-    public void ChangeTileColor(Color color, PlayerEnum newOwner) 
+    public void ChangeTileColor(PlayerEnum newOwner) 
     {
-        _tileRenderer.material.color = color;
+        _tileRenderer.material.color = newOwner != PlayerEnum.None ? Player.PlayerColorDict[newOwner] : _neutralColor; 
         CurrentTileOwner = newOwner;
     }
 
@@ -22,6 +24,8 @@ public class Tile : MonoBehaviour
     {
         _tileRenderer = GetComponentInChildren<Renderer>();
         TileCoordinates = GridManagerStategy.WorldToGridCoordinates(transform.position);
+
+        _neutralColor = _tileRenderer.material.color;
     }
 
 }
