@@ -88,7 +88,7 @@ public class Player : MonoBehaviour
         Vector2 curMoveInput = _moveInput.normalized;
 
         Vector2 move = curMoveInput * (speed * Time.deltaTime);
-        transform.position += new Vector3(move.x, 0, -move.y);
+        transform.position += new Vector3(move.y, 0, -move.x);
     }
 }
 
