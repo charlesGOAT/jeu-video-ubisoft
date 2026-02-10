@@ -11,9 +11,6 @@ public class Bomb : MonoBehaviour
     private float timer = 3.0f;
 
     [SerializeField]
-    private Color explosionColor = new Color(0.2f, 1f, 0.6f, 1f);
-
-    [SerializeField]
     private float pulseAmplitude = 0.2f;
 
     [SerializeField]
@@ -27,7 +24,10 @@ public class Bomb : MonoBehaviour
     private Vector2Int _bombCoordinates;
 
     private Vector3 _initialScale;
-
+    
+    public Color explosionColor = new Color(0.2f, 1f, 0.6f, 1f);
+    public PlayerEnum associatedPlayer = PlayerEnum.None;
+    
     private readonly Vector2Int[] _directions = new Vector2Int[] {
             Vector2Int.up,
             Vector2Int.down,
@@ -38,6 +38,11 @@ public class Bomb : MonoBehaviour
     void Start()
     {
         _gridManager = FindFirstObjectByType<GridManagerStategy>();
+        
+        if (_gridManager == null)
+        {
+            throw new Exception("There's no active grid manager");
+        }
     }
 
     public static bool IsBombAt(Vector2Int gridCoordinates)
@@ -70,29 +75,32 @@ public class Bomb : MonoBehaviour
     /// <param name="direction"></param>
     private void PaintTilesForDirection(Vector2Int bombCoordinates, Vector2Int direction) 
     {
-
-        if (_gridManager == null)
-        {
-            return;
-        }
-
         for (int rangeCounter = 0; rangeCounter <= explosionRange; ++rangeCounter)
         {
-            
             Tile tile = _gridManager.GetTileAtCoordinates(bombCoordinates);
 
-            if (tile != null && !tile.isObstacle)
-            {
-                tile.ChangeTileColor(explosionColor);
-            }
-            else
+            if (tile == null || tile.isObstacle)
             {
                 return;
             }
 
+            if (associatedPlayer != PlayerEnum.None)
+            {
+                PlayerEnum currentTileOwner = tile.CurrentTileOwner;
+                if (currentTileOwner != associatedPlayer)
+                {
+                    if (currentTileOwner != PlayerEnum.None && currentTileOwner != associatedPlayer)
+                        _gridManager.tilesPerPlayer[(int)currentTileOwner - 1]--;
+                
+                    _gridManager.tilesPerPlayer[(int)associatedPlayer - 1]++;
+                    
+                    tile.ChangeTileColor(explosionColor, associatedPlayer);
+
+                }
+            }
+            
             bombCoordinates += direction;
         }
-
     }
 
     /// <summary>
@@ -100,16 +108,6 @@ public class Bomb : MonoBehaviour
     /// </summary>
     private void Explode()
     {
-        if (_gridManager == null)
-        {
-            _gridManager = FindFirstObjectByType<GridManagerStategy>();
-            if (_gridManager == null)
-            {
-                Destroy(gameObject);
-                return;
-            }
-        }
-
         Vector2Int bombCoordinates = _bombCoordinates;
 
         foreach (Vector2Int direction in _directions)

@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 6003852953096131984}
   - component: {fileID: 7148449890927070707}
   - component: {fileID: 1141182974104389932}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -107,7 +107,7 @@ BoxCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 128
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
@@ -155,6 +155,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SimplePlayerMovement
   speed: 5
+  bombPrefab: {fileID: 5789344192112797052, guid: 1008e97cfb9b5d848ab9dc400ca27aa3, type: 3}
+  bombCooldown: 3
+  playerColor: {r: 1, g: 0, b: 0, a: 1}
+  playerNb: 0
 --- !u!114 &1141182974104389932
 MonoBehaviour:
   m_ObjectHideFlags: 0

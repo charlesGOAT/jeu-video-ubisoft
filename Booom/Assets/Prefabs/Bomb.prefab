@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 1060326652740498990}
   - component: {fileID: 6885263192769806501}
   - component: {fileID: 5789344192112797052}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Bomb
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -125,6 +125,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1fa19237aefe85e43b44c0e0c3ad31c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Bomb
-  _timer: 0
-  UnityGridSize: 2
-  _explosionRange: 3
+  timer: 3
+  pulseAmplitude: 0.2
+  pulseSpeed: 8
+  explosionRange: 3
+  explosionColor: {r: 0.2, g: 1, b: 0.6, a: 1}
+  associatedPlayer: 0
