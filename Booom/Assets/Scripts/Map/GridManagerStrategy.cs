@@ -34,6 +34,15 @@ public abstract class GridManagerStategy : MonoBehaviour
         );
     }
 
+    public static Vector3 GridToWorldPosition(Vector2Int gridCoordinates, float y = 0f)
+    {
+        return new Vector3(
+            gridCoordinates.x * UNITY_GRID_SIZE,
+            y,
+            gridCoordinates.y * UNITY_GRID_SIZE
+        );
+    }
+
     private void Start()
     {
         CreateGrid();
