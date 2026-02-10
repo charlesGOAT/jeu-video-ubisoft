@@ -1,24 +1,27 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Tile : MonoBehaviour
 {
-    public Vector2Int TileCoordinates { get; private set; } = new Vector2Int();
+    public Vector2Int TileCoordinates { get; private set; }
 
     [SerializeField]
     public bool isObstacle = false;
 
-    private Renderer TileRenderer;
+    private Renderer _tileRenderer;
 
-    public void ChangeTileColor(Color color) 
+    public PlayerEnum CurrentTileOwner { get; private set; } = PlayerEnum.None;
+    
+    public void ChangeTileColor(Color color, PlayerEnum newOwner) 
     {
-        TileRenderer.material.color = color;
+        _tileRenderer.material.color = color;
+        CurrentTileOwner = newOwner;
     }
 
     void Awake()
     {
-        TileRenderer = GetComponentInChildren<Renderer>();
+        _tileRenderer = GetComponentInChildren<Renderer>();
         TileCoordinates = GridManagerStategy.WorldToGridCoordinates(transform.position);
-
     }
 
 }
