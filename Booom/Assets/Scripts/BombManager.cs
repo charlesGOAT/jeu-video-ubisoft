@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class BombManager : MonoBehaviour
@@ -12,7 +13,8 @@ public class BombManager : MonoBehaviour
     
     private GridManagerStategy _gridManager;
     
-    private float _nextBombAllowedTime = 0f;
+    // Track each Player's bomb cooldown
+    private readonly Dictionary<PlayerEnum, float> _nextBombTime = new Dictionary<PlayerEnum, float>();
     
     private void Awake()
     {
@@ -27,7 +29,9 @@ public class BombManager : MonoBehaviour
     
     public void CreateBomb(Vector3 position, PlayerEnum playerEnum, BombEnum bombEnum)
     {
-        if (Time.time < _nextBombAllowedTime)
+        _nextBombTime.TryAdd(playerEnum, 0f);
+        
+        if (Time.time < _nextBombTime[playerEnum])
         {
             return;
         }
@@ -42,7 +46,8 @@ public class BombManager : MonoBehaviour
 
         Vector3 worldPosition = GridManagerStategy.GridToWorldPosition(gridCoordinates, tile.transform.position.y);
         Instantiate(bombPrefab, worldPosition, Quaternion.identity);
-        _nextBombAllowedTime = Time.time + bombCooldown;
+        
+        _nextBombTime[playerEnum] = Time.time + bombCooldown;
     }
 
     private void GetManagers()

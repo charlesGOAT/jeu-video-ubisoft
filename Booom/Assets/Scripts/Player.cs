@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -21,52 +22,43 @@ public class Player : MonoBehaviour
     
     private Vector2 _moveInput;
 
-    private float _nextBombAllowedTime = 0f;
     private GridManagerStategy _gridManager;
     private BombManager _bombManager;
-    
+
     private void Awake()
     {
         GetManagers();
-        
-        // if(bombPrefab == null)
-        // {
-        //     Debug.LogError("Bomb prefab shouldn't be null deactivating component");
-        //     enabled = false;
-        // }
-        //
-        // bombPrefab.explosionColor = playerColor;
-        // bombPrefab.associatedPlayer = playerNb;
+    }
 
     public static readonly Dictionary<PlayerEnum, Color> PlayerColorDict = new Dictionary<PlayerEnum, Color>();  // make it the other way around if we want to test color spreading
 
     private void Start()
     {
-        _gridManager = FindFirstObjectByType<GridManagerStategy>();
-
-        if (_gridManager == null)
+        var playerInput = GetComponent<PlayerInput>();
+        if (playerInput != null)
         {
-            throw new Exception("There's no active grid manager");
+            switch (playerInput.playerIndex)
+            {
+                case 0:
+                    playerNb = PlayerEnum.Player1;
+                    playerColor = Color.red;
+                    break;
+                case 1:
+                    playerNb = PlayerEnum.Player2;
+                    playerColor = Color.green;
+                    break;
+                default:
+                    playerNb = PlayerEnum.None;
+                    break;
+            }
         }
         
-        if(bombPrefab == null)
-        {
-            Debug.LogError("Bomb prefab shouldn't be null deactivating component");
-            enabled = false;
-        }
-
         if (playerNb == PlayerEnum.None)
         {
             throw new Exception("Player cannot be set to PlayerEnum.None");
         }
-
-        if (PlayerColorDict.ContainsKey(playerNb))
-        {
-            throw new Exception("Two players can't have the same player number.");
-        }
-
-        PlayerColorDict[playerNb] = playerColor;
-        bombPrefab.associatedPlayer = playerNb;
+        
+        PlayerColorDict.TryAdd(playerNb, playerColor);
     }
 
     public void OnMove(InputAction.CallbackContext ctx)
@@ -78,34 +70,12 @@ public class Player : MonoBehaviour
     {
         if (ctx.performed)
         {
-            TryPlaceBomb();
+            _bombManager.CreateBomb(transform.position, playerNb,  BombEnum.NormalBomb);
         }
-    }
-
-    private void TryPlaceBomb()
-    {
-        if (Time.time < _nextBombAllowedTime)
-        {
-            return;
-        }
-        
-        Vector2Int gridCoordinates = GridManagerStategy.WorldToGridCoordinates(transform.position);
-        Tile tile = _gridManager.GetTileAtCoordinates(gridCoordinates);
-
-        if (tile == null || tile.isObstacle || Bomb.IsBombAt(gridCoordinates))
-        {
-            return;
-        }
-
-        Vector3 worldPosition = GridManagerStategy.GridToWorldPosition(gridCoordinates, tile.transform.position.y);
-        Instantiate(bombPrefab, worldPosition, Quaternion.identity);
-        _nextBombAllowedTime = Time.time + bombCooldown;
     }
     
     private void Update()
     {
-        TryPlaceBomb();
-
         Vector2 curMoveInput = _moveInput.normalized;
 
         Vector2 move = curMoveInput * (speed * Time.deltaTime);
