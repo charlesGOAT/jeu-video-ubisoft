@@ -21,6 +21,8 @@ public class Player : MonoBehaviour
     private PlayerEnum playerNb = PlayerEnum.None;
     
     private Vector2 _moveInput;
+    private BombEnum _currentBombType = BombEnum.NormalBomb;
+    private int _bombTypeCount;
 
     private GridManagerStategy _gridManager;
     private BombManager _bombManager;
@@ -28,12 +30,8 @@ public class Player : MonoBehaviour
     private void Awake()
     {
         GetManagers();
-    }
-
-    public static readonly Dictionary<PlayerEnum, Color> PlayerColorDict = new Dictionary<PlayerEnum, Color>();  // make it the other way around if we want to test color spreading
-
-    private void Start()
-    {
+        _bombTypeCount = Enum.GetValues(typeof(BombEnum)).Length - 1; // -1 to avoid None
+        
         var playerInput = GetComponent<PlayerInput>();
         if (playerInput != null)
         {
@@ -52,13 +50,22 @@ public class Player : MonoBehaviour
                     break;
             }
         }
+    }
+
+    public static readonly Dictionary<PlayerEnum, Color> PlayerColorDict = new Dictionary<PlayerEnum, Color>();  // make it the other way around if we want to test color spreading
+
+    private void Start()
+    {
         
         if (playerNb == PlayerEnum.None)
         {
             throw new Exception("Player cannot be set to PlayerEnum.None");
         }
         
-        PlayerColorDict.TryAdd(playerNb, playerColor);
+        if (!PlayerColorDict.TryAdd(playerNb, playerColor))
+        {
+            throw new Exception("Player already exists");
+        }
     }
 
     public void OnMove(InputAction.CallbackContext ctx)
@@ -70,7 +77,16 @@ public class Player : MonoBehaviour
     {
         if (ctx.performed)
         {
-            _bombManager.CreateBomb(transform.position, playerNb,  BombEnum.NormalBomb);
+            _bombManager.CreateBomb(transform.position, playerNb,  _currentBombType);
+        }
+    }
+    
+    public void OnChangeBomb(InputAction.CallbackContext ctx)
+    {
+        if (ctx.performed)
+        {
+            int nextBomb = ((int)_currentBombType % _bombTypeCount) + 1; // +1 to bring back above 0
+            _currentBombType = (BombEnum)nextBomb;
         }
     }
     

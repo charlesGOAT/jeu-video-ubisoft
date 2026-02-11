@@ -12,6 +12,7 @@ public class BombManager : MonoBehaviour
     private float bombCooldown = 3f;
     
     private GridManagerStategy _gridManager;
+    private readonly bool[] _firstBomb = new bool[GameConstants.NB_PLAYERS];
     
     // Track each Player's bomb cooldown
     private readonly Dictionary<PlayerEnum, float> _nextBombTime = new Dictionary<PlayerEnum, float>();
@@ -29,7 +30,17 @@ public class BombManager : MonoBehaviour
     
     public void CreateBomb(Vector3 position, PlayerEnum playerEnum, BombEnum bombEnum)
     {
-        _nextBombTime.TryAdd(playerEnum, 0f);
+        if (!_firstBomb[(int)playerEnum - 1])
+        {
+            _firstBomb[(int)playerEnum - 1] = true;
+            
+            if (!_nextBombTime.TryAdd(playerEnum, 0f))
+            {
+                throw new Exception("Player already exists");
+            }
+        }
+        
+        bombPrefab.associatedPlayer = playerEnum;
         
         if (Time.time < _nextBombTime[playerEnum])
         {
