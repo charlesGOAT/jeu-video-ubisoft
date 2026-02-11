@@ -92,9 +92,16 @@ public class Player : MonoBehaviour
     
     private void Update()
     {
+        UpdateMovement();
+    }
+
+    private void UpdateMovement()
+    {
         Vector2 curMoveInput = _moveInput.normalized;
 
-        Vector2 move = curMoveInput * (speed * Time.deltaTime);
+        float boost = CheckIfOnOwnColor() ? GameConstants.COLOR_BOOST : 1;
+
+        Vector2 move = curMoveInput * (speed * Time.deltaTime * boost);
         transform.position += new Vector3(move.y, 0, -move.x);
     }
 
