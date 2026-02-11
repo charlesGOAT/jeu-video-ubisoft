@@ -20,8 +20,7 @@ public class Bomb : MonoBehaviour
     private int explosionRange = 3;
 
     private GridManagerStategy _gridManager;
-    
-    public Color explosionColor = new Color(0.2f, 1f, 0.6f, 1f);
+  
     public PlayerEnum associatedPlayer = PlayerEnum.None;
 
     private Vector2Int _bombCoordinates;
@@ -89,8 +88,7 @@ public class Bomb : MonoBehaviour
                 
                     _gridManager.tilesPerPlayer[(int)associatedPlayer - 1]++;
                     
-                    tile.ChangeTileColor(explosionColor, associatedPlayer);
-
+                    tile.ChangeTileColor(associatedPlayer);
                 }
             }
             
@@ -100,16 +98,6 @@ public class Bomb : MonoBehaviour
 
     private void Explode()
     {
-        if (_gridManager == null)
-        {
-            _gridManager = FindFirstObjectByType<GridManagerStategy>();
-            if (_gridManager == null)
-            {
-                Destroy(gameObject);
-                return;
-            }
-        }
-
         Vector2Int bombCoordinates = _bombCoordinates;
 
         foreach (Vector2Int direction in _directions)
@@ -118,16 +106,10 @@ public class Bomb : MonoBehaviour
         }
 
         Destroy(gameObject);
-
     }
 
     private void Awake()
     {
-        if (_gridManager == null)
-        {
-            _gridManager = FindFirstObjectByType<GridManagerStategy>();
-        }
-
         _initialScale = transform.localScale;
         _bombCoordinates = GridManagerStategy.WorldToGridCoordinates(transform.position);
         ActiveBombs.Add(_bombCoordinates);
