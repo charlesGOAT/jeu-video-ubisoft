@@ -11,23 +11,28 @@ public class Tile : MonoBehaviour
 
     private Renderer _tileRenderer;
 
-    public PlayerEnum CurrentTileOwner { get; private set; } = PlayerEnum.None;
+    public Color CurrentTileColor { get; private set; }
 
     private Color _neutralColor;
     
-    public void ChangeTileColor(PlayerEnum newOwner) 
+    public void ChangeTileColor(Color color) 
     {
-        if (CurrentTileOwner != newOwner)
+        if (color != CurrentTileColor)
         {
-            bool isNoPlayer = newOwner == PlayerEnum.None;
+            if (CurrentTileColor != _neutralColor)
+            {
+                PlayerEnum currentOwner = Player.PlayerColorDict[CurrentTileColor];
+                GameManager.Instance.GridManager.tilesPerPlayer[(int)currentOwner - 1]--;
+            }
+
+            if (color != _neutralColor)
+            {
+                PlayerEnum newOwner = Player.PlayerColorDict[color];
+                GameManager.Instance.GridManager.tilesPerPlayer[(int)newOwner - 1]++;
+            }
             
-            if (!isNoPlayer)
-                GameManager.Instance.GridManager.tilesPerPlayer[(int)newOwner - 1]--;
-                
-            GameManager.Instance.GridManager.tilesPerPlayer[(int)newOwner - 1]++;
-            
-            _tileRenderer.material.color = !isNoPlayer ? Player.PlayerColorDict[newOwner] : _neutralColor;
-            CurrentTileOwner = newOwner;
+            _tileRenderer.material.color = color;
+            CurrentTileColor = color;
         }
     }
 
@@ -37,6 +42,7 @@ public class Tile : MonoBehaviour
         TileCoordinates = GridManagerStategy.WorldToGridCoordinates(transform.position);
 
         _neutralColor = _tileRenderer.material.color;
+        CurrentTileColor = _neutralColor;
     }
 
 }

@@ -19,8 +19,6 @@ public class Bomb : MonoBehaviour
     [SerializeField]
     private int explosionRange = 3;
 
-    public PlayerEnum associatedPlayer = PlayerEnum.None;
-
     private Vector2Int _bombCoordinates;
 
     private Vector3 _initialScale;
@@ -55,7 +53,7 @@ public class Bomb : MonoBehaviour
         Explode();
     }
 
-    private void PaintTilesForDirection(Vector2Int bombCoordinates, Vector2Int direction)
+    private void PaintTilesForDirection(Vector2Int bombCoordinates, Vector2Int direction, Color color)
     {
         for (int rangeCounter = 0; rangeCounter <= explosionRange; ++rangeCounter)
         {
@@ -66,7 +64,7 @@ public class Bomb : MonoBehaviour
                 return;
             }
 
-            tile.ChangeTileColor(associatedPlayer);
+            tile.ChangeTileColor(color);
 
             foreach (Player player in Player.ActivePlayers)
             {
@@ -84,10 +82,14 @@ public class Bomb : MonoBehaviour
     private void Explode()
     {
         Vector2Int bombCoordinates = _bombCoordinates;
+        Tile bombTile = GameManager.Instance.GridManager.GetTileAtCoordinates(_bombCoordinates);
+        if (bombTile == null) return;
+
+        Color color = bombTile.CurrentTileColor;
 
         foreach (Vector2Int direction in _directions)
         {
-            PaintTilesForDirection(bombCoordinates, direction);
+            PaintTilesForDirection(bombCoordinates, direction, color);
         }
 
         Destroy(gameObject);

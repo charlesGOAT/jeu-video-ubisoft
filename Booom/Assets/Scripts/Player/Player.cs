@@ -19,7 +19,7 @@ public class Player : MonoBehaviour
     private float bombCooldown = 3f;
 
     [SerializeField]
-    private Color playerColor = Color.red;
+    public Color playerColor = Color.red;
 
     [SerializeField]
     private PlayerEnum playerNb = PlayerEnum.None;
@@ -61,7 +61,7 @@ public class Player : MonoBehaviour
 
     public bool IsImmune { get; private set; } = false;
 
-    public static readonly Dictionary<PlayerEnum, Color> PlayerColorDict = new Dictionary<PlayerEnum, Color>();  // make it the other way around if we want to test color spreading
+    public static readonly Dictionary<Color, PlayerEnum> PlayerColorDict = new Dictionary<Color, PlayerEnum>();  // make it the other way around if we want to test color spreading
 
 
     private void Awake()
@@ -84,9 +84,19 @@ public class Player : MonoBehaviour
             throw new Exception("Player cannot be set to PlayerEnum.None");
         }
 
-        if (!PlayerColorDict.TryAdd(playerNb, playerColor))
+        if (!PlayerColorDict.TryAdd(playerColor, playerNb))
         {
             throw new Exception("Player already exists");
+        }
+
+        // Really ugly and temp
+        if (playerColor == Color.red)
+        {
+            GameManager.Instance.GridManager.GetTileAtCoordinates(GameManager.Instance.GridManager.MapUpperLimit).ChangeTileColor(Color.red);
+        }
+        else
+        {
+            GameManager.Instance.GridManager.GetTileAtCoordinates(GameManager.Instance.GridManager.MapLowerLimit).ChangeTileColor(Color.green);
         }
     }
 
@@ -188,7 +198,7 @@ public class Player : MonoBehaviour
             return false;
         }
 
-        return tile.CurrentTileOwner == playerNb;
+        return tile.CurrentTileColor == playerColor;
     }
 
     public Tile GetPlayerTile() => GameManager.Instance.GridManager.GetTileAtCoordinates(GridManagerStategy.WorldToGridCoordinates(transform.position));

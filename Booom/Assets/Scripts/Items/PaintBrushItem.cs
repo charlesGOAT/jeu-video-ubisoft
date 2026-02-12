@@ -11,7 +11,7 @@ public class PaintBrushItem : IItem
 
         if (tile == null || tile.isObstacle) return;
         
-        tile.ChangeTileColor(player.PlayerNb);
+        tile.ChangeTileColor(player.playerColor);
     }
 
     public void PickupItem()

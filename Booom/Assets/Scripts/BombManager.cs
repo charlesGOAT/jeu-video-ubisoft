@@ -43,7 +43,7 @@ public class BombManager : MonoBehaviour
         }
 
         Vector3 worldPosition = GridManagerStategy.GridToWorldPosition(gridCoordinates, tile.transform.position.y);
-        bombPrefabs[(int)bombEnum - 1].associatedPlayer = playerEnum;
+       // bombPrefabs[(int)bombEnum - 1].associatedPlayer = playerEnum;
 
         Instantiate(bombPrefabs[(int)bombEnum - 1], worldPosition, Quaternion.identity);
 
