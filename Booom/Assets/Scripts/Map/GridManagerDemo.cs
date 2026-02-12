@@ -35,8 +35,8 @@ public class GridManagerDemo : GridManagerStategy
 
     private void CreateWalls()
     {
-        float mapWidth = demoWidth * UNITY_GRID_SIZE;
-        float mapHeight = demoHeight * UNITY_GRID_SIZE;
+        float mapWidth = demoWidth * GameConstants.UNITY_GRID_SIZE;
+        float mapHeight = demoHeight * GameConstants.UNITY_GRID_SIZE;
         float wallThickness = 1.0f;
         float wallHeight = 5.0f;
         float yPosition = wallHeight / 2.0f;
