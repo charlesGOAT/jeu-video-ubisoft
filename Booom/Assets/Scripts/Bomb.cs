@@ -19,8 +19,6 @@ public class Bomb : MonoBehaviour
     [SerializeField]
     private int explosionRange = 3;
 
-    private GridManagerStategy _gridManager;
-  
     public PlayerEnum associatedPlayer = PlayerEnum.None;
 
     private Vector2Int _bombCoordinates;
@@ -33,16 +31,8 @@ public class Bomb : MonoBehaviour
             Vector2Int.left,
             Vector2Int.right
         };
-
-    void Start()
-    {
-        _gridManager = FindFirstObjectByType<GridManagerStategy>();
-        
-        if (_gridManager == null)
-        {
-            throw new Exception("There's no active grid manager");
-        }
-    }
+    
+    private GameManager _gameManager;
 
     public static bool IsBombAt(Vector2Int gridCoordinates)
     {
@@ -67,43 +57,23 @@ public class Bomb : MonoBehaviour
         Explode();
     }
 
-    /// <summary>
-    /// Peindre les cases dans une direction jusqu'à ce qu'une case bloquante soit rencontrée
-    /// </summary>
-    /// <param name="bombCoordinates"></param>
-    /// <param name="direction"></param>
     private void PaintTilesForDirection(Vector2Int bombCoordinates, Vector2Int direction) 
     {
         for (int rangeCounter = 0; rangeCounter <= explosionRange; ++rangeCounter)
         {
-            Tile tile = _gridManager.GetTileAtCoordinates(bombCoordinates);
+            Tile tile = _gameManager.GridManager.GetTileAtCoordinates(bombCoordinates);
 
             if (tile == null || tile.isObstacle)
             {
                 return;
             }
-
-            if (associatedPlayer != PlayerEnum.None)
-            {
-                PlayerEnum currentTileOwner = tile.CurrentTileOwner;
-                if (currentTileOwner != associatedPlayer)
-                {
-                    if (currentTileOwner != PlayerEnum.None)
-                        _gridManager.tilesPerPlayer[(int)currentTileOwner - 1]--;
-                
-                    _gridManager.tilesPerPlayer[(int)associatedPlayer - 1]++;
-                    
-                    tile.ChangeTileColor(associatedPlayer);
-                }
-            }
             
+            tile.ChangeTileColor(associatedPlayer);
+
             bombCoordinates += direction;
         }
     }
 
-    /// <summary>
-    /// Peindre les cases autour de la bombe en croix
-    /// </summary>
     private void Explode()
     {
         Vector2Int bombCoordinates = _bombCoordinates;
@@ -118,8 +88,17 @@ public class Bomb : MonoBehaviour
 
     private void Awake()
     {
-        _initialScale = transform.localScale;
-        _bombCoordinates = GridManagerStategy.WorldToGridCoordinates(transform.position);
+        _gameManager = FindFirstObjectByType<GameManager>();
+
+        if (_gameManager == null)
+        {
+            throw new Exception("There's no active game manager");
+        }
+
+        Transform trans = transform;
+
+        _initialScale = trans.localScale;
+        _bombCoordinates = GridManagerStategy.WorldToGridCoordinates(trans.position);
         ActiveBombs.Add(_bombCoordinates);
         Fuse();
     }
