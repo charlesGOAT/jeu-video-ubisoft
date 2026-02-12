@@ -31,8 +31,6 @@ public class Bomb : MonoBehaviour
             Vector2Int.left,
             Vector2Int.right
         };
-    
-    private GameManager _gameManager;
 
     public static bool IsBombAt(Vector2Int gridCoordinates)
     {
@@ -57,18 +55,27 @@ public class Bomb : MonoBehaviour
         Explode();
     }
 
-    private void PaintTilesForDirection(Vector2Int bombCoordinates, Vector2Int direction) 
+    private void PaintTilesForDirection(Vector2Int bombCoordinates, Vector2Int direction)
     {
         for (int rangeCounter = 0; rangeCounter <= explosionRange; ++rangeCounter)
         {
-            Tile tile = _gameManager.GridManager.GetTileAtCoordinates(bombCoordinates);
+            Tile tile = GameManager.Instance.GridManager.GetTileAtCoordinates(bombCoordinates);
 
             if (tile == null || tile.isObstacle)
             {
                 return;
             }
-            
+
             tile.ChangeTileColor(associatedPlayer);
+
+            foreach (Player player in Player.ActivePlayers)
+            {
+                Tile playerTile = player.GetPlayerTile();
+                if (playerTile != null && playerTile.TileCoordinates == bombCoordinates)
+                {
+                    player.OnHit(direction);
+                }
+            }
 
             bombCoordinates += direction;
         }
@@ -88,13 +95,6 @@ public class Bomb : MonoBehaviour
 
     private void Awake()
     {
-        _gameManager = FindFirstObjectByType<GameManager>();
-
-        if (_gameManager == null)
-        {
-            throw new Exception("There's no active game manager");
-        }
-
         Transform trans = transform;
 
         _initialScale = trans.localScale;

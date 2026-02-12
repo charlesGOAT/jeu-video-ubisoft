@@ -3,8 +3,6 @@ using UnityEngine;
 
 public abstract class GridManagerStategy : MonoBehaviour
 {
-    protected const int UNITY_GRID_SIZE = 2;
-
     protected Dictionary<Vector2Int, Tile> _tiles = new Dictionary<Vector2Int, Tile>();
 
     public Vector2Int MapUpperLimit { get; protected set; } = Vector2Int.zero;
@@ -27,17 +25,17 @@ public abstract class GridManagerStategy : MonoBehaviour
     public static Vector2Int WorldToGridCoordinates(Vector3 worldPosition)
     {
         return new Vector2Int(
-            Mathf.RoundToInt(worldPosition.x / UNITY_GRID_SIZE),
-            Mathf.RoundToInt(worldPosition.z / UNITY_GRID_SIZE)
+            Mathf.RoundToInt(worldPosition.x / GameConstants.UNITY_GRID_SIZE),
+            Mathf.RoundToInt(worldPosition.z / GameConstants.UNITY_GRID_SIZE)
         );
     }
 
     public static Vector3 GridToWorldPosition(Vector2Int gridCoordinates, float y = 0f)
     {
         return new Vector3(
-            gridCoordinates.x * UNITY_GRID_SIZE,
+            gridCoordinates.x * GameConstants.UNITY_GRID_SIZE,
             y,
-            gridCoordinates.y * UNITY_GRID_SIZE
+            gridCoordinates.y * GameConstants.UNITY_GRID_SIZE
         );
     }
 
@@ -56,10 +54,10 @@ public abstract class GridManagerStategy : MonoBehaviour
     {
         if (mainCamera == null) return;
 
-        float centerX = (MapUpperLimit.x - ((MapUpperLimit.x - MapLowerLimit.x) / 2f)) * UNITY_GRID_SIZE;
-        float centerZ = (MapUpperLimit.y - ((MapUpperLimit.y - MapLowerLimit.y) / 2f)) * UNITY_GRID_SIZE;
+        float centerX = (MapUpperLimit.x - ((MapUpperLimit.x - MapLowerLimit.x) / 2f)) * GameConstants.UNITY_GRID_SIZE;
+        float centerZ = (MapUpperLimit.y - ((MapUpperLimit.y - MapLowerLimit.y) / 2f)) * GameConstants.UNITY_GRID_SIZE;
 
-        mainCamera.transform.position = new Vector3(centerX - (Height * UNITY_GRID_SIZE) / 2f, ((Width + Height) * UNITY_GRID_SIZE) / 2f, centerZ);
+        mainCamera.transform.position = new Vector3(centerX - (Height * GameConstants.UNITY_GRID_SIZE) / 2f, ((Width + Height) * GameConstants.UNITY_GRID_SIZE) / 2f, centerZ);
         mainCamera.transform.rotation = Quaternion.Euler(60f, 90f, 0f);
     }
 }

@@ -4,6 +4,9 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(PlayerItemsManager))]
+[RequireComponent(typeof(Renderer))]
+[RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(PlayerInput))]
 public class Player : MonoBehaviour
 {
     [SerializeField]
@@ -24,13 +27,42 @@ public class Player : MonoBehaviour
     [SerializeField]
     private PlayerItemsManager playerItemsManager;
 
+    private int knockbackForce = 3;
+
+    [SerializeField]
+    private int hitFlickerFrequency = 50;
+
+    [SerializeField]
+    private float immuneTimer = 5;
+
+    private Rigidbody _rigidbody;
+    private PlayerInput _playerInput;
+    private Renderer _renderer;
+
     private Vector2 _moveInput;
     private BombEnum _currentBombType = BombEnum.NormalBomb;
+
     private int _bombTypeCount;
 
     public PlayerEnum PlayerNb => playerNb;
 
+    private GridManagerStategy _gridManager;
+    private BombManager _bombManager;
+
+    private StateMachine _stateMachine;
+    private IdleState _idleState;
+    private HitState _hitState;
+    private RunState _runState;
+
+    //nom de caca
+    private float _actualImmuneTimer;
+
+    public static List<Player> ActivePlayers = new List<Player>();
+
+    public bool IsImmune { get; private set; } = false;
+
     public static readonly Dictionary<PlayerEnum, Color> PlayerColorDict = new Dictionary<PlayerEnum, Color>();  // make it the other way around if we want to test color spreading
+
 
     private void Awake()
     {
@@ -38,8 +70,11 @@ public class Player : MonoBehaviour
             playerItemsManager = gameObject.GetComponent<PlayerItemsManager>();
 
         _bombTypeCount = Enum.GetValues(typeof(BombEnum)).Length - 1; // -1 to avoid None
-
         ConfigurePlayers();
+        InitializeStateMachine();
+        GetComponents();
+
+        ActivePlayers.Add(this);
     }
 
     private void Start()
@@ -77,12 +112,53 @@ public class Player : MonoBehaviour
         }
     }
 
+    public void DisableInputActions() => _playerInput.actions.Disable();
+    public void EnableInputActions() => _playerInput.actions.Enable();
+
     private void Update()
     {
-        UpdateMovement();
+        UpdateImmune();
+        _stateMachine.UpdateStateMachine(Time.deltaTime);
     }
 
-    private void UpdateMovement()
+    private void UpdateImmune()
+    {
+        if (IsImmune)
+        {
+            if (_actualImmuneTimer <= 0)
+            {
+                IsImmune = false;
+                SetRendererVisible();
+            }
+            else
+            {
+                _actualImmuneTimer -= Time.deltaTime;
+                FlickerPlayerOnHit(_actualImmuneTimer);
+            }
+        }
+    }
+
+    public void OnHit(Vector2Int hitDirection)
+    {
+        //�tant donn� que hitDirection est un Vector2Int, y est z dans se cas
+        if (IsImmune)
+        {
+            return;
+        }
+        Vector3 forceDirection = new Vector3(hitDirection.x, 1, hitDirection.y);
+        _rigidbody.AddForce(forceDirection * knockbackForce, ForceMode.Impulse);
+        _stateMachine.Trigger(GameConstants.PLAYER_HIT_TRIGGER);
+        IsImmune = true;
+        _actualImmuneTimer = immuneTimer;
+    }
+
+    public void FlickerPlayerOnHit(float elapsedT) => _renderer.enabled = Mathf.Sin(elapsedT * hitFlickerFrequency) > 0;
+
+    private void SetRendererVisible() => _renderer.enabled = true;
+
+    public bool IsMoving() => _moveInput.sqrMagnitude > 0.01f;
+
+    public void UpdateMovement()
     {
         Vector2 curMoveInput = _moveInput.normalized;
 
@@ -115,6 +191,45 @@ public class Player : MonoBehaviour
         return tile.CurrentTileOwner == playerNb;
     }
 
+    public Tile GetPlayerTile() => _gridManager.GetTileAtCoordinates(GridManagerStategy.WorldToGridCoordinates(transform.position));
+
+
+    private void InitializeStateMachine()
+    {
+        _stateMachine = new StateMachine();
+        _idleState = new IdleState(_stateMachine, this);
+        _hitState = new HitState(_stateMachine, this);
+        _runState = new RunState(_stateMachine, this);
+
+        _stateMachine.AddTransition<IdleState>(GameConstants.PLAYER_RUN_TRIGGER, _runState);
+        _stateMachine.AddTransition<RunState>(GameConstants.PLAYER_IDLE_TRIGGER, _idleState);
+        _stateMachine.AddTransition<HitState>(GameConstants.PLAYER_IDLE_TRIGGER, _idleState);
+        _stateMachine.AddForEachType(GameConstants.PLAYER_HIT_TRIGGER, _hitState);
+        _stateMachine.SetInitialState(_idleState);
+    }
+
+    private void GetManagers()
+    {
+        _gridManager = FindFirstObjectByType<GridManagerStategy>();
+        _bombManager = FindFirstObjectByType<BombManager>();
+
+        if (_gridManager == null)
+        {
+            throw new Exception("There's no active grid manager");
+        }
+        if (_bombManager == null)
+        {
+            throw new Exception("There's no active bomb manager");
+        }
+    }
+
+    private void GetComponents()
+    {
+        _rigidbody = GetComponent<Rigidbody>();
+        _renderer = GetComponent<Renderer>();
+        _playerInput = GetComponent<PlayerInput>();
+    }
+
     private void ConfigurePlayers()
     {
         var playerInput = GetComponent<PlayerInput>();
@@ -141,6 +256,7 @@ public class Player : MonoBehaviour
         }
     }
 }
+
 
 public enum PlayerEnum
 {
