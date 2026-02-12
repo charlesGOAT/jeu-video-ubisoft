@@ -89,6 +89,11 @@ public class Bomb : MonoBehaviour
                 if (currentTileOwner != associatedPlayer)
                 {
                     if (currentTileOwner != PlayerEnum.None)
+                        GameStatsManager.Instance.OnTileStolen(associatedPlayer);
+
+                    GameStatsManager.Instance.OnTilePainted(associatedPlayer);
+
+                    if (currentTileOwner != PlayerEnum.None)
                         _gridManager.tilesPerPlayer[(int)currentTileOwner - 1]--;
                 
                     _gridManager.tilesPerPlayer[(int)associatedPlayer - 1]++;

@@ -86,6 +86,7 @@ public class Player : MonoBehaviour
 
         Vector3 worldPosition = GridManagerStategy.GridToWorldPosition(gridCoordinates, tile.transform.position.y);
         Instantiate(bombPrefab, worldPosition, Quaternion.identity);
+        GameStatsManager.Instance.OnBombPlaced(playerNb);
         _nextBombAllowedTime = Time.time + bombCooldown;
     }
     
