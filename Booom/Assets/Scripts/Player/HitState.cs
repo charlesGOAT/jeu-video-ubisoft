@@ -16,7 +16,7 @@ public class HitState : State
 
     public override void Exit()
     {
-        //Arrêter l'animation de hit
+        //Arrï¿½ter l'animation de hit
         _hitDuration = GameConstants.HIT_STATE_DURATION;
         _player.EnableInputActions();
     }
@@ -29,6 +29,7 @@ public class HitState : State
         }
         else
         {
+            _player.UpdateKnockback();
             _hitDuration -= time;
         }
     }

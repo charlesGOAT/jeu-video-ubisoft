@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Renderer))]
-[RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(PlayerInput))]
 public class Player : MonoBehaviour
 {
@@ -24,7 +23,7 @@ public class Player : MonoBehaviour
     private PlayerEnum playerNb = PlayerEnum.None;
 
     [SerializeField]
-    private int knockbackForce = 3;
+    private int knockbackForce = 20;
 
     [SerializeField]
     private int hitFlickerFrequency = 50;
@@ -32,7 +31,6 @@ public class Player : MonoBehaviour
     [SerializeField]
     private float immuneTimer = 5;
 
-    private Rigidbody _rigidbody;
     private PlayerInput _playerInput;
     private Renderer _renderer;
 
@@ -40,6 +38,11 @@ public class Player : MonoBehaviour
     private BombEnum _currentBombType = BombEnum.NormalBomb;
 
     private int _bombTypeCount;
+
+    private CharacterController _characterController;
+    private Vector3 _knockbackVelocity;
+    private float _knockbackDamping = 8f;
+    private float _verticalVelocity;
 
     private GridManagerStategy _gridManager;
     private BombManager _bombManager;
@@ -58,11 +61,11 @@ public class Player : MonoBehaviour
 
     public static readonly Dictionary<PlayerEnum, Color> PlayerColorDict = new Dictionary<PlayerEnum, Color>();  // make it the other way around if we want to test color spreading
 
-
     private void Awake()
     {
         GetManagers();
         _bombTypeCount = Enum.GetValues(typeof(BombEnum)).Length - 1; // -1 to avoid None
+
         ConfigurePlayers();
         InitializeStateMachine();
         GetComponents();
@@ -133,13 +136,13 @@ public class Player : MonoBehaviour
 
     public void OnHit(Vector2Int hitDirection) 
     {
-        //Étant donné que hitDirection est un Vector2Int, y est z dans se cas
+        //ï¿½tant donnï¿½ que hitDirection est un Vector2Int, y est z dans se cas
         if (IsImmune)
         {
             return;
         }
         Vector3 forceDirection = new Vector3(hitDirection.x,1,hitDirection.y);
-        _rigidbody.AddForce(forceDirection * knockbackForce, ForceMode.Impulse);
+        ApplyKnockback(forceDirection, knockbackForce);
         _stateMachine.Trigger(GameConstants.PLAYER_HIT_TRIGGER);
         IsImmune = true;
         _actualImmuneTimer = immuneTimer;
@@ -157,8 +160,38 @@ public class Player : MonoBehaviour
 
         float boost = CheckIfOnOwnColor() ? GameConstants.COLOR_BOOST : 1;
 
-        Vector2 move = curMoveInput * (speed * Time.deltaTime * boost);
-        transform.position += new Vector3(move.y, 0, -move.x);
+        Vector3 move = new Vector3(curMoveInput.y, 0, -curMoveInput.x) * (speed * boost);
+
+        if (_characterController.isGrounded && _verticalVelocity < 0f)
+        {
+            _verticalVelocity = 0f;
+        }
+        else
+        {
+            _verticalVelocity += Physics.gravity.y * Time.deltaTime; //gravity
+        }
+        move.y = _verticalVelocity;
+        
+        _characterController.Move(move * Time.deltaTime);
+    }
+
+    public void UpdateKnockback()
+    {
+        Vector3 move = _knockbackVelocity;
+        _knockbackVelocity = Vector3.Lerp(
+            _knockbackVelocity,
+            Vector3.zero,
+            _knockbackDamping * Time.deltaTime
+        );
+
+        move.y = _verticalVelocity;
+        
+        _characterController.Move(move * Time.deltaTime);
+    }
+    
+    public void ApplyKnockback(Vector3 forceDirection, float force)
+    {
+        _knockbackVelocity = forceDirection.normalized * force;
     }
 
     private bool CheckIfOnOwnColor()
@@ -206,7 +239,7 @@ public class Player : MonoBehaviour
 
     private void GetComponents()
     {
-        _rigidbody = GetComponent<Rigidbody>();
+        _characterController = GetComponent<CharacterController>();
         _renderer = GetComponent<Renderer>();
         _playerInput = GetComponent<PlayerInput>();
     }
