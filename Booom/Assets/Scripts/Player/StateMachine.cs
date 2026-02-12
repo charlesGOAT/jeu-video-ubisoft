@@ -14,7 +14,7 @@ public class StateMachine
     {
         foreach (var stateType in typeof(State).Assembly.GetTypes())
         {
-            if (stateType.IsSubclassOf(typeof(State)))
+            if (stateType.IsSubclassOf(typeof(State)) && stateType != to.GetType())
             {
                 _states[(stateType, trigger)] = to;
             }

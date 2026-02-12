@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Renderer))]
+[RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(PlayerInput))]
 public class Player : MonoBehaviour
 {
     [SerializeField]
@@ -31,100 +33,85 @@ public class Player : MonoBehaviour
     private float immuneTimer = 5;
 
     private Rigidbody _rigidbody;
+    private PlayerInput _playerInput;
+    private Renderer _renderer;
 
-    public Vector2 MoveInput { get; private set; }
-    public bool BombInput { get; private set; } = false;
+    private Vector2 _moveInput;
+    private BombEnum _currentBombType = BombEnum.NormalBomb;
 
-    private float _nextBombAllowedTime = 0f;
+    private int _bombTypeCount;
+
     private GridManagerStategy _gridManager;
+    private BombManager _bombManager;
 
     private StateMachine _stateMachine;
     private IdleState _idleState;
     private HitState _hitState;
     private RunState _runState;
-    private Renderer _renderer;
 
     //nom de caca
     private float _actualImmuneTimer;
 
     public static List<Player> ActivePlayers = new List<Player>();
-    
+
     public bool IsImmune { get; private set; } = false;
 
     public static readonly Dictionary<PlayerEnum, Color> PlayerColorDict = new Dictionary<PlayerEnum, Color>();  // make it the other way around if we want to test color spreading
 
+
+    private void Awake()
+    {
+        GetManagers();
+        _bombTypeCount = Enum.GetValues(typeof(BombEnum)).Length - 1; // -1 to avoid None
+        ConfigurePlayers();
+        InitializeStateMachine();
+        GetComponents();
+
+        ActivePlayers.Add(this);
+    }
+
     private void Start()
     {
-        _gridManager = FindFirstObjectByType<GridManagerStategy>();
-        _rigidbody = GetComponent<Rigidbody>();
-        _renderer = GetComponent<Renderer>();
-
-        if (_gridManager == null)
-        {
-            throw new Exception("There's no active grid manager");
-        }
-        
-        if(bombPrefab == null)
-        {
-            Debug.LogError("Bomb prefab shouldn't be null deactivating component");
-            enabled = false;
-        }
-
         if (playerNb == PlayerEnum.None)
         {
             throw new Exception("Player cannot be set to PlayerEnum.None");
         }
 
-        if (PlayerColorDict.ContainsKey(playerNb))
+        if (!PlayerColorDict.TryAdd(playerNb, playerColor))
         {
-            throw new Exception("Two players can't have the same player number.");
+            throw new Exception("Player already exists");
         }
-
-        InitializeStateMachine();
-        ActivePlayers.Add(this);
-        _actualImmuneTimer = immuneTimer;
-        PlayerColorDict[playerNb] = playerColor;
-        bombPrefab.associatedPlayer = playerNb;
     }
 
     public void OnMove(InputAction.CallbackContext ctx)
     {
-        MoveInput = ctx.ReadValue<Vector2>();
+        _moveInput = ctx.ReadValue<Vector2>();
     }
 
     public void OnBomb(InputAction.CallbackContext ctx)
     {
         if (ctx.performed)
         {
-            BombInput = true;
+            _bombManager.CreateBomb(transform.position, playerNb, _currentBombType);
         }
     }
 
-    public void TryPlaceBomb()
+    public void OnChangeBomb(InputAction.CallbackContext ctx)
     {
-        if (Time.time < _nextBombAllowedTime)
+        if (ctx.performed)
         {
-            return;
+            int nextBomb = ((int)_currentBombType % _bombTypeCount) + 1; // +1 to bring back above 0
+            _currentBombType = (BombEnum)nextBomb;
         }
-
-        Vector2Int gridCoordinates = GridManagerStategy.WorldToGridCoordinates(transform.position);
-        Tile tile = _gridManager.GetTileAtCoordinates(gridCoordinates);
-
-        if (tile == null || tile.isObstacle || Bomb.IsBombAt(gridCoordinates))
-        {
-            return;
-        }
-
-        Vector3 worldPosition = GridManagerStategy.GridToWorldPosition(gridCoordinates, tile.transform.position.y);
-        Instantiate(bombPrefab, worldPosition, Quaternion.identity);
-        _nextBombAllowedTime = Time.time + bombCooldown;
     }
-    
+
+    public void DisableInputActions() => _playerInput.actions.Disable();
+    public void EnableInputActions() => _playerInput.actions.Enable();  
+
     private void Update()
     {
         UpdateImmune();
         _stateMachine.UpdateStateMachine(Time.deltaTime);
-        BombInput = false;
     }
 
     private void UpdateImmune()
@@ -162,11 +149,11 @@ public class Player : MonoBehaviour
 
     private void SetRendererVisible() => _renderer.enabled = true;
 
-    public bool IsMoving() => MoveInput.sqrMagnitude > 0.01f;
+    public bool IsMoving() => _moveInput.sqrMagnitude > 0.01f;
 
     public void UpdateMovement()
     {
-        Vector2 curMoveInput = MoveInput.normalized;
+        Vector2 curMoveInput = _moveInput.normalized;
 
         float boost = CheckIfOnOwnColor() ? GameConstants.COLOR_BOOST : 1;
 
@@ -202,7 +189,55 @@ public class Player : MonoBehaviour
         _stateMachine.AddForEachType(GameConstants.PLAYER_HIT_TRIGGER, _hitState);
         _stateMachine.SetInitialState(_idleState);
     }
+    private void GetManagers()
+    {
+        _gridManager = FindFirstObjectByType<GridManagerStategy>();
+        _bombManager = FindFirstObjectByType<BombManager>();
+
+        if (_gridManager == null)
+        {
+            throw new Exception("There's no active grid manager");
+        }
+        if (_bombManager == null)
+        {
+            throw new Exception("There's no active bomb manager");
+        }
+    }
+
+    private void GetComponents()
+    {
+        _rigidbody = GetComponent<Rigidbody>();
+        _renderer = GetComponent<Renderer>();
+        _playerInput = GetComponent<PlayerInput>();
+    }
+
+    private void ConfigurePlayers()
+    {
+        var playerInput = GetComponent<PlayerInput>();
+        if (playerInput != null)
+        {
+            switch (playerInput.playerIndex)
+            {
+                case 0:
+                    playerNb = PlayerEnum.Player1;
+                    playerColor = Color.red;
+                    break;
+                case 1:
+                    playerNb = PlayerEnum.Player2;
+                    playerColor = Color.green;
+                    break;
+                default:
+                    playerNb = PlayerEnum.None;
+                    break;
+            }
+        }
+        else
+        {
+            throw new Exception("There's no active player input");
+        }
+    }
 }
+
 
 public enum PlayerEnum
 {

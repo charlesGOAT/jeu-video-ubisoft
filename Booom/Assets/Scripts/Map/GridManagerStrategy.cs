@@ -49,6 +49,7 @@ public abstract class GridManagerStategy : MonoBehaviour
 
     //A besoin d'un peu de peaufinage mais marche pour l'instant
     //Je peut le faire dans un autre task
+    //Manque encore du peaufinage lol
     protected void PositionCamera()
     {
         if (mainCamera == null) return;
@@ -56,8 +57,8 @@ public abstract class GridManagerStategy : MonoBehaviour
         float centerX = (MapUpperLimit.x - ((MapUpperLimit.x - MapLowerLimit.x) / 2f)) * GameConstants.UNITY_GRID_SIZE;
         float centerZ = (MapUpperLimit.y - ((MapUpperLimit.y - MapLowerLimit.y) / 2f)) * GameConstants.UNITY_GRID_SIZE;
 
-        mainCamera.transform.position = new Vector3(centerX, ((Width + Height) * GameConstants.UNITY_GRID_SIZE) / 2f, (centerZ - (Height * GameConstants.UNITY_GRID_SIZE)) / 2f);
-        mainCamera.transform.rotation = Quaternion.Euler(65f, 0f, 0f);
+        mainCamera.transform.position = new Vector3(centerX - (Height * GameConstants.UNITY_GRID_SIZE) / 2f, ((Width + Height) * GameConstants.UNITY_GRID_SIZE) / 2f, centerZ);
+        mainCamera.transform.rotation = Quaternion.Euler(60f, 90f, 0f);
     }
 }
 

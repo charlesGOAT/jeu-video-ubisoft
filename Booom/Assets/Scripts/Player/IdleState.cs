@@ -19,11 +19,6 @@ public class IdleState : State
 
     public override void Handle(float time)
     {
-        if (_player.BombInput)
-        {
-            _player.TryPlaceBomb();
-        }
-
         if (_player.IsMoving())
         {
             _stateMachine.Trigger(GameConstants.PLAYER_RUN_TRIGGER);

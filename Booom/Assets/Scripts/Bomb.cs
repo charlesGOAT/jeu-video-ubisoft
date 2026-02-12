@@ -67,11 +67,6 @@ public class Bomb : MonoBehaviour
         Explode();
     }
 
-    /// <summary>
-    /// Peindre les cases dans une direction jusqu'à ce qu'une case bloquante soit rencontrée
-    /// </summary>
-    /// <param name="bombCoordinates"></param>
-    /// <param name="direction"></param>
     private void PaintTilesForDirection(Vector2Int bombCoordinates, Vector2Int direction) 
     {
         for (int rangeCounter = 0; rangeCounter <= explosionRange; ++rangeCounter)
@@ -110,11 +105,6 @@ public class Bomb : MonoBehaviour
         }
     }
 
-
-
-    /// <summary>
-    /// Peindre les cases autour de la bombe en croix
-    /// </summary>
     private void Explode()
     {
         Vector2Int bombCoordinates = _bombCoordinates;
