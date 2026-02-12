@@ -1,42 +1,39 @@
 using UnityEngine;
 
-public class FastBomb : Bomb
+public class SplashBomb : Bomb
 {
     [SerializeField]
-    private int explosionRange = 3;
-
-    private readonly Vector2Int[] _directions =
+    private int explosionRange = 1;
+    
+    private readonly Vector2Int[] _offsets =
     {
-        Vector2Int.up,
-        Vector2Int.down,
-        Vector2Int.left,
-        Vector2Int.right
+        new Vector2Int(-1, -1),
+        new Vector2Int(0, -1),
+        new Vector2Int(1, -1),
+        new Vector2Int(-1, 0),
+        new Vector2Int(0, 0),
+        new Vector2Int(1, 0),
+        new Vector2Int(-1, 1),
+        new Vector2Int(0, 1),
+        new Vector2Int(1, 1),
     };
-
-    protected override void Start()
-    {
-        timer = 1.0f;
-        base.Start();
-    }
 
     protected override void Explode()
     {
-        foreach (Vector2Int direction in _directions)
-        {
-            PaintTilesForDirection(_bombCoordinates, direction);
-        }
+        PaintTilesAround(_bombCoordinates);
 
         Destroy(gameObject);
     }
 
-    private void PaintTilesForDirection(Vector2Int bombCoordinates, Vector2Int direction)
+    private void PaintTilesAround(Vector2Int bombCoordinates)
     {
-        for (int rangeCounter = 0; rangeCounter <= explosionRange; ++rangeCounter)
+        foreach (var offset in _offsets)
         {
-            Tile tile = _gridManager.GetTileAtCoordinates(bombCoordinates);
+            Vector2Int coords = bombCoordinates + offset;
+            Tile tile = _gridManager.GetTileAtCoordinates(coords);
 
             if (tile == null || tile.isObstacle)
-                return;
+                continue;
 
             if (associatedPlayer != PlayerEnum.None)
             {
@@ -53,8 +50,6 @@ public class FastBomb : Bomb
                     tile.ChangeTileColor(associatedPlayer);
                 }
             }
-
-            bombCoordinates += direction;
         }
     }
 }

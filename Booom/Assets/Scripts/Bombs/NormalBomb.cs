@@ -39,7 +39,9 @@ public class NormalBomb : Bomb
                 if (currentTileOwner != associatedPlayer)
                 {
                     if (currentTileOwner != PlayerEnum.None)
+                    {
                         _gridManager.tilesPerPlayer[(int)currentTileOwner - 1]--;
+                    }
 
                     _gridManager.tilesPerPlayer[(int)associatedPlayer - 1]++;
                     tile.ChangeTileColor(associatedPlayer);

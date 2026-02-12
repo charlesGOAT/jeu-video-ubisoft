@@ -47,4 +47,5 @@ MonoBehaviour:
   bombPrefabs:
   - {fileID: 2447526827107057125, guid: 1008e97cfb9b5d848ab9dc400ca27aa3, type: 3}
   - {fileID: 3814066917829263046, guid: 3fc31f33bc9fd654c8688166b2999db9, type: 3}
+  - {fileID: -7385885007002980452, guid: 349a5fced833a1746a2ae40cb19af9b7, type: 3}
   bombCooldown: 3

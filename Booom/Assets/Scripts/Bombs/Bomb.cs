@@ -25,6 +25,11 @@ public abstract class Bomb : MonoBehaviour
     private void Awake()
     {
         GetManagers();
+
+        if (associatedPlayer == PlayerEnum.None)
+        {
+            Debug.Log("No player selected on bomb");
+        }
         
         _initialScale = transform.localScale;
         _bombCoordinates = GridManagerStategy.WorldToGridCoordinates(transform.position);
@@ -83,5 +88,6 @@ public enum BombEnum
 {
     None = 0,
     NormalBomb = 1,
-    SquareBomb = 2
+    FastBomb = 2,
+    SplashBomb = 3
 }
