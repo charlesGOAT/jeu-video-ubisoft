@@ -65,10 +65,3 @@ public class BombManager : MonoBehaviour
         }
     }
 }
-
-public enum BombEnum
-{
-    None = 0,
-    NormalBomb = 1,
-    SquareBomb = 2
-}
