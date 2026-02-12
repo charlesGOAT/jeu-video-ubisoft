@@ -208,21 +208,6 @@ public class Player : MonoBehaviour
         _stateMachine.SetInitialState(_idleState);
     }
 
-    private void GetManagers()
-    {
-        _gridManager = FindFirstObjectByType<GridManagerStategy>();
-        _bombManager = FindFirstObjectByType<BombManager>();
-
-        if (_gridManager == null)
-        {
-            throw new Exception("There's no active grid manager");
-        }
-        if (_bombManager == null)
-        {
-            throw new Exception("There's no active bomb manager");
-        }
-    }
-
     private void GetComponents()
     {
         _rigidbody = GetComponent<Rigidbody>();
