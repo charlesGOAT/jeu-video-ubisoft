@@ -15,7 +15,6 @@ GameObject:
   - component: {fileID: 6003852953096131984}
   - component: {fileID: 7148449890927070707}
   - component: {fileID: 1141182974104389932}
-  - component: {fileID: 2946444551040455851}
   m_Layer: 8
   m_Name: Player
   m_TagString: Untagged
@@ -160,7 +159,7 @@ MonoBehaviour:
   bombCooldown: 3
   playerColor: {r: 1, g: 0, b: 0, a: 1}
   playerNb: 0
-  itemsManager: {fileID: 2946444551040455851}
+  _currentBombType: 1
 --- !u!114 &1141182974104389932
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -258,20 +257,24 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: 9caa3d8a-6b2f-4e8e-8bad-6ede561bd9be
     m_ActionName: UI/TrackedDeviceOrientation
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 7148449890927070707}
+        m_TargetAssemblyTypeName: Player, Assembly-CSharp
+        m_MethodName: OnChangeBomb
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: c3490868-bd20-4116-b374-3e59da42a747
+    m_ActionName: 'Player/ChangeBomb[/XInputControllerWindows/buttonEast,/Mouse/rightButton]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
---- !u!114 &2946444551040455851
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8693886412537445449}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8bfe7f3768ca4f01a33d5bca26b111b1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ItemsManager

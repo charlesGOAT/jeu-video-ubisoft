@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 6807817918201611135}
   - component: {fileID: 484057500649795882}
   - component: {fileID: 9097049114423687419}
-  - component: {fileID: 7609508945694552666}
+  - component: {fileID: 4617351842077654283}
   m_Layer: 9
   m_Name: PaintBrushItem
   m_TagString: Item
@@ -113,7 +113,7 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &7609508945694552666
+--- !u!114 &4617351842077654283
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -122,7 +122,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 8020987843652317570}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 178851d3dc374ffa85d6420e62806cf9, type: 3}
+  m_Script: {fileID: 11500000, guid: 0a6bd8c3a30c467cb6d049ade1c8e26f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Item
   itemType: 1
