@@ -14,34 +14,34 @@ public class Player : MonoBehaviour
 
     [SerializeField]
     private float bombCooldown = 3f;
-    
+
     [SerializeField]
     private Color playerColor = Color.red;
 
-    [SerializeField] 
+    [SerializeField]
     private PlayerEnum playerNb = PlayerEnum.None;
-    
+
     [SerializeField]
     private PlayerItemsManager playerItemsManager;
 
     private Vector2 _moveInput;
     private BombEnum _currentBombType = BombEnum.NormalBomb;
     private int _bombTypeCount;
-    
+
     public PlayerEnum PlayerNb => playerNb;
-        
+
     public static readonly Dictionary<PlayerEnum, Color> PlayerColorDict = new Dictionary<PlayerEnum, Color>();  // make it the other way around if we want to test color spreading
 
     private void Awake()
     {
         if (playerItemsManager == null)
             playerItemsManager = gameObject.GetComponent<PlayerItemsManager>();
-        
+
         _bombTypeCount = Enum.GetValues(typeof(BombEnum)).Length - 1; // -1 to avoid None
 
         ConfigurePlayers();
     }
-    
+
     private void Start()
     {
         if (playerNb == PlayerEnum.None)
@@ -64,7 +64,7 @@ public class Player : MonoBehaviour
     {
         if (ctx.performed)
         {
-            GameManager.Instance.BombManager.CreateBomb(transform.position, playerNb,  _currentBombType);
+            GameManager.Instance.BombManager.CreateBomb(transform.position, playerNb, _currentBombType);
         }
     }
 
@@ -90,7 +90,7 @@ public class Player : MonoBehaviour
 
         Vector2 move = curMoveInput * (speed * Time.deltaTime * boost);
         transform.position += new Vector3(move.y, 0, -move.x);
-        
+
         GameManager.Instance.OnMovementUpdated(this);
     }
 
@@ -114,7 +114,7 @@ public class Player : MonoBehaviour
 
         return tile.CurrentTileOwner == playerNb;
     }
-    
+
     private void ConfigurePlayers()
     {
         var playerInput = GetComponent<PlayerInput>();
