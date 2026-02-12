@@ -24,6 +24,9 @@ public class Player : MonoBehaviour
     private BombEnum _currentBombType = BombEnum.NormalBomb;
     private int _bombTypeCount;
 
+    private CharacterController _characterController;
+    private float verticalVelocity;
+
     private GridManagerStategy _gridManager;
     private BombManager _bombManager;
     
@@ -33,6 +36,7 @@ public class Player : MonoBehaviour
     {
         GetManagers();
         _bombTypeCount = Enum.GetValues(typeof(BombEnum)).Length - 1; // -1 to avoid None
+        _characterController = GetComponent<CharacterController>();
 
         ConfigurePlayers();
     }
@@ -84,8 +88,19 @@ public class Player : MonoBehaviour
 
         float boost = CheckIfOnOwnColor() ? GameConstants.COLOR_BOOST : 1;
 
-        Vector2 move = curMoveInput * (speed * Time.deltaTime * boost);
-        transform.position += new Vector3(move.y, 0, -move.x);
+        Vector3 move = new Vector3(curMoveInput.y, 0, -curMoveInput.x) * (speed * boost);
+
+        if (_characterController.isGrounded && verticalVelocity < 0f)
+        {
+            verticalVelocity = 0f;
+        }
+        else
+        {
+            verticalVelocity += -9.8f * Time.deltaTime; //gravity
+        }
+        move.y = verticalVelocity;
+        
+        _characterController.Move(move * Time.deltaTime);
     }
 
     private bool CheckIfOnOwnColor()
