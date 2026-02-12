@@ -21,6 +21,15 @@ public class Player : MonoBehaviour
     [SerializeField]
     private PlayerEnum playerNb = PlayerEnum.None;
 
+    [SerializeField]
+    private int knockbackForce = 3;
+
+    [SerializeField]
+    private int hitFlickerFrequency = 50;
+
+    [SerializeField]
+    private float immuneTimer = 5;
+
     private Rigidbody _rigidbody;
 
     public Vector2 MoveInput { get; private set; }
@@ -35,22 +44,11 @@ public class Player : MonoBehaviour
     private RunState _runState;
     private Renderer _renderer;
 
-
-    [SerializeField]
-    private float immuneTimer = 5;
-
     //nom de caca
     private float _actualImmuneTimer;
 
-    [SerializeField]
-    private int _knockbackForce = 3;
-
-    [SerializeField]
-    private int _hitFlickerFrequency = 50;
-
     public static List<Player> ActivePlayers = new List<Player>();
     
-
     public bool IsImmune { get; private set; } = false;
 
     public static readonly Dictionary<PlayerEnum, Color> PlayerColorDict = new Dictionary<PlayerEnum, Color>();  // make it the other way around if we want to test color spreading
@@ -154,13 +152,13 @@ public class Player : MonoBehaviour
             return;
         }
         Vector3 forceDirection = new Vector3(hitDirection.x,1,hitDirection.y);
-        _rigidbody.AddForce(forceDirection * _knockbackForce, ForceMode.Impulse);
+        _rigidbody.AddForce(forceDirection * knockbackForce, ForceMode.Impulse);
         _stateMachine.Trigger(GameConstants.PLAYER_HIT_TRIGGER);
         IsImmune = true;
         _actualImmuneTimer = immuneTimer;
     }
 
-    public void FlickerPlayerOnHit(float elapsedT) => _renderer.enabled = Mathf.Sin(elapsedT * _hitFlickerFrequency) > 0;
+    public void FlickerPlayerOnHit(float elapsedT) => _renderer.enabled = Mathf.Sin(elapsedT * hitFlickerFrequency) > 0;
 
     private void SetRendererVisible() => _renderer.enabled = true;
 
