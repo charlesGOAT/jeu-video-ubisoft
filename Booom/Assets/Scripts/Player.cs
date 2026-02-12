@@ -21,39 +21,34 @@ public class Player : MonoBehaviour
     private PlayerEnum playerNb = PlayerEnum.None;
     
     private Vector2 _moveInput;
+    private BombEnum _currentBombType = BombEnum.NormalBomb;
+    private int _bombTypeCount;
 
-    private float _nextBombAllowedTime = 0f;
     private GridManagerStategy _gridManager;
-
+    private BombManager _bombManager;
+    
     public static readonly Dictionary<PlayerEnum, Color> PlayerColorDict = new Dictionary<PlayerEnum, Color>();  // make it the other way around if we want to test color spreading
+
+    private void Awake()
+    {
+        GetManagers();
+        _bombTypeCount = Enum.GetValues(typeof(BombEnum)).Length - 1; // -1 to avoid None
+
+        ConfigurePlayers();
+    }
 
     private void Start()
     {
-        _gridManager = FindFirstObjectByType<GridManagerStategy>();
-
-        if (_gridManager == null)
-        {
-            throw new Exception("There's no active grid manager");
-        }
         
-        if(bombPrefab == null)
-        {
-            Debug.LogError("Bomb prefab shouldn't be null deactivating component");
-            enabled = false;
-        }
-
         if (playerNb == PlayerEnum.None)
         {
             throw new Exception("Player cannot be set to PlayerEnum.None");
         }
-
-        if (PlayerColorDict.ContainsKey(playerNb))
+        
+        if (!PlayerColorDict.TryAdd(playerNb, playerColor))
         {
-            throw new Exception("Two players can't have the same player number.");
+            throw new Exception("Player already exists");
         }
-
-        PlayerColorDict[playerNb] = playerColor;
-        bombPrefab.associatedPlayer = playerNb;
     }
 
     public void OnMove(InputAction.CallbackContext ctx)
@@ -65,30 +60,19 @@ public class Player : MonoBehaviour
     {
         if (ctx.performed)
         {
-            TryPlaceBomb();
+            _bombManager.CreateBomb(transform.position, playerNb,  _currentBombType);
         }
     }
 
-    private void TryPlaceBomb()
+    public void OnChangeBomb(InputAction.CallbackContext ctx)
     {
-        if (Time.time < _nextBombAllowedTime)
+        if (ctx.performed)
         {
-            return;
+            int nextBomb = ((int)_currentBombType % _bombTypeCount) + 1; // +1 to bring back above 0
+            _currentBombType = (BombEnum)nextBomb;
         }
-        
-        Vector2Int gridCoordinates = GridManagerStategy.WorldToGridCoordinates(transform.position);
-        Tile tile = _gridManager.GetTileAtCoordinates(gridCoordinates);
-
-        if (tile == null || tile.isObstacle || Bomb.IsBombAt(gridCoordinates))
-        {
-            return;
-        }
-
-        Vector3 worldPosition = GridManagerStategy.GridToWorldPosition(gridCoordinates, tile.transform.position.y);
-        Instantiate(bombPrefab, worldPosition, Quaternion.identity);
-        _nextBombAllowedTime = Time.time + bombCooldown;
     }
-    
+
     private void Update()
     {
         UpdateMovement();
@@ -114,6 +98,47 @@ public class Player : MonoBehaviour
         }
 
         return tile.CurrentTileOwner == playerNb;
+    }
+
+    private void GetManagers()
+    {
+        _gridManager = FindFirstObjectByType<GridManagerStategy>();
+        _bombManager = FindFirstObjectByType<BombManager>();
+
+        if (_gridManager == null)
+        {
+            throw new Exception("There's no active grid manager");
+        }
+        if (_bombManager == null)
+        {
+            throw new Exception("There's no active bomb manager");
+        }
+    }
+
+    private void ConfigurePlayers()
+    {
+        var playerInput = GetComponent<PlayerInput>();
+        if (playerInput != null)
+        {
+            switch (playerInput.playerIndex)
+            {
+                case 0:
+                    playerNb = PlayerEnum.Player1;
+                    playerColor = Color.red;
+                    break;
+                case 1:
+                    playerNb = PlayerEnum.Player2;
+                    playerColor = Color.green;
+                    break;
+                default:
+                    playerNb = PlayerEnum.None;
+                    break;
+            }
+        }
+        else
+        {
+            throw new Exception("There's no active player input");
+        }
     }
 }
 
