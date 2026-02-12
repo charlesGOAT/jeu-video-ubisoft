@@ -17,7 +17,7 @@ public class GridManagerDemo : GridManagerStategy
         {
             for (int y = 0; y < demoHeight; y++)
             {
-                Vector3 tilePosition = new Vector3(x * UNITY_GRID_SIZE, 0, y * UNITY_GRID_SIZE);
+                Vector3 tilePosition = new Vector3(x * GameConstants.UNITY_GRID_SIZE, 0, y * GameConstants.UNITY_GRID_SIZE);
                 GameObject tileObject = Instantiate(tilePrefab, tilePosition, Quaternion.identity, transform);
                 Tile tile = tileObject.GetComponent<Tile>();
                 _tiles[new Vector2Int(x, y)] = tile;

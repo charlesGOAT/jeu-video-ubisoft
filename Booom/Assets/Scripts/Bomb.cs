@@ -96,10 +96,21 @@ public class Bomb : MonoBehaviour
                     tile.ChangeTileColor(associatedPlayer);
                 }
             }
-            
+
+            foreach (Player player in Player.ActivePlayers) 
+            {
+                Tile playerTile = player.GetPlayerTile();
+                if (playerTile != null && playerTile.TileCoordinates == bombCoordinates)
+                {
+                    player.OnHit(direction);
+                }
+            }
+
             bombCoordinates += direction;
         }
     }
+
+
 
     /// <summary>
     /// Peindre les cases autour de la bombe en croix
