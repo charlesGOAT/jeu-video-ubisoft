@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class HitState : State
 {
-    private float _hitDuration = GameConstants.HIT_FLICKER_DURATION;
+    private float _hitDuration = GameConstants.HIT_STATE_DURATION;
     public HitState(StateMachine stateMachine, Player player) : base(stateMachine, player)
     { 
     }
@@ -16,8 +16,7 @@ public class HitState : State
     public override void Exit()
     {
         //Arrêter l'animation de hit
-        _hitDuration = GameConstants.HIT_FLICKER_DURATION;
-        _player.SetRendererVisible();
+        _hitDuration = GameConstants.HIT_STATE_DURATION;
     }
 
     public override void Handle(float time)
@@ -29,7 +28,6 @@ public class HitState : State
         else
         {
             _hitDuration -= time;
-            _player.FlickerPlayerOnHitState(_hitDuration);
         }
     }
 }

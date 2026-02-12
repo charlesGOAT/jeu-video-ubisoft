@@ -7,7 +7,5 @@ public static class GameConstants
     public const string PLAYER_RUN_TRIGGER = "Run";
     public const string PLAYER_HIT_TRIGGER = "Hit";
     public const int UNITY_GRID_SIZE = 2;
-    public const int HIT_FLICKER_FREQUENCY = 50;
-    public const int HIT_FLICKER_DURATION = 3;
-    public const int KNOCKBACK_FORCE = 3;
+    public const int HIT_STATE_DURATION = 3;
 }

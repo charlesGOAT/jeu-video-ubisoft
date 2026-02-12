@@ -14,16 +14,17 @@ public class Player : MonoBehaviour
 
     [SerializeField]
     private float bombCooldown = 3f;
-    
+
     [SerializeField]
     private Color playerColor = Color.red;
 
-    [SerializeField] 
+    [SerializeField]
     private PlayerEnum playerNb = PlayerEnum.None;
 
     private Rigidbody _rigidbody;
 
-    private Vector2 _moveInput;
+    public Vector2 MoveInput { get; private set; }
+    public bool BombInput { get; private set; } = false;
 
     private float _nextBombAllowedTime = 0f;
     private GridManagerStategy _gridManager;
@@ -34,8 +35,23 @@ public class Player : MonoBehaviour
     private RunState _runState;
     private Renderer _renderer;
 
-    public static List<Player> ActivePlayers = new List<Player>();
 
+    [SerializeField]
+    private float immuneTimer = 5;
+
+    //nom de caca
+    private float _actualImmuneTimer;
+
+    [SerializeField]
+    private int _knockbackForce = 3;
+
+    [SerializeField]
+    private int _hitFlickerFrequency = 50;
+
+    public static List<Player> ActivePlayers = new List<Player>();
+    
+
+    public bool IsImmune { get; private set; } = false;
 
     public static readonly Dictionary<PlayerEnum, Color> PlayerColorDict = new Dictionary<PlayerEnum, Color>();  // make it the other way around if we want to test color spreading
 
@@ -68,31 +84,31 @@ public class Player : MonoBehaviour
 
         InitializeStateMachine();
         ActivePlayers.Add(this);
-
+        _actualImmuneTimer = immuneTimer;
         PlayerColorDict[playerNb] = playerColor;
         bombPrefab.associatedPlayer = playerNb;
     }
 
     public void OnMove(InputAction.CallbackContext ctx)
     {
-        _moveInput = ctx.ReadValue<Vector2>();
+        MoveInput = ctx.ReadValue<Vector2>();
     }
 
     public void OnBomb(InputAction.CallbackContext ctx)
     {
         if (ctx.performed)
         {
-            TryPlaceBomb();
+            BombInput = true;
         }
     }
 
-    private void TryPlaceBomb()
+    public void TryPlaceBomb()
     {
         if (Time.time < _nextBombAllowedTime)
         {
             return;
         }
-        
+
         Vector2Int gridCoordinates = GridManagerStategy.WorldToGridCoordinates(transform.position);
         Tile tile = _gridManager.GetTileAtCoordinates(gridCoordinates);
 
@@ -108,27 +124,51 @@ public class Player : MonoBehaviour
     
     private void Update()
     {
+        UpdateImmune();
         _stateMachine.UpdateStateMachine(Time.deltaTime);
+        BombInput = false;
+    }
+
+    private void UpdateImmune()
+    {
+        if (IsImmune)
+        {
+            if (_actualImmuneTimer <= 0)
+             {
+                 IsImmune = false;
+                 SetRendererVisible();
+             }
+             else
+             {
+                 _actualImmuneTimer -= Time.deltaTime;
+                 FlickerPlayerOnHit(_actualImmuneTimer);
+            }
+        }
     }
 
     public void OnHit(Vector2Int hitDirection) 
     {
         //Étant donné que hitDirection est un Vector2Int, y est z dans se cas
-        
+        if (IsImmune)
+        {
+            return;
+        }
         Vector3 forceDirection = new Vector3(hitDirection.x,1,hitDirection.y);
-        _rigidbody.AddForce(forceDirection * GameConstants.KNOCKBACK_FORCE, ForceMode.Impulse);
-        _stateMachine.Trigger("Hit");
+        _rigidbody.AddForce(forceDirection * _knockbackForce, ForceMode.Impulse);
+        _stateMachine.Trigger(GameConstants.PLAYER_HIT_TRIGGER);
+        IsImmune = true;
+        _actualImmuneTimer = immuneTimer;
     }
 
-    public void FlickerPlayerOnHitState(float elapsedT) => _renderer.enabled = Mathf.Sin(elapsedT * GameConstants.HIT_FLICKER_FREQUENCY) > 0;
+    public void FlickerPlayerOnHit(float elapsedT) => _renderer.enabled = Mathf.Sin(elapsedT * _hitFlickerFrequency) > 0;
 
-    public void SetRendererVisible() => _renderer.enabled = true;
+    private void SetRendererVisible() => _renderer.enabled = true;
 
-    public bool IsMoving() => _moveInput.sqrMagnitude > 0.01f;
+    public bool IsMoving() => MoveInput.sqrMagnitude > 0.01f;
 
     public void UpdateMovement()
     {
-        Vector2 curMoveInput = _moveInput.normalized;
+        Vector2 curMoveInput = MoveInput.normalized;
 
         float boost = CheckIfOnOwnColor() ? GameConstants.COLOR_BOOST : 1;
 

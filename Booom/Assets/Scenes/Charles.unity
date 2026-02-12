@@ -9622,6 +9622,10 @@ PrefabInstance:
       propertyPath: playerNb
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 7148449890927070707, guid: e102793ed0fc404468ef9b40a27a2cf9, type: 3}
+      propertyPath: _knockbackForce
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 8693886412537445449, guid: e102793ed0fc404468ef9b40a27a2cf9, type: 3}
       propertyPath: m_Name
       value: Player

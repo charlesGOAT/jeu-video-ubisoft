@@ -16,6 +16,11 @@ public class RunState : State
     }
     public override void Handle(float time)
     {
+        if (_player.BombInput)
+        {
+            _player.TryPlaceBomb();
+        }
+
         _player.UpdateMovement();
 
         if (!_player.IsMoving()) 
