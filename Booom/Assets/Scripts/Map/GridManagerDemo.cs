@@ -42,7 +42,7 @@ public class GridManagerDemo : GridManagerStategy
         float yPosition = wallHeight / 2.0f;
 
         CreateWall(new Vector3(mapWidth / 2 - 1.0f, yPosition, -wallThickness / 2 - 1.0f),
-                     new Vector3(mapHeight, wallHeight, wallThickness), "RightWall");
+                     new Vector3(mapWidth, wallHeight, wallThickness), "RightWall");
 
         CreateWall(new Vector3(mapWidth / 2 - 1.0f, yPosition, mapHeight + wallThickness / 2 - 1.0f),
                      new Vector3(mapWidth, wallHeight, wallThickness),  "LeftWall");
