@@ -26,33 +26,16 @@ public class Player : MonoBehaviour
 
     private GridManagerStategy _gridManager;
     private BombManager _bombManager;
+    
+    public static readonly Dictionary<PlayerEnum, Color> PlayerColorDict = new Dictionary<PlayerEnum, Color>();  // make it the other way around if we want to test color spreading
 
     private void Awake()
     {
         GetManagers();
         _bombTypeCount = Enum.GetValues(typeof(BombEnum)).Length - 1; // -1 to avoid None
-        
-        var playerInput = GetComponent<PlayerInput>();
-        if (playerInput != null)
-        {
-            switch (playerInput.playerIndex)
-            {
-                case 0:
-                    playerNb = PlayerEnum.Player1;
-                    playerColor = Color.red;
-                    break;
-                case 1:
-                    playerNb = PlayerEnum.Player2;
-                    playerColor = Color.green;
-                    break;
-                default:
-                    playerNb = PlayerEnum.None;
-                    break;
-            }
-        }
-    }
 
-    public static readonly Dictionary<PlayerEnum, Color> PlayerColorDict = new Dictionary<PlayerEnum, Color>();  // make it the other way around if we want to test color spreading
+        ConfigurePlayers();
+    }
 
     private void Start()
     {
@@ -80,7 +63,7 @@ public class Player : MonoBehaviour
             _bombManager.CreateBomb(transform.position, playerNb,  _currentBombType);
         }
     }
-    
+
     public void OnChangeBomb(InputAction.CallbackContext ctx)
     {
         if (ctx.performed)
@@ -89,7 +72,7 @@ public class Player : MonoBehaviour
             _currentBombType = (BombEnum)nextBomb;
         }
     }
-    
+
     private void Update()
     {
         UpdateMovement();
@@ -128,7 +111,33 @@ public class Player : MonoBehaviour
         }
         if (_bombManager == null)
         {
-            throw new Exception("There's no active grid manager");
+            throw new Exception("There's no active bomb manager");
+        }
+    }
+
+    private void ConfigurePlayers()
+    {
+        var playerInput = GetComponent<PlayerInput>();
+        if (playerInput != null)
+        {
+            switch (playerInput.playerIndex)
+            {
+                case 0:
+                    playerNb = PlayerEnum.Player1;
+                    playerColor = Color.red;
+                    break;
+                case 1:
+                    playerNb = PlayerEnum.Player2;
+                    playerColor = Color.green;
+                    break;
+                default:
+                    playerNb = PlayerEnum.None;
+                    break;
+            }
+        }
+        else
+        {
+            throw new Exception("There's no active player input");
         }
     }
 }

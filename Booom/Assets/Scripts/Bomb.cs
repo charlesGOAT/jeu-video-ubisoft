@@ -120,5 +120,5 @@ public class Bomb : MonoBehaviour
     {
         ActiveBombs.Remove(_bombCoordinates);
     }
-    
+
 }

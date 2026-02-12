@@ -6,42 +6,34 @@ public class BombManager : MonoBehaviour
 {
     
     [SerializeField]
-    private Bomb bombPrefab;
+    private Bomb[] bombPrefabs;
 
     [SerializeField]
     private float bombCooldown = 3f;
     
     private GridManagerStategy _gridManager;
-    private readonly bool[] _firstBomb = new bool[GameConstants.NB_PLAYERS];
     
     // Track each Player's bomb cooldown
-    private readonly Dictionary<PlayerEnum, float> _nextBombTime = new Dictionary<PlayerEnum, float>();
+    private readonly Dictionary<PlayerEnum, float> _nextBombTime = new Dictionary<PlayerEnum, float>(GameConstants.NB_PLAYERS);
     
     private void Awake()
     {
         GetManagers();
         
-        if(bombPrefab == null)
+        if(bombPrefabs == null)
         {
-            Debug.LogError("Bomb prefab shouldn't be null deactivating component");
+            Debug.LogError("Bomb prefabs shouldn't be empty");
             enabled = false;
+        }
+
+        for (int i = 1; i <= GameConstants.NB_PLAYERS; i++)
+        {
+            _nextBombTime.Add((PlayerEnum)i, 0f);
         }
     }
     
     public void CreateBomb(Vector3 position, PlayerEnum playerEnum, BombEnum bombEnum)
     {
-        if (!_firstBomb[(int)playerEnum - 1])
-        {
-            _firstBomb[(int)playerEnum - 1] = true;
-            
-            if (!_nextBombTime.TryAdd(playerEnum, 0f))
-            {
-                throw new Exception("Player already exists");
-            }
-        }
-        
-        bombPrefab.associatedPlayer = playerEnum;
-        
         if (Time.time < _nextBombTime[playerEnum])
         {
             return;
@@ -54,9 +46,11 @@ public class BombManager : MonoBehaviour
         {
             return;
         }
-
+        
         Vector3 worldPosition = GridManagerStategy.GridToWorldPosition(gridCoordinates, tile.transform.position.y);
-        Instantiate(bombPrefab, worldPosition, Quaternion.identity);
+        bombPrefabs[(int)bombEnum - 1].associatedPlayer = playerEnum;
+
+        Instantiate(bombPrefabs[(int)bombEnum - 1], worldPosition, Quaternion.identity);
         
         _nextBombTime[playerEnum] = Time.time + bombCooldown;
     }
