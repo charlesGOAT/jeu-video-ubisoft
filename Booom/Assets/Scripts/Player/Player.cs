@@ -191,8 +191,7 @@ public class Player : MonoBehaviour
         return tile.CurrentTileOwner == playerNb;
     }
 
-    public Tile GetPlayerTile() => _gridManager.GetTileAtCoordinates(GridManagerStategy.WorldToGridCoordinates(transform.position));
-
+    public Tile GetPlayerTile() => GameManager.Instance.GridManager.GetTileAtCoordinates(GridManagerStategy.WorldToGridCoordinates(transform.position));
 
     private void InitializeStateMachine()
     {
@@ -206,21 +205,6 @@ public class Player : MonoBehaviour
         _stateMachine.AddTransition<HitState>(GameConstants.PLAYER_IDLE_TRIGGER, _idleState);
         _stateMachine.AddForEachType(GameConstants.PLAYER_HIT_TRIGGER, _hitState);
         _stateMachine.SetInitialState(_idleState);
-    }
-
-    private void GetManagers()
-    {
-        _gridManager = FindFirstObjectByType<GridManagerStategy>();
-        _bombManager = FindFirstObjectByType<BombManager>();
-
-        if (_gridManager == null)
-        {
-            throw new Exception("There's no active grid manager");
-        }
-        if (_bombManager == null)
-        {
-            throw new Exception("There's no active bomb manager");
-        }
     }
 
     private void GetComponents()
