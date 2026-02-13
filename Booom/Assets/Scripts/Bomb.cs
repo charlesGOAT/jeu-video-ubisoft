@@ -20,6 +20,8 @@ public class Bomb : MonoBehaviour
     private int explosionRange = 3;
 
     private GridManagerStategy _gridManager;
+
+    private GameStatsManager _statsManager;
   
     public PlayerEnum associatedPlayer = PlayerEnum.None;
 
@@ -37,6 +39,7 @@ public class Bomb : MonoBehaviour
     void Start()
     {
         _gridManager = FindFirstObjectByType<GridManagerStategy>();
+        _statsManager = GameStatsManager.Instance != null ? GameStatsManager.Instance : FindFirstObjectByType<GameStatsManager>();
         
         if (_gridManager == null)
         {
@@ -83,12 +86,20 @@ public class Bomb : MonoBehaviour
                 PlayerEnum currentTileOwner = tile.CurrentTileOwner;
                 if (currentTileOwner != associatedPlayer)
                 {
+                    bool stolen = currentTileOwner != PlayerEnum.None;
                     if (currentTileOwner != PlayerEnum.None)
                         _gridManager.tilesPerPlayer[(int)currentTileOwner - 1]--;
                 
                     _gridManager.tilesPerPlayer[(int)associatedPlayer - 1]++;
                     
                     tile.ChangeTileColor(associatedPlayer);
+
+                    if (_statsManager != null)
+                    {
+                        _statsManager.OnTilePainted(associatedPlayer);
+                        if (stolen)
+                            _statsManager.OnTileStolen(associatedPlayer);
+                    }
                 }
             }
 

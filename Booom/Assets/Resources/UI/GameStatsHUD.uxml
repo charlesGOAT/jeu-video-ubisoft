@@ -1,0 +1,77 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements">
+    <ui:VisualElement name="hudRoot" class="hud-root">
+        <ui:VisualElement name="leftPlate" class="plate plate-left">
+            <ui:VisualElement name="leftAccent" class="plate-accent" />
+            <ui:VisualElement name="leftTop" class="plate-top">
+                <ui:Label name="leftName" class="plate-name">PLAYER 2</ui:Label>
+                <ui:Label name="leftLead" class="lead-badge">LEAD</ui:Label>
+            </ui:VisualElement>
+            <ui:Label name="leftSub" class="plate-sub">BOMB 0   INK 0   STEAL 0</ui:Label>
+            <ui:VisualElement name="leftStats" class="stats-rows">
+                <ui:VisualElement class="stat-row">
+                    <ui:Label class="stat-label">BOMB</ui:Label>
+                    <ui:Label name="leftBombValue" class="stat-value">0</ui:Label>
+                </ui:VisualElement>
+                <ui:VisualElement class="stat-row">
+                    <ui:Label class="stat-label">INK</ui:Label>
+                    <ui:Label name="leftInkValue" class="stat-value">0</ui:Label>
+                </ui:VisualElement>
+                <ui:VisualElement class="stat-row">
+                    <ui:Label class="stat-label">STEAL</ui:Label>
+                    <ui:Label name="leftStealValue" class="stat-value">0</ui:Label>
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:VisualElement name="leftBar" class="territory-bar bar-left">
+                <ui:VisualElement name="leftFill" class="territory-fill">
+                    <ui:VisualElement name="leftFillGloss" class="fill-gloss" />
+                </ui:VisualElement>
+                <ui:VisualElement name="leftEmpty" class="territory-empty" />
+                <ui:Label name="leftValue" class="bar-value bar-value-left">0/0</ui:Label>
+                <ui:VisualElement name="leftShine" class="bar-shine" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <ui:VisualElement name="centerPlate" class="center-plate">
+            <ui:VisualElement name="centerGlow" class="center-glow" />
+            <ui:Label name="centerTitle" class="center-title">TERRITORY</ui:Label>
+            <ui:VisualElement name="centerPercents" class="center-percents">
+                <ui:Label name="centerLeftPercent" class="center-percent percent-left">50%</ui:Label>
+                <ui:Label name="centerDash" class="center-dash">VS</ui:Label>
+                <ui:Label name="centerRightPercent" class="center-percent percent-right">50%</ui:Label>
+            </ui:VisualElement>
+            <ui:Label name="centerDelta" class="center-delta">TIE</ui:Label>
+            <ui:Label name="timerText" class="timer-text">03:00</ui:Label>
+        </ui:VisualElement>
+
+        <ui:VisualElement name="rightPlate" class="plate plate-right">
+            <ui:VisualElement name="rightAccent" class="plate-accent" />
+            <ui:VisualElement name="rightTop" class="plate-top plate-top-right">
+                <ui:Label name="rightLead" class="lead-badge">LEAD</ui:Label>
+                <ui:Label name="rightName" class="plate-name plate-name-right">PLAYER 1</ui:Label>
+            </ui:VisualElement>
+            <ui:Label name="rightSub" class="plate-sub plate-sub-right">BOMB 0   INK 0   STEAL 0</ui:Label>
+            <ui:VisualElement name="rightStats" class="stats-rows stats-rows-right">
+                <ui:VisualElement class="stat-row">
+                    <ui:Label class="stat-label">BOMB</ui:Label>
+                    <ui:Label name="rightBombValue" class="stat-value">0</ui:Label>
+                </ui:VisualElement>
+                <ui:VisualElement class="stat-row">
+                    <ui:Label class="stat-label">INK</ui:Label>
+                    <ui:Label name="rightInkValue" class="stat-value">0</ui:Label>
+                </ui:VisualElement>
+                <ui:VisualElement class="stat-row">
+                    <ui:Label class="stat-label">STEAL</ui:Label>
+                    <ui:Label name="rightStealValue" class="stat-value">0</ui:Label>
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:VisualElement name="rightBar" class="territory-bar bar-right">
+                <ui:VisualElement name="rightFill" class="territory-fill">
+                    <ui:VisualElement name="rightFillGloss" class="fill-gloss" />
+                </ui:VisualElement>
+                <ui:VisualElement name="rightEmpty" class="territory-empty" />
+                <ui:Label name="rightValue" class="bar-value bar-value-right">0/0</ui:Label>
+                <ui:VisualElement name="rightShine" class="bar-shine" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

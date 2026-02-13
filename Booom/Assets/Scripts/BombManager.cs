@@ -34,6 +34,11 @@ public class BombManager : MonoBehaviour
     
     public void CreateBomb(Vector3 position, PlayerEnum playerEnum, BombEnum bombEnum)
     {
+        if (playerEnum == PlayerEnum.None)
+            return;
+        if (bombEnum == BombEnum.None)
+            return;
+
         if (Time.time < _nextBombTime[playerEnum])
         {
             return;
@@ -48,9 +53,13 @@ public class BombManager : MonoBehaviour
         }
         
         Vector3 worldPosition = GridManagerStategy.GridToWorldPosition(gridCoordinates, tile.transform.position.y);
-        bombPrefabs[(int)bombEnum - 1].associatedPlayer = playerEnum;
 
-        Instantiate(bombPrefabs[(int)bombEnum - 1], worldPosition, Quaternion.identity);
+        var bomb = Instantiate(bombPrefabs[(int)bombEnum - 1], worldPosition, Quaternion.identity);
+        bomb.associatedPlayer = playerEnum;
+
+        var stats = GameStatsManager.Instance != null ? GameStatsManager.Instance : FindFirstObjectByType<GameStatsManager>();
+        if (stats != null)
+            stats.OnBombPlaced(playerEnum);
         
         _nextBombTime[playerEnum] = Time.time + bombCooldown;
     }
