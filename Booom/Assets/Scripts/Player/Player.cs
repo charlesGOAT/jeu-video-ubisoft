@@ -92,11 +92,15 @@ public class Player : MonoBehaviour
         // Really ugly and temp
         if (playerColor == Color.red)
         {
-            GameManager.Instance.GridManager.GetTileAtCoordinates(GameManager.Instance.GridManager.MapUpperLimit).ChangeTileColor(Color.red);
+            var test = new Vector2Int(GameManager.Instance.GridManager.MapUpperLimit.x - 1,
+                GameManager.Instance.GridManager.MapUpperLimit.y - 1);
+            GameManager.Instance.GridManager.GetTileAtCoordinates(test).ChangeTileColor(Color.red);
         }
         else
         {
-            GameManager.Instance.GridManager.GetTileAtCoordinates(GameManager.Instance.GridManager.MapLowerLimit).ChangeTileColor(Color.green);
+            var test = new Vector2Int(GameManager.Instance.GridManager.MapLowerLimit.x + 1,
+                GameManager.Instance.GridManager.MapLowerLimit.y + 1);
+            GameManager.Instance.GridManager.GetTileAtCoordinates(test).ChangeTileColor(Color.green);
         }
     }
 
