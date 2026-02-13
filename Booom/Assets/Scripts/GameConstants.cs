@@ -1,6 +1,6 @@
 ﻿public static class GameConstants
 {
-    public const short NB_PLAYERS = 2;
+    public const short NB_PLAYERS = 4;
     public const float COLOR_BOOST = 1.5f;
     public const string PLAYER_IDLE_TRIGGER = "Idle";
     public const string PLAYER_RUN_TRIGGER = "Run";

@@ -61,8 +61,7 @@ public class Player : MonoBehaviour
 
     public bool IsImmune { get; private set; } = false;
 
-    public static readonly Dictionary<PlayerEnum, Color> PlayerColorDict = new Dictionary<PlayerEnum, Color>();  // make it the other way around if we want to test color spreading
-
+    public static readonly Dictionary<PlayerEnum, Color> PlayerColorDict = new Dictionary<PlayerEnum, Color>();
 
     private void Awake()
     {
@@ -76,8 +75,14 @@ public class Player : MonoBehaviour
 
         ActivePlayers.Add(this);
     }
-
+    
     private void Start()
+    {
+        CheckStartConditions();
+        if(GameManager.Instance.isSpreadingMode) InitializeSpawner();
+    }
+
+    private void CheckStartConditions()
     {
         if (playerNb == PlayerEnum.None)
         {
@@ -87,7 +92,21 @@ public class Player : MonoBehaviour
         if (!PlayerColorDict.TryAdd(playerNb, playerColor))
         {
             throw new Exception("Player already exists");
-        }
+        } 
+    }
+
+    private void InitializeSpawner()
+    {
+        int intPlayerNb = (int)PlayerNb - 1;
+        bool isMod2Zero = intPlayerNb % 2 == 0;
+        
+        var posY = isMod2Zero
+            ? GameManager.Instance.GridManager.MapUpperLimit.y
+            : GameManager.Instance.GridManager.MapLowerLimit.y;
+
+        int mult = isMod2Zero ? intPlayerNb / 2 : (intPlayerNb + 1) / 2;
+        var coord = new Vector2Int(GameManager.Instance.GridManager.MapUpperLimit.x * mult, posY);
+        GameManager.Instance.GridManager.GetTileAtCoordinates(coord).ChangeTileColor(playerNb);
     }
 
     public void OnMove(InputAction.CallbackContext ctx)
@@ -229,6 +248,14 @@ public class Player : MonoBehaviour
                     playerNb = PlayerEnum.Player2;
                     playerColor = Color.green;
                     break;
+                case 2:
+                    playerNb = PlayerEnum.Player3;
+                    playerColor = Color.blue;
+                    break;
+                case 3:
+                    playerNb = PlayerEnum.Player4;
+                    playerColor = Color.yellow;
+                    break;
                 default:
                     playerNb = PlayerEnum.None;
                     break;
@@ -246,5 +273,7 @@ public enum PlayerEnum
 {
     None = 0,
     Player1 = 1,
-    Player2 = 2 // add more
+    Player2 = 2, // add more
+    Player3 = 3,
+    Player4 = 4
 }
