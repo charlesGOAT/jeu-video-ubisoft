@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+public delegate void MoveCalledEventHandler(Player player);
+
 [RequireComponent(typeof(PlayerItemsManager))]
 [RequireComponent(typeof(Renderer))]
 [RequireComponent(typeof(Rigidbody))]
@@ -62,7 +64,8 @@ public class Player : MonoBehaviour
     public bool IsImmune { get; private set; } = false;
 
     public static readonly Dictionary<PlayerEnum, Color> PlayerColorDict = new Dictionary<PlayerEnum, Color>();  // make it the other way around if we want to test color spreading
-
+    
+    public event MoveCalledEventHandler OnMoveFunctionCalled;
 
     private void Awake()
     {
@@ -76,8 +79,13 @@ public class Player : MonoBehaviour
 
         ActivePlayers.Add(this);
     }
-
+    
     private void Start()
+    {
+        CheckStartConditions();
+    }
+
+    private void CheckStartConditions()
     {
         if (playerNb == PlayerEnum.None)
         {
@@ -87,7 +95,7 @@ public class Player : MonoBehaviour
         if (!PlayerColorDict.TryAdd(playerNb, playerColor))
         {
             throw new Exception("Player already exists");
-        }
+        } 
     }
 
     public void OnMove(InputAction.CallbackContext ctx)
@@ -167,7 +175,7 @@ public class Player : MonoBehaviour
         Vector2 move = curMoveInput * (speed * Time.deltaTime * boost);
         transform.position += new Vector3(move.y, 0, -move.x);
 
-        GameManager.Instance.OnMovementUpdated(this);
+        OnMoveFunctionCalled?.Invoke(this);
     }
 
     private void OnTriggerEnter(Collider other)
@@ -229,6 +237,14 @@ public class Player : MonoBehaviour
                     playerNb = PlayerEnum.Player2;
                     playerColor = Color.green;
                     break;
+                case 2:
+                    playerNb = PlayerEnum.Player3;
+                    playerColor = Color.blue;
+                    break;
+                case 3:
+                    playerNb = PlayerEnum.Player4;
+                    playerColor = Color.yellow;
+                    break;
                 default:
                     playerNb = PlayerEnum.None;
                     break;
@@ -246,5 +262,7 @@ public enum PlayerEnum
 {
     None = 0,
     Player1 = 1,
-    Player2 = 2 // add more
+    Player2 = 2, // add more
+    Player3 = 3,
+    Player4 = 4
 }

@@ -10,6 +10,8 @@ public class PlayerItemsManager : MonoBehaviour
     private readonly Dictionary<ItemType, IItem> _itemsInventory = new();
     private readonly Dictionary<ItemType, IItem> _allItems = new();
 
+    public Player Player { private get; set; }
+
     private void Awake()
     {
         foreach (ItemType itemType in Enum.GetValues(typeof(ItemType)))
@@ -23,14 +25,14 @@ public class PlayerItemsManager : MonoBehaviour
         IItem newItem = _allItems[item.ItemType];
         if (!_itemsInventory.TryAdd(item.ItemType, newItem)) return;
         
-        newItem.PickupItem();
+        newItem.PickupItem(Player);
         StartCoroutine(ManageActiveTime(newItem));
     }
 
     private void FinishUsingItem(IItem item)
     {
         _itemsInventory.Remove(item.ItemType);
-        item.UseTimeOver();
+        item.UseTimeOver(Player);
     }
 
     private IEnumerator ManageActiveTime(IItem item)

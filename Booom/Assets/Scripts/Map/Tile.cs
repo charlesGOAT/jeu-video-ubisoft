@@ -31,7 +31,7 @@ public class Tile : MonoBehaviour
             CurrentTileOwner = newOwner;
         }
     }
-    
+
     void Awake()
     {
         _tileRenderer = GetComponentInChildren<Renderer>();

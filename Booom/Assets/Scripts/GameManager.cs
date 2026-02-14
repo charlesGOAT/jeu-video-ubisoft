@@ -2,16 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-
-public delegate void MoveCalledEventHandler(Player player);
-
 public class GameManager : MonoBehaviour
 {
     private static GameManager _instance;
     private static bool _isInstanceAssigned;
     
-    public event MoveCalledEventHandler OnMoveFunctionCalled;
-
     public GridManagerStategy GridManager { get; private set; }
     public BombManager BombManager { get; private set; }
     // add other managers
@@ -46,11 +41,6 @@ public class GameManager : MonoBehaviour
     public void RemoveItemFromGrid(ItemType itemType)
     {
         // todo 
-    }
-
-    public void OnMovementUpdated(Player player)
-    {
-        OnMoveFunctionCalled?.Invoke(player);
     }
 
     private void GetManagers()
