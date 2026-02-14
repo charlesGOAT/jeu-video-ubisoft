@@ -72,6 +72,8 @@ public class Player : MonoBehaviour
         if (playerItemsManager == null)
             playerItemsManager = gameObject.GetComponent<PlayerItemsManager>();
 
+        playerItemsManager.Player = this;
+
         _bombTypeCount = Enum.GetValues(typeof(BombEnum)).Length - 1; // -1 to avoid None
         ConfigurePlayers();
         InitializeStateMachine();
