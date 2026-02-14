@@ -2,9 +2,6 @@ using UnityEngine;
 
 public class SplashBomb : Bomb
 {
-    [SerializeField]
-    private int explosionRange = 1;
-    
     private readonly Vector2Int[] _offsets =
     {
         new Vector2Int(-1, -1),
@@ -20,36 +17,21 @@ public class SplashBomb : Bomb
 
     protected override void Explode()
     {
-        PaintTilesAround(_bombCoordinates);
+        foreach (var offset in _offsets)
+        {
+            PaintTilesForDirection(_bombCoordinates, offset);
+        }
 
         Destroy(gameObject);
     }
 
-    private void PaintTilesAround(Vector2Int bombCoordinates)
+    protected override void PaintTilesForDirection(Vector2Int bombCoordinates, Vector2Int offset)
     {
-        foreach (var offset in _offsets)
-        {
-            Vector2Int coords = bombCoordinates + offset;
-            Tile tile = _gridManager.GetTileAtCoordinates(coords);
+        Vector2Int coords = bombCoordinates + offset;
+        Tile tile = _gridManager.GetTileAtCoordinates(coords);
 
-            if (tile == null || tile.isObstacle)
-                continue;
-
-            if (associatedPlayer != PlayerEnum.None)
-            {
-                PlayerEnum currentTileOwner = tile.CurrentTileOwner;
-
-                if (currentTileOwner != associatedPlayer)
-                {
-                    if (currentTileOwner != PlayerEnum.None)
-                    {
-                        _gridManager.tilesPerPlayer[(int)currentTileOwner - 1]--;
-                    }
-
-                    _gridManager.tilesPerPlayer[(int)associatedPlayer - 1]++;
-                    tile.ChangeTileColor(associatedPlayer);
-                }
-            }
-        }
+        if (tile == null || tile.isObstacle) return;
+        
+        tile.ChangeTileColor(associatedPlayer);
     }
 }

@@ -15,6 +15,17 @@ public abstract class Bomb : MonoBehaviour
 
     [SerializeField]
     protected float pulseSpeed = 8f;
+    
+    [SerializeField]
+    protected int explosionRange = 3;
+
+    protected readonly Vector2Int[] _directions =
+    {
+        Vector2Int.up,
+        Vector2Int.down,
+        Vector2Int.left,
+        Vector2Int.right
+    };
 
     protected GridManagerStategy _gridManager;
     protected Vector2Int _bombCoordinates;
@@ -66,7 +77,29 @@ public abstract class Bomb : MonoBehaviour
         Explode();
     }
 
-    protected abstract void Explode();
+    protected virtual void Explode()
+    {
+        foreach (Vector2Int direction in _directions)
+        {
+            PaintTilesForDirection(_bombCoordinates, direction);
+        }
+
+        Destroy(gameObject);
+    }
+    
+    protected virtual void PaintTilesForDirection(Vector2Int bombCoordinates, Vector2Int direction)
+    {
+        for (int rangeCounter = 0; rangeCounter <= explosionRange; ++rangeCounter)
+        {
+            Tile tile = _gridManager.GetTileAtCoordinates(bombCoordinates);
+
+            if (tile == null || tile.isObstacle)
+                return;
+
+            tile.ChangeTileColor(associatedPlayer);
+            bombCoordinates += direction;
+        }
+    }
 
     protected virtual void OnDestroy()
     {
