@@ -145,7 +145,7 @@ public class Player : MonoBehaviour
 
     public void OnHit(Vector2Int hitDirection)
     {
-        //�tant donn� que hitDirection est un Vector2Int, y est z dans se cas
+        //etant donne que hitDirection est un Vector2Int, y est z dans se cas
         if (IsImmune)
         {
             return;
