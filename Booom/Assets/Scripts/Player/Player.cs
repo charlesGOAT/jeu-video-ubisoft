@@ -82,11 +82,6 @@ public class Player : MonoBehaviour
     
     private void Start()
     {
-        CheckStartConditions();
-    }
-
-    private void CheckStartConditions()
-    {
         if (playerNb == PlayerEnum.None)
         {
             throw new Exception("Player cannot be set to PlayerEnum.None");
@@ -95,7 +90,7 @@ public class Player : MonoBehaviour
         if (!PlayerColorDict.TryAdd(playerNb, playerColor))
         {
             throw new Exception("Player already exists");
-        } 
+        }
     }
 
     public void OnMove(InputAction.CallbackContext ctx)
@@ -237,14 +232,6 @@ public class Player : MonoBehaviour
                     playerNb = PlayerEnum.Player2;
                     playerColor = Color.green;
                     break;
-                case 2:
-                    playerNb = PlayerEnum.Player3;
-                    playerColor = Color.blue;
-                    break;
-                case 3:
-                    playerNb = PlayerEnum.Player4;
-                    playerColor = Color.yellow;
-                    break;
                 default:
                     playerNb = PlayerEnum.None;
                     break;
@@ -262,7 +249,5 @@ public enum PlayerEnum
 {
     None = 0,
     Player1 = 1,
-    Player2 = 2, // add more
-    Player3 = 3,
-    Player4 = 4
+    Player2 = 2 // add more
 }
