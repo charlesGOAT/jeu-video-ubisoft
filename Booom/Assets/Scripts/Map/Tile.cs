@@ -39,5 +39,4 @@ public class Tile : MonoBehaviour
 
         _neutralColor = _tileRenderer.material.color;
     }
-
 }
