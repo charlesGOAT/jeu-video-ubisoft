@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -16,8 +17,19 @@ public class Tile : MonoBehaviour
     
     public void ChangeTileColor(PlayerEnum newOwner) 
     {
-        _tileRenderer.material.color = newOwner != PlayerEnum.None ? Player.PlayerColorDict[newOwner] : _neutralColor; 
-        CurrentTileOwner = newOwner;
+        if (CurrentTileOwner != newOwner)
+        {
+            bool isNoPlayer = newOwner == PlayerEnum.None;
+            
+            if (CurrentTileOwner != PlayerEnum.None)
+                GameManager.Instance.GridManager.tilesPerPlayer[(int)CurrentTileOwner - 1]--;
+
+            if (!isNoPlayer)
+                GameManager.Instance.GridManager.tilesPerPlayer[(int)newOwner - 1]++;
+            
+            _tileRenderer.material.color = !isNoPlayer ? Player.PlayerColorDict[newOwner] : _neutralColor;
+            CurrentTileOwner = newOwner;
+        }
     }
 
     void Awake()
@@ -27,5 +39,4 @@ public class Tile : MonoBehaviour
 
         _neutralColor = _tileRenderer.material.color;
     }
-
 }
