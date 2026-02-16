@@ -57,6 +57,12 @@ public class Bomb : MonoBehaviour
 
     private void PaintTilesForDirection(Vector2Int bombCoordinates, Vector2Int direction)
     {
+        Tile bombTile = GameManager.Instance.GridManager.GetTileAtCoordinates(bombCoordinates);
+        if (bombTile == null) return;
+        PlayerEnum currentOwner = bombTile.CurrentTileOwner;
+
+        PlayerEnum newTileOwner = GameManager.Instance.isSpreadingMode ? currentOwner : associatedPlayer;
+        
         for (int rangeCounter = 0; rangeCounter <= explosionRange; ++rangeCounter)
         {
             Tile tile = GameManager.Instance.GridManager.GetTileAtCoordinates(bombCoordinates);
@@ -66,7 +72,7 @@ public class Bomb : MonoBehaviour
                 return;
             }
 
-            tile.ChangeTileColor(associatedPlayer);
+            tile.ChangeTileColor(newTileOwner);
 
             foreach (Player player in Player.ActivePlayers)
             {

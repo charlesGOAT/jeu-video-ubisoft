@@ -1,11 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
     private static GameManager _instance;
     private static bool _isInstanceAssigned;
+
+    [SerializeField] 
+    public bool isSpreadingMode = true;
     
     public GridManagerStategy GridManager { get; private set; }
     public BombManager BombManager { get; private set; }
@@ -25,7 +27,7 @@ public class GameManager : MonoBehaviour
             return _instance;
         }
     }
-    
+
     private static GameManager AutoCreateInstance() =>
         new GameObject($"{nameof(GameManager)} (Auto-Created)", typeof(GameManager)).GetComponent<GameManager>();
     
