@@ -145,6 +145,11 @@ public class Player : MonoBehaviour
         _actualImmuneTimer = immuneTimer;
     }
 
+    internal void OnJump()
+    {
+        throw new NotImplementedException();
+    }
+
     public void FlickerPlayerOnHit(float elapsedT) => _renderer.enabled = Mathf.Sin(elapsedT * hitFlickerFrequency) > 0;
 
     private void SetRendererVisible() => _renderer.enabled = true;
@@ -236,6 +241,8 @@ public class Player : MonoBehaviour
             throw new Exception("There's no active player input");
         }
     }
+
+
 }
 
 

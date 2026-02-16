@@ -5,9 +5,6 @@ public class Tile : MonoBehaviour
 {
     public Vector2Int TileCoordinates { get; private set; }
 
-    [SerializeField]
-    public bool isObstacle = false;
-
     private Renderer _tileRenderer;
 
     public PlayerEnum CurrentTileOwner { get; private set; } = PlayerEnum.None;
