@@ -75,7 +75,9 @@ public class Player : MonoBehaviour
         playerItemsManager.Player = this;
 
         _bombTypeCount = Enum.GetValues(typeof(BombEnum)).Length - 1; // -1 to avoid None
+        
         ConfigurePlayers();
+        
         InitializeStateMachine();
         GetComponents();
 
@@ -271,6 +273,8 @@ public class Player : MonoBehaviour
         {
             throw new Exception("There's no active player input");
         }
+        
+        gameObject.GetComponent<Renderer>().material.color = playerColor;
     }
 }
 
