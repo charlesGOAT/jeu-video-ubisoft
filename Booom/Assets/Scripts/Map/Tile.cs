@@ -31,7 +31,7 @@ public class Tile : MonoBehaviour
             CurrentTileOwner = newOwner;
         }
     }
-    
+
     void Awake()
     {
         _tileRenderer = GetComponentInChildren<Renderer>();
@@ -39,5 +39,4 @@ public class Tile : MonoBehaviour
 
         _neutralColor = _tileRenderer.material.color;
     }
-
 }

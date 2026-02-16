@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+public delegate void MoveCalledEventHandler(Player player);
+
 [RequireComponent(typeof(PlayerItemsManager))]
 [RequireComponent(typeof(Renderer))]
 [RequireComponent(typeof(Rigidbody))]
@@ -61,12 +63,16 @@ public class Player : MonoBehaviour
 
     public bool IsImmune { get; private set; } = false;
 
-    public static readonly Dictionary<PlayerEnum, Color> PlayerColorDict = new Dictionary<PlayerEnum, Color>();
+    public static readonly Dictionary<PlayerEnum, Color> PlayerColorDict = new Dictionary<PlayerEnum, Color>();  // make it the other way around if we want to test color spreading
+    
+    public event MoveCalledEventHandler OnMoveFunctionCalled;
 
     private void Awake()
     {
         if (playerItemsManager == null)
             playerItemsManager = gameObject.GetComponent<PlayerItemsManager>();
+
+        playerItemsManager.Player = this;
 
         _bombTypeCount = Enum.GetValues(typeof(BombEnum)).Length - 1; // -1 to avoid None
         ConfigurePlayers();
@@ -159,7 +165,7 @@ public class Player : MonoBehaviour
 
     public void OnHit(Vector2Int hitDirection)
     {
-        //�tant donn� que hitDirection est un Vector2Int, y est z dans se cas
+        //etant donne que hitDirection est un Vector2Int, y est z dans se cas
         if (IsImmune)
         {
             return;
@@ -186,7 +192,7 @@ public class Player : MonoBehaviour
         Vector2 move = curMoveInput * (speed * Time.deltaTime * boost);
         transform.position += new Vector3(move.y, 0, -move.x);
 
-        GameManager.Instance.OnMovementUpdated(this);
+        OnMoveFunctionCalled?.Invoke(this);
     }
 
     private void OnTriggerEnter(Collider other)
@@ -277,3 +283,4 @@ public enum PlayerEnum
     Player3 = 3,
     Player4 = 4
 }
+

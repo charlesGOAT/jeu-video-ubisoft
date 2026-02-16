@@ -14,13 +14,13 @@ public class PaintBrushItem : IItem
         tile.ChangeTileColor(player.PlayerNb);
     }
 
-    public void PickupItem()
+    public void PickupItem(Player player)
     {
-        GameManager.Instance.OnMoveFunctionCalled += UseItem;
+        player.OnMoveFunctionCalled += UseItem;
     }
 
-    public void UseTimeOver()
+    public void UseTimeOver(Player player)
     {
-        GameManager.Instance.OnMoveFunctionCalled -= UseItem;
+        player.OnMoveFunctionCalled -= UseItem;
     }
 }

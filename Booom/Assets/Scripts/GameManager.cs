@@ -1,9 +1,6 @@
 ﻿using System;
 using UnityEngine;
 
-
-public delegate void MoveCalledEventHandler(Player player);
-
 public class GameManager : MonoBehaviour
 {
     private static GameManager _instance;
@@ -12,8 +9,6 @@ public class GameManager : MonoBehaviour
     [SerializeField] 
     public bool isSpreadingMode = true;
     
-    public event MoveCalledEventHandler OnMoveFunctionCalled;
-
     public GridManagerStategy GridManager { get; private set; }
     public BombManager BombManager { get; private set; }
     // add other managers
@@ -48,11 +43,6 @@ public class GameManager : MonoBehaviour
     public void RemoveItemFromGrid(ItemType itemType)
     {
         // todo 
-    }
-
-    public void OnMovementUpdated(Player player)
-    {
-        OnMoveFunctionCalled?.Invoke(player);
     }
 
     private void GetManagers()

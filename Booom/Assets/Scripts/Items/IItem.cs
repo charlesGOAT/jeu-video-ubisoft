@@ -5,7 +5,7 @@ public interface IItem
     public float ActiveTime => 5.0f; // basic time
 
     public abstract void UseItem(Player player);
-    public abstract void PickupItem();
+    public abstract void PickupItem(Player player);
 
-    public abstract void UseTimeOver();
+    public abstract void UseTimeOver(Player player);
 }
