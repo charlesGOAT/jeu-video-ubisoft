@@ -18,9 +18,6 @@ public class Player : MonoBehaviour
     private Bomb bombPrefab;
 
     [SerializeField]
-    private float bombCooldown = 3f;
-
-    [SerializeField]
     private Color playerColor = Color.red;
 
     [SerializeField]
@@ -29,6 +26,7 @@ public class Player : MonoBehaviour
     [SerializeField]
     private PlayerItemsManager playerItemsManager;
 
+    [SerializeField]
     private int knockbackForce = 3;
 
     [SerializeField]
@@ -172,7 +170,11 @@ public class Player : MonoBehaviour
         {
             return;
         }
-        Vector3 forceDirection = new Vector3(hitDirection.x, 1, hitDirection.y);
+
+        Vector2 hitDirNormalized = hitDirection;
+        hitDirNormalized.Normalize();
+        
+        Vector3 forceDirection = new Vector3(hitDirNormalized.x, 1, hitDirNormalized.y);
         _rigidbody.AddForce(forceDirection * knockbackForce, ForceMode.Impulse);
         _stateMachine.Trigger(GameConstants.PLAYER_HIT_TRIGGER);
         IsImmune = true;

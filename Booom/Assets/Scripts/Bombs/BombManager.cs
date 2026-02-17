@@ -50,10 +50,3 @@ public class BombManager : MonoBehaviour
         _nextBombTime[playerEnum] = Time.time + bombCooldown;
     }
 }
-
-public enum BombEnum
-{
-    None = 0,
-    NormalBomb = 1,
-    SquareBomb = 2
-}

@@ -45,6 +45,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   bombPrefabs:
-  - {fileID: 5789344192112797052, guid: 1008e97cfb9b5d848ab9dc400ca27aa3, type: 3}
-  - {fileID: 5789344192112797052, guid: 1008e97cfb9b5d848ab9dc400ca27aa3, type: 3}
+  - {fileID: 4114011512644460187, guid: 0cc17b392ffb1e843b2e122fc1d17f11, type: 3}
+  - {fileID: 3814066917829263046, guid: 3fc31f33bc9fd654c8688166b2999db9, type: 3}
+  - {fileID: -7385885007002980452, guid: 349a5fced833a1746a2ae40cb19af9b7, type: 3}
   bombCooldown: 3

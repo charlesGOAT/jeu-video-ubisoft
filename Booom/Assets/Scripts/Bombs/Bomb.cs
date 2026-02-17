@@ -5,39 +5,53 @@ using UnityEngine;
 
 public class Bomb : MonoBehaviour
 {
-    private static readonly HashSet<Vector2Int> ActiveBombs = new HashSet<Vector2Int>();
+    protected static readonly HashSet<Vector2Int> ActiveBombs = new HashSet<Vector2Int>();
 
     [SerializeField]
-    private float timer = 3.0f;
+    protected float timer = 3.0f;
 
     [SerializeField]
     private float pulseAmplitude = 0.2f;
 
     [SerializeField]
     private float pulseSpeed = 8f;
-
+    
     [SerializeField]
     private int explosionRange = 3;
 
+    private readonly Vector2Int[] _directions =
+    {
+        Vector2Int.up,
+        Vector2Int.down,
+        Vector2Int.left,
+        Vector2Int.right
+    };
+    private Vector3 _initialScale;
+    
+    protected Vector2Int _bombCoordinates;
+
     public PlayerEnum associatedPlayer = PlayerEnum.None;
 
-    private Vector2Int _bombCoordinates;
+    private void Awake()
+    {
+        Transform trans = transform;
 
-    private Vector3 _initialScale;
+        _initialScale = trans.localScale;
+        _bombCoordinates = GridManagerStategy.WorldToGridCoordinates(trans.position);
+        ActiveBombs.Add(_bombCoordinates);
+    }
 
-    private readonly Vector2Int[] _directions = new Vector2Int[] {
-            Vector2Int.up,
-            Vector2Int.down,
-            Vector2Int.left,
-            Vector2Int.right
-        };
+    protected virtual void Start()
+    {
+        Fuse();
+    }
 
     public static bool IsBombAt(Vector2Int gridCoordinates)
     {
         return ActiveBombs.Contains(gridCoordinates);
     }
 
-    public void Fuse()
+    protected void Fuse()
     {
         StartCoroutine(CountdownAndExplode());
     }
@@ -55,6 +69,20 @@ public class Bomb : MonoBehaviour
         Explode();
     }
 
+    private void Explode()
+    {
+        PaintTiles();
+        Destroy(gameObject);
+    }
+
+    protected virtual void PaintTiles()
+    {
+        foreach (var direction in _directions)
+        {
+            PaintTilesForDirection(_bombCoordinates, direction);
+        }
+    }
+    
     private void PaintTilesForDirection(Vector2Int bombCoordinates, Vector2Int direction)
     {
         Tile bombTile = GameManager.Instance.GridManager.GetTileAtCoordinates(bombCoordinates);
@@ -87,31 +115,17 @@ public class Bomb : MonoBehaviour
         }
     }
 
-    private void Explode()
-    {
-        Vector2Int bombCoordinates = _bombCoordinates;
-
-        foreach (Vector2Int direction in _directions)
-        {
-            PaintTilesForDirection(bombCoordinates, direction);
-        }
-
-        Destroy(gameObject);
-    }
-
-    private void Awake()
-    {
-        Transform trans = transform;
-
-        _initialScale = trans.localScale;
-        _bombCoordinates = GridManagerStategy.WorldToGridCoordinates(trans.position);
-        ActiveBombs.Add(_bombCoordinates);
-        Fuse();
-    }
-
-    private void OnDestroy()
+    protected virtual void OnDestroy()
     {
         ActiveBombs.Remove(_bombCoordinates);
     }
 
+}
+
+public enum BombEnum
+{
+    None = 0,
+    NormalBomb = 1,
+    FastBomb = 2,
+    SplashBomb = 3
 }
