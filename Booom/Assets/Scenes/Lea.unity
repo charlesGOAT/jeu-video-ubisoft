@@ -574,9 +574,17 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1152522418201534996, guid: a6a36da4cbd727d41b82c9941cc107ac, type: 3}
+      propertyPath: isDropFromSky
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1152522418201534996, guid: a6a36da4cbd727d41b82c9941cc107ac, type: 3}
       propertyPath: fixedPosByItemType.Array.size
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 2483793299209764977, guid: a6a36da4cbd727d41b82c9941cc107ac, type: 3}
+      propertyPath: shadow
+      value: 
+      objectReference: {fileID: 7094831668357091440, guid: 792934cba3e79694c89f39918923c806, type: 3}
     - target: {fileID: 2862928836428318727, guid: a6a36da4cbd727d41b82c9941cc107ac, type: 3}
       propertyPath: _maxItems
       value: 3

@@ -16,7 +16,8 @@ public class ItemSpawner : MonoBehaviour
     protected List<Vector2Int> fixedPosList;
     [SerializeField]
     protected Item itemPrefab;
-
+    [SerializeField]
+    protected GameObject shadow;
     public ItemType AssociatedItemType => associatedItemType;
 
     private void Awake()
@@ -25,8 +26,6 @@ public class ItemSpawner : MonoBehaviour
     }
 
     public int NbItemsOnMap { get; set; } = 0;
-
-    // todo : voir si on veut ça comme ça
 
     public void Spawn(SpawnMode spawnMode, bool isDropFromSky)
     {
@@ -47,8 +46,10 @@ public class ItemSpawner : MonoBehaviour
         {
            await WaitForSpawnCond(lastTimeSpawned);
            var pos = GetRandomTilePos(fixedPosList, gen);
-           Instantiate(itemPrefab, pos, Quaternion.identity);
-           NbItemsOnMap++;
+
+           if (isDropFromSky) await ManageShadow(pos);
+
+           InstantiateItem(pos);
            lastTimeSpawned = Time.time;
         }
     }
@@ -60,8 +61,10 @@ public class ItemSpawner : MonoBehaviour
         { 
             await WaitForSpawnCond(lastTimeSpawned);
             Vector3 pos = GameManager.Instance.GridManager.GetRandomPosOnGrid();
-            Instantiate(itemPrefab, pos, Quaternion.identity);
-            NbItemsOnMap++;
+            
+            if (isDropFromSky) await ManageShadow(pos);
+
+            InstantiateItem(pos);
             lastTimeSpawned = Time.time;
         }
     }
@@ -76,16 +79,17 @@ public class ItemSpawner : MonoBehaviour
             PlayerEnum player = GameManager.Instance.GridManager.FindPlayerWithMostGround();
             var playerTiles = GameManager.Instance.GridManager.GetPlayerTiles(player);
             Vector3 pos = GetRandomTilePos(playerTiles.ToList(), gen);
-            Instantiate(itemPrefab, pos, quaternion.identity);
             
-            NbItemsOnMap++;
+            if (isDropFromSky) await ManageShadow(pos);
+
+            InstantiateItem(pos);
             lastTimeSpawned = Time.time;
         }
     }
 
     protected async Task WaitForSpawnCond(float lastSpawnTime)
     { 
-        // todo : do we reset lastSpawn time on pickup instead
+        // todo : do we reset lastSpawn time on pickup instead ? 
         while (Time.time - lastSpawnTime < timeBetweenSpawns || NbItemsOnMap >= maxItems)
         {
             await Task.Yield();
@@ -96,5 +100,18 @@ public class ItemSpawner : MonoBehaviour
     {
         int index = random.Next(0, listPos.Count);
         return GridManagerStategy.GridToWorldPosition(listPos[index]);
+    }
+
+    protected async Task ManageShadow(Vector3 pos)
+    { 
+        GameObject shadowTemp = Instantiate(shadow, pos, Quaternion.identity);
+        await Task.Delay(2000);  // todo tweak
+        Destroy(shadowTemp);
+    }
+
+    protected void InstantiateItem(in Vector3 pos)
+    {
+        Instantiate(itemPrefab, pos, quaternion.identity);
+        NbItemsOnMap++;
     }
 }
