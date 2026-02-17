@@ -90,7 +90,8 @@ public abstract class GridManagerStategy : MonoBehaviour
     {
         int indexMax = -1;
         int currentMax = 0;
-        
+
+        // todo : ca va tjrs etre le joueur avec le plus petit index choisi si deux ont le meme nombre
         for (int i = 0; i < _aquiredTilesByPlayer.Length; ++i)
         {
             if (_aquiredTilesByPlayer[i].Count > currentMax)
@@ -103,7 +104,7 @@ public abstract class GridManagerStategy : MonoBehaviour
         if (indexMax == -1)
         {
             var random = new System.Random();
-            indexMax = random.Next(1, GameConstants.NB_PLAYERS + 1);
+            indexMax = random.Next(0, GameConstants.NB_PLAYERS);
         }
 
         return (PlayerEnum)(indexMax + 1);
