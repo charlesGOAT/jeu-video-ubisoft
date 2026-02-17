@@ -7,7 +7,6 @@ public delegate void MoveCalledEventHandler(Player player);
 
 [RequireComponent(typeof(PlayerItemsManager))]
 [RequireComponent(typeof(Renderer))]
-[RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(PlayerInput))]
 public class Player : MonoBehaviour
 {
@@ -18,9 +17,6 @@ public class Player : MonoBehaviour
     private Bomb bombPrefab;
 
     [SerializeField]
-    private float bombCooldown = 3f;
-
-    [SerializeField]
     private Color playerColor = Color.red;
 
     [SerializeField]
@@ -29,7 +25,8 @@ public class Player : MonoBehaviour
     [SerializeField]
     private PlayerItemsManager playerItemsManager;
 
-    private int knockbackForce = 3;
+    [SerializeField]
+    private int knockbackForce = 20;
 
     [SerializeField]
     private int hitFlickerFrequency = 50;
@@ -37,7 +34,6 @@ public class Player : MonoBehaviour
     [SerializeField]
     private float immuneTimer = 5;
 
-    private Rigidbody _rigidbody;
     private PlayerInput _playerInput;
     private Renderer _renderer;
 
@@ -47,6 +43,11 @@ public class Player : MonoBehaviour
     private int _bombTypeCount;
 
     public PlayerEnum PlayerNb => playerNb;
+
+    private CharacterController _characterController;
+    private Vector3 _knockbackVelocity;
+    private float _knockbackDamping = 8f;
+    private float _verticalVelocity;
 
     private StateMachine _stateMachine;
     private IdleState _idleState;
@@ -72,7 +73,9 @@ public class Player : MonoBehaviour
         playerItemsManager.Player = this;
 
         _bombTypeCount = Enum.GetValues(typeof(BombEnum)).Length - 1; // -1 to avoid None
+
         ConfigurePlayers();
+        
         InitializeStateMachine();
         GetComponents();
 
@@ -95,7 +98,7 @@ public class Player : MonoBehaviour
         if (!PlayerColorDict.TryAdd(playerNb, playerColor))
         {
             throw new Exception("Player already exists");
-        } 
+        }
     }
 
     private void InitializeSpawner()
@@ -167,8 +170,8 @@ public class Player : MonoBehaviour
         {
             return;
         }
-        Vector3 forceDirection = new Vector3(hitDirection.x, 1, hitDirection.y);
-        _rigidbody.AddForce(forceDirection * knockbackForce, ForceMode.Impulse);
+        Vector3 forceDirection = new Vector3(hitDirection.x,1,hitDirection.y);
+        ApplyKnockback(forceDirection, knockbackForce);
         _stateMachine.Trigger(GameConstants.PLAYER_HIT_TRIGGER);
         IsImmune = true;
         _actualImmuneTimer = immuneTimer;
@@ -186,12 +189,41 @@ public class Player : MonoBehaviour
 
         float boost = CheckIfOnOwnColor() ? GameConstants.COLOR_BOOST : 1;
 
-        Vector2 move = curMoveInput * (speed * Time.deltaTime * boost);
-        transform.position += new Vector3(move.y, 0, -move.x);
+        Vector3 move = new Vector3(curMoveInput.y, 0, -curMoveInput.x) * (speed * boost);
 
+        if (_characterController.isGrounded && _verticalVelocity < 0f)
+        {
+            _verticalVelocity = 0f;
+        }
+        else
+        {
+            _verticalVelocity += Physics.gravity.y * Time.deltaTime; //gravity
+        }
+        move.y = _verticalVelocity;
+        
+        _characterController.Move(move * Time.deltaTime);
         OnMoveFunctionCalled?.Invoke(this);
     }
 
+    public void UpdateKnockback()
+    {
+        Vector3 move = _knockbackVelocity;
+        _knockbackVelocity = Vector3.Lerp(
+            _knockbackVelocity,
+            Vector3.zero,
+            _knockbackDamping * Time.deltaTime
+        );
+
+        move.y = _verticalVelocity;
+        
+        _characterController.Move(move * Time.deltaTime);
+    }
+    
+    public void ApplyKnockback(Vector3 forceDirection, float force)
+    {
+        _knockbackVelocity = forceDirection.normalized * force;
+    }
+    
     private void OnTriggerEnter(Collider other)
     {
         if (!other.tag.Equals("Item") || !other.gameObject.TryGetComponent(out Item item)) return;
@@ -231,7 +263,7 @@ public class Player : MonoBehaviour
 
     private void GetComponents()
     {
-        _rigidbody = GetComponent<Rigidbody>();
+        _characterController = GetComponent<CharacterController>();
         _renderer = GetComponent<Renderer>();
         _playerInput = GetComponent<PlayerInput>();
     }
@@ -268,6 +300,8 @@ public class Player : MonoBehaviour
         {
             throw new Exception("There's no active player input");
         }
+        
+        gameObject.GetComponent<Renderer>().material.color = playerColor;
     }
 }
 
@@ -276,7 +310,7 @@ public enum PlayerEnum
 {
     None = 0,
     Player1 = 1,
-    Player2 = 2, // add more
+    Player2 = 2,
     Player3 = 3,
     Player4 = 4
 }

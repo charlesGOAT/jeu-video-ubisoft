@@ -29,5 +29,37 @@ public class GridManagerDemo : GridManagerStategy
 
         Width = demoWidth;
         Height = demoHeight;
+
+        CreateWalls();
+    }
+
+    private void CreateWalls()
+    {
+        float mapWidth = demoWidth * GameConstants.UNITY_GRID_SIZE;
+        float mapHeight = demoHeight * GameConstants.UNITY_GRID_SIZE;
+        float wallThickness = 1.0f;
+        float wallHeight = 5.0f;
+        float yPosition = wallHeight / 2.0f;
+
+        CreateWall(new Vector3(mapWidth / 2 - 1.0f, yPosition, -wallThickness / 2 - 1.0f),
+                     new Vector3(mapWidth, wallHeight, wallThickness), "RightWall");
+
+        CreateWall(new Vector3(mapWidth / 2 - 1.0f, yPosition, mapHeight + wallThickness / 2 - 1.0f),
+                     new Vector3(mapWidth, wallHeight, wallThickness),  "LeftWall");
+
+        CreateWall(new Vector3(-wallThickness / 2 - 1.0f, yPosition, mapHeight / 2 - 1.0f),
+                     new Vector3(wallThickness, wallHeight, mapHeight), "BottomWall");
+
+        CreateWall(new Vector3(mapWidth + wallThickness / 2 - 1.0f, yPosition, mapHeight / 2 - 1.0f),
+                     new Vector3(wallThickness, wallHeight, mapHeight), "TopWall");
+    }
+
+    private void CreateWall(Vector3 position, Vector3 scale, string objectName)
+    {
+        GameObject wall = new GameObject(objectName);
+        wall.transform.position = position;
+        wall.transform.localScale = scale;
+        wall.transform.parent = transform;
+        wall.AddComponent<BoxCollider>();
     }
 }
