@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -29,70 +29,75 @@ public class ItemSpawner : MonoBehaviour
 
     public void Spawn(SpawnMode spawnMode, bool isDropFromSky)
     {
-        _ = spawnMode switch
+        switch (spawnMode)
         {
-            SpawnMode.Fixed => SpawnFixed(isDropFromSky),
-            SpawnMode.Random => SpawnRandom(isDropFromSky),
-            SpawnMode.Strategic => SpawnStrategic(isDropFromSky),
-            _ => Task.CompletedTask
-        };
+            case SpawnMode.Fixed:
+                StartCoroutine(SpawnFixed(isDropFromSky));
+                break;
+            case SpawnMode.Random:
+                StartCoroutine(SpawnRandom(isDropFromSky));
+                break;
+            case SpawnMode.Strategic:
+                StartCoroutine(SpawnStrategic(isDropFromSky));
+                break;
+        }
     }
-
-    protected virtual async Task SpawnFixed(bool isDropFromSky)
+    
+    protected virtual IEnumerator SpawnFixed(bool isDropFromSky)
     {
         float lastTimeSpawned = Time.time;
         var gen = new System.Random();
         while (true)
         {
-           await WaitForSpawnCond(lastTimeSpawned);
+           yield return StartCoroutine(WaitForSpawnCond(lastTimeSpawned));
            var pos = GetRandomTilePos(fixedPosList, gen);
-
-           if (isDropFromSky) await ManageShadow(pos);
-
+    
+           if (isDropFromSky) yield return StartCoroutine(ManageShadow(pos));
+    
            InstantiateItem(pos);
            lastTimeSpawned = Time.time;
         }
     }
-    
-    protected virtual async Task SpawnRandom(bool isDropFromSky)
+
+    protected virtual IEnumerator SpawnRandom(bool isDropFromSky)
     {
         float lastTimeSpawned = Time.time;
         while (true)
         { 
-            await WaitForSpawnCond(lastTimeSpawned);
+            yield return StartCoroutine(WaitForSpawnCond(lastTimeSpawned));
             Vector3 pos = GameManager.Instance.GridManager.GetRandomPosOnGrid();
             
-            if (isDropFromSky) await ManageShadow(pos);
+            if (isDropFromSky) yield return StartCoroutine(ManageShadow(pos));
 
             InstantiateItem(pos);
             lastTimeSpawned = Time.time;
         }
     }
     
-    protected virtual async Task SpawnStrategic(bool isDropFromSky)
+    protected virtual IEnumerator SpawnStrategic(bool isDropFromSky)
     {
         float lastTimeSpawned = Time.time;
         var gen = new System.Random();
         while (true)
         {
-            await WaitForSpawnCond(lastTimeSpawned);
+            yield return StartCoroutine(WaitForSpawnCond(lastTimeSpawned));
             PlayerEnum player = GameManager.Instance.GridManager.FindPlayerWithMostGround();
             var playerTiles = GameManager.Instance.GridManager.GetPlayerTiles(player);
             Vector3 pos = GetRandomTilePos(playerTiles.ToList(), gen);
             
-            if (isDropFromSky) await ManageShadow(pos);
+            if (isDropFromSky) yield return StartCoroutine(ManageShadow(pos));
 
             InstantiateItem(pos);
             lastTimeSpawned = Time.time;
         }
     }
 
-    protected async Task WaitForSpawnCond(float lastSpawnTime)
+    protected IEnumerator WaitForSpawnCond(float lastSpawnTime)
     { 
         // todo : do we reset lastSpawn time on pickup instead ? 
         while (Time.time - lastSpawnTime < timeBetweenSpawns || NbItemsOnMap >= maxItems)
         {
-            await Task.Yield();
+            yield return null;
         }
     }
 
@@ -102,10 +107,10 @@ public class ItemSpawner : MonoBehaviour
         return GridManagerStategy.GridToWorldPosition(listPos[index]);
     }
 
-    protected async Task ManageShadow(Vector3 pos)
+    protected IEnumerator ManageShadow(Vector3 pos)
     { 
         GameObject shadowTemp = Instantiate(shadow, pos, Quaternion.identity);
-        await Task.Delay(2000);  // todo tweak
+        yield return new WaitForSeconds(2f);  // todo tweak
         Destroy(shadowTemp);
     }
 
