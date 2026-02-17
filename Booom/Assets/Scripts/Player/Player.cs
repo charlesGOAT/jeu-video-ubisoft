@@ -49,9 +49,6 @@ public class Player : MonoBehaviour
     private float _knockbackDamping = 8f;
     private float _verticalVelocity;
 
-    private GridManagerStategy _gridManager;
-    private BombManager _bombManager;
-
     private StateMachine _stateMachine;
     private IdleState _idleState;
     private HitState _hitState;
@@ -313,7 +310,7 @@ public enum PlayerEnum
 {
     None = 0,
     Player1 = 1,
-    Player2 = 2, // add more
+    Player2 = 2,
     Player3 = 3,
     Player4 = 4
 }
