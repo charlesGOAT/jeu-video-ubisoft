@@ -20,15 +20,10 @@ public struct FixedPos
 [RequireComponent(typeof(ItemSpawner))]
 public class ItemsManager : MonoBehaviour
 {
-    // Manages spawning of items of one type
-    // todo : make mulitple child classes for every item type
-    // todo : garder un compte du nb d'items par joueur, genre l'incrémenter quand il le pickup
-
     [SerializeField] 
     public SpawnMode spawnMode = SpawnMode.Fixed;
 
-    private static readonly Dictionary<ItemType, int> _itemCountPerItemTypeDict = new();
-    private static readonly ItemSpawner[] _itemSpawnerPerItemType = new ItemSpawner[Enum.GetValues(typeof(ItemType)).Length];
+    private readonly ItemSpawner[] _itemSpawnerPerItemType = new ItemSpawner[Enum.GetValues(typeof(ItemType)).Length];
     
     [SerializeField]
     private bool isDropFromSky = false;
