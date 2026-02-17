@@ -48,9 +48,6 @@ public class Player : MonoBehaviour
 
     public PlayerEnum PlayerNb => playerNb;
 
-    private GridManagerStategy _gridManager;
-    private BombManager _bombManager;
-
     private StateMachine _stateMachine;
     private IdleState _idleState;
     private HitState _hitState;

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -11,6 +12,10 @@ public class GameManager : MonoBehaviour
     
     public GridManagerStategy GridManager { get; private set; }
     public BombManager BombManager { get; private set; }
+    
+    public ItemsManager ItemsManager { get; private set; }
+
+    
     // add other managers
 
     public static GameManager Instance
@@ -42,13 +47,14 @@ public class GameManager : MonoBehaviour
 
     public void RemoveItemFromGrid(ItemType itemType)
     {
-        // todo 
+        ItemsManager.RemoveItem(itemType); 
     }
 
     private void GetManagers()
     {
         GridManager = FindFirstObjectByType<GridManagerStategy>();
         BombManager = FindFirstObjectByType<BombManager>();
+        ItemsManager = FindFirstObjectByType<ItemsManager>();
 
         if (GridManager == null)
         {
@@ -58,6 +64,12 @@ public class GameManager : MonoBehaviour
         {
             throw new Exception("There's no active bomb manager");
         }
+        if (ItemsManager == null)
+        {
+            throw new Exception("There's no active items manager");
+        }
         // add other managers
     }
+
+    
 }

@@ -48,7 +48,6 @@ public class PlayerItemsManager : MonoBehaviour
             case ItemType.PaintBrush:
             {
                 return new PaintBrushItem();
-                break;
             }
         }
 
