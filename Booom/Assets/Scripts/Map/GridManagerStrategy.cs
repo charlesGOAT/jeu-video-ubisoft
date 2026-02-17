@@ -88,7 +88,7 @@ public abstract class GridManagerStategy : MonoBehaviour
 
     public PlayerEnum FindPlayerWithMostGround()
     {
-        int indexMax = 0;
+        int indexMax = -1;
         int currentMax = 0;
         
         for (int i = 0; i < _aquiredTilesByPlayer.Length; ++i)
@@ -98,6 +98,12 @@ public abstract class GridManagerStategy : MonoBehaviour
                 indexMax = i;
                 currentMax = _aquiredTilesByPlayer[i].Count;
             }
+        }
+
+        if (indexMax == -1)
+        {
+            var random = new System.Random();
+            indexMax = random.Next(1, GameConstants.NB_PLAYERS + 1);
         }
 
         return (PlayerEnum)(indexMax + 1);
