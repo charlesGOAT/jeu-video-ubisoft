@@ -155,11 +155,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SimplePlayerMovement
   speed: 5
-  bombPrefab: {fileID: 5789344192112797052, guid: 1008e97cfb9b5d848ab9dc400ca27aa3, type: 3}
+  bombPrefab: {fileID: 4114011512644460187, guid: 0cc17b392ffb1e843b2e122fc1d17f11, type: 3}
   bombCooldown: 3
   playerColor: {r: 1, g: 0, b: 0, a: 1}
   playerNb: 0
-  _currentBombType: 1
 --- !u!114 &1141182974104389932
 MonoBehaviour:
   m_ObjectHideFlags: 0

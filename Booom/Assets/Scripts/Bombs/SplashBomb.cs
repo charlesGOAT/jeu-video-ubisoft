@@ -15,17 +15,15 @@ public class SplashBomb : Bomb
         new Vector2Int(1, 1),
     };
 
-    protected override void Explode()
+    protected override void PaintTiles()
     {
         foreach (var offset in _offsets)
         {
-            PaintTilesForDirection(_bombCoordinates, offset);
+            PaintTilesSurrounding(_bombCoordinates, offset);
         }
-
-        Destroy(gameObject);
     }
 
-    protected override void PaintTilesForDirection(Vector2Int bombCoordinates, Vector2Int offset)
+    private void PaintTilesSurrounding(Vector2Int bombCoordinates, Vector2Int offset)
     {
         Vector2Int coords = bombCoordinates + offset;
         Tile tile = _gridManager.GetTileAtCoordinates(coords);

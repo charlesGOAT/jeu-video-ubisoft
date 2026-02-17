@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class Bomb : MonoBehaviour
+public class Bomb : MonoBehaviour
 {
     protected static readonly HashSet<Vector2Int> ActiveBombs = new HashSet<Vector2Int>();
 
@@ -77,17 +77,21 @@ public abstract class Bomb : MonoBehaviour
         Explode();
     }
 
-    protected virtual void Explode()
+    private void Explode()
     {
-        foreach (Vector2Int direction in _directions)
+        PaintTiles();
+        Destroy(gameObject);
+    }
+
+    protected virtual void PaintTiles()
+    {
+        foreach (var direction in _directions)
         {
             PaintTilesForDirection(_bombCoordinates, direction);
         }
-
-        Destroy(gameObject);
     }
     
-    protected virtual void PaintTilesForDirection(Vector2Int bombCoordinates, Vector2Int direction)
+    private void PaintTilesForDirection(Vector2Int bombCoordinates, Vector2Int direction)
     {
         for (int rangeCounter = 0; rangeCounter <= explosionRange; ++rangeCounter)
         {
