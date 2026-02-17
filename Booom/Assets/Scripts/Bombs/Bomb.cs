@@ -11,39 +11,33 @@ public class Bomb : MonoBehaviour
     protected float timer = 3.0f;
 
     [SerializeField]
-    protected float pulseAmplitude = 0.2f;
+    private float pulseAmplitude = 0.2f;
 
     [SerializeField]
-    protected float pulseSpeed = 8f;
+    private float pulseSpeed = 8f;
     
     [SerializeField]
-    protected int explosionRange = 3;
+    private int explosionRange = 3;
 
-    protected readonly Vector2Int[] _directions =
+    private readonly Vector2Int[] _directions =
     {
         Vector2Int.up,
         Vector2Int.down,
         Vector2Int.left,
         Vector2Int.right
     };
-
-    protected GridManagerStategy _gridManager;
+    private Vector3 _initialScale;
+    
     protected Vector2Int _bombCoordinates;
-    protected Vector3 _initialScale;
 
     public PlayerEnum associatedPlayer = PlayerEnum.None;
 
     private void Awake()
     {
-        GetManagers();
+        Transform trans = transform;
 
-        if (associatedPlayer == PlayerEnum.None)
-        {
-            Debug.Log("No player selected on bomb");
-        }
-        
-        _initialScale = transform.localScale;
-        _bombCoordinates = GridManagerStategy.WorldToGridCoordinates(transform.position);
+        _initialScale = trans.localScale;
+        _bombCoordinates = GridManagerStategy.WorldToGridCoordinates(trans.position);
         ActiveBombs.Add(_bombCoordinates);
     }
 
@@ -65,7 +59,6 @@ public class Bomb : MonoBehaviour
     private IEnumerator CountdownAndExplode()
     {
         float elapsed = 0f;
-
         while (elapsed < timer)
         {
             float pulse = 1f + (Mathf.Abs(Mathf.Sin(elapsed * pulseSpeed)) * pulseAmplitude);
@@ -73,7 +66,6 @@ public class Bomb : MonoBehaviour
             elapsed += Time.deltaTime;
             yield return null;
         }
-
         Explode();
     }
 
@@ -93,14 +85,32 @@ public class Bomb : MonoBehaviour
     
     private void PaintTilesForDirection(Vector2Int bombCoordinates, Vector2Int direction)
     {
+        Tile bombTile = GameManager.Instance.GridManager.GetTileAtCoordinates(bombCoordinates);
+        if (bombTile == null) return;
+        PlayerEnum currentOwner = bombTile.CurrentTileOwner;
+
+        PlayerEnum newTileOwner = GameManager.Instance.isSpreadingMode ? currentOwner : associatedPlayer;
+        
         for (int rangeCounter = 0; rangeCounter <= explosionRange; ++rangeCounter)
         {
-            Tile tile = _gridManager.GetTileAtCoordinates(bombCoordinates);
+            Tile tile = GameManager.Instance.GridManager.GetTileAtCoordinates(bombCoordinates);
 
             if (tile == null || tile.isObstacle)
+            {
                 return;
+            }
 
-            tile.ChangeTileColor(associatedPlayer);
+            tile.ChangeTileColor(newTileOwner);
+
+            foreach (Player player in Player.ActivePlayers)
+            {
+                Tile playerTile = player.GetPlayerTile();
+                if (playerTile != null && playerTile.TileCoordinates == bombCoordinates)
+                {
+                    player.OnHit(direction);
+                }
+            }
+
             bombCoordinates += direction;
         }
     }
@@ -110,15 +120,6 @@ public class Bomb : MonoBehaviour
         ActiveBombs.Remove(_bombCoordinates);
     }
 
-    private void GetManagers()
-    {
-        _gridManager = FindFirstObjectByType<GridManagerStategy>();
-
-        if (_gridManager == null)
-        {
-            throw new Exception("There's no active grid manager");
-        }
-    }
 }
 
 public enum BombEnum

@@ -26,10 +26,24 @@ public class SplashBomb : Bomb
     private void PaintTilesSurrounding(Vector2Int bombCoordinates, Vector2Int offset)
     {
         Vector2Int coords = bombCoordinates + offset;
-        Tile tile = _gridManager.GetTileAtCoordinates(coords);
-
-        if (tile == null || tile.isObstacle) return;
         
-        tile.ChangeTileColor(associatedPlayer);
+        Tile bombTile = GameManager.Instance.GridManager.GetTileAtCoordinates(bombCoordinates);
+        Tile tileToPaint = GameManager.Instance.GridManager.GetTileAtCoordinates(coords);
+        
+        if (bombTile == null || tileToPaint == null) return;
+        
+        PlayerEnum currentOwner = bombTile.CurrentTileOwner;
+        PlayerEnum newTileOwner = GameManager.Instance.isSpreadingMode ? currentOwner : associatedPlayer;
+
+        tileToPaint.ChangeTileColor(newTileOwner);
+
+        foreach (Player player in Player.ActivePlayers)
+        {
+            Tile playerTile = player.GetPlayerTile();
+            if (playerTile != null && playerTile.TileCoordinates == coords)
+            {
+                player.OnHit(coords - bombCoordinates);
+            }
+        }
     }
 }
