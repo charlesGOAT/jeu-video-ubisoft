@@ -326,11 +326,6 @@ public class Player : MonoBehaviour
 
     public Tile GetPlayerTile() 
     {
-        if (!GetIsGrounded())
-        {
-            return null;
-        }
-
         Vector2Int gridCoordinates = GridManagerStategy.WorldToGridCoordinates(transform.position);
         Tile tile = GameManager.Instance.GridManager.GetTileAtCoordinates(gridCoordinates);
         if (tile == null)
