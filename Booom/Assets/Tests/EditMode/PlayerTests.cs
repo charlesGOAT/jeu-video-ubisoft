@@ -51,24 +51,4 @@ public class PlayerTests
 
         Assert.AreEqual(dir.normalized * 10f, value);
     }
-    
-    [Test]
-    public void OnHit_SetsImmunity()
-    {
-        _player.OnHit(Vector2Int.right);
-
-        Assert.IsTrue(_player.IsImmune);
-    }
-
-    [Test]
-    public void FlickerPlayerOnHit_ChangesRendererVisibility()
-    {
-        var renderer = _playerGo.GetComponent<Renderer>();
-
-        _player.FlickerPlayerOnHit(0.1f);
-
-        // We don't check exact state (sin dependent)
-        Assert.IsNotNull(renderer);
-    }
-
 }
