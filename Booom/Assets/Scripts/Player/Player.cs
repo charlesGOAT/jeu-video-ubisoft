@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public delegate void MoveCalledEventHandler(Player player);
+public delegate void MoveCalledEventHandler();
+public delegate void PlaceBomb();
 
 [RequireComponent(typeof(PlayerItemsManager))]
 [RequireComponent(typeof(Renderer))]
@@ -39,6 +40,7 @@ public class Player : MonoBehaviour
 
     private Vector2 _moveInput;
     private BombEnum _currentBombType = BombEnum.NormalBomb;
+    private bool _shouldNextBombBeTransparent = false;
 
     private int _bombTypeCount;
 
@@ -64,6 +66,7 @@ public class Player : MonoBehaviour
     public static readonly Dictionary<PlayerEnum, Color> PlayerColorDict = new Dictionary<PlayerEnum, Color>();  // make it the other way around if we want to test color spreading
     
     public event MoveCalledEventHandler OnMoveFunctionCalled;
+    public event PlaceBomb OnPlaceBomb;
 
     private void Awake()
     {
@@ -124,7 +127,9 @@ public class Player : MonoBehaviour
     {
         if (ctx.performed)
         {
-            GameManager.Instance.BombManager.CreateBomb(transform.position, playerNb, _currentBombType);
+            OnPlaceBomb?.Invoke();
+            GameManager.Instance.BombManager.CreateBomb(transform.position, playerNb, _currentBombType, _shouldNextBombBeTransparent);
+            _shouldNextBombBeTransparent = false;
         }
     }
 
@@ -202,7 +207,7 @@ public class Player : MonoBehaviour
         move.y = _verticalVelocity;
         
         _characterController.Move(move * Time.deltaTime);
-        OnMoveFunctionCalled?.Invoke(this);
+        OnMoveFunctionCalled?.Invoke();
     }
 
     public void UpdateKnockback()
@@ -302,6 +307,11 @@ public class Player : MonoBehaviour
         }
         
         gameObject.GetComponent<Renderer>().material.color = playerColor;
+    }
+    
+    public void CreateNextBombTransparent()
+    {
+        _shouldNextBombBeTransparent = true;
     }
 }
 

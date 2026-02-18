@@ -1,16 +1,18 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
+
 
 public class PlayerItemsManager : MonoBehaviour
 {
     // Manages Items for each players
     
-    private readonly Dictionary<ItemType, IItem> _itemsInventory = new();
-    private readonly Dictionary<ItemType, IItem> _allItems = new();
+    private readonly Dictionary<ItemType, BaseItem> _itemsInventory = new();
+    private readonly Dictionary<ItemType, BaseItem> _allItems = new();
 
     public Player Player { private get; set; }
+    
 
     private void Awake()
     {
@@ -22,26 +24,19 @@ public class PlayerItemsManager : MonoBehaviour
 
     public void AddNewItem(Item item)
     {
-        IItem newItem = _allItems[item.ItemType];
-        if (!_itemsInventory.TryAdd(item.ItemType, newItem)) return;
+        BaseItem newBaseItem = _allItems[item.ItemType];
+        if (!_itemsInventory.TryAdd(item.ItemType, newBaseItem)) return;
         
-        newItem.PickupItem(Player);
-        StartCoroutine(ManageActiveTime(newItem));
+        newBaseItem.PickupItem(Player);
+        newBaseItem.OnFinishUsingItem += FinishUsingItem;
     }
 
-    private void FinishUsingItem(IItem item)
+    private void FinishUsingItem(BaseItem baseItem)
     {
-        _itemsInventory.Remove(item.ItemType);
-        item.UseTimeOver(Player);
+        _itemsInventory.Remove(baseItem.ItemType);
     }
 
-    private IEnumerator ManageActiveTime(IItem item)
-    {
-        yield return new WaitForSeconds(item.ActiveTime);
-        FinishUsingItem(item);
-    }
-    
-    private IItem CreateItem(ItemType type)
+    private BaseItem CreateItem(ItemType type)
     {
         switch (type)
         {
@@ -49,6 +44,11 @@ public class PlayerItemsManager : MonoBehaviour
             {
                 return new PaintBrushItem();
             }
+            case ItemType.TransparentBomb:
+            {
+                return new TransparentBombItem();
+            }
+            // todo : add more
         }
 
         return null;

@@ -27,7 +27,7 @@ public class BombManager : MonoBehaviour
         }
     }
 
-    public void CreateBomb(Vector3 position, PlayerEnum playerEnum, BombEnum bombEnum)
+    public void CreateBomb(Vector3 position, PlayerEnum playerEnum, BombEnum bombEnum, bool isTransparentBomb = false)
     {
         if (Time.time < _nextBombTime[playerEnum])
         {
@@ -45,7 +45,8 @@ public class BombManager : MonoBehaviour
         Vector3 worldPosition = GridManagerStategy.GridToWorldPosition(gridCoordinates, tile.transform.position.y);
         bombPrefabs[(int)bombEnum - 1].associatedPlayer = playerEnum;
 
-        Instantiate(bombPrefabs[(int)bombEnum - 1], worldPosition, Quaternion.identity);
+        Bomb instantiatedBomb = Instantiate(bombPrefabs[(int)bombEnum - 1], worldPosition, Quaternion.identity);
+        instantiatedBomb.isTransparentBomb = isTransparentBomb;
 
         _nextBombTime[playerEnum] = Time.time + bombCooldown;
     }

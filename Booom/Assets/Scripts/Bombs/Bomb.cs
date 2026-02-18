@@ -19,6 +19,8 @@ public class Bomb : MonoBehaviour
     [SerializeField]
     private int explosionRange = 3;
 
+    public bool isTransparentBomb = false;
+
     private readonly Vector2Int[] _directions =
     {
         Vector2Int.up,
@@ -95,10 +97,13 @@ public class Bomb : MonoBehaviour
         {
             Tile tile = GameManager.Instance.GridManager.GetTileAtCoordinates(bombCoordinates);
 
-            if (tile == null || tile.isObstacle)
+            if (tile == null || (tile.isObstacle && !isTransparentBomb))
             {
                 return;
             }
+
+            if (tile.isObstacle && isTransparentBomb)
+                continue;
 
             tile.ChangeTileColor(newTileOwner);
 
