@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+public delegate void MoveCalledEventHandler(Player player);
+
+[RequireComponent(typeof(PlayerItemsManager))]
 [RequireComponent(typeof(Renderer))]
 [RequireComponent(typeof(PlayerInput))]
 public class Player : MonoBehaviour
@@ -14,13 +17,13 @@ public class Player : MonoBehaviour
     private Bomb bombPrefab;
 
     [SerializeField]
-    private float bombCooldown = 3f;
-
-    [SerializeField]
     private Color playerColor = Color.red;
 
     [SerializeField]
     private PlayerEnum playerNb = PlayerEnum.None;
+
+    [SerializeField]
+    private PlayerItemsManager playerItemsManager;
 
     [SerializeField]
     private int knockbackForce = 20;
@@ -38,6 +41,8 @@ public class Player : MonoBehaviour
     private BombEnum _currentBombType = BombEnum.NormalBomb;
 
     private int _bombTypeCount;
+
+    public PlayerEnum PlayerNb => playerNb;
 
     private CharacterController _characterController;
     private Vector3 _knockbackVelocity;
@@ -60,20 +65,33 @@ public class Player : MonoBehaviour
     public bool IsImmune { get; private set; } = false;
 
     public static readonly Dictionary<PlayerEnum, Color> PlayerColorDict = new Dictionary<PlayerEnum, Color>();  // make it the other way around if we want to test color spreading
+    
+    public event MoveCalledEventHandler OnMoveFunctionCalled;
 
     private void Awake()
     {
-        GetManagers();
+        if (playerItemsManager == null)
+            playerItemsManager = gameObject.GetComponent<PlayerItemsManager>();
+
+        playerItemsManager.Player = this;
+
         _bombTypeCount = Enum.GetValues(typeof(BombEnum)).Length - 1; // -1 to avoid None
 
         ConfigurePlayers();
+        
         InitializeStateMachine();
         GetComponents();
 
         ActivePlayers.Add(this);
     }
-
+    
     private void Start()
+    {
+        CheckStartConditions();
+        if(GameManager.Instance.isSpreadingMode) InitializeSpawner();
+    }
+
+    private void CheckStartConditions()
     {
         if (playerNb == PlayerEnum.None)
         {
@@ -86,6 +104,20 @@ public class Player : MonoBehaviour
         }
     }
 
+    private void InitializeSpawner()
+    {
+        int intPlayerNb = (int)PlayerNb - 1;
+        bool isMod2Zero = intPlayerNb % 2 == 0;
+        
+        var posY = isMod2Zero
+            ? GameManager.Instance.GridManager.MapUpperLimit.y
+            : GameManager.Instance.GridManager.MapLowerLimit.y;
+
+        int mult = isMod2Zero ? intPlayerNb / 2 : (intPlayerNb + 1) / 2;
+        var coord = new Vector2Int(GameManager.Instance.GridManager.MapUpperLimit.x * mult, posY);
+        GameManager.Instance.GridManager.GetTileAtCoordinates(coord).ChangeTileColor(playerNb);
+    }
+
     public void OnMove(InputAction.CallbackContext ctx)
     {
         _moveInput = ctx.ReadValue<Vector2>();
@@ -95,7 +127,7 @@ public class Player : MonoBehaviour
     {
         if (ctx.performed)
         {
-            _bombManager.CreateBomb(transform.position, playerNb, _currentBombType);
+            GameManager.Instance.BombManager.CreateBomb(transform.position, playerNb, _currentBombType);
         }
     }
 
@@ -109,7 +141,7 @@ public class Player : MonoBehaviour
     }
 
     public void DisableInputActions() => _playerInput.actions.Disable();
-    public void EnableInputActions() => _playerInput.actions.Enable();  
+    public void EnableInputActions() => _playerInput.actions.Enable();
 
     private void Update()
     {
@@ -122,21 +154,21 @@ public class Player : MonoBehaviour
         if (IsImmune)
         {
             if (_actualImmuneTimer <= 0)
-             {
-                 IsImmune = false;
-                 SetRendererVisible();
-             }
-             else
-             {
-                 _actualImmuneTimer -= Time.deltaTime;
-                 FlickerPlayerOnHit(_actualImmuneTimer);
+            {
+                IsImmune = false;
+                SetRendererVisible();
+            }
+            else
+            {
+                _actualImmuneTimer -= Time.deltaTime;
+                FlickerPlayerOnHit(_actualImmuneTimer);
             }
         }
     }
 
-    public void OnHit(Vector2Int hitDirection) 
+    public void OnHit(Vector2Int hitDirection)
     {
-        //�tant donn� que hitDirection est un Vector2Int, y est z dans se cas
+        //etant donne que hitDirection est un Vector2Int, y est z dans se cas
         if (IsImmune)
         {
             return;
@@ -173,6 +205,7 @@ public class Player : MonoBehaviour
         move.y = _verticalVelocity;
         
         _characterController.Move(move * Time.deltaTime);
+        OnMoveFunctionCalled?.Invoke(this);
     }
 
     public void UpdateKnockback()
@@ -193,11 +226,20 @@ public class Player : MonoBehaviour
     {
         _knockbackVelocity = forceDirection.normalized * force;
     }
+    
+    private void OnTriggerEnter(Collider other)
+    {
+        if (!other.tag.Equals("Item") || !other.gameObject.TryGetComponent(out Item item)) return;
+
+        playerItemsManager.AddNewItem(item);
+        GameManager.Instance.RemoveItemFromGrid(item.ItemType);
+        Destroy(other.gameObject);
+    }
 
     private bool CheckIfOnOwnColor()
     {
         Vector2Int gridCoordinates = GridManagerStategy.WorldToGridCoordinates(transform.position);
-        Tile tile = _gridManager.GetTileAtCoordinates(gridCoordinates);
+        Tile tile = GameManager.Instance.GridManager.GetTileAtCoordinates(gridCoordinates);
         if (tile == null)
         {
             return false;
@@ -206,8 +248,7 @@ public class Player : MonoBehaviour
         return tile.CurrentTileOwner == playerNb;
     }
 
-    public Tile GetPlayerTile() => _gridManager.GetTileAtCoordinates(GridManagerStategy.WorldToGridCoordinates(transform.position));
-
+    public Tile GetPlayerTile() => GameManager.Instance.GridManager.GetTileAtCoordinates(GridManagerStategy.WorldToGridCoordinates(transform.position));
 
     private void InitializeStateMachine()
     {
@@ -221,20 +262,6 @@ public class Player : MonoBehaviour
         _stateMachine.AddTransition<HitState>(GameConstants.PLAYER_IDLE_TRIGGER, _idleState);
         _stateMachine.AddForEachType(GameConstants.PLAYER_HIT_TRIGGER, _hitState);
         _stateMachine.SetInitialState(_idleState);
-    }
-    private void GetManagers()
-    {
-        _gridManager = FindFirstObjectByType<GridManagerStategy>();
-        _bombManager = FindFirstObjectByType<BombManager>();
-
-        if (_gridManager == null)
-        {
-            throw new Exception("There's no active grid manager");
-        }
-        if (_bombManager == null)
-        {
-            throw new Exception("There's no active bomb manager");
-        }
     }
 
     private void GetComponents()
@@ -259,6 +286,14 @@ public class Player : MonoBehaviour
                     playerNb = PlayerEnum.Player2;
                     playerColor = Color.green;
                     break;
+                case 2:
+                    playerNb = PlayerEnum.Player3;
+                    playerColor = Color.blue;
+                    break;
+                case 3:
+                    playerNb = PlayerEnum.Player4;
+                    playerColor = Color.yellow;
+                    break;
                 default:
                     playerNb = PlayerEnum.None;
                     break;
@@ -268,6 +303,8 @@ public class Player : MonoBehaviour
         {
             throw new Exception("There's no active player input");
         }
+        
+        gameObject.GetComponent<Renderer>().material.color = playerColor;
     }
 }
 
@@ -276,5 +313,8 @@ public enum PlayerEnum
 {
     None = 0,
     Player1 = 1,
-    Player2 = 2 // add more
+    Player2 = 2, // add more
+    Player3 = 3,
+    Player4 = 4
 }
+

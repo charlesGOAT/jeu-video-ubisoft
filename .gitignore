@@ -1,4 +1,6 @@
 Booom/.vsconfig
 Booom/.vscode/
+Booom/Assets/Resources.meta
 *.sln
 *.slnx
+Build/
