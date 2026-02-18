@@ -3,8 +3,8 @@ using UnityEngine;
 
 public class ScoreManager : MonoBehaviour
 {
-    public readonly HashSet<Vector2Int>[] _acquiredTilesByPlayer = new HashSet<Vector2Int>[GameConstants.NB_PLAYERS];
-    public readonly Dictionary<PlayerEnum, int> _eliminationsPerPlayer = new(GameConstants.NB_PLAYERS); //We could add other stats like deaths or items used
+    private readonly HashSet<Vector2Int>[] _acquiredTilesByPlayer = new HashSet<Vector2Int>[GameConstants.NB_PLAYERS];
+    private readonly Dictionary<PlayerEnum, int> _eliminationsPerPlayer = new(GameConstants.NB_PLAYERS); //We could add other stats like deaths or items used
 
     private void Start()
     {
