@@ -40,15 +40,15 @@ public abstract class GridManagerStategy : MonoBehaviour
         );
     }
 
-    private void Start()
-    {
-        CreateGrid();
-        PositionCamera();
 
+    private void Awake()
+    {
         for (int i = 0; i < _aquiredTilesByPlayer.Length; i++)
         {
             _aquiredTilesByPlayer[i] = new HashSet<Vector2Int>();
         }
+        CreateGrid();
+        PositionCamera();
     }
 
     protected abstract void CreateGrid();
