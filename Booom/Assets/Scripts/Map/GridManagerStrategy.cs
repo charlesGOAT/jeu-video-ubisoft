@@ -2,9 +2,10 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public abstract class GridManagerStategy : MonoBehaviour
+public abstract class GridManagerStrategy : MonoBehaviour
 {
     protected Dictionary<Vector2Int, Tile> _tiles = new Dictionary<Vector2Int, Tile>();
+    public int capturableTilesCount;
 
     public Vector2Int MapUpperLimit { get; protected set; } = Vector2Int.zero;
     public Vector2Int MapLowerLimit { get; protected set; } = Vector2Int.zero;
@@ -41,6 +42,7 @@ public abstract class GridManagerStategy : MonoBehaviour
     private void Start()
     {
         CreateGrid();
+        capturableTilesCount = _tiles.Count;
         PositionCamera();
     }
 

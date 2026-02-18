@@ -22,12 +22,23 @@ public class ScoreManager : MonoBehaviour
     {
         if (player != PlayerEnum.None)
             _eliminationsPerPlayer[player]++;
+
+        if (_eliminationsPerPlayer[player] >= GameConstants.ELIMS_TO_WIN)
+        {
+            GameManager.Instance.EndGame();
+        }
     }
     
     public void AcquireNewTile(PlayerEnum player, Vector2Int tile)
     {
-        if (player != PlayerEnum.None)
-            _acquiredTilesByPlayer[(int)player - 1].Add(tile);
+        if (player == PlayerEnum.None) return;
+        
+        _acquiredTilesByPlayer[(int)player - 1].Add(tile);
+
+        if (_acquiredTilesByPlayer[(int)player - 1].Count == GameManager.Instance.GridManager.capturableTilesCount) 
+        {
+            GameManager.Instance.EndGame();
+        }
     }
     
     public void LoseTile(PlayerEnum player, Vector2Int tile)

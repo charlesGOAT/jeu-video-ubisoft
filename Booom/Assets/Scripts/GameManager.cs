@@ -10,7 +10,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] 
     public bool isSpreadingMode = true;
     
-    public GridManagerStategy GridManager { get; private set; }
+    public GridManagerStrategy GridManager { get; private set; }
     public BombManager BombManager { get; private set; }
     public ItemsManager ItemsManager { get; private set; }
     public ScoreManager ScoreManager { get; private set; }
@@ -52,7 +52,7 @@ public class GameManager : MonoBehaviour
 
     private void GetManagers()
     {
-        GridManager = FindFirstObjectByType<GridManagerStategy>();
+        GridManager = FindFirstObjectByType<GridManagerStrategy>();
         BombManager = FindFirstObjectByType<BombManager>();
         ItemsManager = FindFirstObjectByType<ItemsManager>();
         ScoreManager = FindFirstObjectByType<ScoreManager>();
@@ -76,5 +76,9 @@ public class GameManager : MonoBehaviour
         // add other managers
     }
 
-    
+    public void EndGame()
+    {
+        //todo end the game
+        Debug.Log("Game Ended");
+    }
 }

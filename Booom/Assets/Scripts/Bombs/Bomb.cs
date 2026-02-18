@@ -37,7 +37,7 @@ public class Bomb : MonoBehaviour
         Transform trans = transform;
 
         _initialScale = trans.localScale;
-        _bombCoordinates = GridManagerStategy.WorldToGridCoordinates(trans.position);
+        _bombCoordinates = GridManagerStrategy.WorldToGridCoordinates(trans.position);
         ActiveBombs.Add(_bombCoordinates);
     }
 

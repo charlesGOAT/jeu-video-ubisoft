@@ -32,7 +32,7 @@ public class Tile : MonoBehaviour
     void Awake()
     {
         _tileRenderer = GetComponentInChildren<Renderer>();
-        TileCoordinates = GridManagerStategy.WorldToGridCoordinates(transform.position);
+        TileCoordinates = GridManagerStrategy.WorldToGridCoordinates(transform.position);
 
         _neutralColor = _tileRenderer.material.color;
     }

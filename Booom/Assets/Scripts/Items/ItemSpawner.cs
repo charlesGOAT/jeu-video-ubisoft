@@ -104,7 +104,7 @@ public class ItemSpawner : MonoBehaviour
     protected Vector3 GetRandomTilePos(List<Vector2Int> listPos, in System.Random random)
     {
         int index = random.Next(0, listPos.Count);
-        return GridManagerStategy.GridToWorldPosition(listPos[index]);
+        return GridManagerStrategy.GridToWorldPosition(listPos[index]);
     }
 
     protected IEnumerator ManageShadow(Vector3 pos)
