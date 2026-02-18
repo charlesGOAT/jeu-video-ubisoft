@@ -101,18 +101,13 @@ public abstract class GridManagerStategy : MonoBehaviour
                 equalMax.Clear();
                 equalMax.Add(indexMax);
             }
-            else if (_aquiredTilesByPlayer[i].Count == currentMax)
+            else if (_aquiredTilesByPlayer[i].Count == currentMax && currentMax != 0)
             {
                 equalMax.Add(i);
             }
         }
 
-        if (indexMax == -1)
-        {
-            var random = new System.Random();
-            indexMax = random.Next(0, GameConstants.NB_PLAYERS);
-        }
-        else if (equalMax.Count > 1)
+        if (equalMax.Count > 1)
         {
             var random = new System.Random();
             int ind = random.Next(0, equalMax.Count);
@@ -125,9 +120,26 @@ public abstract class GridManagerStategy : MonoBehaviour
     public HashSet<Vector2Int> GetPlayerTiles(PlayerEnum player)
     {
         if (player == PlayerEnum.None)
-            return new HashSet<Vector2Int>();
+            return GetAllTilesNotOwned().ToHashSet();
 
         return _aquiredTilesByPlayer[(int)player - 1];
+    }
+
+    private HashSet<Vector2Int> GetAllTilesOwned()
+    {
+        HashSet<Vector2Int> allTilesOwned = new();
+        foreach (var list in _aquiredTilesByPlayer)
+        {
+            allTilesOwned.UnionWith(list);
+        }
+
+        return allTilesOwned;
+    }
+
+    private IEnumerable<Vector2Int> GetAllTilesNotOwned()
+    {
+        HashSet<Vector2Int> allTilesOwned = GetAllTilesOwned();
+        return _tiles.Keys.Except(allTilesOwned);
     }
 }
 
