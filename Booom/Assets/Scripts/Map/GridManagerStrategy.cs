@@ -16,7 +16,7 @@ public abstract class GridManagerStategy : MonoBehaviour
     [SerializeField]
     protected Camera mainCamera;
 
-    public Tile GetTileAtCoordinates(Vector2Int vector2Int)
+    public virtual Tile GetTileAtCoordinates(Vector2Int vector2Int)
     {
         _tiles.TryGetValue(vector2Int, out Tile tile);
         return tile;

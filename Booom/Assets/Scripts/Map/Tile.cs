@@ -15,7 +15,7 @@ public class Tile : MonoBehaviour
 
     private Color _neutralColor;
     
-    public void ChangeTileColor(PlayerEnum newOwner) 
+    public virtual void ChangeTileColor(PlayerEnum newOwner) 
     {
         if (CurrentTileOwner != newOwner)
         {
@@ -32,7 +32,7 @@ public class Tile : MonoBehaviour
         }
     }
 
-    void Awake()
+    protected virtual void Awake()
     {
         _tileRenderer = GetComponentInChildren<Renderer>();
         TileCoordinates = GridManagerStategy.WorldToGridCoordinates(transform.position);
