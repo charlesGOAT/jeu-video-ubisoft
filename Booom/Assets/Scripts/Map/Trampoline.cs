@@ -12,12 +12,12 @@ public class Trampoline : Tile
 
     public void UseTrampoline(Player player)
     {
-        float playerLengthToSpikeX = transform.position.x - player.transform.position.x;
-        float playerLengthToSpikeZ = transform.position.z - player.transform.position.z;
+        float playerLengthToTrampolineX = transform.position.x - player.transform.position.x;
+        float playerLengthToTrampolineZ = transform.position.z - player.transform.position.z;
 
-        if (Mathf.Abs(playerLengthToSpikeX) > Mathf.Abs(playerLengthToSpikeZ))
+        if (Mathf.Abs(playerLengthToTrampolineX) > Mathf.Abs(playerLengthToTrampolineZ))
         {
-            if (playerLengthToSpikeX >= 0)
+            if (playerLengthToTrampolineX >= 0)
             {
                 player.OnJump(Vector2Int.right);
             }
@@ -28,7 +28,7 @@ public class Trampoline : Tile
         }
         else
         {
-            if (playerLengthToSpikeZ >= 0)
+            if (playerLengthToTrampolineZ >= 0)
             {
                 player.OnJump(Vector2Int.up);
             }

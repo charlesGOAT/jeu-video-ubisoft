@@ -20,12 +20,12 @@ public class Portal : Tile
             return;
         }
 
-        float playerLengthToSpikeX = transform.position.x - player.transform.position.x;
-        float playerLengthToSpikeZ = transform.position.z - player.transform.position.z;
+        float playerLengthToPortalX = transform.position.x - player.transform.position.x;
+        float playerLengthToPortalZ = transform.position.z - player.transform.position.z;
 
-        if (Mathf.Abs(playerLengthToSpikeX) > Mathf.Abs(playerLengthToSpikeZ))
+        if (Mathf.Abs(playerLengthToPortalX) > Mathf.Abs(playerLengthToPortalZ))
         {
-            if (playerLengthToSpikeX >= 0)
+            if (playerLengthToPortalX >= 0)
             {
                 player.OnPortal(Vector2Int.right, otherPortal.transform.position);
             }
@@ -36,7 +36,7 @@ public class Portal : Tile
         }
         else
         {
-            if (playerLengthToSpikeZ >= 0)
+            if (playerLengthToPortalZ >= 0)
             {
                 player.OnPortal(Vector2Int.up, otherPortal.transform.position);
             }
