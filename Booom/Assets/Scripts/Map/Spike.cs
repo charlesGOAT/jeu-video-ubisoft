@@ -1,17 +1,18 @@
 using UnityEngine;
 
-public class Trampoline : Tile
+public class Spike : Tile
 {
 
     public override bool IsObstacle => true;
 
     public override void StepOnTile(Player player)
     {
-        UseTrampoline(player);
+        HitPlayer(player);
     }
 
-    public void UseTrampoline(Player player)
+    public void HitPlayer(Player player)
     {
+
         float playerLengthToSpikeX = transform.position.x - player.transform.position.x;
         float playerLengthToSpikeZ = transform.position.z - player.transform.position.z;
 
@@ -19,22 +20,23 @@ public class Trampoline : Tile
         {
             if (playerLengthToSpikeX >= 0)
             {
-                player.OnJump(Vector2Int.right);
+                player.OnHit(Vector2Int.left);
             }
             else
             {
-                player.OnJump(Vector2Int.left);
+                player.OnHit(Vector2Int.right);
             }
+
         }
         else
         {
             if (playerLengthToSpikeZ >= 0)
             {
-                player.OnJump(Vector2Int.up);
+                player.OnHit(Vector2Int.down);
             }
             else
             {
-                player.OnJump(Vector2Int.down);
+                player.OnHit(Vector2Int.up);
             }
         }
     }

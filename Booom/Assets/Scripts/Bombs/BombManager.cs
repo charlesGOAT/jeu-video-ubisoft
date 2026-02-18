@@ -37,7 +37,7 @@ public class BombManager : MonoBehaviour
         Vector2Int gridCoordinates = GridManagerStategy.WorldToGridCoordinates(position);
         Tile tile = GameManager.Instance.GridManager.GetTileAtCoordinates(gridCoordinates);
 
-        if (tile == null || tile.isObstacle || Bomb.IsBombAt(gridCoordinates))
+        if (tile == null || tile.IsObstacle || Bomb.IsBombAt(gridCoordinates))
         {
             return;
         }

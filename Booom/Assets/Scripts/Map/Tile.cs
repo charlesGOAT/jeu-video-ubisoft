@@ -1,13 +1,12 @@
-using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Tile : MonoBehaviour
 {
     public Vector2Int TileCoordinates { get; private set; }
 
-    [SerializeField]
-    public bool isObstacle = false;
+    public virtual bool IsObstacle => false;
+
+    public static float TileLength => 2;
 
     private Renderer _tileRenderer;
 
@@ -27,6 +26,11 @@ public class Tile : MonoBehaviour
             _tileRenderer.material.color = !isNoPlayer ? Player.PlayerColorDict[newOwner] : _neutralColor;
             CurrentTileOwner = newOwner;
         }
+    }
+
+    public virtual void StepOnTile(Player player) 
+    {
+        //update vitesse ici?
     }
 
     void Awake()
