@@ -12,8 +12,8 @@ public class GameManager : MonoBehaviour
     
     public GridManagerStategy GridManager { get; private set; }
     public BombManager BombManager { get; private set; }
-    
     public ItemsManager ItemsManager { get; private set; }
+    public ScoreManager ScoreManager { get; private set; }
 
     
     // add other managers
@@ -55,6 +55,7 @@ public class GameManager : MonoBehaviour
         GridManager = FindFirstObjectByType<GridManagerStategy>();
         BombManager = FindFirstObjectByType<BombManager>();
         ItemsManager = FindFirstObjectByType<ItemsManager>();
+        ScoreManager = FindFirstObjectByType<ScoreManager>();
 
         if (GridManager == null)
         {
@@ -67,6 +68,10 @@ public class GameManager : MonoBehaviour
         if (ItemsManager == null)
         {
             throw new Exception("There's no active items manager");
+        }
+        if (ScoreManager == null)
+        {
+            throw new Exception("There's no active score manager");
         }
         // add other managers
     }

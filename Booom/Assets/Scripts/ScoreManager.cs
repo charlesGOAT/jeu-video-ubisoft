@@ -1,0 +1,82 @@
+using System.Collections.Generic;
+using UnityEngine;
+
+public class ScoreManager : MonoBehaviour
+{
+    public readonly HashSet<Vector2Int>[] _acquiredTilesByPlayer = new HashSet<Vector2Int>[GameConstants.NB_PLAYERS];
+    public readonly Dictionary<PlayerEnum, int> _eliminationsPerPlayer = new(GameConstants.NB_PLAYERS); //We could add other stats like deaths or items used
+
+    private void Start()
+    {
+        for (int i = 0; i < _acquiredTilesByPlayer.Length; i++)
+        {
+            _acquiredTilesByPlayer[i] = new HashSet<Vector2Int>();
+        }
+        for (int i = 1; i <= GameConstants.NB_PLAYERS; i++)
+        {
+            _eliminationsPerPlayer.Add((PlayerEnum)i, 0);
+        }
+    }
+
+    public void NewElimination(PlayerEnum player)
+    {
+        if (player != PlayerEnum.None)
+            _eliminationsPerPlayer[player]++;
+    }
+    
+    public void AcquireNewTile(PlayerEnum player, Vector2Int tile)
+    {
+        if (player != PlayerEnum.None)
+            _acquiredTilesByPlayer[(int)player - 1].Add(tile);
+    }
+    
+    public void LoseTile(PlayerEnum player, Vector2Int tile)
+    {
+        if (player != PlayerEnum.None)
+            _acquiredTilesByPlayer[(int)player - 1].Remove(tile);
+    }
+    
+    public PlayerEnum FindPlayerWithMostGround()
+    {
+        int indexMax = -1;
+        int currentMax = 0;
+        List<int> equalMax = new();
+
+        for (int i = 0; i < _acquiredTilesByPlayer.Length; ++i)
+        {
+            if (_acquiredTilesByPlayer[i].Count > currentMax)
+            {
+                indexMax = i;
+                currentMax = _acquiredTilesByPlayer[i].Count;
+                equalMax.Clear();
+                equalMax.Add(indexMax);
+            }
+            else if (_acquiredTilesByPlayer[i].Count == currentMax)
+            {
+                equalMax.Add(i);
+            }
+        }
+
+        if (indexMax == -1)
+        {
+            var random = new System.Random();
+            indexMax = random.Next(0, GameConstants.NB_PLAYERS);
+        }
+        else if (equalMax.Count > 1)
+        {
+            var random = new System.Random();
+            int ind = random.Next(0, equalMax.Count);
+            indexMax = equalMax[ind];
+        }
+
+        return (PlayerEnum)(indexMax + 1);
+    }
+    
+    public HashSet<Vector2Int> GetPlayerTiles(PlayerEnum player)
+    {
+        if (player == PlayerEnum.None)
+            return new HashSet<Vector2Int>();
+
+        return _acquiredTilesByPlayer[(int)player - 1];
+    }
+}

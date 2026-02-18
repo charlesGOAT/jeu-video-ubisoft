@@ -81,8 +81,8 @@ public class ItemSpawner : MonoBehaviour
         while (true)
         {
             yield return StartCoroutine(WaitForSpawnCond(lastTimeSpawned));
-            PlayerEnum player = GameManager.Instance.GridManager.FindPlayerWithMostGround();
-            var playerTiles = GameManager.Instance.GridManager.GetPlayerTiles(player);
+            PlayerEnum player = GameManager.Instance.ScoreManager.FindPlayerWithMostGround();
+            var playerTiles = GameManager.Instance.ScoreManager.GetPlayerTiles(player);
             Vector3 pos = GetRandomTilePos(playerTiles.ToList(), gen);
             
             if (isDropFromSky) yield return StartCoroutine(ManageShadow(pos));
