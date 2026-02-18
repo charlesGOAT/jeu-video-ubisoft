@@ -22,6 +22,13 @@ public abstract class GridManagerStategy : MonoBehaviour
         return tile;
     }
 
+    public T GetTileAtCoordinates<T>(Vector2Int vector2Int) where T : Tile
+    {
+        _tiles.TryGetValue(vector2Int, out Tile tile);
+        return tile as T;
+    }
+
+
     public static Vector2Int WorldToGridCoordinates(Vector3 worldPosition)
     {
         return new Vector2Int(
@@ -39,7 +46,7 @@ public abstract class GridManagerStategy : MonoBehaviour
         );
     }
 
-    private void Start()
+    private void Awake()
     {
         CreateGrid();
         PositionCamera();

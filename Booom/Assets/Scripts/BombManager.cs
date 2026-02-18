@@ -5,7 +5,7 @@ using UnityEngine;
 public class BombManager : MonoBehaviour
 {
     [SerializeField]
-    private Bomb[] bombPrefabs;
+    public Bomb[] bombPrefabs;
 
     [SerializeField]
     private float bombCooldown = 3f;
@@ -37,7 +37,7 @@ public class BombManager : MonoBehaviour
         Vector2Int gridCoordinates = GridManagerStategy.WorldToGridCoordinates(position);
         Tile tile = GameManager.Instance.GridManager.GetTileAtCoordinates(gridCoordinates);
 
-        if (tile == null || tile.isObstacle || Bomb.IsBombAt(gridCoordinates))
+        if (tile == null || tile.IsObstacle || Bomb.IsBombAt(gridCoordinates))
         {
             return;
         }
@@ -55,5 +55,6 @@ public enum BombEnum
 {
     None = 0,
     NormalBomb = 1,
-    SquareBomb = 2
+    SquareBomb = 2,
+    PortalBomb = 3,
 }

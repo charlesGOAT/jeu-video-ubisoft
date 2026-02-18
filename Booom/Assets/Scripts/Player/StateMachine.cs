@@ -35,7 +35,8 @@ public class StateMachine
         {
             throw new InvalidOperationException($"No transition from state {_currentState.GetType().Name} on trigger {trigger}");
         }
-        
+        Debug.Log("Current State " + _currentState);
+        Debug.Log("Current Trigger " + trigger);
         _currentState.Exit();
         _currentState = nextState;
         _currentState.Enter();

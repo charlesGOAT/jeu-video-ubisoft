@@ -7,8 +7,7 @@ public class Bomb : MonoBehaviour
 {
     private static readonly HashSet<Vector2Int> ActiveBombs = new HashSet<Vector2Int>();
 
-    [SerializeField]
-    private float timer = 3.0f;
+    protected virtual float timer => 3.0f;
 
     [SerializeField]
     private float pulseAmplitude = 0.2f;
@@ -21,7 +20,7 @@ public class Bomb : MonoBehaviour
 
     public PlayerEnum associatedPlayer = PlayerEnum.None;
 
-    private Vector2Int _bombCoordinates;
+    protected Vector2Int _bombCoordinates;
 
     private Vector3 _initialScale;
 
@@ -57,7 +56,7 @@ public class Bomb : MonoBehaviour
 
     private void PaintTilesForDirection(Vector2Int bombCoordinates, Vector2Int direction)
     {
-        Tile bombTile = GameManager.Instance.GridManager.GetTileAtCoordinates(bombCoordinates);
+        ColorableTile bombTile = GameManager.Instance.GridManager.GetTileAtCoordinates<ColorableTile>(bombCoordinates);
         if (bombTile == null) return;
         PlayerEnum currentOwner = bombTile.CurrentTileOwner;
 
@@ -67,12 +66,23 @@ public class Bomb : MonoBehaviour
         {
             Tile tile = GameManager.Instance.GridManager.GetTileAtCoordinates(bombCoordinates);
 
-            if (tile == null || tile.isObstacle)
+            if (tile == null)
             {
                 return;
             }
 
-            tile.ChangeTileColor(newTileOwner);
+            if (tile.IsObstacle) 
+            {
+                if (tile is Portal portal) 
+                {
+                    portal.ContinueBombExplosion(direction, explosionRange - rangeCounter  , newTileOwner);
+                    return;
+                }
+                tile.OnExplosion(newTileOwner);
+                return;
+            }
+
+            tile.OnExplosion(newTileOwner);
 
             foreach (Player player in Player.ActivePlayers)
             {
@@ -87,7 +97,7 @@ public class Bomb : MonoBehaviour
         }
     }
 
-    private void Explode()
+    public virtual void Explode()
     {
         Vector2Int bombCoordinates = _bombCoordinates;
 

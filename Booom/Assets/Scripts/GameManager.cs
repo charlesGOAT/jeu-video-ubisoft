@@ -7,7 +7,7 @@ public class GameManager : MonoBehaviour
     private static bool _isInstanceAssigned;
 
     [SerializeField] 
-    public bool isSpreadingMode = true;
+    public bool isSpreadingMode = false;
     
     public GridManagerStategy GridManager { get; private set; }
     public BombManager BombManager { get; private set; }

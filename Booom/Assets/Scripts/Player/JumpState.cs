@@ -1,17 +1,16 @@
 using UnityEngine;
 
-public class HitState : State
+public class JumpState : State
 {
-    private float _hitDuration = GameConstants.HIT_STATE_DURATION;
-    public HitState(StateMachine stateMachine, Player player) : base(stateMachine, player)
-    { 
+    private float _jumpDuration = GameConstants.AIR_STATE_DURATION;
+    public JumpState(StateMachine stateMachine, Player player) : base(stateMachine, player)
+    {
     }
 
     public override void Enter()
     {
         //Jouer l'animation de hit
-        _hitDuration = GameConstants.HIT_STATE_DURATION;
-        Debug.Log(_hitDuration);
+        _jumpDuration = GameConstants.AIR_STATE_DURATION;
         _player.DisableInputActions();
     }
 
@@ -23,14 +22,15 @@ public class HitState : State
 
     public override void Handle(float time)
     {
-        Debug.Log(_hitDuration);
-        if (_hitDuration <= 0) 
+        //Check si y'est groundé aussi
+        if (_jumpDuration <= 0)
         {
             _stateMachine.Trigger(GameConstants.PLAYER_IDLE_TRIGGER);
         }
         else
         {
-            _hitDuration -= time;
+            _jumpDuration -= time;
         }
     }
 }
+
