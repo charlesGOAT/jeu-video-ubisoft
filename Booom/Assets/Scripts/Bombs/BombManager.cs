@@ -33,7 +33,7 @@ public class BombManager : MonoBehaviour
         {
             return;
         }
-
+        Vector3 bombHeight = Vector3.up * position.y;
         Vector2Int gridCoordinates = GridManagerStategy.WorldToGridCoordinates(position);
         Tile tile = GameManager.Instance.GridManager.GetTileAtCoordinates(gridCoordinates);
 
@@ -45,7 +45,7 @@ public class BombManager : MonoBehaviour
         Vector3 worldPosition = GridManagerStategy.GridToWorldPosition(gridCoordinates, tile.transform.position.y);
         bombPrefabs[(int)bombEnum - 1].associatedPlayer = playerEnum;
 
-        Instantiate(bombPrefabs[(int)bombEnum - 1], worldPosition, Quaternion.identity);
+        Instantiate(bombPrefabs[(int)bombEnum - 1], worldPosition + bombHeight, Quaternion.identity);
 
         _nextBombTime[playerEnum] = Time.time + bombCooldown;
     }
