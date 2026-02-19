@@ -91,7 +91,7 @@ public class Bomb : MonoBehaviour
         }
     }
     
-    private void PaintTilesForDirection(Vector2Int bombCoordinates, Vector2Int direction, PlayerEnum newTileOwner)
+    private void PaintTilesForDirection(Vector2Int bombCoordinates, in Vector2Int direction, PlayerEnum newTileOwner)
     {
         for (int rangeCounter = 1; rangeCounter <= explosionRange; ++rangeCounter)
         {
@@ -105,7 +105,7 @@ public class Bomb : MonoBehaviour
         }
     }
 
-    private static bool PaintTile(Vector2Int bombCoordinates, Vector2Int direction, PlayerEnum newTileOwner)
+    private bool PaintTile(in Vector2Int bombCoordinates, in Vector2Int direction, PlayerEnum newTileOwner)
     {
         Tile tile = GameManager.Instance.GridManager.GetTileAtCoordinates(bombCoordinates);
 
@@ -119,7 +119,7 @@ public class Bomb : MonoBehaviour
         return true;
     }
 
-    private static void HitPlayers(Vector2Int bombCoordinates, Vector2Int direction)
+    private void HitPlayers(in Vector2Int bombCoordinates, in Vector2Int direction)
     {
         foreach (Player player in Player.ActivePlayers)
         {
