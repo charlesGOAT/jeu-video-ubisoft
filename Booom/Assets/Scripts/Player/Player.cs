@@ -202,7 +202,7 @@ public class Player : MonoBehaviour
         {
             _characterController.enabled = false;
             this.gameObject.transform.position = otherPortalPosition;
-            _jumpVelocity = CalculateJumpForce(playerDirection, 2.5f, 0.4f);
+            _jumpVelocity = CalculatePortalForce(playerDirection);
             _stateMachine.Trigger(GameConstants.PLAYER_JUMP_TRIGGER);
             _characterController.enabled = true;
         }
@@ -210,25 +210,37 @@ public class Player : MonoBehaviour
 
     private Vector3 CalculateJumpForce(Vector2Int jumpDirection)
     {
-        return CalculateJumpForce(jumpDirection, 3f, 1f);
-    }
-
-    private Vector3 CalculateJumpForce(Vector2Int jumpDirection, float horizontalTiles, float verticalScale)
-    {
         //Formule pour trouver la vitesse initiale quand le sommet du saut est a (Obstacle.ObstacleHeight / 2) + 1 et au demi du trajet
         //position pour gravity 0.5*a*t^2
         float posForGravity = -(Physics.gravity.y / 2) * Mathf.Pow(GameConstants.AIR_STATE_DURATION / 2, 2);
 
         //position pour apogee du saut
-        float jumpHeight = (Obstacle.ObstacleHeight) + 1;
+        float jumpHeight = (Obstacle.ObstacleHeight) + GameConstants.JUMP_HEIGHT_OFFSET;
 
-        float velocityY = (posForGravity + jumpHeight / (GameConstants.AIR_STATE_DURATION / 2)) * verticalScale;
-        float velocityX = (Tile.TileLength * horizontalTiles) / GameConstants.AIR_STATE_DURATION;
+        float velocityY = posForGravity + jumpHeight / (GameConstants.AIR_STATE_DURATION / 2);
+
+        float velocityX = (Tile.TileLength * GameConstants.JUMP_NUMBER_OF_TILES) /(GameConstants.AIR_STATE_DURATION);
         Vector3 jumpInitialVelocity = new(velocityX * jumpDirection.x, velocityY, jumpDirection.y * velocityX);
 
 
         return jumpInitialVelocity;
     }
+
+    private Vector3 CalculatePortalForce(Vector2Int jumpDirection)
+    {
+        //Formule pour trouver la vitesse initiale quand le sommet du saut est a (Obstacle.ObstacleHeight / 2) + 1 et au demi du trajet
+        //position pour gravity 0.5*a*t^2
+        float posForGravity = -(Physics.gravity.y / 2) * Mathf.Pow(GameConstants.PORTAL_AIR_DURATION / 2, 2);
+
+        float velocityY = (posForGravity + GameConstants.PORTAL_JUMP_HEIGHT) / (GameConstants.PORTAL_AIR_DURATION / 2);
+
+        float velocityX = Tile.TileLength / GameConstants.PORTAL_AIR_DURATION;
+        Vector3 jumpInitialVelocity = new(velocityX * jumpDirection.x, velocityY, jumpDirection.y * velocityX);
+
+
+        return jumpInitialVelocity;
+    }
+
 
     public void UpdateJump() 
     {
