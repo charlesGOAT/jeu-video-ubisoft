@@ -6,7 +6,7 @@ public class Tile : MonoBehaviour
 
     public virtual bool IsObstacle => false;
 
-    public static float TileLength => 2;
+    public static float TileLength;
 
     private Renderer _tileRenderer;
 
@@ -33,8 +33,13 @@ public class Tile : MonoBehaviour
         //update vitesse ici?
     }
 
-    void Awake()
+    protected void Awake()
     {
+        if (TileLength == 0) 
+        {
+            TileLength = transform.GetChild(0).localScale.x;
+        }
+
         _tileRenderer = GetComponentInChildren<Renderer>();
         TileCoordinates = GridManagerStategy.WorldToGridCoordinates(transform.position);
 

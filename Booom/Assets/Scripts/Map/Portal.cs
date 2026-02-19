@@ -9,7 +9,6 @@ public class Portal : Tile
 
     public override void StepOnTile(Player player)
     {
-        Debug.Log("ayooo");
         TeleportToOtherPortal(player);
     }
 
