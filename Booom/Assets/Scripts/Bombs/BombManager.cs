@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -15,7 +14,7 @@ public class BombManager : MonoBehaviour
 
     private readonly Dictionary<PlayerEnum, List<Bomb>> _chainedBombsPerPlayer = new (GameConstants.NB_PLAYERS);
 
-    private void Awake()
+    protected virtual void Awake()
     {
         if (bombPrefabs == null)
         {
@@ -29,15 +28,15 @@ public class BombManager : MonoBehaviour
             _chainedBombsPerPlayer.Add((PlayerEnum)i, new());
         }
     }
-
-    public bool CreateBomb(Vector3 position, PlayerEnum playerEnum, BombEnum bombEnum, bool isTransparentBomb = false, bool isChained = false)
+    
+    public virtual bool CreateBomb(Vector3 position, PlayerEnum playerEnum, BombEnum bombEnum,  bool isTransparentBomb = false, bool isChained = false)
     {
         if (Time.time < _nextBombTime[playerEnum] && !isChained)
         {
             return false;
         }
 
-        Vector2Int gridCoordinates = GridManagerStategy.WorldToGridCoordinates(position);
+        Vector2Int gridCoordinates = GridManagerStrategy.WorldToGridCoordinates(position);
         Tile tile = GameManager.Instance.GridManager.GetTileAtCoordinates(gridCoordinates);
 
         if (tile == null || tile.isObstacle || Bomb.IsBombAt(gridCoordinates))
@@ -45,7 +44,7 @@ public class BombManager : MonoBehaviour
             return false;
         }
 
-        Vector3 worldPosition = GridManagerStategy.GridToWorldPosition(gridCoordinates, tile.transform.position.y);
+        Vector3 worldPosition = GridManagerStrategy.GridToWorldPosition(gridCoordinates, tile.transform.position.y);
         bombPrefabs[(int)bombEnum - 1].associatedPlayer = playerEnum;
 
         bombPrefabs[(int)bombEnum - 1].isChainedBomb = isChained;

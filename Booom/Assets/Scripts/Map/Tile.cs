@@ -15,24 +15,24 @@ public class Tile : MonoBehaviour
 
     private Color _neutralColor;
     
-    public void ChangeTileColor(PlayerEnum newOwner) 
+    public virtual void ChangeTileColor(PlayerEnum newOwner) 
     {
         if (CurrentTileOwner != newOwner)
         {
             bool isNoPlayer = newOwner == PlayerEnum.None;
             
-            GameManager.Instance.GridManager.LoseTile(CurrentTileOwner, TileCoordinates);
-            GameManager.Instance.GridManager.AquireNewTile(newOwner, TileCoordinates);
+            GameManager.Instance.ScoreManager.LoseTile(CurrentTileOwner, TileCoordinates);
+            GameManager.Instance.ScoreManager.AcquireNewTile(newOwner, TileCoordinates);
             
             _tileRenderer.material.color = !isNoPlayer ? Player.PlayerColorDict[newOwner] : _neutralColor;
             CurrentTileOwner = newOwner;
         }
     }
 
-    void Awake()
+    protected virtual void Awake()
     {
         _tileRenderer = GetComponentInChildren<Renderer>();
-        TileCoordinates = GridManagerStategy.WorldToGridCoordinates(transform.position);
+        TileCoordinates = GridManagerStrategy.WorldToGridCoordinates(transform.position);
 
         _neutralColor = _tileRenderer.material.color;
     }

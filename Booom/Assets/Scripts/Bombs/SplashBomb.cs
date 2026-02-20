@@ -19,15 +19,15 @@ public class SplashBomb : Bomb
     {
         foreach (var offset in _offsets)
         {
-            PaintTilesSurrounding(_bombCoordinates, offset);
+            PaintTilesSurrounding(offset);
         }
     }
 
-    private void PaintTilesSurrounding(Vector2Int bombCoordinates, Vector2Int offset)
+    private void PaintTilesSurrounding(Vector2Int offset)
     {
-        Vector2Int coords = bombCoordinates + offset;
+        Vector2Int coords = _bombCoordinates + offset;
         
-        Tile bombTile = GameManager.Instance.GridManager.GetTileAtCoordinates(bombCoordinates);
+        Tile bombTile = GameManager.Instance.GridManager.GetTileAtCoordinates(_bombCoordinates);
         Tile tileToPaint = GameManager.Instance.GridManager.GetTileAtCoordinates(coords);
         
         if (bombTile == null || tileToPaint == null || tileToPaint.isObstacle) return;
@@ -36,14 +36,8 @@ public class SplashBomb : Bomb
         PlayerEnum newTileOwner = GameManager.Instance.isSpreadingMode ? currentOwner : associatedPlayer;
 
         tileToPaint.ChangeTileColor(newTileOwner);
-
-        foreach (Player player in Player.ActivePlayers)
-        {
-            Tile playerTile = player.GetPlayerTile();
-            if (playerTile != null && playerTile.TileCoordinates == coords)
-            {
-                player.OnHit(coords - bombCoordinates);
-            }
-        }
+        
+        Vector2Int hitDirection = coords - _bombCoordinates;
+        HitPlayers(coords, hitDirection);
     }
 }

@@ -1,7 +1,4 @@
-﻿
-using System.Collections;
-using System.Threading.Tasks;
-using UnityEngine;
+﻿using System.Threading.Tasks;
 
 public class PaintBrushItem : BaseItem
 {
@@ -12,7 +9,7 @@ public class PaintBrushItem : BaseItem
 
     public void UseItem()
     {
-        var gridPos = GridManagerStategy.WorldToGridCoordinates(_player.gameObject.transform.position);
+        var gridPos = GridManagerStrategy.WorldToGridCoordinates(_player.gameObject.transform.position);
         Tile tile = GameManager.Instance.GridManager.GetTileAtCoordinates(gridPos);
 
         if (tile == null || tile.isObstacle) return;
