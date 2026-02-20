@@ -1,13 +1,10 @@
 ﻿
 public class ChainBombsItem : BombItem
 {
-    private const int MAX_PLACED_BOMBS = 4; // mettre +1 la valeur qu'on veut trust
-
-    public ChainBombsItem()
-    {
-        _maxUseCount = MAX_PLACED_BOMBS;
-    }
-    protected override void UseItemSpecific()
+    public override ItemType ItemType => ItemType.ChainBombs;
+    protected override int maxUseCount => 3;
+    
+    protected override void UseItem()
     {
         _associatedPlayer.isChainingBombs = true;
     }
@@ -18,6 +15,7 @@ public class ChainBombsItem : BombItem
 
     protected override void FinishUsingItemSpecific()
     {
+        _associatedPlayer.OnExplodeChainedBombs -= FinishUsingItem;
         _associatedPlayer.isChainingBombs = false;
     }
 }

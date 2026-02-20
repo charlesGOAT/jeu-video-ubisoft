@@ -7,6 +7,7 @@ using UnityEngine.InputSystem.Interactions;
 public delegate void MoveCalledEventHandler();
 public delegate void PlaceBomb();
 public delegate void ExplodeChainedBombs();
+public delegate void BombExploded();
 
 [RequireComponent(typeof(PlayerItemsManager))]
 [RequireComponent(typeof(Renderer))]
@@ -20,7 +21,7 @@ public class Player : MonoBehaviour
     private Bomb bombPrefab;
 
     [SerializeField]
-    public Color playerColor = Color.red;
+    private Color playerColor = Color.red;
 
     [SerializeField]
     private PlayerEnum playerNb = PlayerEnum.None;
@@ -77,6 +78,7 @@ public class Player : MonoBehaviour
     public event MoveCalledEventHandler OnMoveFunctionCalled;
     public event PlaceBomb OnPlaceBomb;
     public event ExplodeChainedBombs OnExplodeChainedBombs;
+    public event BombExploded OnBombExploded;
 
     private void Awake()
     {
@@ -97,35 +99,37 @@ public class Player : MonoBehaviour
     
     private void Start()
     {
-        //CheckStartConditions();
+        CheckStartConditions();
         if(GameManager.Instance.isSpreadingMode) InitializeSpawner();
     }
 
-    //private void CheckStartConditions()
-    //{
-    //    if (playerNb == PlayerEnum.None)
-    //    {
-    //        throw new Exception("Player cannot be set to PlayerEnum.None");
-    //    }
-
-    //    if (!PlayerColorDict.TryAdd(playerNb, playerColor))
-    //    {
-    //        throw new Exception("Player already exists");
-    //    }
-    //}
+    private void CheckStartConditions()
+    {
+        if (playerNb == PlayerEnum.None)
+        {
+            throw new Exception("Player cannot be set to PlayerEnum.None");
+        }
+    }
 
     private void InitializeSpawner()
     {
-        int intPlayerNb = (int)PlayerNb - 1;
-        bool isMod2Zero = intPlayerNb % 2 == 0;
+        if (GameManager.Instance.GridManager.playerSpawnPoints == null)
+        {
+            int intPlayerNb = (int)PlayerNb - 1;
+            bool isMod2Zero = intPlayerNb % 2 == 0;
         
-        var posY = isMod2Zero
-            ? GameManager.Instance.GridManager.MapUpperLimit.y
-            : GameManager.Instance.GridManager.MapLowerLimit.y;
+            var posY = isMod2Zero
+                ? GameManager.Instance.GridManager.MapUpperLimit.y
+                : GameManager.Instance.GridManager.MapLowerLimit.y;
 
-        int mult = isMod2Zero ? intPlayerNb / 2 : (intPlayerNb + 1) / 2;
-        var coord = new Vector2Int(GameManager.Instance.GridManager.MapUpperLimit.x * mult, posY);
-        GameManager.Instance.GridManager.GetTileAtCoordinates(coord).ChangeTileColor(playerNb);
+            int mult = isMod2Zero ? intPlayerNb / 2 : (intPlayerNb + 1) / 2;
+            var coord = new Vector2Int(GameManager.Instance.GridManager.MapUpperLimit.x * mult, posY);
+            GameManager.Instance.GridManager.GetTileAtCoordinates(coord).ChangeTileColor(playerNb); 
+        }
+        else
+        {
+            GameManager.Instance.GridManager.GetTileAtCoordinates(GameManager.Instance.GridManager.playerSpawnPoints[(int)playerNb - 1]).ChangeTileColor(playerNb); 
+        }
     }
 
     public void OnMove(InputAction.CallbackContext ctx)
@@ -149,7 +153,13 @@ public class Player : MonoBehaviour
         {
             OnPlaceBomb?.Invoke();
             Vector3 bombDirection = _moveInput.sqrMagnitude > 0.0001f ? GetBombPlacementDirection(_moveInput) : _lastInput;
-            GameManager.Instance.BombManager.CreateBomb(transform.position + (bombDirection * Tile.TileLength), playerNb, _currentBombType, _shouldNextBombBeTransparent, isChainingBombs);
+
+            if (GameManager.Instance.BombManager.CreateBomb(transform.position + (bombDirection * Tile.TileLength), playerNb,
+                    _currentBombType, _shouldNextBombBeTransparent, isChainingBombs))
+            {
+                OnBombExploded?.Invoke();
+            }
+                
             _shouldNextBombBeTransparent = false;
         }
         
