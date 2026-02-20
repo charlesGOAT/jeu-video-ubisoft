@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class ScoreManager : MonoBehaviour
 {
@@ -62,18 +63,13 @@ public class ScoreManager : MonoBehaviour
                 equalMax.Clear();
                 equalMax.Add(indexMax);
             }
-            else if (_acquiredTilesByPlayer[i].Count == currentMax)
+            else if (_acquiredTilesByPlayer[i].Count == currentMax && currentMax != 0)
             {
                 equalMax.Add(i);
             }
         }
 
-        if (indexMax == -1)
-        {
-            var random = new System.Random();
-            indexMax = random.Next(0, GameConstants.NB_PLAYERS);
-        }
-        else if (equalMax.Count > 1)
+        if (equalMax.Count > 1)
         {
             var random = new System.Random();
             int ind = random.Next(0, equalMax.Count);
@@ -82,12 +78,9 @@ public class ScoreManager : MonoBehaviour
 
         return (PlayerEnum)(indexMax + 1);
     }
-    
-    public HashSet<Vector2Int> GetPlayerTiles(PlayerEnum player)
-    {
-        if (player == PlayerEnum.None)
-            return new HashSet<Vector2Int>();
 
-        return _acquiredTilesByPlayer[(int)player - 1];
+    public HashSet<Vector2Int>[] GetAcquiredTilesByPlayer()
+    {
+        return _acquiredTilesByPlayer;
     }
 }

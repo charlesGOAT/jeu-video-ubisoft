@@ -16,7 +16,7 @@ public abstract class GridManagerStrategy : MonoBehaviour
     [SerializeField]
     protected Camera mainCamera;
 
-    public Tile GetTileAtCoordinates(Vector2Int vector2Int)
+    public virtual Tile GetTileAtCoordinates(Vector2Int vector2Int)
     {
         _tiles.TryGetValue(vector2Int, out Tile tile);
         return tile;
@@ -67,6 +67,35 @@ public abstract class GridManagerStrategy : MonoBehaviour
         var rand = new System.Random();
         int ind = rand.Next(0, _tiles.Count);
         return GridToWorldPosition(_tiles.Keys.ToArray()[ind]);
+    }
+    
+    public HashSet<Vector2Int> GetPlayerTiles(PlayerEnum player)
+    {
+        if (player == PlayerEnum.None)
+            return new HashSet<Vector2Int>();
+        
+        var acquiredTiles = GameManager.Instance.ScoreManager.GetAcquiredTilesByPlayer();
+
+        return acquiredTiles[(int)player - 1];
+    }
+    
+    private HashSet<Vector2Int> GetAllTilesOwned()
+    {
+        HashSet<Vector2Int> allTilesOwned = new();
+        var acquiredTiles = GameManager.Instance.ScoreManager.GetAcquiredTilesByPlayer();
+        
+        foreach (var list in acquiredTiles)
+        {
+            allTilesOwned.UnionWith(list);
+        }
+
+        return allTilesOwned;
+    }
+
+    private IEnumerable<Vector2Int> GetAllTilesNotOwned()
+    {
+        HashSet<Vector2Int> allTilesOwned = GetAllTilesOwned();
+        return _tiles.Keys.Except(allTilesOwned);
     }
 }
 

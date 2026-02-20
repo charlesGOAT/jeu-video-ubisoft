@@ -26,7 +26,7 @@ public class Player : MonoBehaviour
     private PlayerItemsManager playerItemsManager;
 
     [SerializeField]
-    private int knockbackForce = 20;
+    private int knockbackForce = 10;
 
     [SerializeField]
     private int hitFlickerFrequency = 50;
