@@ -14,5 +14,6 @@
     public const float JUMP_HEIGHT_OFFSET = 2.5f;
     public const float JUMP_NUMBER_OF_TILES = 3.65f;
     public const float PORTAL_JUMP_HEIGHT = 1.0f;
-    public const int ELIMS_TO_WIN = 10;
+    public const int ELIMS_TO_WIN = 5;
+    public const float GAME_DURATION = 120f;
 }

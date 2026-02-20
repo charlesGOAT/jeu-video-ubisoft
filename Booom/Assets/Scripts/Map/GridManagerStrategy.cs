@@ -42,7 +42,7 @@ public abstract class GridManagerStrategy : MonoBehaviour
     private void Awake()
     {
         CreateGrid();
-        capturableTilesCount = _tiles.Count; //todo fix this shit
+        capturableTilesCount = _tiles.Select(tile => !tile.Value.IsObstacle).Count();
         PositionCamera();
     }
 

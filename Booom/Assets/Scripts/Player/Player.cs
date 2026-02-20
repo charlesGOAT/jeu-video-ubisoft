@@ -20,7 +20,7 @@ public class Player : MonoBehaviour
     private Bomb bombPrefab;
 
     [SerializeField]
-    public Color playerColor = Color.red;
+    private Color playerColor = Color.red;
 
     [SerializeField]
     private PlayerEnum playerNb = PlayerEnum.None;
@@ -106,11 +106,6 @@ public class Player : MonoBehaviour
         if (playerNb == PlayerEnum.None)
         {
             throw new Exception("Player cannot be set to PlayerEnum.None");
-        }
-
-        if (!PlayerColorDict.TryAdd(playerNb, playerColor))
-        {
-            throw new Exception("Player already exists");
         }
     }
 
