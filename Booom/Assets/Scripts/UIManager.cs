@@ -18,8 +18,8 @@ public class UIManager : MonoBehaviour
 
     private void OnEnable()
     {
-        // GameManager.Instance.ScoreManager.OnScoreChanged += Refresh;
-        // PlayerInputManager.instance.onPlayerJoined += AddPlayer;
+         //GameManager.Instance.ScoreManager.OnScoreChanged += Refresh;
+         //PlayerInputManager.instance.onPlayerJoined += AddPlayer;
     }
 
     private void OnDisable()

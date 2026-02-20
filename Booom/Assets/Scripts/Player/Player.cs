@@ -97,22 +97,22 @@ public class Player : MonoBehaviour
     
     private void Start()
     {
-        CheckStartConditions();
+        //CheckStartConditions();
         if(GameManager.Instance.isSpreadingMode) InitializeSpawner();
     }
 
-    private void CheckStartConditions()
-    {
-        if (playerNb == PlayerEnum.None)
-        {
-            throw new Exception("Player cannot be set to PlayerEnum.None");
-        }
+    //private void CheckStartConditions()
+    //{
+    //    if (playerNb == PlayerEnum.None)
+    //    {
+    //        throw new Exception("Player cannot be set to PlayerEnum.None");
+    //    }
 
-        if (!PlayerColorDict.TryAdd(playerNb, playerColor))
-        {
-            throw new Exception("Player already exists");
-        }
-    }
+    //    if (!PlayerColorDict.TryAdd(playerNb, playerColor))
+    //    {
+    //        throw new Exception("Player already exists");
+    //    }
+    //}
 
     private void InitializeSpawner()
     {

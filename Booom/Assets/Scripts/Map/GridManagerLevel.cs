@@ -4,18 +4,26 @@ public class GridManagerLevel : GridManagerStrategy
 {
     protected override void CreateGrid()
     {
-        foreach (Tile tile in FindObjectsByType<Tile>(FindObjectsSortMode.None))
+        foreach (Tile tile in FindObjectsByType<Tile>(FindObjectsInactive.Include, FindObjectsSortMode.None))
         {
-            _tiles[tile.TileCoordinates] = tile;
+            Vector2Int tileCoordinates = WorldToGridCoordinates(tile.transform.position);
 
-            if (tile.TileCoordinates.x > MapUpperLimit.x || tile.TileCoordinates.y > MapUpperLimit.y)
+            if (_tiles.ContainsKey(tileCoordinates))
             {
-                MapUpperLimit = tile.TileCoordinates;
+                Debug.LogWarning($"Duplicate tile coordinates detected at {tileCoordinates} between '{_tiles[tileCoordinates].name}' and '{tile.name}'. Keeping the first tile.");
+                continue;
             }
 
-            if (tile.TileCoordinates.x < MapLowerLimit.x || tile.TileCoordinates.y < MapLowerLimit.y)
+            _tiles[tileCoordinates] = tile;
+
+            if (tileCoordinates.x > MapUpperLimit.x || tileCoordinates.y > MapUpperLimit.y)
             {
-                MapLowerLimit = tile.TileCoordinates;
+                MapUpperLimit = tileCoordinates;
+            }
+
+            if (tileCoordinates.x < MapLowerLimit.x || tileCoordinates.y < MapLowerLimit.y)
+            {
+                MapLowerLimit = tileCoordinates;
             }
         }
 

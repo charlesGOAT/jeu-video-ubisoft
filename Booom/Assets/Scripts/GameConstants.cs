@@ -12,7 +12,7 @@
     public const float AIR_STATE_DURATION = 2.0f;
     public const float PORTAL_AIR_DURATION = 1.0f;
     public const float JUMP_HEIGHT_OFFSET = 2.5f;
-    public const float JUMP_NUMBER_OF_TILES = 3.65f;
+    public const float JUMP_NUMBER_OF_TILES = 2.7f;
     public const float PORTAL_JUMP_HEIGHT = 1.0f;
     public const int ELIMS_TO_WIN = 10;
 }
