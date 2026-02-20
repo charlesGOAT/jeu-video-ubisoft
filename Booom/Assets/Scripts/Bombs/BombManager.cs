@@ -29,11 +29,12 @@ public class BombManager : MonoBehaviour
         }
     }
 
-    public virtual void CreateBomb(Vector3 position, PlayerEnum playerEnum, BombEnum bombEnum, bool isTransparentBomb = false, bool isChained = false)
+
+    public bool CreateBomb(Vector3 position, PlayerEnum playerEnum, BombEnum bombEnum, bool isTransparentBomb = false, bool isChained = false)
     {
-        if (Time.time < _nextBombTime[playerEnum])
+        if (Time.time < _nextBombTime[playerEnum] && !isChained)
         {
-            return;
+            return false;
         }
         Vector3 bombHeight = Vector3.up * position.y;
         Vector2Int gridCoordinates = GridManagerStrategy.WorldToGridCoordinates(position);
@@ -41,7 +42,7 @@ public class BombManager : MonoBehaviour
 
         if (tile == null || tile.IsObstacle || Bomb.IsBombAt(gridCoordinates))
         {
-            return;
+            return false;
         }
 
         Vector3 worldPosition = GridManagerStrategy.GridToWorldPosition(gridCoordinates, tile.transform.position.y);
@@ -55,6 +56,8 @@ public class BombManager : MonoBehaviour
             _chainedBombsPerPlayer[playerEnum].Add(instantiatedBomb);
 
         _nextBombTime[playerEnum] = Time.time + bombCooldown;
+
+        return true;
     }
 
     public void ExplodeChainedBombs(PlayerEnum player)

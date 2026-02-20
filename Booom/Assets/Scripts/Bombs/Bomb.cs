@@ -112,14 +112,14 @@ public class Bomb : MonoBehaviour
             {
                 return;
             }
-
+            
             if (tile.IsObstacle)
             {
                 if (!isTransparentBomb)
                 {
                     return;
                 }
-
+                
                 bombCoordinates += direction;
                 continue;
             }
