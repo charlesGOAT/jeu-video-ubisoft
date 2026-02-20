@@ -40,7 +40,7 @@ public abstract class GridManagerStategy : MonoBehaviour
         );
     }
 
-    private void Start()
+    private void Awake()
     {
         CreateGrid();
         PositionCamera();

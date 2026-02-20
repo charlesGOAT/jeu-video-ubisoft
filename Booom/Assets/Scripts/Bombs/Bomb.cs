@@ -77,41 +77,57 @@ public class Bomb : MonoBehaviour
 
     protected virtual void PaintTiles()
     {
-        foreach (var direction in _directions)
-        {
-            PaintTilesForDirection(_bombCoordinates, direction);
-        }
-    }
-    
-    private void PaintTilesForDirection(Vector2Int bombCoordinates, Vector2Int direction)
-    {
-        Tile bombTile = GameManager.Instance.GridManager.GetTileAtCoordinates(bombCoordinates);
+
+        Tile bombTile = GameManager.Instance.GridManager.GetTileAtCoordinates(_bombCoordinates);
         if (bombTile == null) return;
         PlayerEnum currentOwner = bombTile.CurrentTileOwner;
 
         PlayerEnum newTileOwner = GameManager.Instance.isSpreadingMode ? currentOwner : associatedPlayer;
-        
-        for (int rangeCounter = 0; rangeCounter <= explosionRange; ++rangeCounter)
-        {
-            Tile tile = GameManager.Instance.GridManager.GetTileAtCoordinates(bombCoordinates);
+        PaintTile(_bombCoordinates,Vector2Int.zero, newTileOwner);
 
-            if (tile == null || tile.isObstacle)
+        foreach (var direction in _directions)
+        {
+            PaintTilesForDirection(_bombCoordinates, direction, newTileOwner);
+        }
+    }
+    
+    private void PaintTilesForDirection(Vector2Int bombCoordinates, in Vector2Int direction, PlayerEnum newTileOwner)
+    {
+        for (int rangeCounter = 1; rangeCounter <= explosionRange; ++rangeCounter)
+        {
+            bombCoordinates += direction;
+            
+            bool flowControl = PaintTile(bombCoordinates, direction, newTileOwner);
+            if (!flowControl)
             {
                 return;
             }
+        }
+    }
 
-            tile.ChangeTileColor(newTileOwner);
+    private bool PaintTile(in Vector2Int bombCoordinates, in Vector2Int direction, PlayerEnum newTileOwner)
+    {
+        Tile tile = GameManager.Instance.GridManager.GetTileAtCoordinates(bombCoordinates);
 
-            foreach (Player player in Player.ActivePlayers)
+        if (tile == null || tile.isObstacle)
+        {
+            return false;
+        }
+
+        tile.ChangeTileColor(newTileOwner);
+        HitPlayers(bombCoordinates, direction);
+        return true;
+    }
+
+    private void HitPlayers(in Vector2Int bombCoordinates, in Vector2Int direction)
+    {
+        foreach (Player player in Player.ActivePlayers)
+        {
+            Tile playerTile = player.GetPlayerTile();
+            if (playerTile != null && playerTile.TileCoordinates == bombCoordinates)
             {
-                Tile playerTile = player.GetPlayerTile();
-                if (playerTile != null && playerTile.TileCoordinates == bombCoordinates)
-                {
-                    player.OnHit(direction);
-                }
+                player.OnHit(direction);
             }
-
-            bombCoordinates += direction;
         }
     }
 

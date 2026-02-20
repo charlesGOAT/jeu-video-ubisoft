@@ -9,6 +9,8 @@ public class Tile : MonoBehaviour
     [SerializeField]
     public bool isObstacle = false;
 
+    public static float TileLength { get; private set; }
+
     private Renderer _tileRenderer;
 
     public PlayerEnum CurrentTileOwner { get; private set; } = PlayerEnum.None;
@@ -31,6 +33,11 @@ public class Tile : MonoBehaviour
 
     protected virtual void Awake()
     {
+        if (TileLength == 0) 
+        {
+            TileLength = this.transform.GetChild(0).localScale.x;
+        }
+
         _tileRenderer = GetComponentInChildren<Renderer>();
         TileCoordinates = GridManagerStategy.WorldToGridCoordinates(transform.position);
 

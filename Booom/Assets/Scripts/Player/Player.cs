@@ -38,6 +38,7 @@ public class Player : MonoBehaviour
     private Renderer _renderer;
 
     private Vector2 _moveInput;
+    private Vector3 _lastInput;
     private BombEnum _currentBombType = BombEnum.NormalBomb;
 
     private int _bombTypeCount;
@@ -118,13 +119,18 @@ public class Player : MonoBehaviour
     public void OnMove(InputAction.CallbackContext ctx)
     {
         _moveInput = ctx.ReadValue<Vector2>();
+        if (_moveInput != Vector2.zero) 
+        {
+            _lastInput = GetBombPlacementDirection(_moveInput);
+        }
     }
 
     public void OnBomb(InputAction.CallbackContext ctx)
     {
         if (ctx.performed)
         {
-            GameManager.Instance.BombManager.CreateBomb(transform.position, playerNb, _currentBombType);
+            Vector3 bombDirection = _moveInput.sqrMagnitude > 0.0001f ? GetBombPlacementDirection(_moveInput) : _lastInput;
+            GameManager.Instance.BombManager.CreateBomb(transform.position + (bombDirection * Tile.TileLength), playerNb, _currentBombType);
         }
     }
 
@@ -187,7 +193,7 @@ public class Player : MonoBehaviour
     {
         Vector2 curMoveInput = _moveInput.normalized;
 
-        float boost = CheckIfOnOwnColor() ? GameConstants.COLOR_BOOST : 1;
+        float boost = CheckIfOnOwnColor() ? GameConstants.COLOR_BOOST : (CheckIfOnEnemyTerritory() ? GameConstants.COLOR_DEBUFF: 1);
 
         Vector3 move = new Vector3(curMoveInput.y, 0, -curMoveInput.x) * (speed * boost);
 
@@ -245,7 +251,59 @@ public class Player : MonoBehaviour
         return tile.CurrentTileOwner == playerNb;
     }
 
+    private bool CheckIfOnEnemyTerritory() 
+    {
+        Vector2Int gridCoordinates = GridManagerStategy.WorldToGridCoordinates(transform.position);
+        Tile tile = GameManager.Instance.GridManager.GetTileAtCoordinates(gridCoordinates);
+        if (tile == null)
+        {
+            return false;
+        }
+
+        return tile.CurrentTileOwner != playerNb && tile.CurrentTileOwner != PlayerEnum.None;
+    }
+
     public Tile GetPlayerTile() => GameManager.Instance.GridManager.GetTileAtCoordinates(GridManagerStategy.WorldToGridCoordinates(transform.position));
+
+    private Vector3 GetBombPlacementDirection(Vector2 input)
+    {
+        //a cause de la camera les inputs sont weird
+        Vector3 worldDirection = new(input.y, 0f, -input.x);
+        float absX = Mathf.Abs(worldDirection.x);
+        float absZ = Mathf.Abs(worldDirection.z);
+
+        if (absX < 0.001f && absZ < 0.001f)
+        {
+            return _lastInput;
+        }
+
+        if (absX < 0.001f)
+        {
+            return new Vector3(0f, 0f, Mathf.Sign(worldDirection.z));
+        }
+
+        if (absZ < 0.001f)
+        {
+            return new Vector3(Mathf.Sign(worldDirection.x), 0f, 0f);
+        }
+
+        Vector3 xCandidate = new(Mathf.Sign(worldDirection.x), 0f, 0f);
+        Vector3 zCandidate = new(0f, 0f, Mathf.Sign(worldDirection.z));
+
+        Vector3 intendedTarget = transform.position + worldDirection.normalized * Tile.TileLength;
+        Vector3 xTarget = transform.position + xCandidate * Tile.TileLength;
+        Vector3 zTarget = transform.position + zCandidate * Tile.TileLength;
+
+        float xDistance = (intendedTarget - xTarget).sqrMagnitude;
+        float zDistance = (intendedTarget - zTarget).sqrMagnitude;
+
+        if (Mathf.Abs(xDistance - zDistance) <= 0.0001f)
+        {
+            return absX >= absZ ? xCandidate : zCandidate;
+        }
+
+        return xDistance < zDistance ? xCandidate : zCandidate;
+    }
 
     private void InitializeStateMachine()
     {
