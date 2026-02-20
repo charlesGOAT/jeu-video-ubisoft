@@ -3330,6 +3330,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c958c5a9dfd264d4098046c6d10b0ebd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GridManagerDemo
+  capturableTilesCount: 0
   mainCamera: {fileID: 722509299}
   demoWidth: 10
   demoHeight: 10
@@ -3707,6 +3708,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1152522418201534996, guid: a6a36da4cbd727d41b82c9941cc107ac, type: 3}
+      propertyPath: spawnMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1462128113699712619, guid: a6a36da4cbd727d41b82c9941cc107ac, type: 3}
+      propertyPath: timeBetweenSpawns
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 2483793299209764977, guid: a6a36da4cbd727d41b82c9941cc107ac, type: 3}
+      propertyPath: fixedPosList.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2483793299209764977, guid: a6a36da4cbd727d41b82c9941cc107ac, type: 3}
+      propertyPath: fixedPosList.Array.data[0].x
+      value: -1
+      objectReference: {fileID: 0}
     - target: {fileID: 6342508757352982611, guid: a6a36da4cbd727d41b82c9941cc107ac, type: 3}
       propertyPath: m_Name
       value: ItemsManager
@@ -10063,6 +10080,63 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 9017637209094971560, guid: 48d0be96f349ccc4983f8cc4ead433ad, type: 3}
   m_PrefabInstance: {fileID: 1730625866}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &1168197097
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4622466783874199105, guid: 06b21fc583d65094cb2f86517a5a4855, type: 3}
+      propertyPath: m_Name
+      value: ScoreManager
+      objectReference: {fileID: 0}
+    - target: {fileID: 9133874978224438919, guid: 06b21fc583d65094cb2f86517a5a4855, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.6139
+      objectReference: {fileID: 0}
+    - target: {fileID: 9133874978224438919, guid: 06b21fc583d65094cb2f86517a5a4855, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.05
+      objectReference: {fileID: 0}
+    - target: {fileID: 9133874978224438919, guid: 06b21fc583d65094cb2f86517a5a4855, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -2.55649
+      objectReference: {fileID: 0}
+    - target: {fileID: 9133874978224438919, guid: 06b21fc583d65094cb2f86517a5a4855, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9133874978224438919, guid: 06b21fc583d65094cb2f86517a5a4855, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9133874978224438919, guid: 06b21fc583d65094cb2f86517a5a4855, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9133874978224438919, guid: 06b21fc583d65094cb2f86517a5a4855, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9133874978224438919, guid: 06b21fc583d65094cb2f86517a5a4855, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9133874978224438919, guid: 06b21fc583d65094cb2f86517a5a4855, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9133874978224438919, guid: 06b21fc583d65094cb2f86517a5a4855, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 06b21fc583d65094cb2f86517a5a4855, type: 3}
 --- !u!1 &1170488413
 GameObject:
   m_ObjectHideFlags: 0
@@ -16975,6 +17049,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ccf427dc7e39e7c4a92ea4b407453d68, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GridManagerLevel
+  capturableTilesCount: 0
   mainCamera: {fileID: 722509299}
 --- !u!4 &1884964991 stripped
 Transform:
@@ -19556,3 +19631,4 @@ SceneRoots:
   - {fileID: 1170488415}
   - {fileID: 1134043638}
   - {fileID: 397838997}
+  - {fileID: 1168197097}
