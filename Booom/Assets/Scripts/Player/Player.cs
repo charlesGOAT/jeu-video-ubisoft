@@ -94,11 +94,6 @@ public class Player : MonoBehaviour
         {
             throw new Exception("Player cannot be set to PlayerEnum.None");
         }
-
-        if (!PlayerColorDict.TryAdd(playerNb, playerColor))
-        {
-            throw new Exception("Player already exists");
-        }
     }
 
     private void InitializeSpawner()

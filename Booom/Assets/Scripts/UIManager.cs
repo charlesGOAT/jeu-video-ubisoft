@@ -12,27 +12,25 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private TMP_Text leaderboard;
 
-    private Dictionary<PlayerEnum, ScorePlayer> _scorePerPlayer = new ();
-    private bool _spreadMode = false;
+    private readonly Dictionary<PlayerEnum, ScorePlayer> _scorePerPlayer = new ();
     private string _statTracked = "Eliminations";
+    
+    private readonly List<KeyValuePair<PlayerEnum, ScorePlayer>> _sortedPlayerScores = new();
 
     private void OnEnable()
     {
-        // GameManager.Instance.ScoreManager.OnScoreChanged += Refresh;
-        // PlayerInputManager.instance.onPlayerJoined += AddPlayer;
+        GameManager.Instance.ScoreManager.OnScoreChanged += Refresh;
     }
 
     private void OnDisable()
     {
-        // GameManager.Instance.ScoreManager.OnScoreChanged -= Refresh;
+        GameManager.Instance.ScoreManager.OnScoreChanged -= Refresh;
         PlayerInputManager.instance.onPlayerJoined -= AddPlayer;
     }
 
     private void Start()
     {
-        _spreadMode = GameManager.Instance.isSpreadingMode;
-        
-        if (_spreadMode)
+        if (GameManager.Instance.isSpreadingMode)
             _statTracked = "Number of tiles owned";
         
         leaderboard.text = _statTracked;
@@ -55,7 +53,7 @@ public class UIManager : MonoBehaviour
                     Player.PlayerColorDict[PlayerEnum.Player3] = Color.blue;
                     break;
                 case 3:
-                    Player.PlayerColorDict[PlayerEnum.Player2] = Color.yellow;
+                    Player.PlayerColorDict[PlayerEnum.Player4] = Color.yellow;
                     break;
                 default:
                     throw new Exception("Player Input Manager tried to create invalid Player");
@@ -74,21 +72,33 @@ public class UIManager : MonoBehaviour
         {
             var scorePlayer = Instantiate(scorePlayerPrefab, leaderboard.transform);
             scorePlayer.SetColor(c);
-                
-            RectTransform textTrans = scorePlayer.GetComponentInChildren<RectTransform>();
-            Vector2 newPos = textTrans.anchoredPosition;
-            newPos.y = - (60f + (int)(playerEnum - 1) * 50f);
-            Debug.Log(newPos.y);
-                
-            textTrans.anchoredPosition = newPos;
-                
             scorePlayer.UpdateScore(0);
             _scorePerPlayer[playerEnum] = scorePlayer;
+            
+            SortLeaderboard();
         }
     }
 
     private void Refresh(PlayerEnum player, int score)
     {
         _scorePerPlayer[player].UpdateScore(score);
+        
+        SortLeaderboard();
+    }
+    
+    private void SortLeaderboard()
+    {
+        _sortedPlayerScores.Clear();
+        _sortedPlayerScores.AddRange(_scorePerPlayer);
+        _sortedPlayerScores.Sort((p1, p2) => p1.Value.currentScore.CompareTo(p2.Value.currentScore));
+
+        for (int i = 0; i < _sortedPlayerScores.Count; i++)
+        {
+            RectTransform rect = _sortedPlayerScores[i].Value.rectTransform;
+
+            Vector2 newPos = rect.anchoredPosition;
+            newPos.y = -(60f + i * 50f);
+            rect.anchoredPosition = newPos;
+        }
     }
 }
