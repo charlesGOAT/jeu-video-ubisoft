@@ -291,7 +291,7 @@ public class Player : MonoBehaviour
 
         _characterController.Move(move * Time.deltaTime);
         _characterController.Move(Vector3.down * Math.Abs(tempMove));
-        OnMoveFunctionCalled?.Invoke(this);
+        OnMoveFunctionCalled?.Invoke();
     }
 
     //Peut etre faire une meilleure fonction
@@ -309,11 +309,6 @@ public class Player : MonoBehaviour
             tempMove = (0.5f * Physics.gravity.y * Time.deltaTime * Time.deltaTime) + (currentVerticalVelocity * Time.deltaTime);
             currentVerticalVelocity += Physics.gravity.y * Time.deltaTime;
         }
-
-        move.y = _verticalVelocity;
-        
-        _characterController.Move(move * Time.deltaTime);
-        OnMoveFunctionCalled?.Invoke();
 
         return tempMove;
     }

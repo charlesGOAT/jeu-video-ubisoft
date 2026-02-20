@@ -115,7 +115,7 @@ public class Bomb : MonoBehaviour
                 return;
             }
 
-            if (tile.isObstacle && isTransparentBomb)
+            if (tile.IsObstacle && isTransparentBomb)
                 continue;
 
             tile.ChangeTileColor(newTileOwner);

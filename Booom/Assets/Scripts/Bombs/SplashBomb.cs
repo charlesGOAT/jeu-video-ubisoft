@@ -19,6 +19,7 @@ public class SplashBomb : Bomb
     {
         Tile bombTile = GameManager.Instance.GridManager.GetTileAtCoordinates(_bombCoordinates);
         if (bombTile == null) return;
+    }
 
     private void PaintTilesSurrounding(Vector2Int bombCoordinates, Vector2Int offset)
     {
@@ -27,14 +28,14 @@ public class SplashBomb : Bomb
         Tile bombTile = GameManager.Instance.GridManager.GetTileAtCoordinates(bombCoordinates);
         Tile tileToPaint = GameManager.Instance.GridManager.GetTileAtCoordinates(coords);
         
-        if (bombTile == null || tileToPaint == null || tileToPaint.isObstacle) return;
+        if (bombTile == null || tileToPaint == null || tileToPaint.IsObstacle) return;
         
         PlayerEnum currentOwner = bombTile.CurrentTileOwner;
         PlayerEnum newTileOwner = GameManager.Instance.isSpreadingMode ? currentOwner : associatedPlayer;
 
-        foreach (var offset in _offsets)
+        foreach (var offsetInOffset in _offsets)
         {
-            PaintTilesSurrounding(_bombCoordinates, offset, newTileOwner);
+            PaintTilesSurrounding(_bombCoordinates, offsetInOffset, newTileOwner);
         }
     }
 
