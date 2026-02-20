@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.Mathematics;
 using UnityEngine;
 
 public class ItemSpawner : MonoBehaviour
@@ -116,7 +115,7 @@ public class ItemSpawner : MonoBehaviour
 
     protected void InstantiateItem(in Vector3 pos)
     {
-        Instantiate(itemPrefab, pos, quaternion.identity);
+        Instantiate(itemPrefab, pos, Quaternion.identity);
         NbItemsOnMap++;
     }
 }
