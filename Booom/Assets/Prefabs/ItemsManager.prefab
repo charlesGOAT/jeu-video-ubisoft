@@ -11,6 +11,8 @@ GameObject:
   - component: {fileID: 6413393087208067349}
   - component: {fileID: 1152522418201534996}
   - component: {fileID: 2483793299209764977}
+  - component: {fileID: 6732902544355015788}
+  - component: {fileID: 1462128113699712619}
   m_Layer: 0
   m_Name: ItemsManager
   m_TagString: Untagged
@@ -64,3 +66,40 @@ MonoBehaviour:
   timeBetweenSpawns: 5
   fixedPosList: []
   itemPrefab: {fileID: 4617351842077654283, guid: 6b17d8918ffb9d848b9ca02884783f97, type: 3}
+  shadow: {fileID: 7094831668357091440, guid: 792934cba3e79694c89f39918923c806, type: 3}
+--- !u!114 &6732902544355015788
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6342508757352982611}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 604fac95f3534a54bf8b04e792ec930f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ItemSpawner
+  associatedItemType: 1
+  maxItems: 3
+  timeBetweenSpawns: 10
+  fixedPosList: []
+  itemPrefab: {fileID: 4617351842077654283, guid: d4b2bfba77b399d4195a2c8e7aff591b, type: 3}
+  shadow: {fileID: 7094831668357091440, guid: 792934cba3e79694c89f39918923c806, type: 3}
+--- !u!114 &1462128113699712619
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6342508757352982611}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 604fac95f3534a54bf8b04e792ec930f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ItemSpawner
+  associatedItemType: 2
+  maxItems: 2
+  timeBetweenSpawns: 1
+  fixedPosList: []
+  itemPrefab: {fileID: 4617351842077654283, guid: b540ad8f9c075e04697c73bfdc158273, type: 3}
+  shadow: {fileID: 7094831668357091440, guid: 792934cba3e79694c89f39918923c806, type: 3}

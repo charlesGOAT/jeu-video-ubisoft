@@ -20,6 +20,15 @@ public class SplashBomb : Bomb
         Tile bombTile = GameManager.Instance.GridManager.GetTileAtCoordinates(_bombCoordinates);
         if (bombTile == null) return;
 
+    private void PaintTilesSurrounding(Vector2Int bombCoordinates, Vector2Int offset)
+    {
+        Vector2Int coords = bombCoordinates + offset;
+        
+        Tile bombTile = GameManager.Instance.GridManager.GetTileAtCoordinates(bombCoordinates);
+        Tile tileToPaint = GameManager.Instance.GridManager.GetTileAtCoordinates(coords);
+        
+        if (bombTile == null || tileToPaint == null || tileToPaint.isObstacle) return;
+        
         PlayerEnum currentOwner = bombTile.CurrentTileOwner;
         PlayerEnum newTileOwner = GameManager.Instance.isSpreadingMode ? currentOwner : associatedPlayer;
 
