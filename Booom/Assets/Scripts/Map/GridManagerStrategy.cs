@@ -15,6 +15,9 @@ public abstract class GridManagerStrategy : MonoBehaviour
 
     [SerializeField]
     protected Camera mainCamera;
+    
+    [SerializeField] 
+    public Vector2Int[] playerSpawnPoints;
 
     public virtual Tile GetTileAtCoordinates(Vector2Int vector2Int)
     {

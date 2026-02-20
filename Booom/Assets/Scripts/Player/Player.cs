@@ -116,16 +116,23 @@ public class Player : MonoBehaviour
 
     private void InitializeSpawner()
     {
-        int intPlayerNb = (int)PlayerNb - 1;
-        bool isMod2Zero = intPlayerNb % 2 == 0;
+        if (GameManager.Instance.GridManager.playerSpawnPoints == null)
+        {
+            int intPlayerNb = (int)PlayerNb - 1;
+            bool isMod2Zero = intPlayerNb % 2 == 0;
         
-        var posY = isMod2Zero
-            ? GameManager.Instance.GridManager.MapUpperLimit.y
-            : GameManager.Instance.GridManager.MapLowerLimit.y;
+            var posY = isMod2Zero
+                ? GameManager.Instance.GridManager.MapUpperLimit.y
+                : GameManager.Instance.GridManager.MapLowerLimit.y;
 
-        int mult = isMod2Zero ? intPlayerNb / 2 : (intPlayerNb + 1) / 2;
-        var coord = new Vector2Int(GameManager.Instance.GridManager.MapUpperLimit.x * mult, posY);
-        GameManager.Instance.GridManager.GetTileAtCoordinates(coord).ChangeTileColor(playerNb);
+            int mult = isMod2Zero ? intPlayerNb / 2 : (intPlayerNb + 1) / 2;
+            var coord = new Vector2Int(GameManager.Instance.GridManager.MapUpperLimit.x * mult, posY);
+            GameManager.Instance.GridManager.GetTileAtCoordinates(coord).ChangeTileColor(playerNb); 
+        }
+        else
+        {
+            GameManager.Instance.GridManager.GetTileAtCoordinates(GameManager.Instance.GridManager.playerSpawnPoints[(int)playerNb - 1]).ChangeTileColor(playerNb); 
+        }
     }
 
     public void OnMove(InputAction.CallbackContext ctx)
