@@ -17,7 +17,7 @@ public class Player : MonoBehaviour
     private Bomb bombPrefab;
 
     [SerializeField]
-    public Color playerColor = Color.red;
+    private Color playerColor = Color.red;
 
     [SerializeField]
     private PlayerEnum playerNb = PlayerEnum.None;
