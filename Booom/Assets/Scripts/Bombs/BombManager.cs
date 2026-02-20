@@ -30,7 +30,7 @@ public class BombManager : MonoBehaviour
     }
 
 
-    public bool CreateBomb(Vector3 position, PlayerEnum playerEnum, BombEnum bombEnum, bool isTransparentBomb = false, bool isChained = false)
+    public virtual bool CreateBomb(Vector3 position, PlayerEnum playerEnum, BombEnum bombEnum, bool isTransparentBomb = false, bool isChained = false)
     {
         if (Time.time < _nextBombTime[playerEnum] && !isChained)
         {
