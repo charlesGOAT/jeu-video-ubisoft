@@ -1,7 +1,7 @@
 ﻿
 public class ChainBombsItem : BombItem
 {
-    private const int MAX_PLACED_BOMBS = 3;
+    private const int MAX_PLACED_BOMBS = 4; // mettre +1 la valeur qu'on veut trust
 
     public ChainBombsItem()
     {
