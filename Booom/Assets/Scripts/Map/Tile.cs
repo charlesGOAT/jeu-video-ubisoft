@@ -21,8 +21,8 @@ public class Tile : MonoBehaviour
         {
             bool isNoPlayer = newOwner == PlayerEnum.None;
             
-            GameManager.Instance.GridManager.LoseTile(CurrentTileOwner, TileCoordinates);
-            GameManager.Instance.GridManager.AquireNewTile(newOwner, TileCoordinates);
+            GameManager.Instance.ScoreManager.LoseTile(CurrentTileOwner, TileCoordinates);
+            GameManager.Instance.ScoreManager.AcquireNewTile(newOwner, TileCoordinates);
             
             _tileRenderer.material.color = !isNoPlayer ? Player.PlayerColorDict[newOwner] : _neutralColor;
             CurrentTileOwner = newOwner;
@@ -32,7 +32,7 @@ public class Tile : MonoBehaviour
     protected virtual void Awake()
     {
         _tileRenderer = GetComponentInChildren<Renderer>();
-        TileCoordinates = GridManagerStategy.WorldToGridCoordinates(transform.position);
+        TileCoordinates = GridManagerStrategy.WorldToGridCoordinates(transform.position);
 
         _neutralColor = _tileRenderer.material.color;
     }

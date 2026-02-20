@@ -35,7 +35,7 @@ public class CoordinateLabeler : MonoBehaviour
 
     private void DisplayCoordinates() 
     {
-        _coordinates = GridManagerStategy.WorldToGridCoordinates(transform.parent.position);
+        _coordinates = GridManagerStrategy.WorldToGridCoordinates(transform.parent.position);
         _label.color = color;
         _label.text = _coordinates.ToString();
     }

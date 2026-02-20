@@ -33,7 +33,7 @@ public class BombManager : MonoBehaviour
             return;
         }
 
-        Vector2Int gridCoordinates = GridManagerStategy.WorldToGridCoordinates(position);
+        Vector2Int gridCoordinates = GridManagerStrategy.WorldToGridCoordinates(position);
         Tile tile = GameManager.Instance.GridManager.GetTileAtCoordinates(gridCoordinates);
 
         if (tile == null || tile.isObstacle || Bomb.IsBombAt(gridCoordinates))
@@ -41,7 +41,7 @@ public class BombManager : MonoBehaviour
             return;
         }
 
-        Vector3 worldPosition = GridManagerStategy.GridToWorldPosition(gridCoordinates, tile.transform.position.y);
+        Vector3 worldPosition = GridManagerStrategy.GridToWorldPosition(gridCoordinates, tile.transform.position.y);
         bombPrefabs[(int)bombEnum - 1].associatedPlayer = playerEnum;
 
         Instantiate(bombPrefabs[(int)bombEnum - 1], worldPosition, Quaternion.identity);

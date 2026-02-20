@@ -6,7 +6,7 @@ public class PaintBrushItem : IItem
 
     public void UseItem(Player player)
     {
-        var gridPos = GridManagerStategy.WorldToGridCoordinates(player.gameObject.transform.position);
+        var gridPos = GridManagerStrategy.WorldToGridCoordinates(player.gameObject.transform.position);
         Tile tile = GameManager.Instance.GridManager.GetTileAtCoordinates(gridPos);
 
         if (tile == null || tile.isObstacle) return;

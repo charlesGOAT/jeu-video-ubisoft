@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class FakeGridManager : GridManagerStategy
+public class FakeGridManager : GridManagerStrategy
 {
     protected override void CreateGrid() {}
 
