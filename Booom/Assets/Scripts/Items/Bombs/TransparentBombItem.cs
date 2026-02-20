@@ -1,7 +1,8 @@
 ﻿
 public class TransparentBombItem : BombItem
 {
-    protected override void UseItemSpecific()
+    public override ItemType ItemType => ItemType.TransparentBomb;
+    protected override void UseItem()
     {
         _associatedPlayer.CreateNextBombTransparent();
     }

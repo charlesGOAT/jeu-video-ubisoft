@@ -6,7 +6,7 @@ using UnityEngine;
 public class PaintBrushItem : BaseItem
 {
     public override ItemType ItemType => ItemType.PaintBrush;
-    private const float ACTIVE_TIME = 1.5f;
+    private const float ACTIVE_TIME = 2.5f;
     
     private Player _player;
 

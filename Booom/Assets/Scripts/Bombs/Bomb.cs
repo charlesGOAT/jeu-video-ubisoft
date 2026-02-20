@@ -105,7 +105,10 @@ public class Bomb : MonoBehaviour
             }
 
             if (tile.isObstacle && isTransparentBomb)
+            {
+                bombCoordinates += direction;
                 continue;
+            }
 
             tile.ChangeTileColor(newTileOwner);
 

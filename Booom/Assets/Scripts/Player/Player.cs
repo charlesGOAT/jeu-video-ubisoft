@@ -7,6 +7,7 @@ using UnityEngine.InputSystem.Interactions;
 public delegate void MoveCalledEventHandler();
 public delegate void PlaceBomb();
 public delegate void ExplodeChainedBombs();
+public delegate void BombExploded();
 
 [RequireComponent(typeof(PlayerItemsManager))]
 [RequireComponent(typeof(Renderer))]
@@ -71,6 +72,7 @@ public class Player : MonoBehaviour
     public event MoveCalledEventHandler OnMoveFunctionCalled;
     public event PlaceBomb OnPlaceBomb;
     public event ExplodeChainedBombs OnExplodeChainedBombs;
+    public event BombExploded OnBombExploded;
 
     private void Awake()
     {
@@ -138,7 +140,12 @@ public class Player : MonoBehaviour
         else if (ctx.performed && (isChainingBombs || !GameManager.Instance.BombManager.HasChainedBombs(playerNb)))
         {
             OnPlaceBomb?.Invoke();
-            GameManager.Instance.BombManager.CreateBomb(transform.position, playerNb, _currentBombType, _shouldNextBombBeTransparent, isChainingBombs);
+            if (GameManager.Instance.BombManager.CreateBomb(transform.position, playerNb,
+                    _currentBombType, _shouldNextBombBeTransparent, isChainingBombs))
+            {
+                OnBombExploded?.Invoke();
+            }
+                
             _shouldNextBombBeTransparent = false;
         }
         
