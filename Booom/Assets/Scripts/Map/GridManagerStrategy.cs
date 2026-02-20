@@ -42,7 +42,7 @@ public abstract class GridManagerStrategy : MonoBehaviour
     private void Awake()
     {
         CreateGrid();
-        capturableTilesCount = _tiles.Count;
+        capturableTilesCount = _tiles.Count; //todo fix this shit
         PositionCamera();
     }
 
@@ -52,6 +52,7 @@ public abstract class GridManagerStrategy : MonoBehaviour
     //Je peut le faire dans un autre task
     //Manque encore du peaufinage lol
     //Manque de peaufinage en tbnk
+    //Yo la cam a tweak faudrait fix
     protected void PositionCamera()
     {
         if (mainCamera == null) return;
@@ -65,8 +66,15 @@ public abstract class GridManagerStrategy : MonoBehaviour
 
     public Vector3 GetRandomPosOnGrid()
     {
-        var rand = new System.Random();
-        int ind = rand.Next(0, _tiles.Count);
+        int ind = 0;
+        
+        do
+        {
+            var rand = new System.Random();
+            ind = rand.Next(0, _tiles.Count);
+
+        } while (_tiles[_tiles.Keys.ToArray()[ind]].IsObstacle);
+        
         return GridToWorldPosition(_tiles.Keys.ToArray()[ind]);
     }
     

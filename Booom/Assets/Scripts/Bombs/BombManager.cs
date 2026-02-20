@@ -7,7 +7,7 @@ public class BombManager : MonoBehaviour
     private Bomb[] bombPrefabs;
 
     [SerializeField]
-    private float bombCooldown = 3f;
+    private float bombCooldown = 2f;
 
     // Track each Player's bomb cooldown
     private readonly Dictionary<PlayerEnum, float> _nextBombTime = new (GameConstants.NB_PLAYERS);

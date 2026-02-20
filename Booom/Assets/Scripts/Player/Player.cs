@@ -14,7 +14,7 @@ public delegate void ExplodeChainedBombs();
 public class Player : MonoBehaviour
 {
     [SerializeField]
-    private float speed = 5f;
+    private float speed = 9f;
 
     [SerializeField]
     private Bomb bombPrefab;
