@@ -2,9 +2,10 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public abstract class GridManagerStategy : MonoBehaviour
+public abstract class GridManagerStrategy : MonoBehaviour
 {
     protected Dictionary<Vector2Int, Tile> _tiles = new Dictionary<Vector2Int, Tile>();
+    public int capturableTilesCount;
 
     public Vector2Int MapUpperLimit { get; protected set; } = Vector2Int.zero;
     public Vector2Int MapLowerLimit { get; protected set; } = Vector2Int.zero;
@@ -12,12 +13,10 @@ public abstract class GridManagerStategy : MonoBehaviour
     public int Width { get; protected set; } = 0;
     public int Height { get; protected set; } = 0;
 
-    private HashSet<Vector2Int>[] _aquiredTilesByPlayer = new HashSet<Vector2Int>[GameConstants.NB_PLAYERS];
-
     [SerializeField]
     protected Camera mainCamera;
 
-    public Tile GetTileAtCoordinates(Vector2Int vector2Int)
+    public virtual Tile GetTileAtCoordinates(Vector2Int vector2Int)
     {
         _tiles.TryGetValue(vector2Int, out Tile tile);
         return tile;
@@ -43,12 +42,8 @@ public abstract class GridManagerStategy : MonoBehaviour
     private void Start()
     {
         CreateGrid();
+        capturableTilesCount = _tiles.Count;
         PositionCamera();
-
-        for (int i = 0; i < _aquiredTilesByPlayer.Length; i++)
-        {
-            _aquiredTilesByPlayer[i] = new HashSet<Vector2Int>();
-        }
     }
 
     protected abstract void CreateGrid();
@@ -66,18 +61,6 @@ public abstract class GridManagerStategy : MonoBehaviour
         mainCamera.transform.position = new Vector3(centerX - (Height * GameConstants.UNITY_GRID_SIZE) / 2f, ((Width + Height) * GameConstants.UNITY_GRID_SIZE) / 2f, centerZ);
         mainCamera.transform.rotation = Quaternion.Euler(60f, 90f, 0f);
     }
-    
-    public void AquireNewTile(PlayerEnum player, Vector2Int tile)
-    {
-        if (player != PlayerEnum.None)
-            _aquiredTilesByPlayer[(int)player - 1].Add(tile);
-    }
-    
-    public void LoseTile(PlayerEnum player, Vector2Int tile)
-    {
-        if (player != PlayerEnum.None)
-            _aquiredTilesByPlayer[(int)player - 1].Remove(tile);
-    }
 
     public Vector3 GetRandomPosOnGrid()
     {
@@ -85,49 +68,34 @@ public abstract class GridManagerStategy : MonoBehaviour
         int ind = rand.Next(0, _tiles.Count);
         return GridToWorldPosition(_tiles.Keys.ToArray()[ind]);
     }
-
-    public PlayerEnum FindPlayerWithMostGround()
-    {
-        int indexMax = -1;
-        int currentMax = 0;
-        List<int> equalMax = new();
-
-        for (int i = 0; i < _aquiredTilesByPlayer.Length; ++i)
-        {
-            if (_aquiredTilesByPlayer[i].Count > currentMax)
-            {
-                indexMax = i;
-                currentMax = _aquiredTilesByPlayer[i].Count;
-                equalMax.Clear();
-                equalMax.Add(indexMax);
-            }
-            else if (_aquiredTilesByPlayer[i].Count == currentMax)
-            {
-                equalMax.Add(i);
-            }
-        }
-
-        if (indexMax == -1)
-        {
-            var random = new System.Random();
-            indexMax = random.Next(0, GameConstants.NB_PLAYERS);
-        }
-        else if (equalMax.Count > 1)
-        {
-            var random = new System.Random();
-            int ind = random.Next(0, equalMax.Count);
-            indexMax = equalMax[ind];
-        }
-
-        return (PlayerEnum)(indexMax + 1);
-    }
-
+    
     public HashSet<Vector2Int> GetPlayerTiles(PlayerEnum player)
     {
         if (player == PlayerEnum.None)
             return new HashSet<Vector2Int>();
+        
+        var acquiredTiles = GameManager.Instance.ScoreManager.GetAcquiredTilesByPlayer();
 
-        return _aquiredTilesByPlayer[(int)player - 1];
+        return acquiredTiles[(int)player - 1];
+    }
+    
+    private HashSet<Vector2Int> GetAllTilesOwned()
+    {
+        HashSet<Vector2Int> allTilesOwned = new();
+        var acquiredTiles = GameManager.Instance.ScoreManager.GetAcquiredTilesByPlayer();
+        
+        foreach (var list in acquiredTiles)
+        {
+            allTilesOwned.UnionWith(list);
+        }
+
+        return allTilesOwned;
+    }
+
+    private IEnumerable<Vector2Int> GetAllTilesNotOwned()
+    {
+        HashSet<Vector2Int> allTilesOwned = GetAllTilesOwned();
+        return _tiles.Keys.Except(allTilesOwned);
     }
 }
 

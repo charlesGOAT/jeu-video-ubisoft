@@ -26,7 +26,7 @@ public class Player : MonoBehaviour
     private PlayerItemsManager playerItemsManager;
 
     [SerializeField]
-    private int knockbackForce = 20;
+    private int knockbackForce = 10;
 
     [SerializeField]
     private int hitFlickerFrequency = 50;
@@ -235,7 +235,7 @@ public class Player : MonoBehaviour
 
     private bool CheckIfOnOwnColor()
     {
-        Vector2Int gridCoordinates = GridManagerStategy.WorldToGridCoordinates(transform.position);
+        Vector2Int gridCoordinates = GridManagerStrategy.WorldToGridCoordinates(transform.position);
         Tile tile = GameManager.Instance.GridManager.GetTileAtCoordinates(gridCoordinates);
         if (tile == null)
         {
@@ -245,7 +245,7 @@ public class Player : MonoBehaviour
         return tile.CurrentTileOwner == playerNb;
     }
 
-    public Tile GetPlayerTile() => GameManager.Instance.GridManager.GetTileAtCoordinates(GridManagerStategy.WorldToGridCoordinates(transform.position));
+    public Tile GetPlayerTile() => GameManager.Instance.GridManager.GetTileAtCoordinates(GridManagerStrategy.WorldToGridCoordinates(transform.position));
 
     private void InitializeStateMachine()
     {

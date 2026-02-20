@@ -37,7 +37,7 @@ public class Bomb : MonoBehaviour
         Transform trans = transform;
 
         _initialScale = trans.localScale;
-        _bombCoordinates = GridManagerStategy.WorldToGridCoordinates(trans.position);
+        _bombCoordinates = GridManagerStrategy.WorldToGridCoordinates(trans.position);
         ActiveBombs.Add(_bombCoordinates);
     }
 
@@ -79,21 +79,23 @@ public class Bomb : MonoBehaviour
     {
         foreach (var direction in _directions)
         {
-            PaintTilesForDirection(_bombCoordinates, direction);
+            PaintTilesForDirection(direction);
         }
     }
     
-    private void PaintTilesForDirection(Vector2Int bombCoordinates, Vector2Int direction)
+    private void PaintTilesForDirection(Vector2Int direction)
     {
-        Tile bombTile = GameManager.Instance.GridManager.GetTileAtCoordinates(bombCoordinates);
+        Tile bombTile = GameManager.Instance.GridManager.GetTileAtCoordinates(_bombCoordinates);
         if (bombTile == null) return;
         PlayerEnum currentOwner = bombTile.CurrentTileOwner;
 
         PlayerEnum newTileOwner = GameManager.Instance.isSpreadingMode ? currentOwner : associatedPlayer;
+
+        Vector2Int tileCoords = _bombCoordinates;
         
         for (int rangeCounter = 0; rangeCounter <= explosionRange; ++rangeCounter)
         {
-            Tile tile = GameManager.Instance.GridManager.GetTileAtCoordinates(bombCoordinates);
+            Tile tile = GameManager.Instance.GridManager.GetTileAtCoordinates(tileCoords);
 
             if (tile == null || tile.isObstacle)
             {
@@ -101,17 +103,25 @@ public class Bomb : MonoBehaviour
             }
 
             tile.ChangeTileColor(newTileOwner);
+            
+            HitPlayers(tileCoords, direction);
 
-            foreach (Player player in Player.ActivePlayers)
+            tileCoords += direction;
+        }
+    }
+
+    protected void HitPlayers(Vector2Int tileCoordinates, Vector2Int hitDirection)
+    {
+        foreach (Player player in Player.ActivePlayers)
+        {
+            Tile playerTile = player.GetPlayerTile();
+            if (playerTile != null && playerTile.TileCoordinates == tileCoordinates)
             {
-                Tile playerTile = player.GetPlayerTile();
-                if (playerTile != null && playerTile.TileCoordinates == bombCoordinates)
-                {
-                    player.OnHit(direction);
-                }
+                if (player.PlayerNb != associatedPlayer)
+                    GameManager.Instance.ScoreManager.NewElimination(associatedPlayer);
+                
+                player.OnHit(hitDirection);
             }
-
-            bombCoordinates += direction;
         }
     }
 
