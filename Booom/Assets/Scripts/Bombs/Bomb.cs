@@ -20,6 +20,7 @@ public class Bomb : MonoBehaviour
     private int explosionRange = 3;
 
     public bool isTransparentBomb = false;
+    public bool isChainedBomb = false;
 
     private readonly Vector2Int[] _directions =
     {
@@ -45,7 +46,8 @@ public class Bomb : MonoBehaviour
 
     protected virtual void Start()
     {
-        Fuse();
+        if(!isChainedBomb)
+            Fuse();
     }
 
     public static bool IsBombAt(Vector2Int gridCoordinates)
@@ -71,7 +73,7 @@ public class Bomb : MonoBehaviour
         Explode();
     }
 
-    private void Explode()
+    public void Explode()
     {
         PaintTiles();
         Destroy(gameObject);

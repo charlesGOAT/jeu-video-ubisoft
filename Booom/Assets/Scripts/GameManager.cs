@@ -70,6 +70,4 @@ public class GameManager : MonoBehaviour
         }
         // add other managers
     }
-
-    
 }

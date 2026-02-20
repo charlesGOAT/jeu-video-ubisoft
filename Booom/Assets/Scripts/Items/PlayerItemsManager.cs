@@ -48,6 +48,10 @@ public class PlayerItemsManager : MonoBehaviour
             {
                 return new TransparentBombItem();
             }
+            case ItemType.ChainBombs:
+            {
+                return new ChainBombsItem();
+            }
             // todo : add more
         }
 

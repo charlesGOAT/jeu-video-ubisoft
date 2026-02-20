@@ -6,7 +6,7 @@ public abstract class BombItem : BaseItem
     public override ItemType ItemType => ItemType.TransparentBomb;
 
     protected int _maxUseCount = 1;
-    protected int _currentUseCount = 0;
+    private int _currentUseCount = 0;
 
     protected Player _associatedPlayer;
 
@@ -27,11 +27,18 @@ public abstract class BombItem : BaseItem
     {
         _associatedPlayer = player;
         player.OnPlaceBomb += UseItem;
+        
+        PickupItemSpecific();
     }
+    
+    protected virtual void PickupItemSpecific() {}
 
     protected void FinishUsingItem()
     {
         _associatedPlayer.OnPlaceBomb -= UseItem;
+        FinishUsingItemSpecific();
         CallFinishUsingItemCallback();
     }
+    
+    protected virtual void FinishUsingItemSpecific() {}
 }

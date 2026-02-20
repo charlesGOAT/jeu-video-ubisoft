@@ -2,9 +2,11 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Interactions;
 
 public delegate void MoveCalledEventHandler();
 public delegate void PlaceBomb();
+public delegate void ExplodeChainedBombs();
 
 [RequireComponent(typeof(PlayerItemsManager))]
 [RequireComponent(typeof(Renderer))]
@@ -41,7 +43,8 @@ public class Player : MonoBehaviour
     private Vector2 _moveInput;
     private BombEnum _currentBombType = BombEnum.NormalBomb;
     private bool _shouldNextBombBeTransparent = false;
-
+    public bool isChainingBombs = false;
+    
     private int _bombTypeCount;
 
     public PlayerEnum PlayerNb => playerNb;
@@ -67,6 +70,7 @@ public class Player : MonoBehaviour
     
     public event MoveCalledEventHandler OnMoveFunctionCalled;
     public event PlaceBomb OnPlaceBomb;
+    public event ExplodeChainedBombs OnExplodeChainedBombs;
 
     private void Awake()
     {
@@ -125,12 +129,19 @@ public class Player : MonoBehaviour
 
     public void OnBomb(InputAction.CallbackContext ctx)
     {
-        if (ctx.performed)
+        if (ctx.performed && ctx.interaction is HoldInteraction)
+        {
+            OnExplodeChainedBombs?.Invoke();
+            isChainingBombs = false;
+            GameManager.Instance.BombManager.ExplodeChainedBombs(playerNb);
+        }
+        else if (ctx.performed && (isChainingBombs || !GameManager.Instance.BombManager.HasChainedBombs(playerNb)))
         {
             OnPlaceBomb?.Invoke();
-            GameManager.Instance.BombManager.CreateBomb(transform.position, playerNb, _currentBombType, _shouldNextBombBeTransparent);
+            GameManager.Instance.BombManager.CreateBomb(transform.position, playerNb, _currentBombType, _shouldNextBombBeTransparent, isChainingBombs);
             _shouldNextBombBeTransparent = false;
         }
+        
     }
 
     public void OnChangeBomb(InputAction.CallbackContext ctx)
