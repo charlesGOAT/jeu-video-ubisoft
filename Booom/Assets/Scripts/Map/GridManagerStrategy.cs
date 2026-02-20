@@ -42,13 +42,12 @@ public abstract class GridManagerStategy : MonoBehaviour
 
     private void Awake()
     {
-        CreateGrid();
-        PositionCamera();
-
         for (int i = 0; i < _aquiredTilesByPlayer.Length; i++)
         {
             _aquiredTilesByPlayer[i] = new HashSet<Vector2Int>();
         }
+        CreateGrid();
+        PositionCamera();
     }
 
     protected abstract void CreateGrid();
@@ -56,6 +55,7 @@ public abstract class GridManagerStategy : MonoBehaviour
     //A besoin d'un peu de peaufinage mais marche pour l'instant
     //Je peut le faire dans un autre task
     //Manque encore du peaufinage lol
+    //Manque de peaufinage en tbnk
     protected void PositionCamera()
     {
         if (mainCamera == null) return;

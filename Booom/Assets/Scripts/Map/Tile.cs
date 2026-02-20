@@ -1,13 +1,10 @@
-using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Tile : MonoBehaviour
 {
     public Vector2Int TileCoordinates { get; private set; }
 
-    [SerializeField]
-    public bool isObstacle = false;
+    public virtual bool IsObstacle => false;
 
     public static float TileLength { get; private set; }
 
@@ -31,11 +28,16 @@ public class Tile : MonoBehaviour
         }
     }
 
+    public virtual void StepOnTile(Player player) 
+    {
+        //update vitesse ici?
+    }
+
     protected virtual void Awake()
     {
         if (TileLength == 0) 
         {
-            TileLength = this.transform.GetChild(0).localScale.x;
+            TileLength = transform.GetChild(0).localScale.x;
         }
 
         _tileRenderer = GetComponentInChildren<Renderer>();

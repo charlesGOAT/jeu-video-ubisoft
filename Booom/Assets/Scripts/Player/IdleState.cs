@@ -19,6 +19,8 @@ public class IdleState : State
 
     public override void Handle(float time)
     {
+        _player.UpdateMovement();
+
         if (_player.IsMoving())
         {
             _stateMachine.Trigger(GameConstants.PLAYER_RUN_TRIGGER);
