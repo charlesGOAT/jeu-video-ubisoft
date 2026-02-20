@@ -36,7 +36,7 @@ public class BombManager : MonoBehaviour
             return;
         }
         Vector3 bombHeight = Vector3.up * position.y;
-        Vector2Int gridCoordinates = GridManagerStategy.WorldToGridCoordinates(position);
+        Vector2Int gridCoordinates = GridManagerStrategy.WorldToGridCoordinates(position);
         Tile tile = GameManager.Instance.GridManager.GetTileAtCoordinates(gridCoordinates);
 
         if (tile == null || tile.IsObstacle || Bomb.IsBombAt(gridCoordinates))
@@ -44,7 +44,7 @@ public class BombManager : MonoBehaviour
             return;
         }
 
-        Vector3 worldPosition = GridManagerStategy.GridToWorldPosition(gridCoordinates, tile.transform.position.y);
+        Vector3 worldPosition = GridManagerStrategy.GridToWorldPosition(gridCoordinates, tile.transform.position.y);
         bombPrefabs[(int)bombEnum - 1].associatedPlayer = playerEnum;
 
         bombPrefabs[(int)bombEnum - 1].isChainedBomb = isChained;

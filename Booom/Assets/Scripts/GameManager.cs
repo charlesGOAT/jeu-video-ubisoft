@@ -10,10 +10,10 @@ public class GameManager : MonoBehaviour
     [SerializeField] 
     public bool isSpreadingMode = false;
     
-    public GridManagerStategy GridManager { get; private set; }
+    public GridManagerStrategy GridManager { get; private set; }
     public BombManager BombManager { get; private set; }
-    
     public ItemsManager ItemsManager { get; private set; }
+    public ScoreManager ScoreManager { get; private set; }
 
     
     // add other managers
@@ -52,9 +52,10 @@ public class GameManager : MonoBehaviour
 
     private void GetManagers()
     {
-        GridManager = FindFirstObjectByType<GridManagerStategy>();
+        GridManager = FindFirstObjectByType<GridManagerStrategy>();
         BombManager = FindFirstObjectByType<BombManager>();
         ItemsManager = FindFirstObjectByType<ItemsManager>();
+        ScoreManager = FindFirstObjectByType<ScoreManager>();
 
         if (GridManager == null)
         {
@@ -68,6 +69,16 @@ public class GameManager : MonoBehaviour
         {
             throw new Exception("There's no active items manager");
         }
+        if (ScoreManager == null)
+        {
+            throw new Exception("There's no active score manager");
+        }
         // add other managers
+    }
+
+    public void EndGame()
+    {
+        //todo end the game
+        Debug.Log("Game Ended");
     }
 }

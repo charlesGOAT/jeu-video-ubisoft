@@ -40,7 +40,7 @@ public class Bomb : MonoBehaviour
         Transform trans = transform;
 
         _initialScale = trans.localScale;
-        _bombCoordinates = GridManagerStategy.WorldToGridCoordinates(trans.position);
+        _bombCoordinates = GridManagerStrategy.WorldToGridCoordinates(trans.position);
         ActiveBombs.Add(_bombCoordinates);
     }
 
@@ -101,8 +101,6 @@ public class Bomb : MonoBehaviour
         for (int rangeCounter = 1; rangeCounter <= range; ++rangeCounter)
         {
             Tile tile = GameManager.Instance.GridManager.GetTileAtCoordinates(bombCoordinates);
-
-
             if (tile is not null and Portal portalTile)
             {
                 int tilesRemaining = range - rangeCounter;
@@ -110,13 +108,21 @@ public class Bomb : MonoBehaviour
                 return;
             }
 
-            if (tile == null || (tile.IsObstacle && !isTransparentBomb))
+            if (tile == null)
             {
                 return;
             }
 
-            if (tile.IsObstacle && isTransparentBomb)
+            if (tile.IsObstacle)
+            {
+                if (!isTransparentBomb)
+                {
+                    return;
+                }
+
+                bombCoordinates += direction;
                 continue;
+            }
 
             tile.ChangeTileColor(newTileOwner);
             HitPlayers(bombCoordinates, direction);
@@ -138,14 +144,19 @@ public class Bomb : MonoBehaviour
         return true;
     }
 
-    private void HitPlayers(in Vector2Int bombCoordinates, in Vector2Int direction)
+    protected void HitPlayers(Vector2Int tileCoordinates, Vector2Int hitDirection)
     {
         foreach (Player player in Player.ActivePlayers)
         {
             Tile playerTile = player.GetPlayerTile();
-            if (playerTile != null && playerTile.TileCoordinates == bombCoordinates)
+            if (playerTile != null && playerTile.TileCoordinates == tileCoordinates)
             {
-                player.OnHit(direction);
+                if (player.PlayerNb != associatedPlayer)
+                {
+                    GameManager.Instance.ScoreManager.NewElimination(associatedPlayer);
+                }
+
+                player.OnHit(hitDirection);
             }
         }
     }
@@ -166,9 +177,20 @@ public class Bomb : MonoBehaviour
                 return;
             }
 
-            if (tile == null || tile.IsObstacle)
+            if (tile == null)
             {
                 return;
+            }
+
+            if (tile.IsObstacle)
+            {
+                if (!isTransparentBomb)
+                {
+                    return;
+                }
+
+                bombCoordinates += direction;
+                continue;
             }
 
             tile.ChangeTileColor(tileOwner);

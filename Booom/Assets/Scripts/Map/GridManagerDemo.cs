@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class GridManagerDemo : GridManagerStategy
+public class GridManagerDemo : GridManagerStrategy
 {
     [SerializeField]
     private int demoWidth = 10;

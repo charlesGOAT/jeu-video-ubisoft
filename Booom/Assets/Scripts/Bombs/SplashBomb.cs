@@ -17,51 +17,37 @@ public class SplashBomb : Bomb
 
     protected override void PaintTiles()
     {
-        Tile bombTile = GameManager.Instance.GridManager.GetTileAtCoordinates(_bombCoordinates);
-        if (bombTile == null) return;
+        foreach (var offset in _offsets)
+        {
+            PaintTilesSurrounding(_bombCoordinates, offset);
+        }
     }
 
     private void PaintTilesSurrounding(Vector2Int bombCoordinates, Vector2Int offset)
     {
         Vector2Int coords = bombCoordinates + offset;
         
-        Tile bombTile = GameManager.Instance.GridManager.GetTileAtCoordinates(bombCoordinates);
+        Tile bombTile = GameManager.Instance.GridManager.GetTileAtCoordinates(_bombCoordinates);
         Tile tileToPaint = GameManager.Instance.GridManager.GetTileAtCoordinates(coords);
         
-        if (bombTile == null || tileToPaint == null || tileToPaint.IsObstacle) return;
-        
-        PlayerEnum currentOwner = bombTile.CurrentTileOwner;
-        PlayerEnum newTileOwner = GameManager.Instance.isSpreadingMode ? currentOwner : associatedPlayer;
-
-        foreach (var offsetInOffset in _offsets)
-        {
-            PaintTilesSurrounding(_bombCoordinates, offsetInOffset, newTileOwner);
-        }
-    }
-
-    private void PaintTilesSurrounding(Vector2Int bombCoordinates, Vector2Int offset, PlayerEnum tileOwner)
-    {
-        Vector2Int coords = bombCoordinates + offset;
-        Tile tileToPaint = GameManager.Instance.GridManager.GetTileAtCoordinates(coords);
-        if (tileToPaint == null) return;
+        if (bombTile == null || tileToPaint == null) return;
 
         if (tileToPaint is Portal portalTile)
         {
-            PaintTilesSurrounding(portalTile.GetOtherPortalPosition(), offset, tileOwner);
+            PaintTilesSurrounding(portalTile.GetOtherPortalPosition(), offset);
             return;
         }
 
-        if (tileToPaint.IsObstacle) return;
-
-        tileToPaint.ChangeTileColor(tileOwner);
-
-        foreach (Player player in Player.ActivePlayers)
+        if (tileToPaint.IsObstacle)
         {
-            Tile playerTile = player.GetPlayerTile();
-            if (playerTile != null && playerTile.TileCoordinates == coords)
-            {
-                player.OnHit(offset);
-            }
+            return;
         }
+        
+        PlayerEnum currentOwner = bombTile.CurrentTileOwner;
+        PlayerEnum newTileOwner = GameManager.Instance.isSpreadingMode ? currentOwner : associatedPlayer;
+        tileToPaint.ChangeTileColor(newTileOwner);
+        
+        Vector2Int hitDirection = offset;
+        HitPlayers(coords, hitDirection);
     }
 }

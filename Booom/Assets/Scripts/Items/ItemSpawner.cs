@@ -80,7 +80,7 @@ public class ItemSpawner : MonoBehaviour
         while (true)
         {
             yield return StartCoroutine(WaitForSpawnCond(lastTimeSpawned));
-            PlayerEnum player = GameManager.Instance.GridManager.FindPlayerWithMostGround();
+            PlayerEnum player = GameManager.Instance.ScoreManager.FindPlayerWithMostGround();
             var playerTiles = GameManager.Instance.GridManager.GetPlayerTiles(player);
             Vector3 pos = GetRandomTilePos(playerTiles.ToList(), gen);
             
@@ -103,7 +103,7 @@ public class ItemSpawner : MonoBehaviour
     protected Vector3 GetRandomTilePos(List<Vector2Int> listPos, in System.Random random)
     {
         int index = random.Next(0, listPos.Count);
-        return GridManagerStategy.GridToWorldPosition(listPos[index]);
+        return GridManagerStrategy.GridToWorldPosition(listPos[index]);
     }
 
     protected IEnumerator ManageShadow(Vector3 pos)

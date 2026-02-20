@@ -348,7 +348,7 @@ public class Player : MonoBehaviour
 
     private bool CheckIfOnOwnColor()
     {
-        Vector2Int gridCoordinates = GridManagerStategy.WorldToGridCoordinates(transform.position);
+        Vector2Int gridCoordinates = GridManagerStrategy.WorldToGridCoordinates(transform.position);
         Tile tile = GameManager.Instance.GridManager.GetTileAtCoordinates(gridCoordinates);
         if (tile == null)
         {
@@ -371,7 +371,7 @@ public class Player : MonoBehaviour
 
     public Tile GetPlayerTile()
     {
-        Vector2Int gridCoordinates = GridManagerStategy.WorldToGridCoordinates(transform.position);
+        Vector2Int gridCoordinates = GridManagerStrategy.WorldToGridCoordinates(transform.position);
         Tile tile = GameManager.Instance.GridManager.GetTileAtCoordinates(gridCoordinates);
         if (tile == null)
         {
