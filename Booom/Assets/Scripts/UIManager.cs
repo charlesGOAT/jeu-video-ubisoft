@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
@@ -11,9 +12,18 @@ public class UIManager : MonoBehaviour
 
     [SerializeField]
     private TMP_Text leaderboard;
+    
+    [SerializeField]
+    private TMP_Text timer;
+
+    [SerializeField]
+    public Image endGameImage;
 
     private readonly Dictionary<PlayerEnum, ScorePlayer> _scorePerPlayer = new ();
     private string _statTracked = "Eliminations";
+    
+    private float _timeRemaining;
+    private bool _timerRunning;
     
     private readonly List<KeyValuePair<PlayerEnum, ScorePlayer>> _sortedPlayerScores = new();
 
@@ -35,6 +45,26 @@ public class UIManager : MonoBehaviour
         
         leaderboard.text = _statTracked;
         PlayerInputManager.instance.onPlayerJoined += AddPlayer;
+
+        StartTimer();
+    }
+
+    private void Update()
+    {
+        if (!_timerRunning) return;
+
+        _timeRemaining -= Time.deltaTime;
+
+        if (_timeRemaining <= 0f)
+        {
+            _timeRemaining = 0f;
+            _timerRunning = false;
+            UpdateTimerDisplay();
+            GameManager.Instance.EndGame();
+            return;
+        }
+
+        UpdateTimerDisplay();
     }
 
     public void AddPlayer(PlayerInput playerInput)
@@ -90,7 +120,7 @@ public class UIManager : MonoBehaviour
     {
         _sortedPlayerScores.Clear();
         _sortedPlayerScores.AddRange(_scorePerPlayer);
-        _sortedPlayerScores.Sort((p1, p2) => p1.Value.currentScore.CompareTo(p2.Value.currentScore));
+        _sortedPlayerScores.Sort((p1, p2) => p2.Value.currentScore.CompareTo(p1.Value.currentScore));
 
         for (int i = 0; i < _sortedPlayerScores.Count; i++)
         {
@@ -100,5 +130,19 @@ public class UIManager : MonoBehaviour
             newPos.y = -(60f + i * 50f);
             rect.anchoredPosition = newPos;
         }
+    }
+
+    private void StartTimer()
+    {
+        _timeRemaining = GameConstants.GAME_DURATION;
+        _timerRunning = true;
+        UpdateTimerDisplay();
+    }
+    
+    private void UpdateTimerDisplay()
+    {
+        int minutes = Mathf.FloorToInt(_timeRemaining / 60f);
+        int seconds = Mathf.FloorToInt(_timeRemaining % 60f);
+        timer.text = $"{minutes}:{seconds:D2}";
     }
 }

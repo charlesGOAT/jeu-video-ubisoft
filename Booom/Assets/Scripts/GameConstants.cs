@@ -7,5 +7,6 @@
     public const string PLAYER_HIT_TRIGGER = "Hit";
     public const int UNITY_GRID_SIZE = 2;
     public const int HIT_STATE_DURATION = 3;
-    public const int ELIMS_TO_WIN = 10;
+    public const int ELIMS_TO_WIN = 5;
+    public const float GAME_DURATION = 120f;
 }

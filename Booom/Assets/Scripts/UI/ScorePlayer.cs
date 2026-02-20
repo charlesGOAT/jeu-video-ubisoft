@@ -10,7 +10,7 @@ public class ScorePlayer : MonoBehaviour
 
     private void Awake()
     {
-        rectTransform = GetComponent<RectTransform>();
+        rectTransform = GetComponentInChildren<RectTransform>();
     }
 
     public void UpdateScore(int score)
