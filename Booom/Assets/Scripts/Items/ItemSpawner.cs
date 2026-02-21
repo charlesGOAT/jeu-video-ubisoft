@@ -64,7 +64,7 @@ public class ItemSpawner : MonoBehaviour
         while (true)
         { 
             yield return StartCoroutine(WaitForSpawnCond(lastTimeSpawned));
-            Vector3 pos = GameManager.Instance.GridManager.GetRandomPosOnGrid();
+            Vector3 pos = GameManager.Instance.GridManager.GetRandomPosOnGridWithNoItem();
             
             if (isDropFromSky) yield return StartCoroutine(ManageShadow(pos));
 
@@ -81,8 +81,8 @@ public class ItemSpawner : MonoBehaviour
         {
             yield return StartCoroutine(WaitForSpawnCond(lastTimeSpawned));
             PlayerEnum player = GameManager.Instance.ScoreManager.FindPlayerWithMostGround();
-            var playerTiles = GameManager.Instance.GridManager.GetPlayerTiles(player);
-            Vector3 pos = GetRandomTilePos(playerTiles.ToList(), gen);
+            var playerTiles = GameManager.Instance.GridManager.GetPlayerTilesWithNoItem(player);
+            Vector3 pos = GetRandomTilePos(playerTiles, gen);
             
             if (isDropFromSky) yield return StartCoroutine(ManageShadow(pos));
 
@@ -115,7 +115,14 @@ public class ItemSpawner : MonoBehaviour
 
     protected void InstantiateItem(in Vector3 pos)
     {
-        Instantiate(itemPrefab, pos, Quaternion.identity);
-        NbItemsOnMap++;
+        Vector2Int posOnMap = GridManagerStrategy.WorldToGridCoordinates(pos);
+        if (!GameManager.Instance.GridManager.IsItemAtPos(posOnMap))
+        {
+            Item item = Instantiate(itemPrefab, pos, Quaternion.identity);
+            item.posOnMap = posOnMap;
+            
+            GameManager.Instance.GridManager.AddItemOnGrid(item);
+            NbItemsOnMap++;
+        }
     }
 }
