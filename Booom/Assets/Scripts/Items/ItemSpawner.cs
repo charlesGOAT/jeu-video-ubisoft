@@ -49,7 +49,7 @@ public class ItemSpawner : MonoBehaviour
         while (true)
         {
            yield return StartCoroutine(WaitForSpawnCond(lastTimeSpawned));
-           var pos = GetRandomTilePos(fixedPosList, gen);
+           var pos = GetRandomTilePos(fixedPosList.Where(pos => !GameManager.Instance.GridManager.IsItemAtPos(pos)).ToList(), gen);
     
            if (isDropFromSky) yield return StartCoroutine(ManageShadow(pos));
     
@@ -116,13 +116,11 @@ public class ItemSpawner : MonoBehaviour
     protected void InstantiateItem(in Vector3 pos)
     {
         Vector2Int posOnMap = GridManagerStrategy.WorldToGridCoordinates(pos);
-        if (!GameManager.Instance.GridManager.IsItemAtPos(posOnMap))
-        {
-            Item item = Instantiate(itemPrefab, pos, Quaternion.identity);
-            item.posOnMap = posOnMap;
-            
-            GameManager.Instance.GridManager.AddItemOnGrid(item);
-            NbItemsOnMap++;
-        }
+        
+        Item item = Instantiate(itemPrefab, pos, Quaternion.identity);
+        item.posOnMap = posOnMap;
+        
+        GameManager.Instance.GridManager.AddItemOnGrid(item);
+        NbItemsOnMap++;
     }
 }
