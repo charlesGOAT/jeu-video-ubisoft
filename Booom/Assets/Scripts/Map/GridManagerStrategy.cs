@@ -100,15 +100,15 @@ public abstract class GridManagerStrategy : MonoBehaviour
         return GridToWorldPosition(noItemGrid[ind]);
     }
     
-    public List<Vector2Int> GetPlayerTilesWithNoItem(PlayerEnum player)
+    public IEnumerable<Vector2Int> GetPlayerTilesWithNoItem(PlayerEnum player)
     {
         if (player == PlayerEnum.None)
-            return null;
+            return _ownableTiles.Keys;
         
         var acquiredTiles = GameManager.Instance.ScoreManager.GetAcquiredTilesByPlayer();
         var tilesWithNoItem = acquiredTiles[(int)player - 1].Where(pos => !IsItemAtPos(pos));
         
-        return tilesWithNoItem.ToList();
+        return tilesWithNoItem;
     }
     
     private HashSet<Vector2Int> GetAllTilesOwned()

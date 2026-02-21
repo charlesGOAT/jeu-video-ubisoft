@@ -49,7 +49,7 @@ public class ItemSpawner : MonoBehaviour
         while (true)
         {
            yield return StartCoroutine(WaitForSpawnCond(lastTimeSpawned));
-           var pos = GetRandomTilePos(fixedPosList.Where(pos => !GameManager.Instance.GridManager.IsItemAtPos(pos)).ToList(), gen);
+           var pos = GetRandomTilePos(fixedPosList.Where(pos => !GameManager.Instance.GridManager.IsItemAtPos(pos)), gen);
     
            if (isDropFromSky) yield return StartCoroutine(ManageShadow(pos));
     
@@ -100,10 +100,11 @@ public class ItemSpawner : MonoBehaviour
         }
     }
 
-    protected Vector3 GetRandomTilePos(List<Vector2Int> listPos, in System.Random random)
+    protected Vector3 GetRandomTilePos(IEnumerable<Vector2Int> listPos, in System.Random random)
     {
-        int index = random.Next(0, listPos.Count);
-        return GridManagerStrategy.GridToWorldPosition(listPos[index]);
+        var listP = listPos.ToArray();
+        int index = random.Next(0, listP.Length);
+        return GridManagerStrategy.GridToWorldPosition(listP[index]);
     }
 
     protected IEnumerator ManageShadow(Vector3 pos)
