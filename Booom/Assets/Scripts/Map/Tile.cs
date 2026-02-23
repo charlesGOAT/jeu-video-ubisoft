@@ -6,13 +6,26 @@ public class Tile : MonoBehaviour
 
     public virtual bool IsObstacle => false;
 
-    public static float TileLength;
+    public static float TileLength { get; private set; }
 
     private Renderer _tileRenderer;
 
     public PlayerEnum CurrentTileOwner { get; private set; } = PlayerEnum.None;
 
     private Color _neutralColor;
+
+    protected virtual void Awake()
+    {
+        if (TileLength == 0)
+        {
+            TileLength = transform.GetChild(0).localScale.x;
+        }
+
+        _tileRenderer = GetComponentInChildren<Renderer>();
+        InitializeTileCoordinates();
+
+        _neutralColor = _tileRenderer.material.color;
+    }
 
     public virtual void ChangeTileColor(PlayerEnum newOwner)
     {
@@ -30,20 +43,6 @@ public class Tile : MonoBehaviour
 
     public virtual void StepOnTile(Player player)
     {
-        // update vitesse ici?
-    }
-
-    protected virtual void Awake()
-    {
-        if (TileLength == 0)
-        {
-            TileLength = transform.GetChild(0).localScale.x;
-        }
-
-        _tileRenderer = GetComponentInChildren<Renderer>();
-        InitializeTileCoordinates();
-
-        _neutralColor = _tileRenderer.material.color;
     }
 
     public void InitializeTileCoordinates()

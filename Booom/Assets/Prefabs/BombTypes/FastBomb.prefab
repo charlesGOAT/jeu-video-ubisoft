@@ -11,8 +11,8 @@ GameObject:
   - component: {fileID: 6539345820531006645}
   - component: {fileID: 6818836923387075724}
   - component: {fileID: 1060326652740498990}
-  - component: {fileID: 6885263192769806501}
   - component: {fileID: 3814066917829263046}
+  - component: {fileID: 5082618193227979649}
   m_Layer: 7
   m_Name: FastBomb
   m_TagString: Untagged
@@ -92,8 +92,25 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!135 &6885263192769806501
-SphereCollider:
+--- !u!114 &3814066917829263046
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2159313182516406791}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cc258808fa1ec2a4f95ab2d41d514de4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FastBomb
+  timer: 3
+  pulseAmplitude: 0.2
+  pulseSpeed: 8
+  explosionRange: 3
+  associatedPlayer: 0
+--- !u!65 &5082618193227979649
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -111,22 +128,5 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.5
+  m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &3814066917829263046
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2159313182516406791}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cc258808fa1ec2a4f95ab2d41d514de4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::FastBomb
-  timer: 3
-  pulseAmplitude: 0.2
-  pulseSpeed: 8
-  associatedPlayer: 0
-  explosionRange: 3
