@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -13,7 +12,7 @@ public class BombManager : MonoBehaviour
     // Track each Player's bomb cooldown
     private readonly Dictionary<PlayerEnum, float> _nextBombTime = new Dictionary<PlayerEnum, float>(GameConstants.NB_PLAYERS);
 
-    private void Awake()
+    protected virtual void Awake()
     {
         if (bombPrefabs == null)
         {
@@ -27,14 +26,14 @@ public class BombManager : MonoBehaviour
         }
     }
 
-    public void CreateBomb(Vector3 position, PlayerEnum playerEnum, BombEnum bombEnum)
+    public virtual void CreateBomb(Vector3 position, PlayerEnum playerEnum, BombEnum bombEnum)
     {
         if (Time.time < _nextBombTime[playerEnum])
         {
             return;
         }
 
-        Vector2Int gridCoordinates = GridManagerStategy.WorldToGridCoordinates(position);
+        Vector2Int gridCoordinates = GridManagerStrategy.WorldToGridCoordinates(position);
         Tile tile = GameManager.Instance.GridManager.GetTileAtCoordinates(gridCoordinates);
 
         if (tile == null || tile.IsObstacle || Bomb.IsBombAt(gridCoordinates))
@@ -42,7 +41,7 @@ public class BombManager : MonoBehaviour
             return;
         }
 
-        Vector3 worldPosition = GridManagerStategy.GridToWorldPosition(gridCoordinates, tile.transform.position.y);
+        Vector3 worldPosition = GridManagerStrategy.GridToWorldPosition(gridCoordinates, tile.transform.position.y);
         bombPrefabs[(int)bombEnum - 1].associatedPlayer = playerEnum;
 
         Instantiate(bombPrefabs[(int)bombEnum - 1], worldPosition, Quaternion.identity);

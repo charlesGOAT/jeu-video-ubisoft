@@ -45,13 +45,7 @@ public class SplashBomb : Bomb
 
         tileToPaint.ChangeTileColor(tileOwner);
 
-        foreach (Player player in Player.ActivePlayers)
-        {
-            Tile playerTile = player.GetPlayerTile();
-            if (playerTile != null && playerTile.TileCoordinates == coords)
-            {
-                player.OnHit(offset);
-            }
-        }
+        Vector2Int hitDirection = coords - _bombCoordinates;
+        HitPlayers(coords, hitDirection);
     }
 }

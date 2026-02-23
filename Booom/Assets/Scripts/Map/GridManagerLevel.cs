@@ -1,26 +1,27 @@
 using UnityEngine;
 
-public class GridManagerLevel : GridManagerStategy
+public class GridManagerLevel : GridManagerStrategy
 {
     protected override void CreateGrid()
     {
-        foreach (Tile tile in FindObjectsByType<Tile>(FindObjectsSortMode.None))
+        foreach (Tile tile in FindObjectsByType<Tile>(FindObjectsInactive.Include, FindObjectsSortMode.None))
         {
-            _tiles[tile.TileCoordinates] = tile;
+            tile.InitializeTileCoordinates();
+            Vector2Int tileCoordinates = tile.TileCoordinates;
+            _tiles[tileCoordinates] = tile;
 
-            if (tile.TileCoordinates.x > MapUpperLimit.x || tile.TileCoordinates.y > MapUpperLimit.y)
+            if (tileCoordinates.x > MapUpperLimit.x || tileCoordinates.y > MapUpperLimit.y)
             {
-                MapUpperLimit = tile.TileCoordinates;
+                MapUpperLimit = tileCoordinates;
             }
 
-            if (tile.TileCoordinates.x < MapLowerLimit.x || tile.TileCoordinates.y < MapLowerLimit.y)
+            if (tileCoordinates.x < MapLowerLimit.x || tileCoordinates.y < MapLowerLimit.y)
             {
-                MapLowerLimit = tile.TileCoordinates;
+                MapLowerLimit = tileCoordinates;
             }
         }
 
         Width = MapUpperLimit.x - MapLowerLimit.x + 1;
         Height = MapUpperLimit.y - MapLowerLimit.y + 1;
     }
-
 }

@@ -6,12 +6,12 @@ public class Obstacle : Tile
 
     public static float ObstacleHeight;
 
-    private void Awake()
+    protected override void Awake()
     {
         base.Awake();
         if (ObstacleHeight == 0)
         {
-            TileLength = transform.GetChild(0).localScale.y;
+            ObstacleHeight = transform.GetChild(0).localScale.y;
         }
     }
 }

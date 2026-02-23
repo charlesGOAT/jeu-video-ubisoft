@@ -13,36 +13,41 @@ public class Tile : MonoBehaviour
     public PlayerEnum CurrentTileOwner { get; private set; } = PlayerEnum.None;
 
     private Color _neutralColor;
-    
-    public void ChangeTileColor(PlayerEnum newOwner) 
+
+    public virtual void ChangeTileColor(PlayerEnum newOwner)
     {
         if (CurrentTileOwner != newOwner)
         {
             bool isNoPlayer = newOwner == PlayerEnum.None;
-            
-            GameManager.Instance.GridManager.LoseTile(CurrentTileOwner, TileCoordinates);
-            GameManager.Instance.GridManager.AquireNewTile(newOwner, TileCoordinates);
-            
+
+            GameManager.Instance.ScoreManager.LoseTile(CurrentTileOwner, TileCoordinates);
+            GameManager.Instance.ScoreManager.AcquireNewTile(newOwner, TileCoordinates);
+
             _tileRenderer.material.color = !isNoPlayer ? Player.PlayerColorDict[newOwner] : _neutralColor;
             CurrentTileOwner = newOwner;
         }
     }
 
-    public virtual void StepOnTile(Player player) 
+    public virtual void StepOnTile(Player player)
     {
-        //update vitesse ici?
+        // update vitesse ici?
     }
 
-    protected void Awake()
+    protected virtual void Awake()
     {
-        if (TileLength == 0) 
+        if (TileLength == 0)
         {
             TileLength = transform.GetChild(0).localScale.x;
         }
 
         _tileRenderer = GetComponentInChildren<Renderer>();
-        TileCoordinates = GridManagerStategy.WorldToGridCoordinates(transform.position);
+        InitializeTileCoordinates();
 
         _neutralColor = _tileRenderer.material.color;
+    }
+
+    public void InitializeTileCoordinates()
+    {
+        TileCoordinates = GridManagerStrategy.WorldToGridCoordinates(transform.position);
     }
 }
