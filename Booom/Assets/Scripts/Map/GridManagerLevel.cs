@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class GridManagerLevel : GridManagerStrategy
 {
+    //Faudra fix lowkey c une source d'erreur
     protected override void CreateGrid()
     {
         foreach (Tile tile in FindObjectsByType<Tile>(FindObjectsInactive.Include, FindObjectsSortMode.None))
