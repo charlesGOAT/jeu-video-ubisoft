@@ -25,7 +25,14 @@ public class HitState : State
     {
         if (_hitDuration <= 0) 
         {
-            _stateMachine.Trigger(GameConstants.PLAYER_IDLE_TRIGGER);
+            if (_player.IsMoving())
+            {
+                _stateMachine.Trigger(GameConstants.PLAYER_RUN_TRIGGER);
+            }
+            else
+            {
+                _stateMachine.Trigger(GameConstants.PLAYER_IDLE_TRIGGER);
+            }
         }
         else
         {

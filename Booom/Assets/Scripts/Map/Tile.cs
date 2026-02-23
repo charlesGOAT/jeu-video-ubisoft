@@ -1,39 +1,53 @@
-using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Tile : MonoBehaviour
 {
     public Vector2Int TileCoordinates { get; private set; }
 
-    [SerializeField]
-    public bool isObstacle = false;
+    public virtual bool IsObstacle => false;
+
+    public static float TileLength;
 
     private Renderer _tileRenderer;
 
     public PlayerEnum CurrentTileOwner { get; private set; } = PlayerEnum.None;
 
     private Color _neutralColor;
-    
-    public virtual void ChangeTileColor(PlayerEnum newOwner) 
+
+    public virtual void ChangeTileColor(PlayerEnum newOwner)
     {
         if (CurrentTileOwner != newOwner)
         {
             bool isNoPlayer = newOwner == PlayerEnum.None;
-            
+
             GameManager.Instance.ScoreManager.LoseTile(CurrentTileOwner, TileCoordinates);
             GameManager.Instance.ScoreManager.AcquireNewTile(newOwner, TileCoordinates);
-            
+
             _tileRenderer.material.color = !isNoPlayer ? Player.PlayerColorDict[newOwner] : _neutralColor;
             CurrentTileOwner = newOwner;
         }
     }
 
+    public virtual void StepOnTile(Player player)
+    {
+        // update vitesse ici?
+    }
+
     protected virtual void Awake()
     {
+        if (TileLength == 0)
+        {
+            TileLength = transform.GetChild(0).localScale.x;
+        }
+
         _tileRenderer = GetComponentInChildren<Renderer>();
-        TileCoordinates = GridManagerStrategy.WorldToGridCoordinates(transform.position);
+        InitializeTileCoordinates();
 
         _neutralColor = _tileRenderer.material.color;
+    }
+
+    public void InitializeTileCoordinates()
+    {
+        TileCoordinates = GridManagerStrategy.WorldToGridCoordinates(transform.position);
     }
 }

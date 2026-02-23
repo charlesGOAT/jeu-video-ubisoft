@@ -9,7 +9,7 @@ public class PaintBrushItem : IItem
         var gridPos = GridManagerStrategy.WorldToGridCoordinates(player.gameObject.transform.position);
         Tile tile = GameManager.Instance.GridManager.GetTileAtCoordinates(gridPos);
 
-        if (tile == null || tile.isObstacle) return;
+        if (tile == null || tile.IsObstacle) return;
         
         tile.ChangeTileColor(player.PlayerNb);
     }
