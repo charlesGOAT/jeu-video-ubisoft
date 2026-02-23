@@ -116,7 +116,7 @@ public class BombSpawner : MonoBehaviour
 
     private void TrySpawnOnTile(Tile tile)
     {
-        if (tile == null || tile.isObstacle)
+        if (tile == null || tile.IsObstacle)
         {
             return;
         }

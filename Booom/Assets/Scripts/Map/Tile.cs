@@ -1,13 +1,10 @@
-using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Tile : MonoBehaviour
 {
     public Vector2Int TileCoordinates { get; private set; }
 
-    [SerializeField]
-    public bool isObstacle = false;
+    public virtual bool IsObstacle => false;
 
     public static float TileLength { get; private set; }
 
@@ -16,31 +13,40 @@ public class Tile : MonoBehaviour
     public PlayerEnum CurrentTileOwner { get; private set; } = PlayerEnum.None;
 
     private Color _neutralColor;
-    
-    public void ChangeTileColor(PlayerEnum newOwner) 
+
+    protected virtual void Awake()
+    {
+        if (TileLength == 0)
+        {
+            TileLength = transform.GetChild(0).localScale.x;
+        }
+
+        _tileRenderer = GetComponentInChildren<Renderer>();
+        InitializeTileCoordinates();
+
+        _neutralColor = _tileRenderer.material.color;
+    }
+
+    public virtual void ChangeTileColor(PlayerEnum newOwner)
     {
         if (CurrentTileOwner != newOwner)
         {
             bool isNoPlayer = newOwner == PlayerEnum.None;
-            
-            GameManager.Instance.GridManager.LoseTile(CurrentTileOwner, TileCoordinates);
-            GameManager.Instance.GridManager.AquireNewTile(newOwner, TileCoordinates);
-            
+
+            GameManager.Instance.ScoreManager.LoseTile(CurrentTileOwner, TileCoordinates);
+            GameManager.Instance.ScoreManager.AcquireNewTile(newOwner, TileCoordinates);
+
             _tileRenderer.material.color = !isNoPlayer ? Player.PlayerColorDict[newOwner] : _neutralColor;
             CurrentTileOwner = newOwner;
         }
     }
 
-    void Awake()
+    public virtual void StepOnTile(Player player)
     {
-        if (TileLength == 0) 
-        {
-            TileLength = this.transform.GetChild(0).localScale.x;
-        }
+    }
 
-        _tileRenderer = GetComponentInChildren<Renderer>();
-        TileCoordinates = GridManagerStategy.WorldToGridCoordinates(transform.position);
-
-        _neutralColor = _tileRenderer.material.color;
+    public void InitializeTileCoordinates()
+    {
+        TileCoordinates = GridManagerStrategy.WorldToGridCoordinates(transform.position);
     }
 }

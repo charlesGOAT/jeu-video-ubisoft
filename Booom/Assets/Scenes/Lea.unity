@@ -571,7 +571,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1152522418201534996, guid: a6a36da4cbd727d41b82c9941cc107ac, type: 3}
       propertyPath: spawnMode
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 1152522418201534996, guid: a6a36da4cbd727d41b82c9941cc107ac, type: 3}
       propertyPath: isDropFromSky

@@ -1,10 +1,9 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 public class StateMachine
 {
-    private State _currentState;
+    public State CurrentState { get; private set; }
 
     private readonly Dictionary<(Type from, string trigger), State> _states = new();
 
@@ -24,26 +23,26 @@ public class StateMachine
 
     public void SetInitialState(State state) 
     {
-        _currentState = state != null ? state : throw new ArgumentNullException("The initial state cannot be null");
-        _currentState.Enter();
+        CurrentState = state != null ? state : throw new ArgumentNullException("The initial state cannot be null");
+        CurrentState.Enter();
     }
 
     public void Trigger(string trigger) 
     {
-        _states.TryGetValue((_currentState.GetType(), trigger), out var nextState);
+        _states.TryGetValue((CurrentState.GetType(), trigger), out var nextState);
         if (nextState == null) 
         {
-            throw new InvalidOperationException($"No transition from state {_currentState.GetType().Name} on trigger {trigger}");
+            throw new InvalidOperationException($"No transition from state {CurrentState.GetType().Name} on trigger {trigger}");
         }
         
-        _currentState.Exit();
-        _currentState = nextState;
-        _currentState.Enter();
+        CurrentState.Exit();
+        CurrentState = nextState;
+        CurrentState.Enter();
     }
 
     public void UpdateStateMachine(float dt)
     {
-        _currentState.Handle(dt);
+        CurrentState.Handle(dt);
     }
 
 }
