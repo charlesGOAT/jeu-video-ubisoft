@@ -12,7 +12,7 @@ public class PaintBrushItem : BaseItem
         var gridPos = GridManagerStrategy.WorldToGridCoordinates(_player.gameObject.transform.position);
         Tile tile = GameManager.Instance.GridManager.GetTileAtCoordinates(gridPos);
 
-        if (tile == null || tile.isObstacle) return;
+        if (tile == null || tile.IsObstacle) return;
         
         tile.ChangeTileColor(_player.PlayerNb);
     }
