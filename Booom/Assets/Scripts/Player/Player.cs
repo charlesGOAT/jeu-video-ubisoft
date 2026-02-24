@@ -37,6 +37,9 @@ public class Player : MonoBehaviour
     [SerializeField]
     private float tileDetectionTolerance = 0.35f;
 
+    [SerializeField]
+    private GameObject arrow;
+
     private PlayerInput _playerInput;
     private Renderer _renderer;
 
@@ -86,8 +89,10 @@ public class Player : MonoBehaviour
         GetComponents();
 
         ActivePlayers.Add(this);
+
+        InitializeArrow();
     }
-    
+
     private void Start()
     {
         CheckStartConditions();
@@ -121,12 +126,34 @@ public class Player : MonoBehaviour
         GameManager.Instance.GridManager.GetTileAtCoordinates(coord).ChangeTileColor(playerNb);
     }
 
+    private void InitializeArrow()
+    {
+        foreach (var children in arrow.GetComponentsInChildren<Renderer>())
+        {
+            children.material.color = playerColor;
+        }
+    }
+
     public void OnMove(InputAction.CallbackContext ctx)
     {
         _moveInput = ctx.ReadValue<Vector2>();
         if (_moveInput != Vector2.zero) 
         {
             _lastInput = GetBombPlacementDirection(_moveInput);
+        }
+    
+        RotateArrow();
+    }
+    
+    private void RotateArrow()
+    {
+        Vector3 targetDirection = _lastInput * (float)(Tile.TileLength / 2.0);
+        if (targetDirection != Vector3.zero) 
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(targetDirection, Vector3.up);
+
+            arrow.transform.rotation = targetRotation;
+            arrow.transform.position = transform.position + targetDirection;
         }
     }
 
@@ -394,9 +421,10 @@ public class Player : MonoBehaviour
         Vector3 xCandidate = new(Mathf.Sign(worldDirection.x), 0f, 0f);
         Vector3 zCandidate = new(0f, 0f, Mathf.Sign(worldDirection.z));
 
-        Vector3 intendedTarget = transform.position + worldDirection.normalized * Tile.TileLength;
-        Vector3 xTarget = transform.position + xCandidate * Tile.TileLength;
-        Vector3 zTarget = transform.position + zCandidate * Tile.TileLength;
+        var position = transform.position;
+        Vector3 intendedTarget = position + worldDirection.normalized * Tile.TileLength;
+        Vector3 xTarget = position + xCandidate * Tile.TileLength;
+        Vector3 zTarget = position + zCandidate * Tile.TileLength;
 
         float xDistance = (intendedTarget - xTarget).sqrMagnitude;
         float zDistance = (intendedTarget - zTarget).sqrMagnitude;
