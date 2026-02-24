@@ -19,6 +19,9 @@ public class Bomb : MonoBehaviour
     [SerializeField]
     private int explosionRange = 3;
 
+    public bool isTransparentBomb = false;
+    public bool isChainedBomb = false;
+
     private readonly Vector2Int[] _directions =
     {
         Vector2Int.up,
@@ -44,7 +47,8 @@ public class Bomb : MonoBehaviour
 
     protected virtual void Start()
     {
-        Fuse();
+        if(!isChainedBomb)
+            Fuse();
     }
 
     public static bool IsBombAt(Vector2Int gridCoordinates)
@@ -71,7 +75,7 @@ public class Bomb : MonoBehaviour
         Explode();
     }
 
-    private void Explode()
+    public void Explode()
     {
         PaintTiles();
         Destroy(gameObject);
@@ -112,8 +116,6 @@ public class Bomb : MonoBehaviour
             {
                 return;
             }
-
-            bombCoordinates += direction;
         }
     }
 
@@ -121,7 +123,7 @@ public class Bomb : MonoBehaviour
     {
         Tile tile = GameManager.Instance.GridManager.GetTileAtCoordinates(bombCoordinates);
 
-        if (tile == null || tile.IsObstacle)
+        if (tile == null || (tile.IsObstacle && !isTransparentBomb))
         {
             return false;
         }

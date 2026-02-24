@@ -10,7 +10,9 @@ public class BombManager : MonoBehaviour
     private float bombCooldown = 3f;
 
     // Track each Player's bomb cooldown
-    private readonly Dictionary<PlayerEnum, float> _nextBombTime = new Dictionary<PlayerEnum, float>(GameConstants.NB_PLAYERS);
+    private readonly Dictionary<PlayerEnum, float> _nextBombTime = new (GameConstants.NB_PLAYERS);
+
+    private readonly Dictionary<PlayerEnum, List<Bomb>> _chainedBombsPerPlayer = new (GameConstants.NB_PLAYERS);
 
     protected virtual void Awake()
     {
@@ -23,14 +25,15 @@ public class BombManager : MonoBehaviour
         for (int i = 1; i <= GameConstants.NB_PLAYERS; i++)
         {
             _nextBombTime.Add((PlayerEnum)i, 0f);
+            _chainedBombsPerPlayer.Add((PlayerEnum)i, new());
         }
     }
-
-    public virtual void CreateBomb(Vector3 position, PlayerEnum playerEnum, BombEnum bombEnum)
+    
+    public virtual bool CreateBomb(Vector3 position, PlayerEnum playerEnum, BombEnum bombEnum,  bool isTransparentBomb = false, bool isChained = false)
     {
-        if (Time.time < _nextBombTime[playerEnum])
+        if (Time.time < _nextBombTime[playerEnum] && !isChained)
         {
-            return;
+            return false;
         }
 
         Vector3 bombHeight = Vector3.up * position.y;
@@ -39,14 +42,36 @@ public class BombManager : MonoBehaviour
 
         if (tile == null || tile.IsObstacle || Bomb.IsBombAt(gridCoordinates))
         {
-            return;
+            return false;
         }
 
         Vector3 worldPosition = GridManagerStrategy.GridToWorldPosition(gridCoordinates, tile.transform.position.y);
         bombPrefabs[(int)bombEnum - 1].associatedPlayer = playerEnum;
 
-        Instantiate(bombPrefabs[(int)bombEnum - 1], worldPosition + bombHeight, Quaternion.identity);
+        bombPrefabs[(int)bombEnum - 1].isChainedBomb = isChained;
+        Bomb instantiatedBomb = Instantiate(bombPrefabs[(int)bombEnum - 1], worldPosition + bombHeight, Quaternion.identity);
+        instantiatedBomb.isTransparentBomb = isTransparentBomb;
+
+        if (isChained)
+            _chainedBombsPerPlayer[playerEnum].Add(instantiatedBomb);
 
         _nextBombTime[playerEnum] = Time.time + bombCooldown;
+
+        return true;
+    }
+
+    public void ExplodeChainedBombs(PlayerEnum player)
+    {
+        foreach (Bomb bomb in _chainedBombsPerPlayer[player])
+        {
+            bomb.Explode();
+        }
+        
+        _chainedBombsPerPlayer[player].Clear();
+    }
+
+    public bool HasChainedBombs(PlayerEnum player)
+    {
+        return _chainedBombsPerPlayer[player].Count != 0;
     }
 }

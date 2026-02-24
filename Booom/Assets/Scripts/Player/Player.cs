@@ -2,8 +2,12 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Interactions;
 
-public delegate void MoveCalledEventHandler(Player player);
+public delegate void MoveCalledEventHandler();
+public delegate void PlaceBomb();
+public delegate void ExplodeChainedBombs();
+public delegate void BombExploded();
 
 [RequireComponent(typeof(PlayerItemsManager))]
 [RequireComponent(typeof(Renderer))]
@@ -46,7 +50,9 @@ public class Player : MonoBehaviour
     private Vector2 _moveInput;
     private Vector3 _lastInput;
     private BombEnum _currentBombType = BombEnum.NormalBomb;
-
+    private bool _shouldNextBombBeTransparent = false;
+    public bool isChainingBombs = false;
+    
     private int _bombTypeCount;
 
     public PlayerEnum PlayerNb => playerNb;
@@ -73,6 +79,9 @@ public class Player : MonoBehaviour
     public static readonly Dictionary<PlayerEnum, Color> PlayerColorDict = new Dictionary<PlayerEnum, Color>();  // make it the other way around if we want to test color spreading
     
     public event MoveCalledEventHandler OnMoveFunctionCalled;
+    public event PlaceBomb OnPlaceBomb;
+    public event ExplodeChainedBombs OnExplodeChainedBombs;
+    public event BombExploded OnBombExploded;
 
     private void Awake()
     {
@@ -159,11 +168,26 @@ public class Player : MonoBehaviour
 
     public void OnBomb(InputAction.CallbackContext ctx)
     {
-        if (ctx.performed)
+        if (ctx.performed && ctx.interaction is HoldInteraction)
         {
-            Vector3 bombDirection = _moveInput.sqrMagnitude > 0.0001f ? GetBombPlacementDirection(_moveInput) : _lastInput;
-            GameManager.Instance.BombManager.CreateBomb(transform.position + (bombDirection * Tile.TileLength), playerNb, _currentBombType);
+            OnExplodeChainedBombs?.Invoke();
+            isChainingBombs = false;
+            GameManager.Instance.BombManager.ExplodeChainedBombs(playerNb);
         }
+        else if (ctx.performed && (isChainingBombs || !GameManager.Instance.BombManager.HasChainedBombs(playerNb)))
+        {
+            OnPlaceBomb?.Invoke();
+            Vector3 bombDirection = _moveInput.sqrMagnitude > 0.0001f ? GetBombPlacementDirection(_moveInput) : _lastInput;
+
+            if (GameManager.Instance.BombManager.CreateBomb(transform.position + (bombDirection * Tile.TileLength), playerNb,
+                    _currentBombType, _shouldNextBombBeTransparent, isChainingBombs))
+            {
+                OnBombExploded?.Invoke();
+            }
+                
+            _shouldNextBombBeTransparent = false;
+        }
+        
     }
 
     public void OnChangeBomb(InputAction.CallbackContext ctx)
@@ -302,7 +326,7 @@ public class Player : MonoBehaviour
 
         _characterController.Move(move * Time.deltaTime);
         _characterController.Move(Vector3.down * Math.Abs(tempMove));
-        OnMoveFunctionCalled?.Invoke(this);
+        OnMoveFunctionCalled?.Invoke();
     }
 
     //Peut etre faire une meilleure fonction
@@ -496,6 +520,11 @@ public class Player : MonoBehaviour
         }
         
         gameObject.GetComponent<Renderer>().material.color = playerColor;
+    }
+    
+    public void CreateNextBombTransparent()
+    {
+        _shouldNextBombBeTransparent = true;
     }
 }
 
