@@ -25,7 +25,11 @@ public class PlayerItemsManager : MonoBehaviour
     public void AddNewItem(Item item)
     {
         BaseItem newBaseItem = _allItems[item.ItemType];
-        if (!_itemsInventory.TryAdd(item.ItemType, newBaseItem)) return;
+        if (!_itemsInventory.TryAdd(item.ItemType, newBaseItem))
+        {
+            _itemsInventory[item.ItemType].RepickUpItem();
+            return;
+        }
         
         newBaseItem.PickupItem(Player);
         newBaseItem.OnFinishUsingItem += FinishUsingItem;
