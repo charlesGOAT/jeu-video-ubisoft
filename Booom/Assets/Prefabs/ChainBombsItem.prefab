@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 9097049114423687419}
   - component: {fileID: 4617351842077654283}
   m_Layer: 9
-  m_Name: PaintBrushItem
+  m_Name: ChainBombsItem
   m_TagString: Item
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -68,8 +68,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 0547f9ca48c9a3f49b6519821579e4e5, type: 2}
-  - {fileID: 2100000, guid: 0547f9ca48c9a3f49b6519821579e4e5, type: 2}
+  - {fileID: 2100000, guid: e723750a00c307545a772269b68cf193, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -126,4 +125,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a6bd8c3a30c467cb6d049ade1c8e26f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Item
-  itemType: 0
+  itemType: 2

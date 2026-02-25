@@ -6,8 +6,9 @@ public class FakeBombManager : BombManager
 
     protected override void Awake() {}
 
-    public override void CreateBomb(Vector3 position, PlayerEnum playerEnum, BombEnum bombEnum)
+    public override bool CreateBomb(Vector3 position, PlayerEnum playerEnum, BombEnum bombEnum, bool isTransparentBomb = false, bool isChained = false)
     {
         bombCreated = true;
+        return true;
     }
 }

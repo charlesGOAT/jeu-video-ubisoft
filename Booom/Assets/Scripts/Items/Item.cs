@@ -12,5 +12,7 @@ public class Item : MonoBehaviour
 
 public enum ItemType
 {
-    PaintBrush = 0
+    PaintBrush = 0,
+    TransparentBomb = 1,
+    ChainBombs = 2
 }
