@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -15,7 +14,6 @@ public class GameManager : MonoBehaviour
     public ItemsManager ItemsManager { get; private set; }
     public ScoreManager ScoreManager { get; private set; }
 
-    
     // add other managers
 
     public static GameManager Instance
@@ -24,7 +22,7 @@ public class GameManager : MonoBehaviour
         {
             if (!_isInstanceAssigned)
             {
-                var instance = AutoCreateInstance();
+                var instance = FindFirstObjectByType<GameManager>() ?? AutoCreateInstance();
                 SetSingletonInstance(instance);
                 instance.GetManagers();
             }

@@ -91,7 +91,7 @@ public class Player : MonoBehaviour
     private void Start()
     {
         CheckStartConditions();
-        if(GameManager.Instance.isSpreadingMode) InitializeSpawner();
+        InitializeSpawner();
     }
 
     private void CheckStartConditions()
@@ -109,23 +109,55 @@ public class Player : MonoBehaviour
 
     private void InitializeSpawner()
     {
-        if (GameManager.Instance.GridManager.playerSpawnPoints == null)
+        if (GameManager.Instance.GridManager.playerSpawnPoints.Length < (int)playerNb)
         {
-            int intPlayerNb = (int)PlayerNb - 1;
-            bool isMod2Zero = intPlayerNb % 2 == 0;
-        
-            var posY = isMod2Zero
-                ? GameManager.Instance.GridManager.MapUpperLimit.y
-                : GameManager.Instance.GridManager.MapLowerLimit.y;
-
-            int mult = isMod2Zero ? intPlayerNb / 2 : (intPlayerNb + 1) / 2;
-            var coord = new Vector2Int(GameManager.Instance.GridManager.MapUpperLimit.x * mult, posY);
-            GameManager.Instance.GridManager.GetTileAtCoordinates(coord).ChangeTileColor(playerNb); 
+            InitializeSpawnerWithDynamicSpawnPos();
         }
         else
         {
-            GameManager.Instance.GridManager.GetTileAtCoordinates(GameManager.Instance.GridManager.playerSpawnPoints[(int)playerNb - 1]).ChangeTileColor(playerNb); 
+            InitializeSpawnerWithFixedSpawnPos();
         }
+    }
+
+    private void InitializeSpawnerWithDynamicSpawnPos()
+    {
+        int intPlayerNb = (int)PlayerNb - 1;
+        bool isMod2Zero = intPlayerNb % 2 == 0;
+        
+        int posY = isMod2Zero
+            ? GameManager.Instance.GridManager.MapUpperLimit.y
+            : GameManager.Instance.GridManager.MapLowerLimit.y;
+
+        int mult = isMod2Zero ? intPlayerNb / 2 : (intPlayerNb + 1) / 2;
+        Vector2Int spawnPointGrid = new Vector2Int(GameManager.Instance.GridManager.MapUpperLimit.x * mult, posY);
+        
+        if(GameManager.Instance.isSpreadingMode)
+            GameManager.Instance.GridManager.GetTileAtCoordinates(spawnPointGrid).ChangeTileColor(playerNb); 
+        
+        MovePlayerOnSpawnPoint(spawnPointGrid);
+    }
+
+    private void InitializeSpawnerWithFixedSpawnPos()
+    {
+        Vector2Int spawnPointGrid = GameManager.Instance.GridManager.playerSpawnPoints[(int)playerNb - 1];
+        Tile tile = GameManager.Instance.GridManager.GetTileAtCoordinates(spawnPointGrid);
+        
+        if (tile == null)
+            throw new Exception($"There's no tile at player spawn point position {spawnPointGrid}");
+        if (tile.IsObstacle)
+            throw new Exception($"Player spawn position {spawnPointGrid} is on an obstacle");
+        
+        if(GameManager.Instance.isSpreadingMode)
+            tile.ChangeTileColor(playerNb);
+        
+        MovePlayerOnSpawnPoint(spawnPointGrid);
+    }
+
+    private void MovePlayerOnSpawnPoint(Vector2Int gridPos)
+    {
+        Vector3 worldPos = GridManagerStrategy.GridToWorldPosition(gridPos);
+        var trans = transform;
+        trans.position = new Vector3(worldPos.x, trans.position.y, worldPos.z);
     }
 
     public void OnMove(InputAction.CallbackContext ctx)
