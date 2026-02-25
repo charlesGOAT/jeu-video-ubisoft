@@ -69,6 +69,7 @@ MeshRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: e723750a00c307545a772269b68cf193, type: 2}
+  - {fileID: 2100000, guid: 370fe0b1c005ca24581cebabf1dd2e8a, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -126,3 +127,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Item
   itemType: 2
+  posOnMap: {x: 0, y: 0}
