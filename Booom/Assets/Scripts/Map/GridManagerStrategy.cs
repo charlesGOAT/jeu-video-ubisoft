@@ -42,7 +42,7 @@ public abstract class GridManagerStrategy : MonoBehaviour
         );
     }
 
-    private void Start()
+    private void Awake()
     {
         CreateGrid();
         SetOwnableTiles();
@@ -81,6 +81,7 @@ public abstract class GridManagerStrategy : MonoBehaviour
     //A besoin d'un peu de peaufinage mais marche pour l'instant
     //Je peut le faire dans un autre task
     //Manque encore du peaufinage lol
+    //Manque de peaufinage en tbnk
     protected void PositionCamera()
     {
         if (mainCamera == null) return;
@@ -104,18 +105,18 @@ public abstract class GridManagerStrategy : MonoBehaviour
     {
         if (player == PlayerEnum.None)
             return _ownableTiles.Keys;
-        
+
         var acquiredTiles = GameManager.Instance.ScoreManager.GetAcquiredTilesByPlayer();
         var tilesWithNoItem = acquiredTiles[(int)player - 1].Where(pos => !IsItemAtPos(pos));
         
         return tilesWithNoItem;
     }
-    
+
     private HashSet<Vector2Int> GetAllTilesOwned()
     {
         HashSet<Vector2Int> allTilesOwned = new();
         var acquiredTiles = GameManager.Instance.ScoreManager.GetAcquiredTilesByPlayer();
-        
+
         foreach (var list in acquiredTiles)
         {
             allTilesOwned.UnionWith(list);
@@ -130,4 +131,3 @@ public abstract class GridManagerStrategy : MonoBehaviour
         return _tiles.Keys.Except(allTilesOwned);
     }
 }
-
