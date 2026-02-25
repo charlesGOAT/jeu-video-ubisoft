@@ -326,7 +326,7 @@ public class Player : MonoBehaviour
         if (!other.tag.Equals("Item") || !other.gameObject.TryGetComponent(out Item item)) return;
 
         playerItemsManager.AddNewItem(item);
-        GameManager.Instance.RemoveItemFromGrid(item.ItemType);
+        GameManager.Instance.RemoveItemFromGrid(item);
         Destroy(other.gameObject);
     }
 

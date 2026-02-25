@@ -12,7 +12,7 @@ public class ItemSpawner : MonoBehaviour
     [SerializeField]
     protected float timeBetweenSpawns = 0;
     [SerializeField]
-    protected List<Vector2Int> fixedPosList;
+    protected List<Vector2Int> fixedPosList = new();
     [SerializeField]
     protected Item itemPrefab;
     [SerializeField]
@@ -21,7 +21,12 @@ public class ItemSpawner : MonoBehaviour
 
     private void Awake()
     {
-        // todo check that everything is set
+        var validPositions = from pos in fixedPosList
+            let tile = GameManager.Instance.GridManager.GetTileAtCoordinates(pos)
+            where tile != null && !tile.isObstacle
+            select pos;
+
+        fixedPosList = validPositions.ToList();
     }
 
     public int NbItemsOnMap { get; set; } = 0;
@@ -49,7 +54,7 @@ public class ItemSpawner : MonoBehaviour
         while (true)
         {
            yield return StartCoroutine(WaitForSpawnCond(lastTimeSpawned));
-           var pos = GetRandomTilePos(fixedPosList, gen);
+           var pos = GetRandomTilePos(fixedPosList.Where(pos => !GameManager.Instance.GridManager.IsItemAtPos(pos)), gen);
     
            if (isDropFromSky) yield return StartCoroutine(ManageShadow(pos));
     
@@ -64,7 +69,7 @@ public class ItemSpawner : MonoBehaviour
         while (true)
         { 
             yield return StartCoroutine(WaitForSpawnCond(lastTimeSpawned));
-            Vector3 pos = GameManager.Instance.GridManager.GetRandomPosOnGrid();
+            Vector3 pos = GameManager.Instance.GridManager.GetRandomPosOnGridWithNoItem();
             
             if (isDropFromSky) yield return StartCoroutine(ManageShadow(pos));
 
@@ -81,8 +86,8 @@ public class ItemSpawner : MonoBehaviour
         {
             yield return StartCoroutine(WaitForSpawnCond(lastTimeSpawned));
             PlayerEnum player = GameManager.Instance.ScoreManager.FindPlayerWithMostGround();
-            var playerTiles = GameManager.Instance.GridManager.GetPlayerTiles(player);
-            Vector3 pos = GetRandomTilePos(playerTiles.ToList(), gen);
+            var playerTiles = GameManager.Instance.GridManager.GetPlayerTilesWithNoItem(player);
+            Vector3 pos = GetRandomTilePos(playerTiles, gen);
             
             if (isDropFromSky) yield return StartCoroutine(ManageShadow(pos));
 
@@ -100,10 +105,11 @@ public class ItemSpawner : MonoBehaviour
         }
     }
 
-    protected Vector3 GetRandomTilePos(List<Vector2Int> listPos, in System.Random random)
+    protected Vector3 GetRandomTilePos(IEnumerable<Vector2Int> listPos, in System.Random random)
     {
-        int index = random.Next(0, listPos.Count);
-        return GridManagerStrategy.GridToWorldPosition(listPos[index]);
+        var listP = listPos.ToArray();
+        int index = random.Next(0, listP.Length);
+        return GridManagerStrategy.GridToWorldPosition(listP[index]);
     }
 
     protected IEnumerator ManageShadow(Vector3 pos)
@@ -115,7 +121,12 @@ public class ItemSpawner : MonoBehaviour
 
     protected void InstantiateItem(in Vector3 pos)
     {
-        Instantiate(itemPrefab, pos, Quaternion.identity);
+        Vector2Int posOnMap = GridManagerStrategy.WorldToGridCoordinates(pos);
+        
+        Item item = Instantiate(itemPrefab, pos, Quaternion.identity);
+        item.posOnMap = posOnMap;
+        
+        GameManager.Instance.GridManager.AddItemOnGrid(item);
         NbItemsOnMap++;
     }
 }
