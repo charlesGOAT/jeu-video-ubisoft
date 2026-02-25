@@ -1,9 +1,13 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 public class PaintBrushItem : BaseItem
 {
     public override ItemType ItemType => ItemType.PaintBrush;
     private const float ACTIVE_TIME = 2.5f;
+
+    private CancellationTokenSource _cts;
     
     private Player _player;
 
@@ -17,11 +21,19 @@ public class PaintBrushItem : BaseItem
         tile.ChangeTileColor(_player.PlayerNb);
     }
 
+    public override async void RepickUpItem()
+    {
+        _cts.Cancel();
+        _cts.Dispose();
+        await StartDelayTask();
+    }
+
     public override async void PickupItem(Player player)
     {
         _player = player;
         player.OnMoveFunctionCalled += UseItem;
-        await ManageActiveTime();
+
+        await StartDelayTask();
     }
 
     public void UseTimeOver()
@@ -29,10 +41,24 @@ public class PaintBrushItem : BaseItem
         _player.OnMoveFunctionCalled -= UseItem;
         CallFinishUsingItemCallback();
     }
+
+    private async Task StartDelayTask()
+    {
+        _cts = new CancellationTokenSource();
+        await ManageActiveTime();
+    }
     
     private async Task ManageActiveTime()
     {
-        await Task.Delay((int)(ACTIVE_TIME * 1000));
+        try
+        {
+            await Task.Delay((int)(ACTIVE_TIME * 1000), _cts.Token);
+        }
+        catch (OperationCanceledException)
+        {
+            return;
+        }
+        
         UseTimeOver();
     }
 }

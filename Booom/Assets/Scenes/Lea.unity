@@ -149,6 +149,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c958c5a9dfd264d4098046c6d10b0ebd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GridManagerDemo
+  capturableTilesCount: 0
   mainCamera: {fileID: 722509299}
   demoWidth: 10
   demoHeight: 10
@@ -564,6 +565,63 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0b43c4aaced3d3d49b3a48928e31c743, type: 3}
+--- !u!1001 &1860231024
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4622466783874199105, guid: 06b21fc583d65094cb2f86517a5a4855, type: 3}
+      propertyPath: m_Name
+      value: ScoreManager
+      objectReference: {fileID: 0}
+    - target: {fileID: 9133874978224438919, guid: 06b21fc583d65094cb2f86517a5a4855, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 13.1913
+      objectReference: {fileID: 0}
+    - target: {fileID: 9133874978224438919, guid: 06b21fc583d65094cb2f86517a5a4855, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9133874978224438919, guid: 06b21fc583d65094cb2f86517a5a4855, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 8.63725
+      objectReference: {fileID: 0}
+    - target: {fileID: 9133874978224438919, guid: 06b21fc583d65094cb2f86517a5a4855, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9133874978224438919, guid: 06b21fc583d65094cb2f86517a5a4855, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9133874978224438919, guid: 06b21fc583d65094cb2f86517a5a4855, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9133874978224438919, guid: 06b21fc583d65094cb2f86517a5a4855, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9133874978224438919, guid: 06b21fc583d65094cb2f86517a5a4855, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9133874978224438919, guid: 06b21fc583d65094cb2f86517a5a4855, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9133874978224438919, guid: 06b21fc583d65094cb2f86517a5a4855, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 06b21fc583d65094cb2f86517a5a4855, type: 3}
 --- !u!1001 &6839762246474525721
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -574,7 +632,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1152522418201534996, guid: a6a36da4cbd727d41b82c9941cc107ac, type: 3}
       propertyPath: spawnMode
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1152522418201534996, guid: a6a36da4cbd727d41b82c9941cc107ac, type: 3}
       propertyPath: isDropFromSky
@@ -659,3 +717,4 @@ SceneRoots:
   - {fileID: 1768921920}
   - {fileID: 376785771}
   - {fileID: 6839762246474525721}
+  - {fileID: 1860231024}
