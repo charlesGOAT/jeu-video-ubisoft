@@ -12,7 +12,7 @@ public class ItemSpawner : MonoBehaviour
     [SerializeField]
     protected float timeBetweenSpawns = 0;
     [SerializeField]
-    protected List<Vector2Int> fixedPosList;
+    protected List<Vector2Int> fixedPosList = new();
     [SerializeField]
     protected Item itemPrefab;
     [SerializeField]
@@ -21,7 +21,12 @@ public class ItemSpawner : MonoBehaviour
 
     private void Awake()
     {
-        // todo check that everything is set
+        var validPositions = from pos in fixedPosList
+            let tile = GameManager.Instance.GridManager.GetTileAtCoordinates(pos)
+            where tile != null && !tile.isObstacle
+            select pos;
+
+        fixedPosList = validPositions.ToList();
     }
 
     public int NbItemsOnMap { get; set; } = 0;
