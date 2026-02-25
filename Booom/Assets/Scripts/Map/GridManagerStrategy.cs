@@ -71,7 +71,7 @@ public abstract class GridManagerStrategy : MonoBehaviour
     {
         foreach (var posTile in _tiles)
         {
-            if (!posTile.Value.isObstacle)
+            if (!posTile.Value.IsObstacle)
             {
                 _ownableTiles[posTile.Key] = posTile.Value;
             }

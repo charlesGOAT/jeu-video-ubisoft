@@ -23,7 +23,7 @@ public class ItemSpawner : MonoBehaviour
     {
         var validPositions = from pos in fixedPosList
             let tile = GameManager.Instance.GridManager.GetTileAtCoordinates(pos)
-            where tile != null && !tile.isObstacle
+            where tile != null && !tile.IsObstacle
             select pos;
 
         fixedPosList = validPositions.ToList();
