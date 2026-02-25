@@ -48,9 +48,9 @@ public class BombManager : MonoBehaviour
         Vector3 worldPosition = GridManagerStrategy.GridToWorldPosition(gridCoordinates, tile.transform.position.y);
         bombPrefabs[(int)bombEnum - 1].associatedPlayer = playerEnum;
 
-        bombPrefabs[(int)bombEnum - 1].isChainedBomb = isChained;
+        bombPrefabs[(int)bombEnum - 1].IsChainedBomb = isChained;
         Bomb instantiatedBomb = Instantiate(bombPrefabs[(int)bombEnum - 1], worldPosition + bombHeight, Quaternion.identity);
-        instantiatedBomb.isTransparentBomb = isTransparentBomb;
+        instantiatedBomb.IsTransparentBomb = isTransparentBomb;
 
         if (isChained)
             _chainedBombsPerPlayer[playerEnum].Add(instantiatedBomb);

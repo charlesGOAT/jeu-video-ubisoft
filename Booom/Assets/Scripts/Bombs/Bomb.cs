@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -19,8 +18,8 @@ public class Bomb : MonoBehaviour
     [SerializeField]
     private int explosionRange = 3;
 
-    public bool isTransparentBomb = false;
-    public bool isChainedBomb = false;
+    public bool IsTransparentBomb { private get; set; } = false;
+    public bool IsChainedBomb { private get; set; } = false;
 
     private readonly Vector2Int[] _directions =
     {
@@ -47,7 +46,7 @@ public class Bomb : MonoBehaviour
 
     protected virtual void Start()
     {
-        if(!isChainedBomb)
+        if(!IsChainedBomb)
             Fuse();
     }
 
@@ -123,7 +122,7 @@ public class Bomb : MonoBehaviour
     {
         Tile tile = GameManager.Instance.GridManager.GetTileAtCoordinates(bombCoordinates);
 
-        if (tile == null || (tile.IsObstacle && !isTransparentBomb))
+        if (tile == null || (tile.IsObstacle && !IsTransparentBomb))
         {
             return false;
         }
