@@ -18,8 +18,9 @@ public class Bomb : MonoBehaviour
     [SerializeField]
     private int explosionRange = 3;
 
+    public BombFusingStrategy BombFusingStrategy = new();
+
     public bool IsTransparentBomb { private get; set; } = false;
-    public bool IsChainedBomb { private get; set; } = false;
 
     private readonly Vector2Int[] _directions =
     {
@@ -46,8 +47,7 @@ public class Bomb : MonoBehaviour
 
     protected virtual void Start()
     {
-        if(!IsChainedBomb)
-            Fuse();
+        BombFusingStrategy.Fuse(this);
     }
 
     public static bool IsBombAt(Vector2Int gridCoordinates)
@@ -55,7 +55,7 @@ public class Bomb : MonoBehaviour
         return ActiveBombs.Contains(gridCoordinates);
     }
 
-    protected void Fuse()
+    public void StartBombCountDown()
     {
         StartCoroutine(CountdownAndExplode());
     }

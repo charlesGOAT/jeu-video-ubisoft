@@ -14,5 +14,6 @@ public enum ItemType
 {
     PaintBrush = 0,
     TransparentBomb = 1,
-    ChainBombs = 2
+    ChainBombs = 2,
+    TargetBomb = 3
 }
