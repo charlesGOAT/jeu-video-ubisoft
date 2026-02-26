@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -15,9 +14,12 @@ public class Bomb : MonoBehaviour
 
     [SerializeField]
     private float pulseSpeed = 8f;
-    
+
     [SerializeField]
     private int explosionRange = 3;
+
+    public bool IsTransparentBomb { private get; set; } = false;
+    public bool IsChainedBomb { private get; set; } = false;
 
     private readonly Vector2Int[] _directions =
     {
@@ -26,8 +28,9 @@ public class Bomb : MonoBehaviour
         Vector2Int.left,
         Vector2Int.right
     };
+
     private Vector3 _initialScale;
-    
+
     protected Vector2Int _bombCoordinates;
 
     public PlayerEnum associatedPlayer = PlayerEnum.None;
@@ -43,7 +46,8 @@ public class Bomb : MonoBehaviour
 
     protected virtual void Start()
     {
-        Fuse();
+        if(!IsChainedBomb)
+            Fuse();
     }
 
     public static bool IsBombAt(Vector2Int gridCoordinates)
@@ -66,10 +70,11 @@ public class Bomb : MonoBehaviour
             elapsed += Time.deltaTime;
             yield return null;
         }
+
         Explode();
     }
 
-    private void Explode()
+    public void Explode()
     {
         PaintTiles();
         Destroy(gameObject);
@@ -77,37 +82,54 @@ public class Bomb : MonoBehaviour
 
     protected virtual void PaintTiles()
     {
-        foreach (var direction in _directions)
-        {
-            PaintTilesForDirection(direction);
-        }
-    }
-    
-    private void PaintTilesForDirection(Vector2Int direction)
-    {
         Tile bombTile = GameManager.Instance.GridManager.GetTileAtCoordinates(_bombCoordinates);
         if (bombTile == null) return;
-        PlayerEnum currentOwner = bombTile.CurrentTileOwner;
 
+        PlayerEnum currentOwner = bombTile.CurrentTileOwner;
         PlayerEnum newTileOwner = GameManager.Instance.isSpreadingMode ? currentOwner : associatedPlayer;
 
-        Vector2Int tileCoords = _bombCoordinates;
-        
-        for (int rangeCounter = 0; rangeCounter <= explosionRange; ++rangeCounter)
-        {
-            Tile tile = GameManager.Instance.GridManager.GetTileAtCoordinates(tileCoords);
+        PaintTile(_bombCoordinates, Vector2Int.zero, newTileOwner);
 
-            if (tile == null || tile.isObstacle)
+        foreach (Vector2Int direction in _directions)
+        {
+            PaintTilesForDirection(_bombCoordinates + direction, direction, explosionRange - 1, newTileOwner);
+        }
+    }
+
+    private void PaintTilesForDirection(Vector2Int bombCoordinates, Vector2Int direction, int range, PlayerEnum newTileOwner)
+    {
+        if (range < 0) return;
+
+        for (int rangeCounter = 0; rangeCounter <= range; ++rangeCounter)
+        {
+            Tile tile = GameManager.Instance.GridManager.GetTileAtCoordinates(bombCoordinates);
+
+            if (tile is Portal portalTile)
             {
+                int tilesRemaining = range - rangeCounter;
+                PaintTilesForDirectionUsingPortal(portalTile.GetOtherPortalPosition() + direction, direction, tilesRemaining, newTileOwner);
                 return;
             }
 
-            tile.ChangeTileColor(newTileOwner);
-            
-            HitPlayers(tileCoords, direction);
-
-            tileCoords += direction;
+            if (!PaintTile(bombCoordinates, direction, newTileOwner))
+            {
+                return;
+            }
         }
+    }
+
+    private bool PaintTile(in Vector2Int bombCoordinates, in Vector2Int direction, PlayerEnum newTileOwner)
+    {
+        Tile tile = GameManager.Instance.GridManager.GetTileAtCoordinates(bombCoordinates);
+
+        if (tile == null || (tile.IsObstacle && !IsTransparentBomb))
+        {
+            return false;
+        }
+
+        tile.ChangeTileColor(newTileOwner);
+        HitPlayers(bombCoordinates, direction);
+        return true;
     }
 
     protected void HitPlayers(Vector2Int tileCoordinates, Vector2Int hitDirection)
@@ -118,10 +140,36 @@ public class Bomb : MonoBehaviour
             if (playerTile != null && playerTile.TileCoordinates == tileCoordinates)
             {
                 if (player.PlayerNb != associatedPlayer)
+                {
                     GameManager.Instance.ScoreManager.NewElimination(associatedPlayer);
-                
+                }
+
                 player.OnHit(hitDirection);
             }
+        }
+    }
+
+    private void PaintTilesForDirectionUsingPortal(Vector2Int bombCoordinates, Vector2Int direction, int range, PlayerEnum tileOwner)
+    {
+        if (range < 0 || GameManager.Instance.GridManager.GetTileAtCoordinates(bombCoordinates) == null) return;
+
+        for (int rangeCounter = 0; rangeCounter <= range; ++rangeCounter)
+        {
+            Tile tile = GameManager.Instance.GridManager.GetTileAtCoordinates(bombCoordinates);
+
+            if (tile is Portal portalTile)
+            {
+                int tilesRemaining = range - rangeCounter;
+                PaintTilesForDirectionUsingPortal(portalTile.GetOtherPortalPosition() + direction, direction, tilesRemaining, tileOwner);
+                return;
+            }
+
+            if (!PaintTile(bombCoordinates, direction, tileOwner))
+            {
+                return;
+            }
+
+            bombCoordinates += direction;
         }
     }
 
@@ -129,7 +177,6 @@ public class Bomb : MonoBehaviour
     {
         ActiveBombs.Remove(_bombCoordinates);
     }
-
 }
 
 public enum BombEnum

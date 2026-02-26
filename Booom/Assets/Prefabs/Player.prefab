@@ -35,7 +35,8 @@ Transform:
   m_LocalPosition: {x: 2, y: 2.88, z: 2}
   m_LocalScale: {x: 1, y: 2.1557, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 6896737471147546589}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &8912798228003709967
@@ -129,7 +130,7 @@ CharacterController:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 384
+    m_Bits: 256
   m_LayerOverridePriority: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
@@ -155,13 +156,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SimplePlayerMovement
   speed: 5
   bombPrefab: {fileID: 4114011512644460187, guid: 0cc17b392ffb1e843b2e122fc1d17f11, type: 3}
-  bombCooldown: 3
   playerColor: {r: 1, g: 0, b: 0, a: 1}
   playerNb: 0
-  playerItemsManager: {fileID: 0}
+  playerItemsManager: {fileID: 1158385441533370530}
   knockbackForce: 10
   hitFlickerFrequency: 50
   immuneTimer: 5
+  tileDetectionTolerance: 0.35
+  arrow: {fileID: 1432551464615285425}
 --- !u!114 &1141182974104389932
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -202,7 +204,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
     m_ActionId: 351f2ccd-1f9f-44bf-9bec-d62ac5c5f408
-    m_ActionName: Player/Move[/Keyboard/w,/Keyboard/upArrow,/Keyboard/s,/Keyboard/downArrow,/Keyboard/a,/Keyboard/leftArrow,/Keyboard/d,/Keyboard/rightArrow]
+    m_ActionName: 'Player/Move[/Keyboard/w,/Keyboard/upArrow,/Keyboard/s,/Keyboard/downArrow,/Keyboard/a,/Keyboard/leftArrow,/Keyboard/d,/Keyboard/rightArrow]'
   - m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 7148449890927070707}
@@ -218,39 +220,39 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
     m_ActionId: 6c2ab1b8-8984-453a-af3d-a3c78ae1679a
-    m_ActionName: Player/PlaceBomb[/Mouse/leftButton]
+    m_ActionName: 'Player/PlaceBomb[/Mouse/leftButton]'
   - m_PersistentCalls:
       m_Calls: []
     m_ActionId: c95b2375-e6d9-4b88-9c4c-c5e76515df4b
-    m_ActionName: UI/Navigate[/Keyboard/w,/Keyboard/upArrow,/Keyboard/s,/Keyboard/downArrow,/Keyboard/a,/Keyboard/leftArrow,/Keyboard/d,/Keyboard/rightArrow]
+    m_ActionName: 'UI/Navigate[/Keyboard/w,/Keyboard/upArrow,/Keyboard/s,/Keyboard/downArrow,/Keyboard/a,/Keyboard/leftArrow,/Keyboard/d,/Keyboard/rightArrow]'
   - m_PersistentCalls:
       m_Calls: []
     m_ActionId: 7607c7b6-cd76-4816-beef-bd0341cfe950
-    m_ActionName: UI/Submit[/Keyboard/enter]
+    m_ActionName: 'UI/Submit[/Keyboard/enter]'
   - m_PersistentCalls:
       m_Calls: []
     m_ActionId: 15cef263-9014-4fd5-94d9-4e4a6234a6ef
-    m_ActionName: UI/Cancel[/Keyboard/escape]
+    m_ActionName: 'UI/Cancel[/Keyboard/escape]'
   - m_PersistentCalls:
       m_Calls: []
     m_ActionId: 32b35790-4ed0-4e9a-aa41-69ac6d629449
-    m_ActionName: UI/Point[/Mouse/position]
+    m_ActionName: 'UI/Point[/Mouse/position]'
   - m_PersistentCalls:
       m_Calls: []
     m_ActionId: 3c7022bf-7922-4f7c-a998-c437916075ad
-    m_ActionName: UI/Click[/Mouse/leftButton]
+    m_ActionName: 'UI/Click[/Mouse/leftButton]'
   - m_PersistentCalls:
       m_Calls: []
     m_ActionId: 44b200b1-1557-4083-816c-b22cbdf77ddf
-    m_ActionName: UI/RightClick[/Mouse/rightButton]
+    m_ActionName: 'UI/RightClick[/Mouse/rightButton]'
   - m_PersistentCalls:
       m_Calls: []
     m_ActionId: dad70c86-b58c-4b17-88ad-f5e53adf419e
-    m_ActionName: UI/MiddleClick[/Mouse/middleButton]
+    m_ActionName: 'UI/MiddleClick[/Mouse/middleButton]'
   - m_PersistentCalls:
       m_Calls: []
     m_ActionId: 0489e84a-4833-4c40-bfae-cea84b696689
-    m_ActionName: UI/ScrollWheel[/Mouse/scroll]
+    m_ActionName: 'UI/ScrollWheel[/Mouse/scroll]'
   - m_PersistentCalls:
       m_Calls: []
     m_ActionId: 24908448-c609-4bc3-a128-ea258674378a
@@ -274,7 +276,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
     m_ActionId: c3490868-bd20-4116-b374-3e59da42a747
-    m_ActionName: Player/ChangeBomb[/XInputControllerWindows/buttonEast,/Mouse/rightButton]
+    m_ActionName: 'Player/ChangeBomb[/XInputControllerWindows/buttonEast,/Mouse/rightButton]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
@@ -292,3 +294,70 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8bfe7f3768ca4f01a33d5bca26b111b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerItemsManager
+--- !u!1001 &1929161250637153427
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 7061186720972457990}
+    m_Modifications:
+    - target: {fileID: 658845063172920866, guid: ed63e48ff14d06047b2e6eeadfe16a52, type: 3}
+      propertyPath: m_Name
+      value: Arrow
+      objectReference: {fileID: 0}
+    - target: {fileID: 5004594158766986062, guid: ed63e48ff14d06047b2e6eeadfe16a52, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.01
+      objectReference: {fileID: 0}
+    - target: {fileID: 5004594158766986062, guid: ed63e48ff14d06047b2e6eeadfe16a52, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5004594158766986062, guid: ed63e48ff14d06047b2e6eeadfe16a52, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -1.39
+      objectReference: {fileID: 0}
+    - target: {fileID: 5004594158766986062, guid: ed63e48ff14d06047b2e6eeadfe16a52, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: -0.022071475
+      objectReference: {fileID: 0}
+    - target: {fileID: 5004594158766986062, guid: ed63e48ff14d06047b2e6eeadfe16a52, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5004594158766986062, guid: ed63e48ff14d06047b2e6eeadfe16a52, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0.99975646
+      objectReference: {fileID: 0}
+    - target: {fileID: 5004594158766986062, guid: ed63e48ff14d06047b2e6eeadfe16a52, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5004594158766986062, guid: ed63e48ff14d06047b2e6eeadfe16a52, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5004594158766986062, guid: ed63e48ff14d06047b2e6eeadfe16a52, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: -182.529
+      objectReference: {fileID: 0}
+    - target: {fileID: 5004594158766986062, guid: ed63e48ff14d06047b2e6eeadfe16a52, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: ed63e48ff14d06047b2e6eeadfe16a52, type: 3}
+--- !u!1 &1432551464615285425 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 658845063172920866, guid: ed63e48ff14d06047b2e6eeadfe16a52, type: 3}
+  m_PrefabInstance: {fileID: 1929161250637153427}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &6896737471147546589 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5004594158766986062, guid: ed63e48ff14d06047b2e6eeadfe16a52, type: 3}
+  m_PrefabInstance: {fileID: 1929161250637153427}
+  m_PrefabAsset: {fileID: 0}

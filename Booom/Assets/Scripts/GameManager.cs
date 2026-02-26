@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -47,9 +46,10 @@ public class GameManager : MonoBehaviour
         _isInstanceAssigned = true;
     }
 
-    public void RemoveItemFromGrid(ItemType itemType)
+    public void RemoveItemFromGrid(Item item)
     {
-        ItemsManager.RemoveItem(itemType); 
+        ItemsManager.RemoveItem(item.ItemType);
+        GridManager.RemoveItemFromGrid(item);
     }
 
     private void GetManagers()

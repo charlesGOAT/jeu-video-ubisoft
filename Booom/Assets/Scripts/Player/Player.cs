@@ -2,8 +2,12 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Interactions;
 
-public delegate void MoveCalledEventHandler(Player player);
+public delegate void MoveCalledEventHandler();
+public delegate void PlaceBomb();
+public delegate void ExplodeChainedBombs();
+public delegate void BombExploded();
 
 [RequireComponent(typeof(PlayerItemsManager))]
 [RequireComponent(typeof(Renderer))]
@@ -34,18 +38,28 @@ public class Player : MonoBehaviour
     [SerializeField]
     private float immuneTimer = 5;
 
+    [SerializeField]
+    private float tileDetectionTolerance = 0.35f;
+
+    [SerializeField]
+    private GameObject arrow;
+
     private PlayerInput _playerInput;
     private Renderer _renderer;
 
     private Vector2 _moveInput;
+    private Vector3 _lastInput;
     private BombEnum _currentBombType = BombEnum.NormalBomb;
-
+    private bool _shouldNextBombBeTransparent = false;
+    public bool isChainingBombs = false;
+    
     private int _bombTypeCount;
 
     public PlayerEnum PlayerNb => playerNb;
 
     private CharacterController _characterController;
     private Vector3 _knockbackVelocity;
+    private Vector3 _jumpVelocity;
     private float _knockbackDamping = 8f;
     private float _verticalVelocity;
 
@@ -53,6 +67,7 @@ public class Player : MonoBehaviour
     private IdleState _idleState;
     private HitState _hitState;
     private RunState _runState;
+    private JumpState _jumpState;
 
     //nom de caca
     private float _actualImmuneTimer;
@@ -64,6 +79,9 @@ public class Player : MonoBehaviour
     public static readonly Dictionary<PlayerEnum, Color> PlayerColorDict = new Dictionary<PlayerEnum, Color>();  // make it the other way around if we want to test color spreading
     
     public event MoveCalledEventHandler OnMoveFunctionCalled;
+    public event PlaceBomb OnPlaceBomb;
+    public event ExplodeChainedBombs OnExplodeChainedBombs;
+    public event BombExploded OnBombExploded;
 
     private void Awake()
     {
@@ -80,8 +98,10 @@ public class Player : MonoBehaviour
         GetComponents();
 
         ActivePlayers.Add(this);
+
+        InitializeArrow();
     }
-    
+
     private void Start()
     {
         CheckStartConditions();
@@ -110,17 +130,59 @@ public class Player : MonoBehaviour
         GameManager.Instance.GridManager.GetTileAtCoordinates(coord).ChangeTileColor(playerNb);
     }
 
+    private void InitializeArrow()
+    {
+        foreach (var children in arrow.GetComponentsInChildren<Renderer>())
+        {
+            children.material.color = playerColor;
+        }
+    }
+
     public void OnMove(InputAction.CallbackContext ctx)
     {
         _moveInput = ctx.ReadValue<Vector2>();
+        if (_moveInput != Vector2.zero) 
+        {
+            _lastInput = GetBombPlacementDirection(_moveInput);
+        }
+    
+        RotateArrow();
+    }
+    
+    private void RotateArrow()
+    {
+        Vector3 targetDirection = _lastInput * (float)(Tile.TileLength / 2.0);
+        if (targetDirection != Vector3.zero) 
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(targetDirection, Vector3.up);
+
+            arrow.transform.rotation = targetRotation;
+            arrow.transform.position = transform.position + targetDirection;
+        }
     }
 
     public void OnBomb(InputAction.CallbackContext ctx)
     {
-        if (ctx.performed)
+        if (ctx.performed && ctx.interaction is HoldInteraction)
         {
-            GameManager.Instance.BombManager.CreateBomb(transform.position, playerNb, _currentBombType);
+            OnExplodeChainedBombs?.Invoke();
+            isChainingBombs = false;
+            GameManager.Instance.BombManager.ExplodeChainedBombs(playerNb);
         }
+        else if (ctx.performed && (isChainingBombs || !GameManager.Instance.BombManager.HasChainedBombs(playerNb)))
+        {
+            OnPlaceBomb?.Invoke();
+            Vector3 bombDirection = _moveInput.sqrMagnitude > 0.0001f ? GetBombPlacementDirection(_moveInput) : _lastInput;
+
+            if (GameManager.Instance.BombManager.CreateBomb(transform.position + (bombDirection * Tile.TileLength), playerNb,
+                    _currentBombType, _shouldNextBombBeTransparent, isChainingBombs))
+            {
+                OnBombExploded?.Invoke();
+            }
+                
+            _shouldNextBombBeTransparent = false;
+        }
+        
     }
 
     public void OnChangeBomb(InputAction.CallbackContext ctx)
@@ -138,6 +200,11 @@ public class Player : MonoBehaviour
     private void Update()
     {
         UpdateImmune();
+        if (GetPlayerTile() != null) 
+        {
+            GetPlayerTile().StepOnTile(this);
+        }
+        
         _stateMachine.UpdateStateMachine(Time.deltaTime);
     }
 
@@ -172,6 +239,71 @@ public class Player : MonoBehaviour
         _actualImmuneTimer = immuneTimer;
     }
 
+    public void OnJump(Vector2Int jumpDirection) 
+    {
+        if (_stateMachine.CurrentState is not JumpState)
+        {
+            _jumpVelocity = CalculateJumpForce(jumpDirection);
+            _stateMachine.Trigger(GameConstants.PLAYER_JUMP_TRIGGER);
+        }
+    }
+
+    public void OnPortal(Vector2Int playerDirection, Vector3 otherPortalPosition)
+    {
+        if (_stateMachine.CurrentState is not JumpState) 
+        {
+            _characterController.enabled = false;
+            this.gameObject.transform.position = otherPortalPosition;
+            _jumpVelocity = CalculatePortalForce(playerDirection);
+            _stateMachine.Trigger(GameConstants.PLAYER_JUMP_TRIGGER);
+            _characterController.enabled = true;
+        }
+    }
+
+    private Vector3 CalculateJumpForce(Vector2Int jumpDirection)
+    {
+        //Formule pour trouver la vitesse initiale quand le sommet du saut est a (Obstacle.ObstacleHeight / 2) + 1 et au demi du trajet
+        //position pour gravity 0.5*a*t^2
+        float posForGravity = -(Physics.gravity.y / 2) * Mathf.Pow(GameConstants.AIR_STATE_DURATION / 2, 2);
+
+        //position pour apogee du saut
+        float jumpHeight = (Obstacle.ObstacleHeight) + GameConstants.JUMP_HEIGHT_OFFSET;
+
+        float velocityY = posForGravity + jumpHeight / (GameConstants.AIR_STATE_DURATION / 2);
+
+        float velocityX = (Tile.TileLength * GameConstants.JUMP_NUMBER_OF_TILES) /(GameConstants.AIR_STATE_DURATION);
+        Vector3 jumpInitialVelocity = new(velocityX * jumpDirection.x, velocityY, jumpDirection.y * velocityX);
+
+
+        return jumpInitialVelocity;
+    }
+
+    private Vector3 CalculatePortalForce(Vector2Int jumpDirection)
+    {
+        //Formule pour trouver la vitesse initiale quand le sommet du saut est a (Obstacle.ObstacleHeight / 2) + 1 et au demi du trajet
+        //position pour gravity 0.5*a*t^2
+        float posForGravity = -(Physics.gravity.y / 2) * Mathf.Pow(GameConstants.PORTAL_AIR_DURATION / 2, 2);
+
+        float velocityY = (posForGravity + GameConstants.PORTAL_JUMP_HEIGHT) / (GameConstants.PORTAL_AIR_DURATION / 2);
+
+        float velocityX = Tile.TileLength / GameConstants.PORTAL_AIR_DURATION;
+        Vector3 jumpInitialVelocity = new(velocityX * jumpDirection.x, velocityY, jumpDirection.y * velocityX);
+
+
+        return jumpInitialVelocity;
+    }
+
+
+    public void UpdateJump() 
+    {
+        float moveY = ApplyGravity(ref _jumpVelocity.y);
+        Vector3 jumpMove = new Vector3(_jumpVelocity.x * Time.deltaTime, moveY, _jumpVelocity.z * Time.deltaTime);
+        _characterController.Move(jumpMove);
+    }
+
+    public void ResetJumpVelocity() => _jumpVelocity = Vector3.zero;
+
+
     public void FlickerPlayerOnHit(float elapsedT) => _renderer.enabled = Mathf.Sin(elapsedT * hitFlickerFrequency) > 0;
 
     private void SetRendererVisible() => _renderer.enabled = true;
@@ -182,22 +314,38 @@ public class Player : MonoBehaviour
     {
         Vector2 curMoveInput = _moveInput.normalized;
 
-        float boost = CheckIfOnOwnColor() ? GameConstants.COLOR_BOOST : 1;
+        float boost = CheckIfOnOwnColor() ? GameConstants.COLOR_BOOST : (CheckIfOnEnemyTerritory() ? GameConstants.COLOR_DEBUFF: 1);
 
         Vector3 move = new Vector3(curMoveInput.y, 0, -curMoveInput.x) * (speed * boost);
+        float tempMove = ApplyGravity(ref _verticalVelocity);
 
-        if (_characterController.isGrounded && _verticalVelocity < 0f)
+        _characterController.Move(move * Time.deltaTime);
+        _characterController.Move(Vector3.down * Math.Abs(tempMove));
+        OnMoveFunctionCalled?.Invoke();
+    }
+
+    //Peut etre faire une meilleure fonction
+    private float ApplyGravity(ref float currentVerticalVelocity)
+    {
+        float tempMove;
+        if (GetIsGrounded() && currentVerticalVelocity < 0f)
         {
-            _verticalVelocity = 0f;
+            tempMove = 0f;
+            currentVerticalVelocity = 0f;
         }
         else
         {
-            _verticalVelocity += Physics.gravity.y * Time.deltaTime; //gravity
+            //calcul de la gravité par rapport a la position = 0.5*at^2 + vt
+            tempMove = (0.5f * Physics.gravity.y * Time.deltaTime * Time.deltaTime) + (currentVerticalVelocity * Time.deltaTime);
+            currentVerticalVelocity += Physics.gravity.y * Time.deltaTime;
         }
-        move.y = _verticalVelocity;
-        
-        _characterController.Move(move * Time.deltaTime);
-        OnMoveFunctionCalled?.Invoke(this);
+
+        return tempMove;
+    }
+
+    public bool GetIsGrounded()
+    {
+        return _characterController.isGrounded;
     }
 
     public void UpdateKnockback()
@@ -224,7 +372,7 @@ public class Player : MonoBehaviour
         if (!other.tag.Equals("Item") || !other.gameObject.TryGetComponent(out Item item)) return;
 
         playerItemsManager.AddNewItem(item);
-        GameManager.Instance.RemoveItemFromGrid(item.ItemType);
+        GameManager.Instance.RemoveItemFromGrid(item);
         Destroy(other.gameObject);
     }
 
@@ -240,7 +388,73 @@ public class Player : MonoBehaviour
         return tile.CurrentTileOwner == playerNb;
     }
 
-    public Tile GetPlayerTile() => GameManager.Instance.GridManager.GetTileAtCoordinates(GridManagerStrategy.WorldToGridCoordinates(transform.position));
+    private bool CheckIfOnEnemyTerritory() 
+    {
+        Vector2Int gridCoordinates = GridManagerStrategy.WorldToGridCoordinates(transform.position);
+        Tile tile = GameManager.Instance.GridManager.GetTileAtCoordinates(gridCoordinates);
+        if (tile == null)
+        {
+            return false;
+        }
+
+        return tile.CurrentTileOwner != playerNb && tile.CurrentTileOwner != PlayerEnum.None;
+    }
+
+    public Tile GetPlayerTile()
+    {
+        Vector2Int gridCoordinates = GridManagerStrategy.WorldToGridCoordinates(transform.position);
+        Tile tile = GameManager.Instance.GridManager.GetTileAtCoordinates(gridCoordinates);
+        if (tile == null)
+        {
+            return null;
+        }
+
+        float playerFeetY = _characterController.bounds.min.y;
+        float tileSurfaceY = tile.transform.position.y;
+
+        return Mathf.Abs(playerFeetY - tileSurfaceY) <= tileDetectionTolerance ? tile : null;
+    }
+
+    private Vector3 GetBombPlacementDirection(Vector2 input)
+    {
+        //a cause de la camera les inputs sont weird
+        Vector3 worldDirection = new(input.y, 0f, -input.x);
+        float absX = Mathf.Abs(worldDirection.x);
+        float absZ = Mathf.Abs(worldDirection.z);
+
+        if (absX < 0.001f && absZ < 0.001f)
+        {
+            return _lastInput;
+        }
+
+        if (absX < 0.001f)
+        {
+            return new Vector3(0f, 0f, Mathf.Sign(worldDirection.z));
+        }
+
+        if (absZ < 0.001f)
+        {
+            return new Vector3(Mathf.Sign(worldDirection.x), 0f, 0f);
+        }
+
+        Vector3 xCandidate = new(Mathf.Sign(worldDirection.x), 0f, 0f);
+        Vector3 zCandidate = new(0f, 0f, Mathf.Sign(worldDirection.z));
+
+        var position = transform.position;
+        Vector3 intendedTarget = position + worldDirection.normalized * Tile.TileLength;
+        Vector3 xTarget = position + xCandidate * Tile.TileLength;
+        Vector3 zTarget = position + zCandidate * Tile.TileLength;
+
+        float xDistance = (intendedTarget - xTarget).sqrMagnitude;
+        float zDistance = (intendedTarget - zTarget).sqrMagnitude;
+
+        if (Mathf.Abs(xDistance - zDistance) <= 0.0001f)
+        {
+            return absX >= absZ ? xCandidate : zCandidate;
+        }
+
+        return xDistance < zDistance ? xCandidate : zCandidate;
+    }
 
     private void InitializeStateMachine()
     {
@@ -248,9 +462,13 @@ public class Player : MonoBehaviour
         _idleState = new IdleState(_stateMachine, this);
         _hitState = new HitState(_stateMachine, this);
         _runState = new RunState(_stateMachine, this);
+        _jumpState = new JumpState(_stateMachine, this);
 
         _stateMachine.AddTransition<IdleState>(GameConstants.PLAYER_RUN_TRIGGER, _runState);
         _stateMachine.AddTransition<RunState>(GameConstants.PLAYER_IDLE_TRIGGER, _idleState);
+        _stateMachine.AddTransition<JumpState>(GameConstants.PLAYER_IDLE_TRIGGER, _idleState);
+        _stateMachine.AddTransition<JumpState>(GameConstants.PLAYER_RUN_TRIGGER, _runState);
+        _stateMachine.AddForEachType(GameConstants.PLAYER_JUMP_TRIGGER, _jumpState);
         _stateMachine.AddTransition<HitState>(GameConstants.PLAYER_IDLE_TRIGGER, _idleState);
         _stateMachine.AddForEachType(GameConstants.PLAYER_HIT_TRIGGER, _hitState);
         _stateMachine.SetInitialState(_idleState);
@@ -279,8 +497,12 @@ public class Player : MonoBehaviour
         
         gameObject.GetComponent<Renderer>().material.color = playerColor;
     }
+    
+    public void CreateNextBombTransparent()
+    {
+        _shouldNextBombBeTransparent = true;
+    }
 }
-
 
 public enum PlayerEnum
 {
@@ -290,4 +512,5 @@ public enum PlayerEnum
     Player3 = 3,
     Player4 = 4
 }
+
 

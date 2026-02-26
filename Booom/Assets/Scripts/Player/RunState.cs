@@ -12,7 +12,7 @@ public class RunState : State
     }
     public override void Exit()
     {
-        //Arrêter l'animation de course
+        //Arreter l'animation de course
     }
     public override void Handle(float time)
     {
