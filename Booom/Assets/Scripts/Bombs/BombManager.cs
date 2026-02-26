@@ -48,7 +48,7 @@ public class BombManager : MonoBehaviour
         }
 
         Vector3 worldPosition = GridManagerStrategy.GridToWorldPosition(gridCoordinates, tile.transform.position.y);
-        bombPrefabs[(int)bombEnum - 1].associatedPlayer = playerEnum;
+        bombPrefabs[(int)bombEnum - 1].AssociatedPlayer = playerEnum;
 
         Bomb instantiatedBomb = Instantiate(bombPrefabs[(int)bombEnum - 1], worldPosition + bombHeight, Quaternion.identity);
         instantiatedBomb.BombFusingStrategy = bombStrat;

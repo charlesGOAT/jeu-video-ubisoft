@@ -4,4 +4,6 @@
     {
         bomb.StartBombCountDown();
     }
+    
+    public virtual void OnCollision(Bomb bomb){}
 }

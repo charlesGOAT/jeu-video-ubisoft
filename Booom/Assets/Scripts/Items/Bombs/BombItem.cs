@@ -6,7 +6,7 @@ public abstract class BombItem : BaseItem
 
     protected Player _associatedPlayer;
 
-    private void BombPlacedExploded()
+    protected void BombPlacedExploded()
     {
         _currentUseCount++;
         if (_currentUseCount >= maxUseCount)
