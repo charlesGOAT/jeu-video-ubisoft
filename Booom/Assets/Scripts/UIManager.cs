@@ -35,8 +35,6 @@ public class UIManager : MonoBehaviour
     private void OnDisable()
     {
         GameManager.Instance.ScoreManager.OnScoreChanged -= Refresh;
-        if (PlayerInputManager.instance != null)
-            PlayerInputManager.instance.onPlayerJoined -= AddPlayer;
     }
 
     private void Start()
@@ -45,7 +43,6 @@ public class UIManager : MonoBehaviour
             _statTracked = "Number of tiles owned";
         
         leaderboard.text = _statTracked;
-        PlayerInputManager.instance.onPlayerJoined += AddPlayer;
 
         StartTimer();
     }
@@ -68,37 +65,8 @@ public class UIManager : MonoBehaviour
         UpdateTimerDisplay();
     }
 
-    public void AddPlayer(PlayerInput playerInput)
+    public void PlayerAdded(PlayerEnum playerEnum, Color c)
     {
-        if (playerInput != null)
-        {
-            switch (playerInput.playerIndex)
-            {
-                case 0:
-                    Player.PlayerColorDict[PlayerEnum.Player1] = Color.red;
-                    break;
-                case 1:
-                    Player.PlayerColorDict[PlayerEnum.Player2] = Color.green;
-                    break;
-                case 2:
-                    Player.PlayerColorDict[PlayerEnum.Player3] = Color.blue;
-                    break;
-                case 3:
-                    Player.PlayerColorDict[PlayerEnum.Player4] = Color.yellow;
-                    break;
-                default:
-                    throw new Exception("Player Input Manager tried to create invalid Player");
-            }
-        }
-        else
-        {
-            throw new Exception("There's no active player input");
-        }
-        
-        PlayerEnum playerEnum = (PlayerEnum) playerInput.playerIndex + 1;
-        Color c = Player.PlayerColorDict[playerEnum];
-        
-        
         if (!_scorePerPlayer.ContainsKey(playerEnum))
         {
             var scorePlayer = Instantiate(scorePlayerPrefab, leaderboard.transform);

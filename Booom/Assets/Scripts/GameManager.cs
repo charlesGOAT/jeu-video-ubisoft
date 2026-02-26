@@ -78,7 +78,7 @@ public class GameManager : MonoBehaviour
         }
         if (UIManager == null)
         {
-            throw new Exception("There's no active ui manager");
+            // throw new Exception("There's no active ui manager");
         }
         // add other managers
     }
