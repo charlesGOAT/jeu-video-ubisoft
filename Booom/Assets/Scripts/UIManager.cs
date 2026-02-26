@@ -35,7 +35,8 @@ public class UIManager : MonoBehaviour
     private void OnDisable()
     {
         GameManager.Instance.ScoreManager.OnScoreChanged -= Refresh;
-        PlayerInputManager.instance.onPlayerJoined -= AddPlayer;
+        if (PlayerInputManager.instance != null)
+            PlayerInputManager.instance.onPlayerJoined -= AddPlayer;
     }
 
     private void Start()
