@@ -114,11 +114,6 @@ public class Player : MonoBehaviour
         {
             throw new Exception("Player cannot be set to PlayerEnum.None");
         }
-
-        if (!PlayerColorDict.TryAdd(playerNb, playerColor))
-        {
-            throw new Exception("Player already exists");
-        }
     }
 
     private void InitializeSpawner()
@@ -491,33 +486,14 @@ public class Player : MonoBehaviour
         var playerInput = GetComponent<PlayerInput>();
         if (playerInput != null)
         {
-            switch (playerInput.playerIndex)
-            {
-                case 0:
-                    playerNb = PlayerEnum.Player1;
-                    playerColor = Color.red;
-                    break;
-                case 1:
-                    playerNb = PlayerEnum.Player2;
-                    playerColor = Color.green;
-                    break;
-                case 2:
-                    playerNb = PlayerEnum.Player3;
-                    playerColor = Color.blue;
-                    break;
-                case 3:
-                    playerNb = PlayerEnum.Player4;
-                    playerColor = Color.yellow;
-                    break;
-                default:
-                    playerNb = PlayerEnum.None;
-                    break;
-            }
+            playerNb = (PlayerEnum) playerInput.playerIndex + 1;
         }
         else
         {
             throw new Exception("There's no active player input");
         }
+        
+        playerColor = PlayerColorDict[playerNb];
         
         gameObject.GetComponent<Renderer>().material.color = playerColor;
     }

@@ -2,10 +2,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 
+public delegate void ScoreChangedEventHandler(PlayerEnum player, int score);
+
 public class ScoreManager : MonoBehaviour
 {
     private readonly HashSet<Vector2Int>[] _acquiredTilesByPlayer = new HashSet<Vector2Int>[GameConstants.NB_PLAYERS];
     private readonly Dictionary<PlayerEnum, int> _eliminationsPerPlayer = new(GameConstants.NB_PLAYERS); //We could add other stats like deaths or items used
+    
+    private bool _spreadMode = false;
+    
+    public event ScoreChangedEventHandler OnScoreChanged;
 
     private void Start()
     {
@@ -17,6 +23,8 @@ public class ScoreManager : MonoBehaviour
         {
             _eliminationsPerPlayer.Add((PlayerEnum)i, 0);
         }
+        
+        _spreadMode = GameManager.Instance.isSpreadingMode;
     }
 
     public void NewElimination(PlayerEnum player)
@@ -24,6 +32,9 @@ public class ScoreManager : MonoBehaviour
         if (player != PlayerEnum.None)
             _eliminationsPerPlayer[player]++;
 
+        if (_spreadMode) return;
+        
+        OnScoreChanged?.Invoke(player, _eliminationsPerPlayer[player]);
         if (_eliminationsPerPlayer[player] >= GameConstants.ELIMS_TO_WIN)
         {
             GameManager.Instance.EndGame();
@@ -36,7 +47,12 @@ public class ScoreManager : MonoBehaviour
         
         _acquiredTilesByPlayer[(int)player - 1].Add(tile);
 
-        if (_acquiredTilesByPlayer[(int)player - 1].Count == GameManager.Instance.GridManager.capturableTilesCount) 
+        if (!_spreadMode) return;
+
+        int newScore = _acquiredTilesByPlayer[(int)player - 1].Count;
+        OnScoreChanged?.Invoke(player, newScore);
+        
+        if (newScore == GameManager.Instance.GridManager.capturableTilesCount) 
         {
             GameManager.Instance.EndGame();
         }
@@ -44,8 +60,13 @@ public class ScoreManager : MonoBehaviour
     
     public void LoseTile(PlayerEnum player, Vector2Int tile)
     {
-        if (player != PlayerEnum.None)
-            _acquiredTilesByPlayer[(int)player - 1].Remove(tile);
+        if (player == PlayerEnum.None) return;
+            
+        _acquiredTilesByPlayer[(int)player - 1].Remove(tile);
+        
+        if (!_spreadMode) return;
+        
+        OnScoreChanged?.Invoke(player, _acquiredTilesByPlayer[(int)player - 1].Count);
     }
     
     public PlayerEnum FindPlayerWithMostGround()
