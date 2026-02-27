@@ -477,8 +477,52 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 1246669290624655608, guid: 0b43c4aaced3d3d49b3a48928e31c743, type: 3}
+      propertyPath: m_JoinBehavior
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1246669290624655608, guid: 0b43c4aaced3d3d49b3a48928e31c743, type: 3}
       propertyPath: m_NotificationBehavior
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1246669290624655608, guid: 0b43c4aaced3d3d49b3a48928e31c743, type: 3}
+      propertyPath: m_JoinAction.m_Reference
+      value: 
+      objectReference: {fileID: -8950098364838555862, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+    - target: {fileID: 1246669290624655608, guid: 0b43c4aaced3d3d49b3a48928e31c743, type: 3}
+      propertyPath: m_JoinAction.m_UseReference
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1246669290624655608, guid: 0b43c4aaced3d3d49b3a48928e31c743, type: 3}
+      propertyPath: m_JoinAction.m_Action.m_Name
+      value: Join
+      objectReference: {fileID: 0}
+    - target: {fileID: 1246669290624655608, guid: 0b43c4aaced3d3d49b3a48928e31c743, type: 3}
+      propertyPath: m_PlayerJoinedEvent.m_PersistentCalls.m_Calls.Array.size
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1246669290624655608, guid: 0b43c4aaced3d3d49b3a48928e31c743, type: 3}
+      propertyPath: m_PlayerJoinedEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1246669290624655608, guid: 0b43c4aaced3d3d49b3a48928e31c743, type: 3}
+      propertyPath: m_PlayerJoinedEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1682771049}
+    - target: {fileID: 1246669290624655608, guid: 0b43c4aaced3d3d49b3a48928e31c743, type: 3}
+      propertyPath: m_PlayerJoinedEvent.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1246669290624655608, guid: 0b43c4aaced3d3d49b3a48928e31c743, type: 3}
+      propertyPath: m_PlayerJoinedEvent.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnPlayerJoined
+      objectReference: {fileID: 0}
+    - target: {fileID: 1246669290624655608, guid: 0b43c4aaced3d3d49b3a48928e31c743, type: 3}
+      propertyPath: m_PlayerJoinedEvent.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: LobbyManager, GameplayAssembly
+      objectReference: {fileID: 0}
+    - target: {fileID: 1246669290624655608, guid: 0b43c4aaced3d3d49b3a48928e31c743, type: 3}
+      propertyPath: m_PlayerJoinedEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 4430174042866800640, guid: 0b43c4aaced3d3d49b3a48928e31c743, type: 3}
       propertyPath: m_LocalPosition.x

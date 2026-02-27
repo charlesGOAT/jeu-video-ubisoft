@@ -38,7 +38,7 @@ public class LobbyManager : MonoBehaviour
         Color c = Player.PlayerColorDict[playerEnum];
 
         // GameManager.Instance.UIManager.PlayerAdded(playerEnum, c);
-        
+        joinedPlayers.Add(playerInput);
         Debug.Log("Player joined : "  + playerEnum);
     }
 }
