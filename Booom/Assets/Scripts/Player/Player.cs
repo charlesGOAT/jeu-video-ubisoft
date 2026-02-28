@@ -2,8 +2,12 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Interactions;
 
-public delegate void MoveCalledEventHandler(Player player);
+public delegate void MoveCalledEventHandler();
+public delegate void PlaceBomb();
+public delegate void ExplodeChainedBombs();
+public delegate void BombExploded();
 
 [RequireComponent(typeof(PlayerItemsManager))]
 [RequireComponent(typeof(Renderer))]
@@ -37,13 +41,18 @@ public class Player : MonoBehaviour
     [SerializeField]
     private float tileDetectionTolerance = 0.35f;
 
+    [SerializeField]
+    private GameObject arrow;
+
     private PlayerInput _playerInput;
     private Renderer _renderer;
 
     private Vector2 _moveInput;
     private Vector3 _lastInput;
     private BombEnum _currentBombType = BombEnum.NormalBomb;
-
+    private bool _shouldNextBombBeTransparent = false;
+    public bool isChainingBombs = false;
+    
     private int _bombTypeCount;
 
     public PlayerEnum PlayerNb => playerNb;
@@ -70,6 +79,9 @@ public class Player : MonoBehaviour
     public static readonly Dictionary<PlayerEnum, Color> PlayerColorDict = new Dictionary<PlayerEnum, Color>();  // make it the other way around if we want to test color spreading
     
     public event MoveCalledEventHandler OnMoveFunctionCalled;
+    public event PlaceBomb OnPlaceBomb;
+    public event ExplodeChainedBombs OnExplodeChainedBombs;
+    public event BombExploded OnBombExploded;
 
     private void Awake()
     {
@@ -86,8 +98,10 @@ public class Player : MonoBehaviour
         GetComponents();
 
         ActivePlayers.Add(this);
+
+        InitializeArrow();
     }
-    
+
     private void Start()
     {
         CheckStartConditions();
@@ -99,11 +113,6 @@ public class Player : MonoBehaviour
         if (playerNb == PlayerEnum.None)
         {
             throw new Exception("Player cannot be set to PlayerEnum.None");
-        }
-
-        if (!PlayerColorDict.TryAdd(playerNb, playerColor))
-        {
-            throw new Exception("Player already exists");
         }
     }
 
@@ -160,6 +169,14 @@ public class Player : MonoBehaviour
         trans.position = new Vector3(worldPos.x, trans.position.y, worldPos.z);
     }
 
+    private void InitializeArrow()
+    {
+        foreach (var children in arrow.GetComponentsInChildren<Renderer>())
+        {
+            children.material.color = playerColor;
+        }
+    }
+
     public void OnMove(InputAction.CallbackContext ctx)
     {
         _moveInput = ctx.ReadValue<Vector2>();
@@ -167,15 +184,44 @@ public class Player : MonoBehaviour
         {
             _lastInput = GetBombPlacementDirection(_moveInput);
         }
+    
+        RotateArrow();
+    }
+    
+    private void RotateArrow()
+    {
+        Vector3 targetDirection = _lastInput * (float)(Tile.TileLength / 2.0);
+        if (targetDirection != Vector3.zero) 
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(targetDirection, Vector3.up);
+
+            arrow.transform.rotation = targetRotation;
+            arrow.transform.position = transform.position + targetDirection;
+        }
     }
 
     public void OnBomb(InputAction.CallbackContext ctx)
     {
-        if (ctx.performed)
+        if (ctx.performed && ctx.interaction is HoldInteraction)
         {
-            Vector3 bombDirection = _moveInput.sqrMagnitude > 0.0001f ? GetBombPlacementDirection(_moveInput) : _lastInput;
-            GameManager.Instance.BombManager.CreateBomb(transform.position + (bombDirection * Tile.TileLength), playerNb, _currentBombType);
+            OnExplodeChainedBombs?.Invoke();
+            isChainingBombs = false;
+            GameManager.Instance.BombManager.ExplodeChainedBombs(playerNb);
         }
+        else if (ctx.performed && (isChainingBombs || !GameManager.Instance.BombManager.HasChainedBombs(playerNb)))
+        {
+            OnPlaceBomb?.Invoke();
+            Vector3 bombDirection = _moveInput.sqrMagnitude > 0.0001f ? GetBombPlacementDirection(_moveInput) : _lastInput;
+
+            if (GameManager.Instance.BombManager.CreateBomb(transform.position + (bombDirection * Tile.TileLength), playerNb,
+                    _currentBombType, _shouldNextBombBeTransparent, isChainingBombs))
+            {
+                OnBombExploded?.Invoke();
+            }
+                
+            _shouldNextBombBeTransparent = false;
+        }
+        
     }
 
     public void OnChangeBomb(InputAction.CallbackContext ctx)
@@ -314,7 +360,7 @@ public class Player : MonoBehaviour
 
         _characterController.Move(move * Time.deltaTime);
         _characterController.Move(Vector3.down * Math.Abs(tempMove));
-        OnMoveFunctionCalled?.Invoke(this);
+        OnMoveFunctionCalled?.Invoke();
     }
 
     //Peut etre faire une meilleure fonction
@@ -365,7 +411,7 @@ public class Player : MonoBehaviour
         if (!other.tag.Equals("Item") || !other.gameObject.TryGetComponent(out Item item)) return;
 
         playerItemsManager.AddNewItem(item);
-        GameManager.Instance.RemoveItemFromGrid(item.ItemType);
+        GameManager.Instance.RemoveItemFromGrid(item);
         Destroy(other.gameObject);
     }
 
@@ -433,9 +479,10 @@ public class Player : MonoBehaviour
         Vector3 xCandidate = new(Mathf.Sign(worldDirection.x), 0f, 0f);
         Vector3 zCandidate = new(0f, 0f, Mathf.Sign(worldDirection.z));
 
-        Vector3 intendedTarget = transform.position + worldDirection.normalized * Tile.TileLength;
-        Vector3 xTarget = transform.position + xCandidate * Tile.TileLength;
-        Vector3 zTarget = transform.position + zCandidate * Tile.TileLength;
+        var position = transform.position;
+        Vector3 intendedTarget = position + worldDirection.normalized * Tile.TileLength;
+        Vector3 xTarget = position + xCandidate * Tile.TileLength;
+        Vector3 zTarget = position + zCandidate * Tile.TileLength;
 
         float xDistance = (intendedTarget - xTarget).sqrMagnitude;
         float zDistance = (intendedTarget - zTarget).sqrMagnitude;
@@ -478,35 +525,21 @@ public class Player : MonoBehaviour
         var playerInput = GetComponent<PlayerInput>();
         if (playerInput != null)
         {
-            switch (playerInput.playerIndex)
-            {
-                case 0:
-                    playerNb = PlayerEnum.Player1;
-                    playerColor = Color.red;
-                    break;
-                case 1:
-                    playerNb = PlayerEnum.Player2;
-                    playerColor = Color.green;
-                    break;
-                case 2:
-                    playerNb = PlayerEnum.Player3;
-                    playerColor = Color.blue;
-                    break;
-                case 3:
-                    playerNb = PlayerEnum.Player4;
-                    playerColor = Color.yellow;
-                    break;
-                default:
-                    playerNb = PlayerEnum.None;
-                    break;
-            }
+            playerNb = (PlayerEnum) playerInput.playerIndex + 1;
         }
         else
         {
             throw new Exception("There's no active player input");
         }
         
+        playerColor = PlayerColorDict[playerNb];
+        
         gameObject.GetComponent<Renderer>().material.color = playerColor;
+    }
+    
+    public void CreateNextBombTransparent()
+    {
+        _shouldNextBombBeTransparent = true;
     }
 }
 

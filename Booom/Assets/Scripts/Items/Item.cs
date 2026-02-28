@@ -6,9 +6,13 @@ public class Item : MonoBehaviour
     private ItemType itemType = ItemType.PaintBrush;
 
     public ItemType ItemType => itemType;
+
+    public Vector2Int posOnMap;
 }
 
 public enum ItemType
 {
-    PaintBrush = 0
+    PaintBrush = 0,
+    TransparentBomb = 1,
+    ChainBombs = 2
 }

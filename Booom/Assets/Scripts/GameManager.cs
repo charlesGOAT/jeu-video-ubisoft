@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class GameManager : MonoBehaviour
 {
@@ -7,12 +8,13 @@ public class GameManager : MonoBehaviour
     private static bool _isInstanceAssigned;
 
     [SerializeField] 
-    public bool isSpreadingMode = false;
+    public bool isSpreadingMode = true;
     
     public GridManagerStrategy GridManager { get; private set; }
     public BombManager BombManager { get; private set; }
     public ItemsManager ItemsManager { get; private set; }
     public ScoreManager ScoreManager { get; private set; }
+    public UIManager UIManager { get; private set; }
 
     // add other managers
 
@@ -43,9 +45,10 @@ public class GameManager : MonoBehaviour
         _isInstanceAssigned = true;
     }
 
-    public void RemoveItemFromGrid(ItemType itemType)
+    public void RemoveItemFromGrid(Item item)
     {
-        ItemsManager.RemoveItem(itemType); 
+        ItemsManager.RemoveItem(item.ItemType);
+        GridManager.RemoveItemFromGrid(item);
     }
 
     private void GetManagers()
@@ -54,6 +57,7 @@ public class GameManager : MonoBehaviour
         BombManager = FindFirstObjectByType<BombManager>();
         ItemsManager = FindFirstObjectByType<ItemsManager>();
         ScoreManager = FindFirstObjectByType<ScoreManager>();
+        UIManager = FindFirstObjectByType<UIManager>();
 
         if (GridManager == null)
         {
@@ -71,12 +75,15 @@ public class GameManager : MonoBehaviour
         {
             throw new Exception("There's no active score manager");
         }
+        if (UIManager == null)
+        {
+            throw new Exception("There's no active ui manager");
+        }
         // add other managers
     }
 
     public void EndGame()
     {
-        //todo end the game
-        Debug.Log("Game Ended");
+        UIManager.endGameImage.gameObject.SetActive(true);
     }
 }

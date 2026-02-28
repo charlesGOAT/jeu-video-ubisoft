@@ -18,6 +18,7 @@ public class SplashBomb : Bomb
     protected override void PaintTiles()
     {
         Tile bombTile = GameManager.Instance.GridManager.GetTileAtCoordinates(_bombCoordinates);
+
         if (bombTile == null) return;
 
         PlayerEnum currentOwner = bombTile.CurrentTileOwner;
