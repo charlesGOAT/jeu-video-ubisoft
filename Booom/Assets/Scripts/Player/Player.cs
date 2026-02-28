@@ -115,7 +115,7 @@ public class Player : MonoBehaviour
     private void Start()
     {
         CheckStartConditions();
-        if(GameManager.Instance.isSpreadingMode) InitializeSpawner();
+        InitializeSpawner();
     }
 
     private void CheckStartConditions()
@@ -124,25 +124,59 @@ public class Player : MonoBehaviour
         {
             throw new Exception("Player cannot be set to PlayerEnum.None");
         }
-
-        if (!PlayerColorDict.TryAdd(playerNb, playerColor))
-        {
-            throw new Exception("Player already exists");
-        }
     }
 
     private void InitializeSpawner()
     {
+        if (GameManager.Instance.GridManager.playerSpawnPoints.Length < (int)playerNb)
+        {
+            InitializeSpawnerWithDynamicSpawnPos();
+        }
+        else
+        {
+            InitializeSpawnerWithFixedSpawnPos();
+        }
+    }
+
+    private void InitializeSpawnerWithDynamicSpawnPos()
+    {
         int intPlayerNb = (int)PlayerNb - 1;
         bool isMod2Zero = intPlayerNb % 2 == 0;
         
-        var posY = isMod2Zero
+        int posY = isMod2Zero
             ? GameManager.Instance.GridManager.MapUpperLimit.y
             : GameManager.Instance.GridManager.MapLowerLimit.y;
 
         int mult = isMod2Zero ? intPlayerNb / 2 : (intPlayerNb + 1) / 2;
-        var coord = new Vector2Int(GameManager.Instance.GridManager.MapUpperLimit.x * mult, posY);
-        GameManager.Instance.GridManager.GetTileAtCoordinates(coord).ChangeTileColor(playerNb);
+        Vector2Int spawnPointGrid = new Vector2Int(GameManager.Instance.GridManager.MapUpperLimit.x * mult, posY);
+        
+        if(GameManager.Instance.isSpreadingMode)
+            GameManager.Instance.GridManager.GetTileAtCoordinates(spawnPointGrid).ChangeTileColor(playerNb); 
+        
+        MovePlayerOnSpawnPoint(spawnPointGrid);
+    }
+
+    private void InitializeSpawnerWithFixedSpawnPos()
+    {
+        Vector2Int spawnPointGrid = GameManager.Instance.GridManager.playerSpawnPoints[(int)playerNb - 1];
+        Tile tile = GameManager.Instance.GridManager.GetTileAtCoordinates(spawnPointGrid);
+        
+        if (tile == null)
+            throw new Exception($"There's no tile at player spawn point position {spawnPointGrid}");
+        if (tile.IsObstacle)
+            throw new Exception($"Player spawn position {spawnPointGrid} is on an obstacle");
+        
+        if(GameManager.Instance.isSpreadingMode)
+            tile.ChangeTileColor(playerNb);
+        
+        MovePlayerOnSpawnPoint(spawnPointGrid);
+    }
+
+    private void MovePlayerOnSpawnPoint(Vector2Int gridPos)
+    {
+        Vector3 worldPos = GridManagerStrategy.GridToWorldPosition(gridPos);
+        var trans = transform;
+        trans.position = new Vector3(worldPos.x, trans.position.y, worldPos.z);
     }
 
     private void InitializeArrow()
@@ -498,33 +532,14 @@ public class Player : MonoBehaviour
         var playerInput = GetComponent<PlayerInput>();
         if (playerInput != null)
         {
-            switch (playerInput.playerIndex)
-            {
-                case 0:
-                    playerNb = PlayerEnum.Player1;
-                    playerColor = Color.red;
-                    break;
-                case 1:
-                    playerNb = PlayerEnum.Player2;
-                    playerColor = Color.green;
-                    break;
-                case 2:
-                    playerNb = PlayerEnum.Player3;
-                    playerColor = Color.blue;
-                    break;
-                case 3:
-                    playerNb = PlayerEnum.Player4;
-                    playerColor = Color.yellow;
-                    break;
-                default:
-                    playerNb = PlayerEnum.None;
-                    break;
-            }
+            playerNb = (PlayerEnum) playerInput.playerIndex + 1;
         }
         else
         {
             throw new Exception("There's no active player input");
         }
+        
+        playerColor = PlayerColorDict[playerNb];
         
         gameObject.GetComponent<Renderer>().material.color = playerColor;
     }
