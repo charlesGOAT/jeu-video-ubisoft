@@ -20,55 +20,115 @@ public class TargetBombFusingStrategy : BombFusingStrategy
         
         _bomb.StartPulseCoroutine();
 
-        Task timerTask = ManageActiveTime();
+        Task timerTask = ManageActiveTime(); // bomb explodes after the Timer is over even if it hasn't reached any player
         Task movementTask = MoveBombLoop();
 
         await timerTask;
         await movementTask;
     }
-
-    private async Task MoveBombLoop()
-    {
-        while (!_cts.IsCancellationRequested)
-        {
-            ExecuteMove();
-
-            try {
-                await Task.Delay(200, _cts.Token); 
-            } catch (OperationCanceledException) { break; }
-        }
-    }
-
-    public void ExecuteMove()
-    {
-        Vector2Int myGridPos = GridManagerStrategy.WorldToGridCoordinates(_bomb.transform.position);
-
-        Vector2Int targetGridPos = FindClosestEnemy();
-
-        if (targetGridPos != new Vector2Int(-1, -1))
-        {
-            Vector2Int nextStep = GetNextMoveTowards(myGridPos, targetGridPos);
-
-            _bomb.transform.position = GridManagerStrategy.GridToWorldPosition(nextStep);
-            ExplodeIfPlayerInSurroundings(nextStep);
-        }
-    }
+    
     private async Task ManageActiveTime()
     {
         try
         {
             await Task.Delay((int)(_bomb.Timer * 1000), _cts.Token);
         }
-        catch (OperationCanceledException)
-        {
-            return;
-        }
+        catch (OperationCanceledException) { return; }
         
         _cts.Cancel();
         _bomb.SetBombCoordinates(GridManagerStrategy.WorldToGridCoordinates(_bomb.transform.position));
         _bomb.Explode();
     }
 
+    private async Task MoveBombLoop()
+    {
+        float moveSpeed = 6f; // Tiles per second
+
+        while (!_cts.IsCancellationRequested)
+        {
+            Vector2Int myGridPos = GridManagerStrategy.WorldToGridCoordinates(_bomb.transform.position);
+            Vector2Int targetGridPos = FindClosestEnemy();
+
+            if (targetGridPos != new Vector2Int(-1, -1))
+            {
+                Vector2Int nextGridStep = GetNextMoveTowards(myGridPos, targetGridPos);
+                Vector3 targetWorldPos = GridManagerStrategy.GridToWorldPosition(nextGridStep);
+
+                while (!_cts.IsCancellationRequested && 
+                       Vector3.Distance(_bomb.transform.position, targetWorldPos) > 0.01f)
+                {
+                    _bomb.transform.position = Vector3.MoveTowards(
+                        _bomb.transform.position, 
+                        targetWorldPos, 
+                        moveSpeed * Time.deltaTime
+                    );
+                
+                    await Task.Yield(); 
+                }
+            
+                _bomb.SetBombCoordinates(nextGridStep);
+                ExplodeIfPlayerInSurroundings(nextGridStep);
+            }
+            else
+            {
+                try
+                {
+                    await Task.Delay(100, _cts.Token);
+                }
+                catch (OperationCanceledException) { break; }
+            }
+        }
+    }
+
+    private Vector2Int FindClosestEnemy()
+    {
+        float minDistance = float.MaxValue;
+        Vector2Int targetGridPos = new(-1, -1);
+    
+        Vector2Int gridBombPos = GridManagerStrategy.WorldToGridCoordinates(_bomb.transform.position);
+    
+        foreach (Player player in Player.ActivePlayers)
+        {
+            if (_bomb.AssociatedPlayer == player.PlayerNb) continue;
+
+            Vector2Int playerPos = GridManagerStrategy.WorldToGridCoordinates(player.transform.position);
+
+            if (!TryGetFreePosInPlayerSurroundings(playerPos, gridBombPos, out Vector2Int actualTargetPos)) continue;
+        
+            float dist = Vector2Int.Distance(gridBombPos, playerPos);
+            if (dist < minDistance)
+            {
+                minDistance = dist;
+                targetGridPos = actualTargetPos;
+            }
+        }
+
+        return targetGridPos;
+    }
+
+    private bool TryGetFreePosInPlayerSurroundings(Vector2Int playerPos, Vector2Int bombPos, out Vector2Int surroundingPos)
+    {
+        surroundingPos = Vector2Int.zero;
+
+        var availablePos = from pos in _directions
+            let realPos = playerPos + pos
+            let tile = GameManager.Instance.GridManager.GetTileAtCoordinates(realPos)
+            where tile != null && !tile.IsObstacle && !Bomb.IsBombAt(realPos)
+            select realPos;
+
+        var availablePosArray = availablePos as Vector2Int[] ?? availablePos.ToArray();
+
+        if (availablePosArray.Length == 0) return false;
+
+        surroundingPos = GetClosestPosToBomb(availablePosArray, bombPos);
+        return true;
+    }
+
+    private Vector2Int GetClosestPosToBomb(in Vector2Int[] surroundingPos, Vector2Int bombPos)
+    {
+        return surroundingPos.OrderBy(pos => Vector2Int.Distance(pos, bombPos)).First();
+    }
+    
     private void ExplodeIfPlayerInSurroundings(Vector2Int newPos)
     {
         foreach (Player player in Player.ActivePlayers)
@@ -83,52 +143,6 @@ public class TargetBombFusingStrategy : BombFusingStrategy
         }
     }
     
-    private bool TryGetFreePosInPlayerSurroundings(Vector2Int playerPos, out Vector2Int surroundingPos)
-    {
-        surroundingPos = Vector2Int.zero;
-        
-        var availablePos = from pos in _directions
-            let tile = GameManager.Instance.GridManager.GetTileAtCoordinates(playerPos + pos)
-            where tile != null && !tile.IsObstacle  // todo : and ya pas de bombe
-            select pos;
-
-        var availablePosArray = availablePos as Vector2Int[] ?? availablePos.ToArray();
-
-        if (availablePosArray.Length == 0) return false;
-
-        System.Random rand = new System.Random();
-        surroundingPos = availablePosArray[rand.Next(0, availablePosArray.Length)];
-        return true;
-    }
-    
-    private Vector2Int FindClosestEnemy()
-    {
-        float minDistance = float.MaxValue;
-        Vector2Int targetWorldGridPos = new(-1, -1);
-    
-        Vector2Int gridBombPos = GridManagerStrategy.WorldToGridCoordinates(_bomb.transform.position);
-    
-        foreach (Player player in Player.ActivePlayers)
-        {
-            if (_bomb.AssociatedPlayer == player.PlayerNb) continue;
-
-            Vector2Int playerPos = GridManagerStrategy.WorldToGridCoordinates(player.transform.position);
-
-            if (!TryGetFreePosInPlayerSurroundings(playerPos, out Vector2Int offset)) continue;
-        
-            Vector2Int actualTargetPos = playerPos + offset;
-
-            float dist = Vector2Int.Distance(gridBombPos, playerPos);
-            if (dist < minDistance)
-            {
-                minDistance = dist;
-                targetWorldGridPos = actualTargetPos;
-            }
-        }
-
-        return targetWorldGridPos;
-    }
-
     private Vector2Int GetNextMoveTowards(Vector2Int startPos, Vector2Int targetPos)
     {
         if (startPos == targetPos) return startPos;
@@ -179,5 +193,3 @@ public class TargetBombFusingStrategy : BombFusingStrategy
         bomb.Explode();
     }
 }
-
-// todo : exploser si elle rencontre un joueur

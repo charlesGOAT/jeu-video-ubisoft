@@ -182,7 +182,9 @@ public class Bomb : MonoBehaviour
 
     public void SetBombCoordinates(Vector2Int newBombCoordinates)
     {
+        ActiveBombs.Remove(_bombCoordinates);
         _bombCoordinates = newBombCoordinates;
+        ActiveBombs.Add(_bombCoordinates);
     }
 
     protected virtual void OnDestroy()
@@ -193,7 +195,7 @@ public class Bomb : MonoBehaviour
     private void OnCollisionEnter(Collision collision)
     {
         if (!collision.collider.tag.Equals("Player") ||
-            !collision.collider.gameObject.TryGetComponent<Player>(out Player player) ||
+            !collision.collider.gameObject.TryGetComponent(out Player player) ||
             player.PlayerNb == AssociatedPlayer) return;
             
         BombFusingStrategy.OnCollision(this);
