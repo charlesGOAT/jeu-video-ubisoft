@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using UnityEngine;
 
 public class TargetBombFusingStrategy : BombFusingStrategy
@@ -11,42 +10,57 @@ public class TargetBombFusingStrategy : BombFusingStrategy
     
     private CancellationTokenSource _cts;
 
+    private Player _associatedPlayer; 
     private Bomb _bomb;
+
+    private readonly System.Object _lock = new ();
 
     public override async void Fuse(Bomb bomb)
     {
         _bomb = bomb;
+        _associatedPlayer = Player.ActivePlayers.First(player => player.PlayerNb == _bomb.AssociatedPlayer);
         _cts = new CancellationTokenSource();
-        
+
         _bomb.StartPulseCoroutine();
 
-        Task timerTask = ManageActiveTime(); // bomb explodes after the Timer is over even if it hasn't reached any player
-        Task movementTask = MoveBombLoop();
+        Awaitable timerTask = ManageActiveTime(); // bomb explodes after the Timer is over even if it hasn't reached any player
+        Awaitable movementTask = MoveBombLoop();
 
         await timerTask;
         await movementTask;
     }
     
-    private async Task ManageActiveTime()
+    private async Awaitable ManageActiveTime()
     {
         try
         {
-            await Task.Delay((int)(_bomb.Timer * 1000), _cts.Token);
+            await Awaitable.WaitForSecondsAsync(_bomb.Timer, _cts.Token);
         }
         catch (OperationCanceledException) { return; }
         
         _cts.Cancel();
-        _bomb.SetBombCoordinates(GridManagerStrategy.WorldToGridCoordinates(_bomb.transform.position));
-        _bomb.Explode();
+
+        lock (_lock)
+        {
+            if (_bomb == null) return;
+            _bomb.SetBombCoordinates(GridManagerStrategy.WorldToGridCoordinates(_bomb.transform.position));
+            _bomb.Explode();
+        }
     }
 
-    private async Task MoveBombLoop()
+    private async Awaitable MoveBombLoop()
     {
-        float moveSpeed = 6f; // Tiles per second
+        float moveSpeed = 8f;
 
         while (!_cts.IsCancellationRequested)
         {
-            Vector2Int myGridPos = GridManagerStrategy.WorldToGridCoordinates(_bomb.transform.position);
+            Vector2Int myGridPos = new();
+            lock (_lock)
+            {
+                if (_bomb == null) break;
+                myGridPos = GridManagerStrategy.WorldToGridCoordinates(_bomb.transform.position);
+            }
+
             Vector2Int targetGridPos = FindClosestEnemy();
 
             if (targetGridPos != new Vector2Int(-1, -1))
@@ -54,26 +68,35 @@ public class TargetBombFusingStrategy : BombFusingStrategy
                 Vector2Int nextGridStep = GetNextMoveTowards(myGridPos, targetGridPos);
                 Vector3 targetWorldPos = GridManagerStrategy.GridToWorldPosition(nextGridStep);
 
-                while (!_cts.IsCancellationRequested && 
-                       Vector3.Distance(_bomb.transform.position, targetWorldPos) > 0.01f)
+                while (!_cts.IsCancellationRequested)
                 {
-                    _bomb.transform.position = Vector3.MoveTowards(
-                        _bomb.transform.position, 
-                        targetWorldPos, 
-                        moveSpeed * Time.deltaTime
-                    );
-                
-                    await Task.Yield(); 
+                    lock (_lock)
+                    {
+                        if (_bomb == null || Vector3.Distance(_bomb.transform.position, targetWorldPos) <= 0.01f) break;
+                    
+                        _bomb.transform.position = Vector3.MoveTowards(
+                            _bomb.transform.position, 
+                            targetWorldPos, 
+                            moveSpeed * Time.deltaTime
+                        );
+                    }
+                    
+                    await Awaitable.NextFrameAsync(); 
                 }
-            
-                _bomb.SetBombCoordinates(nextGridStep);
+
+                lock (_lock)
+                {
+                    if (_bomb == null) break;
+                    _bomb.SetBombCoordinates(nextGridStep);
+                }
+                
                 ExplodeIfPlayerInSurroundings(nextGridStep);
             }
             else
             {
                 try
                 {
-                    await Task.Delay(100, _cts.Token);
+                    await Awaitable.WaitForSecondsAsync(0.100f, _cts.Token);
                 }
                 catch (OperationCanceledException) { break; }
             }
@@ -84,12 +107,17 @@ public class TargetBombFusingStrategy : BombFusingStrategy
     {
         float minDistance = float.MaxValue;
         Vector2Int targetGridPos = new(-1, -1);
-    
-        Vector2Int gridBombPos = GridManagerStrategy.WorldToGridCoordinates(_bomb.transform.position);
+        Vector2Int gridBombPos = new();
+        
+        lock (_lock)
+        {
+            if (_bomb == null) return targetGridPos;
+            gridBombPos = GridManagerStrategy.WorldToGridCoordinates(_bomb.transform.position);
+        }
     
         foreach (Player player in Player.ActivePlayers)
         {
-            if (_bomb.AssociatedPlayer == player.PlayerNb) continue;
+            if (_associatedPlayer.PlayerNb == player.PlayerNb) continue;
 
             Vector2Int playerPos = GridManagerStrategy.WorldToGridCoordinates(player.transform.position);
 
@@ -133,10 +161,18 @@ public class TargetBombFusingStrategy : BombFusingStrategy
     {
         foreach (Player player in Player.ActivePlayers)
         {
-            if (_bomb.AssociatedPlayer == player.PlayerNb) continue;
+            if (_associatedPlayer.PlayerNb == player.PlayerNb) continue;
 
             Vector2Int playerPos = GridManagerStrategy.WorldToGridCoordinates(player.transform.position);
-            if (Vector2Int.Distance(newPos, playerPos) < _bomb.ExplosionRange)
+
+            bool shouldExplode = false;
+            lock (_lock)
+            {
+                if (_bomb == null) return;
+                shouldExplode = Vector2Int.Distance(newPos, playerPos) < _bomb.ExplosionRange;
+            }
+
+            if (shouldExplode)
             {
                 OnCollision(_bomb);
             }
@@ -182,14 +218,20 @@ public class TargetBombFusingStrategy : BombFusingStrategy
     
     private bool IsTileWalkable(Vector2Int coords)
     {
+        Vector2Int playerPos = GridManagerStrategy.WorldToGridCoordinates(_associatedPlayer.transform.position);
+
         var tile = GameManager.Instance.GridManager.GetTileAtCoordinates(coords);
-        return tile != null && !tile.IsObstacle;
+        return tile != null && !tile.IsObstacle && coords != playerPos;
     }
 
     public override void OnCollision(Bomb bomb)
     {
         _cts.Cancel();
-        bomb.SetBombCoordinates(GridManagerStrategy.WorldToGridCoordinates(bomb.transform.position));
-        bomb.Explode();
+        lock (_lock)
+        {
+            if (_bomb == null) return;
+            bomb.SetBombCoordinates(GridManagerStrategy.WorldToGridCoordinates(bomb.transform.position));
+            bomb.Explode();
+        }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading;
-using System.Threading.Tasks;
+using UnityEngine;
 
 public class PaintBrushItem : BaseItem
 {
@@ -42,17 +42,17 @@ public class PaintBrushItem : BaseItem
         CallFinishUsingItemCallback();
     }
 
-    private async Task StartDelayTask()
+    private async Awaitable StartDelayTask()
     {
         _cts = new CancellationTokenSource();
         await ManageActiveTime();
     }
     
-    private async Task ManageActiveTime()
+    private async Awaitable ManageActiveTime()
     {
         try
         {
-            await Task.Delay((int)(ACTIVE_TIME * 1000), _cts.Token);
+            await Awaitable.WaitForSecondsAsync(ACTIVE_TIME, _cts.Token);
         }
         catch (OperationCanceledException)
         {
