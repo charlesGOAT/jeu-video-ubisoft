@@ -114,7 +114,7 @@ public class Bomb : MonoBehaviour
 
         foreach (Vector2Int direction in _directions)
         {
-            PaintTilesForDirection(_bombCoordinates + direction, direction, ExplosionRange, newTileOwner);
+            PaintTilesForDirection(_bombCoordinates, direction, ExplosionRange, newTileOwner);
         }
     }
 
@@ -124,7 +124,7 @@ public class Bomb : MonoBehaviour
 
         for (int rangeCounter = 0; rangeCounter < range; ++rangeCounter)
         {
-            Tile tile = GameManager.Instance.GridManager.GetTileAtCoordinates(bombCoordinates + direction * rangeCounter);
+            Tile tile = GameManager.Instance.GridManager.GetTileAtCoordinates(bombCoordinates);
 
             if (tile is Portal portalTile)
             {
@@ -133,7 +133,7 @@ public class Bomb : MonoBehaviour
                 return;
             }
 
-            if (!PaintTile(bombCoordinates, direction * rangeCounter, newTileOwner))
+            if (!PaintTile(bombCoordinates, direction, newTileOwner))
             {
                 return;
             }
@@ -142,7 +142,7 @@ public class Bomb : MonoBehaviour
 
     private bool PaintTile(in Vector2Int bombCoordinates, in Vector2Int direction, PlayerEnum newTileOwner)
     {
-        Tile tile = GameManager.Instance.GridManager.GetTileAtCoordinates(bombCoordinates + direction);
+        Tile tile = GameManager.Instance.GridManager.GetTileAtCoordinates(bombCoordinates);
 
         if (tile == null || (tile.IsObstacle && !IsTransparentBomb))
         {
@@ -150,7 +150,7 @@ public class Bomb : MonoBehaviour
         }
 
         tile.ChangeTileColor(newTileOwner);
-        HitPlayers(bombCoordinates + direction, bombCoordinates);
+        HitPlayers(bombCoordinates, direction);
         return true;
     }
 
