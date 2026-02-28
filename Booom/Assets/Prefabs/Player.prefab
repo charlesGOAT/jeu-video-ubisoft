@@ -18,7 +18,7 @@ GameObject:
   - component: {fileID: 1158385441533370530}
   m_Layer: 8
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -164,6 +164,7 @@ MonoBehaviour:
   immuneTimer: 5
   tileDetectionTolerance: 0.35
   arrow: {fileID: 1432551464615285425}
+  ShouldNextBombBeTransparent: 0
 --- !u!114 &1141182974104389932
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -346,7 +347,9 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 3620241611461352729, guid: ed63e48ff14d06047b2e6eeadfe16a52, type: 3}
+    - {fileID: 5122735134142805416, guid: ed63e48ff14d06047b2e6eeadfe16a52, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []

@@ -459,7 +459,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 371454801795050369, guid: 0d602448bd1f8d44793a5fc9f674005b, type: 3}
       propertyPath: m_JoinBehavior
-      value: 2
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 371454801795050369, guid: 0d602448bd1f8d44793a5fc9f674005b, type: 3}
       propertyPath: m_PlayerJoinedEvent.m_PersistentCalls.m_Calls.Array.size
