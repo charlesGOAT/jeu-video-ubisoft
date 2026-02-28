@@ -60,10 +60,10 @@ public class Bomb : MonoBehaviour
 
     public void StartBombCountDown()
     {
-        StartCoroutine(Pulse());
+        StartCoroutine(CountdownAndExplode());
     }
 
-    private IEnumerator Pulse()
+    private IEnumerator CountdownAndExplode()
     {
         float elapsed = 0f;
         while (elapsed < timer)
@@ -74,7 +74,7 @@ public class Bomb : MonoBehaviour
         Explode();
     }
 
-    private IEnumerator PulseNoExplosion()
+    private IEnumerator Pulse()
     {
         float elapsed = 0f;
         while (elapsed < timer)
@@ -93,9 +93,9 @@ public class Bomb : MonoBehaviour
 
     public void StartPulseCoroutine()
     {
-        StartCoroutine(PulseNoExplosion());
+        StartCoroutine(Pulse());
     }
-
+    
     public void Explode()
     {
         PaintTiles();
