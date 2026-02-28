@@ -16,7 +16,6 @@ public class GameManager : MonoBehaviour
     public ScoreManager ScoreManager { get; private set; }
     public UIManager UIManager { get; private set; }
 
-    
     // add other managers
 
     public static GameManager Instance
@@ -25,7 +24,7 @@ public class GameManager : MonoBehaviour
         {
             if (!_isInstanceAssigned)
             {
-                var instance = AutoCreateInstance();
+                var instance = FindFirstObjectByType<GameManager>() ?? AutoCreateInstance();
                 SetSingletonInstance(instance);
                 instance.GetManagers();
             }
