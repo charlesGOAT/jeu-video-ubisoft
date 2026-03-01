@@ -39,8 +39,16 @@ public class ItemsManager : MonoBehaviour
 
     private void Awake()
     {
+        ApplyRuntimeConfig();
         InitialiseSpawners();
         StartSpawning();
+    }
+
+    private void ApplyRuntimeConfig()
+    {
+        RuntimeConfigData runtimeConfig = RuntimeConfigLoader.GetConfig();
+        spawnMode = runtimeConfig.spawnMode;
+        isDropFromSky = runtimeConfig.isDropFromSky;
     }
 
     private void InitialiseSpawners()

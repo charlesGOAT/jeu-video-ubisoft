@@ -33,6 +33,16 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private void Awake()
+    {
+        if (!_isInstanceAssigned)
+        {
+            SetSingletonInstance(this);
+        }
+
+        ApplyRuntimeConfig();
+    }
+
     private static GameManager AutoCreateInstance() =>
         new GameObject($"{nameof(GameManager)} (Auto-Created)", typeof(GameManager)).GetComponent<GameManager>();
     
@@ -43,6 +53,12 @@ public class GameManager : MonoBehaviour
 
         _instance = instance;
         _isInstanceAssigned = true;
+    }
+
+    private void ApplyRuntimeConfig()
+    {
+        RuntimeConfigData runtimeConfig = RuntimeConfigLoader.GetConfig();
+        isSpreadingMode = runtimeConfig.isSpreadingMode;
     }
 
     public void RemoveItemFromGrid(Item item)
