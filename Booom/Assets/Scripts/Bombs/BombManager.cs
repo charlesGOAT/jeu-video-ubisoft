@@ -29,8 +29,10 @@ public class BombManager : MonoBehaviour
         }
     }
     
-    public virtual bool CreateBomb(Vector3 position, PlayerEnum playerEnum, bool isTransparentBomb = false, bool isChained = false)
+    public virtual bool CreateBomb(Vector3 position, PlayerEnum playerEnum, BombFusingStrategy bombStrat, bool isTransparentBomb = false)
     {
+        bool isChained = bombStrat is ChainedBombFusingStrategy;
+        
         if (Time.time < _nextBombTime[playerEnum] && !isChained)
         {
             return false;
@@ -49,10 +51,10 @@ public class BombManager : MonoBehaviour
         int intBombType = (int)bombType - 1;
         
         Vector3 worldPosition = GridManagerStrategy.GridToWorldPosition(gridCoordinates, tile.transform.position.y);
-        bombPrefabs[intBombType].associatedPlayer = playerEnum;
+        bombPrefabs[intBombType].AssociatedPlayer = playerEnum;
 
-        bombPrefabs[intBombType].IsChainedBomb = isChained;
         Bomb instantiatedBomb = Instantiate(bombPrefabs[intBombType], worldPosition + bombHeight, Quaternion.identity);
+        instantiatedBomb.BombFusingStrategy = bombStrat;
         instantiatedBomb.IsTransparentBomb = isTransparentBomb;
 
         if (isChained)
