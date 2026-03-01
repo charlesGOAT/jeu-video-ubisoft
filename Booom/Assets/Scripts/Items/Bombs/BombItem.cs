@@ -1,6 +1,4 @@
 ﻿
-using System;
-
 public abstract class BombItem : BaseItem
 {
     protected virtual int maxUseCount => 1;
@@ -8,7 +6,7 @@ public abstract class BombItem : BaseItem
 
     protected Player _associatedPlayer;
 
-    private void BombPlacedExploded()
+    protected void BombPlacedExploded()
     {
         _currentUseCount++;
         if (_currentUseCount >= maxUseCount)
@@ -17,7 +15,7 @@ public abstract class BombItem : BaseItem
         }
     }
 
-    protected abstract void UseItem();
+    protected virtual void UseItem() {}
 
     public override void PickupItem(Player player)
     {

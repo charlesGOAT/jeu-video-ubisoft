@@ -44,14 +44,22 @@ public class Player : MonoBehaviour
     [SerializeField]
     private GameObject arrow;
 
+    private BombFusingStrategy[] _bombFusingStrategies = new []
+        {
+            new BombFusingStrategy(),
+            new ChainedBombFusingStrategy(),
+            new TargetBombFusingStrategy()
+            
+            // todo : add more here
+        };
+
     private PlayerInput _playerInput;
     private Renderer _renderer;
 
     private Vector2 _moveInput;
     private Vector3 _lastInput;
     private BombEnum _currentBombType = BombEnum.NormalBomb;
-    private bool _shouldNextBombBeTransparent = false;
-    public bool isChainingBombs = false;
+    public bool ShouldNextBombBeTransparent = false;
     
     private int _bombTypeCount;
 
@@ -68,6 +76,8 @@ public class Player : MonoBehaviour
     private HitState _hitState;
     private RunState _runState;
     private JumpState _jumpState;
+
+    public BombFusingType BombFusingType { get; set; }
 
     //nom de caca
     private float _actualImmuneTimer;
@@ -105,7 +115,7 @@ public class Player : MonoBehaviour
     private void Start()
     {
         CheckStartConditions();
-        if(GameManager.Instance.isSpreadingMode) InitializeSpawner();
+        InitializeSpawner();
     }
 
     private void CheckStartConditions()
@@ -118,16 +128,55 @@ public class Player : MonoBehaviour
 
     private void InitializeSpawner()
     {
+        if (GameManager.Instance.GridManager.playerSpawnPoints.Length < (int)playerNb)
+        {
+            InitializeSpawnerWithDynamicSpawnPos();
+        }
+        else
+        {
+            InitializeSpawnerWithFixedSpawnPos();
+        }
+    }
+
+    private void InitializeSpawnerWithDynamicSpawnPos()
+    {
         int intPlayerNb = (int)PlayerNb - 1;
         bool isMod2Zero = intPlayerNb % 2 == 0;
         
-        var posY = isMod2Zero
+        int posY = isMod2Zero
             ? GameManager.Instance.GridManager.MapUpperLimit.y
             : GameManager.Instance.GridManager.MapLowerLimit.y;
 
         int mult = isMod2Zero ? intPlayerNb / 2 : (intPlayerNb + 1) / 2;
-        var coord = new Vector2Int(GameManager.Instance.GridManager.MapUpperLimit.x * mult, posY);
-        GameManager.Instance.GridManager.GetTileAtCoordinates(coord).ChangeTileColor(playerNb);
+        Vector2Int spawnPointGrid = new Vector2Int(GameManager.Instance.GridManager.MapUpperLimit.x * mult, posY);
+        
+        if(GameManager.Instance.isSpreadingMode)
+            GameManager.Instance.GridManager.GetTileAtCoordinates(spawnPointGrid).ChangeTileColor(playerNb); 
+        
+        MovePlayerOnSpawnPoint(spawnPointGrid);
+    }
+
+    private void InitializeSpawnerWithFixedSpawnPos()
+    {
+        Vector2Int spawnPointGrid = GameManager.Instance.GridManager.playerSpawnPoints[(int)playerNb - 1];
+        Tile tile = GameManager.Instance.GridManager.GetTileAtCoordinates(spawnPointGrid);
+        
+        if (tile == null)
+            throw new Exception($"There's no tile at player spawn point position {spawnPointGrid}");
+        if (tile.IsObstacle)
+            throw new Exception($"Player spawn position {spawnPointGrid} is on an obstacle");
+        
+        if(GameManager.Instance.isSpreadingMode)
+            tile.ChangeTileColor(playerNb);
+        
+        MovePlayerOnSpawnPoint(spawnPointGrid);
+    }
+
+    private void MovePlayerOnSpawnPoint(Vector2Int gridPos)
+    {
+        Vector3 worldPos = GridManagerStrategy.GridToWorldPosition(gridPos);
+        var trans = transform;
+        trans.position = new Vector3(worldPos.x, trans.position.y, worldPos.z);
     }
 
     private void InitializeArrow()
@@ -166,23 +215,20 @@ public class Player : MonoBehaviour
         if (ctx.performed && ctx.interaction is HoldInteraction)
         {
             OnExplodeChainedBombs?.Invoke();
-            isChainingBombs = false;
             GameManager.Instance.BombManager.ExplodeChainedBombs(playerNb);
         }
-        else if (ctx.performed && (isChainingBombs || !GameManager.Instance.BombManager.HasChainedBombs(playerNb)))
+        else if (ctx.performed && 
+                 (BombFusingType.Equals(BombFusingType.Chained) || !GameManager.Instance.BombManager.HasChainedBombs(playerNb)))
         {
             OnPlaceBomb?.Invoke();
             Vector3 bombDirection = _moveInput.sqrMagnitude > 0.0001f ? GetBombPlacementDirection(_moveInput) : _lastInput;
 
             if (GameManager.Instance.BombManager.CreateBomb(transform.position + (bombDirection * Tile.TileLength), playerNb,
-                    _currentBombType, _shouldNextBombBeTransparent, isChainingBombs))
+                    _currentBombType, _bombFusingStrategies[(int)BombFusingType], ShouldNextBombBeTransparent))
             {
                 OnBombExploded?.Invoke();
             }
-                
-            _shouldNextBombBeTransparent = false;
         }
-        
     }
 
     public void OnChangeBomb(InputAction.CallbackContext ctx)
@@ -497,11 +543,6 @@ public class Player : MonoBehaviour
         
         gameObject.GetComponent<Renderer>().material.color = playerColor;
     }
-    
-    public void CreateNextBombTransparent()
-    {
-        _shouldNextBombBeTransparent = true;
-    }
 }
 
 public enum PlayerEnum
@@ -511,6 +552,13 @@ public enum PlayerEnum
     Player2 = 2,
     Player3 = 3,
     Player4 = 4
+}
+
+public enum BombFusingType
+{
+    None = 0,
+    Chained = 1,
+    Target = 2
 }
 
 

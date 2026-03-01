@@ -45,17 +45,14 @@ public class PlayerItemsManager : MonoBehaviour
         switch (type)
         {
             case ItemType.PaintBrush:
-            {
                 return new PaintBrushItem();
-            }
             case ItemType.TransparentBomb:
-            {
                 return new TransparentBombItem();
-            }
             case ItemType.ChainBombs:
-            {
                 return new ChainBombsItem();
-            }
+            case ItemType.TargetBomb:
+                return new TargetBombItem();
+            
             // todo : add more
         }
 

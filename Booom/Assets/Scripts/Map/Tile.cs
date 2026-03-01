@@ -31,12 +31,10 @@ public class Tile : MonoBehaviour
     {
         if (CurrentTileOwner != newOwner)
         {
-            bool isNoPlayer = newOwner == PlayerEnum.None;
-
             GameManager.Instance.ScoreManager.LoseTile(CurrentTileOwner, TileCoordinates);
             GameManager.Instance.ScoreManager.AcquireNewTile(newOwner, TileCoordinates);
 
-            _tileRenderer.material.color = !isNoPlayer ? Player.PlayerColorDict[newOwner] : _neutralColor;
+            _tileRenderer.material.color = newOwner != PlayerEnum.None ? Player.PlayerColorDict[newOwner] : _neutralColor;
             CurrentTileOwner = newOwner;
         }
     }
