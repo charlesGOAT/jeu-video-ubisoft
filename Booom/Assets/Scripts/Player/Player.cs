@@ -76,7 +76,7 @@ public class Player : MonoBehaviour
 
     public bool IsImmune { get; private set; } = false;
 
-    public static readonly Dictionary<PlayerEnum, Color> PlayerColorDict = new Dictionary<PlayerEnum, Color>();  // make it the other way around if we want to test color spreading
+    public static readonly Dictionary<PlayerEnum, Color> PlayerColorDict = new Dictionary<PlayerEnum, Color>();
     
     public event MoveCalledEventHandler OnMoveFunctionCalled;
     public event PlaceBomb OnPlaceBomb;
@@ -213,8 +213,7 @@ public class Player : MonoBehaviour
             OnPlaceBomb?.Invoke();
             Vector3 bombDirection = _moveInput.sqrMagnitude > 0.0001f ? GetBombPlacementDirection(_moveInput) : _lastInput;
 
-            if (GameManager.Instance.BombManager.CreateBomb(transform.position + (bombDirection * Tile.TileLength), playerNb,
-                    _currentBombType, _shouldNextBombBeTransparent, isChainingBombs))
+            if (GameManager.Instance.BombManager.CreateBomb(transform.position + (bombDirection * Tile.TileLength), playerNb, _shouldNextBombBeTransparent, isChainingBombs))
             {
                 OnBombExploded?.Invoke();
             }
@@ -224,14 +223,14 @@ public class Player : MonoBehaviour
         
     }
 
-    public void OnChangeBomb(InputAction.CallbackContext ctx)
-    {
-        if (ctx.performed)
-        {
-            int nextBomb = ((int)_currentBombType % _bombTypeCount) + 1; // +1 to bring back above 0
-            _currentBombType = (BombEnum)nextBomb;
-        }
-    }
+    // public void OnChangeBomb(InputAction.CallbackContext ctx)
+    // {
+    //     if (ctx.performed)
+    //     {
+    //         int nextBomb = ((int)_currentBombType % _bombTypeCount) + 1; // +1 to bring back above 0
+    //         _currentBombType = (BombEnum)nextBomb;
+    //     }
+    // }
 
     public void DisableInputActions() => _playerInput.actions.Disable();
     public void EnableInputActions() => _playerInput.actions.Enable();

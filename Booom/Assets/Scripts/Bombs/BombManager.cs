@@ -29,7 +29,7 @@ public class BombManager : MonoBehaviour
         }
     }
     
-    public virtual bool CreateBomb(Vector3 position, PlayerEnum playerEnum, BombEnum bombEnum,  bool isTransparentBomb = false, bool isChained = false)
+    public virtual bool CreateBomb(Vector3 position, PlayerEnum playerEnum, bool isTransparentBomb = false, bool isChained = false)
     {
         if (Time.time < _nextBombTime[playerEnum] && !isChained)
         {
@@ -45,11 +45,14 @@ public class BombManager : MonoBehaviour
             return false;
         }
 
+        BombEnum bombType = GameManager.Instance.EventManager.CurrentBombType;
+        int intBombType = (int)bombType - 1;
+        
         Vector3 worldPosition = GridManagerStrategy.GridToWorldPosition(gridCoordinates, tile.transform.position.y);
-        bombPrefabs[(int)bombEnum - 1].associatedPlayer = playerEnum;
+        bombPrefabs[intBombType].associatedPlayer = playerEnum;
 
-        bombPrefabs[(int)bombEnum - 1].IsChainedBomb = isChained;
-        Bomb instantiatedBomb = Instantiate(bombPrefabs[(int)bombEnum - 1], worldPosition + bombHeight, Quaternion.identity);
+        bombPrefabs[intBombType].IsChainedBomb = isChained;
+        Bomb instantiatedBomb = Instantiate(bombPrefabs[intBombType], worldPosition + bombHeight, Quaternion.identity);
         instantiatedBomb.IsTransparentBomb = isTransparentBomb;
 
         if (isChained)
