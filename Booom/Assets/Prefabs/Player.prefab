@@ -278,6 +278,22 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: c3490868-bd20-4116-b374-3e59da42a747
     m_ActionName: 'Player/ChangeBomb[/XInputControllerWindows/buttonEast,/Mouse/rightButton]'
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 2274895575808496514, guid: 87b723c18e21d754b8b46ee9cb44c4e2, type: 3}
+        m_TargetAssemblyTypeName: 
+        m_MethodName: 
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: f56118f8-995f-41b5-882c-bcdaa22b94dd
+    m_ActionName: 'Player/Join[/XInputControllerWindows/start,/Keyboard/e]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player

@@ -101,19 +101,17 @@ public class Player : MonoBehaviour
         playerItemsManager.Player = this;
 
         _bombTypeCount = Enum.GetValues(typeof(BombEnum)).Length - 1; // -1 to avoid None
-
-        ConfigurePlayers();
         
         InitializeStateMachine();
         GetComponents();
 
         ActivePlayers.Add(this);
-
-        InitializeArrow();
     }
 
     private void Start()
     {
+        ConfigurePlayers();
+        InitializeArrow();
         CheckStartConditions();
         InitializeSpawner();
     }
@@ -237,6 +235,14 @@ public class Player : MonoBehaviour
         {
             int nextBomb = ((int)_currentBombType % _bombTypeCount) + 1; // +1 to bring back above 0
             _currentBombType = (BombEnum)nextBomb;
+        }
+    }
+
+    public void OnJoin(InputAction.CallbackContext ctx)
+    {
+        if (ctx.performed)
+        {
+            Debug.Log("Joined");
         }
     }
 

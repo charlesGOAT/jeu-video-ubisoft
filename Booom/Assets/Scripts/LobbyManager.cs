@@ -6,6 +6,22 @@ using System.Collections.Generic;
 public class LobbyManager : MonoBehaviour
 {
     public static List<PlayerInput> joinedPlayers = new List<PlayerInput>();
+    private PlayerInputManager _inputManager;
+
+    private void Awake()
+    {
+        _inputManager = GetComponent<PlayerInputManager>();
+    }
+
+    private void OnEnable()
+    {
+        _inputManager.onPlayerJoined += OnPlayerJoined;
+    }
+
+    private void OnDisable()
+    {
+        _inputManager.onPlayerJoined -= OnPlayerJoined;
+    }
 
     public void OnPlayerJoined(PlayerInput playerInput)
     {
@@ -36,9 +52,8 @@ public class LobbyManager : MonoBehaviour
         
         PlayerEnum playerEnum = (PlayerEnum) playerInput.playerIndex + 1;
         Color c = Player.PlayerColorDict[playerEnum];
-
+        
         // GameManager.Instance.UIManager.PlayerAdded(playerEnum, c);
         joinedPlayers.Add(playerInput);
-        Debug.Log("Player joined : "  + playerEnum);
     }
 }
