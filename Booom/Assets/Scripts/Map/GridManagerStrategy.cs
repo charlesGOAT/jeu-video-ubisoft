@@ -107,12 +107,15 @@ public abstract class GridManagerStrategy : MonoBehaviour
     public IEnumerable<Vector2Int> GetPlayerTilesWithNoItem(PlayerEnum player)
     {
         if (player == PlayerEnum.None)
-            return _ownableTiles.Keys;
+            return new []{WorldToGridCoordinates(GetRandomPosOnGridWithNoItem())};
 
         var acquiredTiles = GameManager.Instance.ScoreManager.GetAcquiredTilesByPlayer();
         var tilesWithNoItem = acquiredTiles[(int)player - 1].Where(pos => !IsItemAtPos(pos));
+
+        var playerTilesWithNoItem = tilesWithNoItem as Vector2Int[] ?? tilesWithNoItem.ToArray();
+        if (playerTilesWithNoItem.Length > 0) return playerTilesWithNoItem;
         
-        return tilesWithNoItem;
+        return new []{WorldToGridCoordinates(GetRandomPosOnGridWithNoItem())};
     }
 
     private HashSet<Vector2Int> GetAllTilesOwned()
