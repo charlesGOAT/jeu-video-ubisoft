@@ -42,7 +42,7 @@ public class PlayerItemsManager : MonoBehaviour
         foreach (ItemType itemType in Enum.GetValues(typeof(ItemType)))
         {
             if(_itemsInventory.TryGetValue(itemType, out BaseItem item))
-                item.FinishUsingItem();
+                item.FinishUsingItem(true);
         }
     }
 

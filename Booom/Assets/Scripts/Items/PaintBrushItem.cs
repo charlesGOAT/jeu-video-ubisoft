@@ -42,7 +42,7 @@ public class PaintBrushItem : BaseItem
         CallFinishUsingItemCallback();
     }
 
-    public override void FinishUsingItem()
+    public override void FinishUsingItem(bool hasDied = false)
     {
         _cts.Cancel();
         UseTimeOver();

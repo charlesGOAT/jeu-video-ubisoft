@@ -6,15 +6,21 @@ public class ChainBombsItem : BombItem
     
     protected override void PickupItemSpecific()
     {
-        _associatedPlayer.OnExplodeChainedBombs += FinishUsingItem;
+        _associatedPlayer.OnExplodeChainedBombs += FinishUsingChainedBombs;
         _associatedPlayer.BombFusingType = BombFusingType.Chained;
     }
 
-    protected override void FinishUsingItemSpecific()
+    protected override void FinishUsingItemSpecific(bool hasDied = false)
     {
-        _associatedPlayer.OnExplodeChainedBombs -= FinishUsingItem;
+        _associatedPlayer.OnExplodeChainedBombs -= FinishUsingChainedBombs;
         _associatedPlayer.BombFusingType = BombFusingType.None;
         
-        GameManager.Instance.BombManager.ExplodeChainedBombs(_associatedPlayer.PlayerNb);
+        if(hasDied)
+            GameManager.Instance.BombManager.ExplodeChainedBombs(_associatedPlayer.PlayerNb);
+    }
+
+    private void FinishUsingChainedBombs()
+    {
+        FinishUsingItem();
     }
 }
