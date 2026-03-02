@@ -39,12 +39,11 @@ public class PlayerItemsManager : MonoBehaviour
 
     public void ResetInventory()
     {
-        foreach (var item in _itemsInventory)
+        foreach (ItemType itemType in Enum.GetValues(typeof(ItemType)))
         {
-            item.Value.FinishUsingItem();
+            if(_itemsInventory.TryGetValue(itemType, out BaseItem item))
+                item.FinishUsingItem();
         }
-        
-        _itemsInventory.Clear();
     }
 
     private BaseItem CreateItem(ItemType type)
