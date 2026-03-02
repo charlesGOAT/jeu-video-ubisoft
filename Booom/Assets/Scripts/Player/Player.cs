@@ -104,8 +104,6 @@ public class Player : MonoBehaviour
         
         InitializeStateMachine();
         GetComponents();
-
-        ActivePlayers.Add(this);
     }
 
     private void Start()
@@ -114,6 +112,8 @@ public class Player : MonoBehaviour
         InitializeArrow();
         CheckStartConditions();
         InitializeSpawner();
+        
+        ActivePlayers.Add(this);
     }
 
     private void CheckStartConditions()
@@ -235,14 +235,6 @@ public class Player : MonoBehaviour
         {
             int nextBomb = ((int)_currentBombType % _bombTypeCount) + 1; // +1 to bring back above 0
             _currentBombType = (BombEnum)nextBomb;
-        }
-    }
-
-    public void OnJoin(InputAction.CallbackContext ctx)
-    {
-        if (ctx.performed)
-        {
-            Debug.Log("Joined");
         }
     }
 

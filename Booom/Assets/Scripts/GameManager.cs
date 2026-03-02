@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -9,12 +10,16 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] 
     public bool isSpreadingMode = true;
+    [SerializeField]
+    private GameObject playerPrefab;
+    [SerializeField]
+    private Vector3[] spawnPoints;
     
     public GridManagerStrategy GridManager { get; private set; }
     public BombManager BombManager { get; private set; }
     public ItemsManager ItemsManager { get; private set; }
     public ScoreManager ScoreManager { get; private set; }
-    public UIManager UIManager { get; private set; }
+    public GameUIManager GameUIManager { get; private set; }
 
     // add other managers
 
@@ -57,7 +62,7 @@ public class GameManager : MonoBehaviour
         BombManager = FindFirstObjectByType<BombManager>();
         ItemsManager = FindFirstObjectByType<ItemsManager>();
         ScoreManager = FindFirstObjectByType<ScoreManager>();
-        UIManager = FindFirstObjectByType<UIManager>();
+        GameUIManager = FindFirstObjectByType<GameUIManager>();
 
         if (GridManager == null)
         {
@@ -75,15 +80,29 @@ public class GameManager : MonoBehaviour
         {
             throw new Exception("There's no active score manager");
         }
-        if (UIManager == null)
+        if (GameUIManager == null)
         {
-            // throw new Exception("There's no active ui manager");
+            throw new Exception("There's no active game ui manager");
         }
         // add other managers
     }
 
+    public void SpawnPlayers()
+    {
+        foreach (var playerInput in LobbyManager.joinedPlayers) 
+        {
+            Vector3 spawnPoint = spawnPoints[playerInput.playerIndex];
+            PlayerInput newInput = PlayerInput.Instantiate(playerPrefab, playerIndex:playerInput.playerIndex, pairWithDevices:playerInput.devices.ToArray());
+            newInput.transform.position = spawnPoint;
+            
+            Destroy(playerInput.gameObject);
+        }
+        
+        LobbyManager.joinedPlayers.Clear();
+    }
+
     public void EndGame()
     {
-        UIManager.endGameImage.gameObject.SetActive(true);
+        GameUIManager.endGameImage.gameObject.SetActive(true);
     }
 }

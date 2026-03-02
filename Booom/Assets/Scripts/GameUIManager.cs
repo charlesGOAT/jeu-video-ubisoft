@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
-public class UIManager : MonoBehaviour
+public class GameUIManager : MonoBehaviour
 {
     [SerializeField]
     private ScorePlayer scorePlayerPrefab;
@@ -29,7 +29,7 @@ public class UIManager : MonoBehaviour
 
     private void OnEnable()
     {
-        GameManager.Instance.ScoreManager.OnScoreChanged += Refresh;
+        CreateLeaderBoard();
     }
 
     private void OnDisable()
@@ -44,6 +44,7 @@ public class UIManager : MonoBehaviour
         
         leaderboard.text = _statTracked;
 
+        GameManager.Instance.ScoreManager.OnScoreChanged += Refresh;
         StartTimer();
     }
 
@@ -65,16 +66,24 @@ public class UIManager : MonoBehaviour
         UpdateTimerDisplay();
     }
 
-    public void PlayerAdded(PlayerEnum playerEnum, Color c)
+    public void CreateLeaderBoard()
     {
-        if (!_scorePerPlayer.ContainsKey(playerEnum))
+        foreach (var player in Player.ActivePlayers)
         {
-            var scorePlayer = Instantiate(scorePlayerPrefab, leaderboard.transform);
-            scorePlayer.SetColor(c);
-            scorePlayer.UpdateScore(0);
-            _scorePerPlayer[playerEnum] = scorePlayer;
+            PlayerEnum playerEnum = player.PlayerNb;
+            Color c = Player.PlayerColorDict[playerEnum];
             
-            SortLeaderboard();
+            Debug.Log($"{playerEnum} - {c}");
+            
+            if (!_scorePerPlayer.ContainsKey(playerEnum))
+            {
+                var scorePlayer = Instantiate(scorePlayerPrefab, leaderboard.transform);
+                scorePlayer.SetColor(c);
+                scorePlayer.UpdateScore(0);
+                _scorePerPlayer[playerEnum] = scorePlayer;
+            
+                SortLeaderboard();
+            }
         }
     }
 
