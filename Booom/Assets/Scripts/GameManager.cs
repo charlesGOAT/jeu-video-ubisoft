@@ -11,7 +11,7 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     private GameObject playerPrefab;
     [SerializeField] 
-    public bool _isSpreadingMode = true;
+    private bool _isSpreadingMode = true;
     public bool IsSpreadingMode => _isSpreadingMode;
     
     public RuntimeConfigData RuntimeConfig { get; private set; }
