@@ -10720,8 +10720,8 @@ MonoBehaviour:
   mainCamera: {fileID: 722509299}
   playerSpawnPoints:
   - {x: -4, y: 6}
-  - {x: 4, y: -6}
-  - {x: -4, y: -6}
+  - {x: 4, y: -5}
+  - {x: -4, y: -5}
   - {x: 4, y: 6}
 --- !u!4 &1884964991 stripped
 Transform:
