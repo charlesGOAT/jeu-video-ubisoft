@@ -7,7 +7,7 @@ public class TransparentBombItem : BombItem
         _associatedPlayer.ShouldNextBombBeTransparent = true;
     }
     
-    protected override void FinishUsingItemSpecific()
+    protected override void FinishUsingItemSpecific(bool hasDied = false)
     {
         _associatedPlayer.ShouldNextBombBeTransparent = false;
     }
