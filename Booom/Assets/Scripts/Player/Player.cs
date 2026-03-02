@@ -84,24 +84,6 @@ public class Player : MonoBehaviour
 
     public static List<Player> ActivePlayers = new List<Player>();
 
-    private static readonly Dictionary<int, float> _speedBoostPerKill =new ()
-    {
-        {0, 1f},
-        {1, 1.25f},
-        {2, 1.5f},
-        {3, 1.75f},
-        {4, 2f},
-        {5, 2.25f} // todo : add more or tweak
-    };
-    
-    private static readonly Dictionary<int, int> _rangeBoostPerKill = new ()
-    {
-        {0, 0},
-        {2, 1},
-        {4, 2},
-        {6, 3}  // todo : add more or tweak
-    };
-
     private int _elimsRangeBoost = 0;
     public int ElimsRangeBoost => _elimsRangeBoost;
     private float _elimsSpeedBoost = 1;
@@ -160,10 +142,10 @@ public class Player : MonoBehaviour
 
     private void OnNbKillsChanged()
     {
-        if (_speedBoostPerKill.TryGetValue(NbKills, out float newSpeedBoost))
+        if (GameConstants.SpeedBoostPerKill.TryGetValue(NbKills, out float newSpeedBoost))
             _elimsSpeedBoost = newSpeedBoost;
 
-        if (_rangeBoostPerKill.TryGetValue(NbKills, out int newRangeBoost))
+        if (GameConstants.RangeBoostPerKill.TryGetValue(NbKills, out int newRangeBoost))
             _elimsRangeBoost = newRangeBoost;
         
         // todo : generate little animation or particle effect indicating kill streak
