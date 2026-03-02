@@ -58,11 +58,8 @@ public class Player : MonoBehaviour
 
     private Vector2 _moveInput;
     private Vector3 _lastInput;
-    private BombEnum _currentBombType = BombEnum.NormalBomb;
     public bool ShouldNextBombBeTransparent = false;
     
-    private int _bombTypeCount;
-
     public PlayerEnum PlayerNb => playerNb;
 
     private CharacterController _characterController;
@@ -84,9 +81,23 @@ public class Player : MonoBehaviour
 
     public static List<Player> ActivePlayers = new List<Player>();
 
+    private int _elimsRangeBoost = 0;
+    public int ElimsRangeBoost => _elimsRangeBoost;
+    private float _elimsSpeedBoost = 1;
+
+    private int _nbKills = 0;
+    public int NbKills { 
+        get => _nbKills;
+        set
+        {
+            _nbKills = value;
+            OnNbKillsChanged(); 
+        } 
+    }
+
     public bool IsImmune { get; private set; } = false;
 
-    public static readonly Dictionary<PlayerEnum, Color> PlayerColorDict = new Dictionary<PlayerEnum, Color>();  // make it the other way around if we want to test color spreading
+    public static readonly Dictionary<PlayerEnum, Color> PlayerColorDict = new Dictionary<PlayerEnum, Color>();
     
     public event MoveCalledEventHandler OnMoveFunctionCalled;
     public event PlaceBomb OnPlaceBomb;
@@ -99,8 +110,6 @@ public class Player : MonoBehaviour
             playerItemsManager = gameObject.GetComponent<PlayerItemsManager>();
 
         playerItemsManager.Player = this;
-
-        _bombTypeCount = Enum.GetValues(typeof(BombEnum)).Length - 1; // -1 to avoid None
         
         InitializeStateMachine();
         GetComponents();
@@ -121,6 +130,17 @@ public class Player : MonoBehaviour
         {
             throw new Exception("Player cannot be set to PlayerEnum.None");
         }
+    }
+
+    private void OnNbKillsChanged()
+    {
+        if (GameConstants.SpeedBoostPerKill.TryGetValue(NbKills, out float newSpeedBoost))
+            _elimsSpeedBoost = newSpeedBoost;
+
+        if (GameConstants.RangeBoostPerKill.TryGetValue(NbKills, out int newRangeBoost))
+            _elimsRangeBoost = newRangeBoost;
+        
+        // todo : generate little animation or particle effect indicating kill streak
     }
 
     private void InitializeSpawner()
@@ -220,20 +240,12 @@ public class Player : MonoBehaviour
             OnPlaceBomb?.Invoke();
             Vector3 bombDirection = _moveInput.sqrMagnitude > 0.0001f ? GetBombPlacementDirection(_moveInput) : _lastInput;
 
-            if (GameManager.Instance.BombManager.CreateBomb(transform.position + (bombDirection * Tile.TileLength), playerNb,
-                    _currentBombType, _bombFusingStrategies[(int)BombFusingType], ShouldNextBombBeTransparent))
+
+            if (GameManager.Instance.BombManager.CreateBomb(transform.position + (bombDirection * Tile.TileLength),
+                    playerNb, _bombFusingStrategies[(int)BombFusingType], ShouldNextBombBeTransparent))
             {
                 OnBombExploded?.Invoke();
             }
-        }
-    }
-
-    public void OnChangeBomb(InputAction.CallbackContext ctx)
-    {
-        if (ctx.performed)
-        {
-            int nextBomb = ((int)_currentBombType % _bombTypeCount) + 1; // +1 to bring back above 0
-            _currentBombType = (BombEnum)nextBomb;
         }
     }
 
@@ -280,6 +292,8 @@ public class Player : MonoBehaviour
         _stateMachine.Trigger(GameConstants.PLAYER_HIT_TRIGGER);
         IsImmune = true;
         _actualImmuneTimer = immuneTimer;
+
+        NbKills = 0;
     }
 
     public void OnJump(Vector2Int jumpDirection) 
@@ -358,6 +372,8 @@ public class Player : MonoBehaviour
         Vector2 curMoveInput = _moveInput.normalized;
 
         float boost = CheckIfOnOwnColor() ? GameConstants.COLOR_BOOST : (CheckIfOnEnemyTerritory() ? GameConstants.COLOR_DEBUFF: 1);
+
+        boost *= GameManager.Instance.IsBonusSpeed ? _elimsSpeedBoost : 1;
 
         Vector3 move = new Vector3(curMoveInput.y, 0, -curMoveInput.x) * (speed * boost);
         float tempMove = ApplyGravity(ref _verticalVelocity);

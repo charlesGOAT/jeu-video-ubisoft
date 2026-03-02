@@ -6,6 +6,7 @@ using UnityEngine;
 public class RuntimeConfigData
 {
     public bool IsSpreadingMode = true;
+    public bool IsBonusSpeed = true;
     public SpawnMode SpawnMode = SpawnMode.Fixed;
     public bool IsDropFromSky = false;
 }

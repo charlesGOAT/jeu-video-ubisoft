@@ -8,7 +8,6 @@ public class BombManager : MonoBehaviour
 
     // Track each Player's bomb cooldown
     private readonly Dictionary<PlayerEnum, float> _nextBombTime = new (GameConstants.NB_PLAYERS);
-
     private readonly Dictionary<PlayerEnum, List<Bomb>> _chainedBombsPerPlayer = new (GameConstants.NB_PLAYERS);
 
     protected virtual void Awake()
@@ -26,7 +25,7 @@ public class BombManager : MonoBehaviour
         }
     }
     
-    public virtual bool CreateBomb(Vector3 position, PlayerEnum playerEnum, BombEnum bombEnum,  BombFusingStrategy bombStrat, bool isTransparentBomb = false)
+    public virtual bool CreateBomb(Vector3 position, PlayerEnum playerEnum, BombFusingStrategy bombStrat, bool isTransparentBomb = false)
     {
         bool isChained = bombStrat is ChainedBombFusingStrategy;
         
@@ -44,10 +43,13 @@ public class BombManager : MonoBehaviour
             return false;
         }
 
+        BombEnum bombType = GameManager.Instance.EventManager.CurrentBombType;
+        int intBombType = (int)bombType - 1;
+        
         Vector3 worldPosition = GridManagerStrategy.GridToWorldPosition(gridCoordinates, tile.transform.position.y);
-        bombPrefabs[(int)bombEnum - 1].AssociatedPlayer = playerEnum;
+        bombPrefabs[intBombType].AssociatedPlayer = playerEnum;
 
-        Bomb instantiatedBomb = Instantiate(bombPrefabs[(int)bombEnum - 1], worldPosition + bombHeight, Quaternion.identity);
+        Bomb instantiatedBomb = Instantiate(bombPrefabs[intBombType], worldPosition + bombHeight, Quaternion.identity);
         instantiatedBomb.BombFusingStrategy = bombStrat;
         instantiatedBomb.IsTransparentBomb = isTransparentBomb;
 

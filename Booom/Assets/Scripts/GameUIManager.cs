@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -17,51 +18,43 @@ public class GameUIManager : MonoBehaviour
     private TMP_Text timer;
 
     [SerializeField]
+    private TMP_Text bombType;
+    
+    [SerializeField]
+    private TMP_Text eventPanelText;
+    
+    [SerializeField]
+    private GameObject bombEventPanel;
+    
+    [SerializeField]
     public Image endGameImage;
 
     private readonly Dictionary<PlayerEnum, ScorePlayer> _scorePerPlayer = new ();
     private string _statTracked = "Eliminations";
     
-    private float _timeRemaining;
-    private bool _timerRunning;
-    
     private readonly List<KeyValuePair<PlayerEnum, ScorePlayer>> _sortedPlayerScores = new();
 
     private void OnEnable()
     {
-        GameManager.Instance.ScoreManager.OnScoreChanged += Refresh;
+        GameManager.Instance.ScoreManager.OnScoreChanged += RefreshScore;
     }
 
     private void OnDisable()
     {
-        GameManager.Instance.ScoreManager.OnScoreChanged -= Refresh;
+        GameManager.Instance.ScoreManager.OnScoreChanged -= RefreshScore;
     }
 
     private void Start()
     {
+        bombEventPanel.SetActive(false);
+
         if (GameManager.Instance.IsSpreadingMode)
             _statTracked = "Number of tiles owned";
-        
+
+        bombType.text = GameManager.Instance.EventManager.CurrentBombType.ToString().AddSpacesBeforeCaps();
         leaderboard.text = _statTracked;
-        StartTimer();
-    }
 
-    private void Update()
-    {
-        if (!_timerRunning) return;
-
-        _timeRemaining -= Time.deltaTime;
-
-        if (_timeRemaining <= 0f)
-        {
-            _timeRemaining = 0f;
-            _timerRunning = false;
-            UpdateTimerDisplay();
-            GameManager.Instance.EndGame();
-            return;
-        }
-
-        UpdateTimerDisplay();
+        GameManager.Instance.StartTimer();
     }
 
     public void CreateScorePlayer(PlayerEnum playerEnum)
@@ -76,7 +69,7 @@ public class GameUIManager : MonoBehaviour
         SortLeaderboard();
     }
 
-    private void Refresh(PlayerEnum player, int score)
+    private void RefreshScore(PlayerEnum player, int score)
     {
         if (!_scorePerPlayer.ContainsKey(player))
         {
@@ -85,6 +78,11 @@ public class GameUIManager : MonoBehaviour
         _scorePerPlayer[player].UpdateScore(score);
         
         SortLeaderboard();
+    }
+
+    public void RefreshBombType(string newBombType)
+    {
+        bombType.text = newBombType;
     }
     
     private void SortLeaderboard()
@@ -103,17 +101,21 @@ public class GameUIManager : MonoBehaviour
         }
     }
 
-    private void StartTimer()
+    public void UpdateTimerDisplay()
     {
-        _timeRemaining = GameConstants.GAME_DURATION;
-        _timerRunning = true;
-        UpdateTimerDisplay();
+        timer.text = $"{GameManager.Instance.CurrentMinutes}:{GameManager.Instance.CurrentSeconds:D2}";
     }
-    
-    private void UpdateTimerDisplay()
+
+    public void DisplayEventPanel(string bombTypeName)
     {
-        int minutes = Mathf.FloorToInt(_timeRemaining / 60f);
-        int seconds = Mathf.FloorToInt(_timeRemaining % 60f);
-        timer.text = $"{minutes}:{seconds:D2}";
+        eventPanelText.text = $"Bomb type is now {bombTypeName}!";
+        StartCoroutine(EventPanelCoroutine());
+    }
+
+    private IEnumerator EventPanelCoroutine()
+    {
+        bombEventPanel.SetActive(true);
+        yield return new WaitForSeconds(3); // to tweak
+        bombEventPanel.SetActive(false);
     }
 }

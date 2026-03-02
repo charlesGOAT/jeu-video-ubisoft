@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -10,19 +9,53 @@ public class GameManager : MonoBehaviour
 
     [SerializeField]
     private GameObject playerPrefab;
+    private float _timeRemaining;
+    private bool _timerRunning;
+
+    public int CurrentMinutes => Mathf.FloorToInt(_timeRemaining / 60f);
+    public int CurrentSeconds => Mathf.FloorToInt(_timeRemaining % 60f);
+    
     [SerializeField] 
     private bool _isSpreadingMode = true;
     public bool IsSpreadingMode => _isSpreadingMode;
     
     public RuntimeConfigData RuntimeConfig { get; private set; }
     
+    [SerializeField]
+    private bool _isBonusSpeed = false;
+    public bool IsBonusSpeed => _isBonusSpeed;
+
     public GridManagerStrategy GridManager { get; private set; }
     public BombManager BombManager { get; private set; }
     public ItemsManager ItemsManager { get; private set; }
     public ScoreManager ScoreManager { get; private set; }
     public GameUIManager GameUIManager { get; private set; }
+    public EventManager EventManager { get; private set; }
 
     // add other managers
+
+    private void Update()
+    {
+        if (!_timerRunning) return;
+
+        _timeRemaining -= Time.deltaTime;
+
+        if (_timeRemaining <= 0f)
+        {
+            _timeRemaining = 0f;
+            _timerRunning = false;
+            GameUIManager.UpdateTimerDisplay();
+            EndGame();
+        }
+
+        GameUIManager.UpdateTimerDisplay();
+    }
+
+    public void StartTimer()
+    {
+        _timeRemaining = GameConstants.GAME_DURATION;
+        _timerRunning = true;
+    }
 
     public static GameManager Instance
     {
@@ -59,6 +92,7 @@ public class GameManager : MonoBehaviour
     {
         RuntimeConfig = RuntimeConfigLoader.GetConfig();
         _isSpreadingMode = RuntimeConfig.IsSpreadingMode;
+        _isBonusSpeed = RuntimeConfig.IsBonusSpeed;
     }
 
     public void RemoveItemFromGrid(Item item)
@@ -74,6 +108,7 @@ public class GameManager : MonoBehaviour
         ItemsManager = FindFirstObjectByType<ItemsManager>();
         ScoreManager = FindFirstObjectByType<ScoreManager>();
         GameUIManager = FindFirstObjectByType<GameUIManager>();
+        EventManager = FindFirstObjectByType<EventManager>();
 
         if (GridManager == null)
         {
@@ -94,6 +129,10 @@ public class GameManager : MonoBehaviour
         if (GameUIManager == null)
         {
             throw new Exception("There's no active game ui manager");
+        }
+        if (EventManager == null)
+        {
+            throw new Exception("There's no active event manager");
         }
         // add other managers
     }
