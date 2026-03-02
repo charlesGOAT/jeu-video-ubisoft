@@ -232,14 +232,13 @@ public class Player : MonoBehaviour
         if (ctx.performed && ctx.interaction is HoldInteraction)
         {
             OnExplodeChainedBombs?.Invoke();
-            GameManager.Instance.BombManager.ExplodeChainedBombs(playerNb);
+            GameManager.Instance.BombManager.ExplodeChainedBombs(PlayerNb);
         }
         else if (ctx.performed && 
                  (BombFusingType.Equals(BombFusingType.Chained) || !GameManager.Instance.BombManager.HasChainedBombs(playerNb)))
         {
             OnPlaceBomb?.Invoke();
             Vector3 bombDirection = _moveInput.sqrMagnitude > 0.0001f ? GetBombPlacementDirection(_moveInput) : _lastInput;
-
 
             if (GameManager.Instance.BombManager.CreateBomb(transform.position + (bombDirection * Tile.TileLength),
                     playerNb, _bombFusingStrategies[(int)BombFusingType], ShouldNextBombBeTransparent))
@@ -294,6 +293,7 @@ public class Player : MonoBehaviour
         _actualImmuneTimer = immuneTimer;
 
         NbKills = 0;
+        playerItemsManager.ResetInventory();
     }
 
     public void OnJump(Vector2Int jumpDirection) 
