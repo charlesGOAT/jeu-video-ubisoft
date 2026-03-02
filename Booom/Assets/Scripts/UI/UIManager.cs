@@ -24,7 +24,7 @@ public class UIManager : MonoBehaviour
     private TMP_Text eventPanelText;
     
     [SerializeField]
-    private GameObject panel;
+    private GameObject bombEventPanel;
     
     [SerializeField]
     public Image endGameImage;
@@ -48,8 +48,8 @@ public class UIManager : MonoBehaviour
 
     private void Start()
     {
-        panel.SetActive(false);
-        
+        bombEventPanel.SetActive(false);
+
         if (GameManager.Instance.IsSpreadingMode)
             _statTracked = "Number of tiles owned";
 
@@ -143,8 +143,8 @@ public class UIManager : MonoBehaviour
 
     private IEnumerator EventPanelCoroutine()
     {
-        panel.SetActive(true);
+        bombEventPanel.SetActive(true);
         yield return new WaitForSeconds(3); // to tweak
-        panel.SetActive(false);
+        bombEventPanel.SetActive(false);
     }
 }
