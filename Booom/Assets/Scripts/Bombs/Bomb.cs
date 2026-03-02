@@ -86,7 +86,7 @@ public class Bomb : MonoBehaviour
         if (bombTile == null) return;
 
         PlayerEnum currentOwner = bombTile.CurrentTileOwner;
-        PlayerEnum newTileOwner = GameManager.Instance.isSpreadingMode ? currentOwner : associatedPlayer;
+        PlayerEnum newTileOwner = GameManager.Instance.IsSpreadingMode ? currentOwner : associatedPlayer;
 
         PaintTile(_bombCoordinates, Vector2Int.zero, newTileOwner);
 

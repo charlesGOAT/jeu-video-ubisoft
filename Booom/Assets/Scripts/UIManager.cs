@@ -41,7 +41,7 @@ public class UIManager : MonoBehaviour
 
     private void Start()
     {
-        if (GameManager.Instance.isSpreadingMode)
+        if (GameManager.Instance.IsSpreadingMode)
             _statTracked = "Number of tiles owned";
         
         leaderboard.text = _statTracked;

@@ -5,14 +5,14 @@ using UnityEngine;
 [Serializable]
 public class RuntimeConfigData
 {
-    public bool isSpreadingMode = true;
-    public SpawnMode spawnMode = SpawnMode.Fixed;
-    public bool isDropFromSky = false;
+    public bool IsSpreadingMode = true;
+    public SpawnMode SpawnMode = SpawnMode.Fixed;
+    public bool IsDropFromSky = false;
 }
 
 public static class RuntimeConfigLoader
 {
-    private const string ConfigFileName = "gameConfig.json";
+    private const string CONFIG_FILE_NAME = "gameConfig.json";
 
     private static bool _isLoaded;
     private static RuntimeConfigData _cachedConfig;
@@ -24,7 +24,7 @@ public static class RuntimeConfigLoader
             return _cachedConfig;
         }
 
-        string configPath = Path.Combine(Application.streamingAssetsPath, ConfigFileName);
+        string configPath = Path.Combine(Application.streamingAssetsPath, CONFIG_FILE_NAME);
 
         if (!File.Exists(configPath))
         {
