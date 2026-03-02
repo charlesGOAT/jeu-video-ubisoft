@@ -19,15 +19,10 @@ public class MenuUIManager : MonoBehaviour
         {
             EventSystem.current.SetSelectedGameObject(playButton.gameObject);
         }
-        
-        _lobbyManager = FindFirstObjectByType<LobbyManager>();
+
+        _lobbyManager = LobbyManager.Instance;
         
         _lobbyManager.OnLobbyPlayerCountChanged += UnlockPlayButton;
-    }
-
-    private void OnDestroy()
-    {
-        _lobbyManager.OnLobbyPlayerCountChanged -= UnlockPlayButton;
     }
 
     private void UnlockPlayButton(int playerCount)
@@ -49,5 +44,6 @@ public class MenuUIManager : MonoBehaviour
     public void PlayGame()
     {
         _lobbyManager.GameStarted();
+        _lobbyManager.OnLobbyPlayerCountChanged -= UnlockPlayButton;
     }
 }

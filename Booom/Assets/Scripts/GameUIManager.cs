@@ -27,7 +27,10 @@ public class GameUIManager : MonoBehaviour
     private GameObject bombEventPanel;
     
     [SerializeField]
-    public Image endGameImage;
+    private Image endGameImage;
+    
+    [SerializeField]
+    private TMP_Text winnerText;
 
     private readonly Dictionary<PlayerEnum, ScorePlayer> _scorePerPlayer = new ();
     private string _statTracked = "Eliminations";
@@ -110,6 +113,16 @@ public class GameUIManager : MonoBehaviour
     {
         eventPanelText.text = $"Bomb type is now {bombTypeName}!";
         StartCoroutine(EventPanelCoroutine());
+    }
+
+    public void EndGame()
+    {
+        endGameImage.enabled = true;
+        winnerText.enabled = true;
+
+        PlayerEnum winner = GameManager.Instance.ScoreManager.FindPlayerWithMostGround();
+        winnerText.text = $"Player {(int)winner} won!";
+        winnerText.color = Player.PlayerColorDict[winner];
     }
 
     private IEnumerator EventPanelCoroutine()

@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -155,6 +157,13 @@ public class GameManager : MonoBehaviour
 
     public void EndGame()
     {
-        GameUIManager.endGameImage.gameObject.SetActive(true);
+        GameUIManager.EndGame();
+        StartCoroutine(EndGameCoroutine());
+    }
+
+    private IEnumerator EndGameCoroutine()
+    {
+        yield return new WaitForSeconds(3f);
+        SceneManager.LoadScene("Menu");
     }
 }
