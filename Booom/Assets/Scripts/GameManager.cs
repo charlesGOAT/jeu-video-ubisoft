@@ -12,6 +12,10 @@ public class GameManager : MonoBehaviour
     public bool IsSpreadingMode => _isSpreadingMode;
     public RuntimeConfigData RuntimeConfig { get; private set; }
     
+    [SerializeField]
+    private bool _isBonusSpeed = false;
+    public bool IsBonusSpeed => _isBonusSpeed;
+
     public GridManagerStrategy GridManager { get; private set; }
     public BombManager BombManager { get; private set; }
     public ItemsManager ItemsManager { get; private set; }
@@ -55,6 +59,7 @@ public class GameManager : MonoBehaviour
     {
         RuntimeConfig = RuntimeConfigLoader.GetConfig();
         _isSpreadingMode = RuntimeConfig.IsSpreadingMode;
+        _isBonusSpeed = RuntimeConfig.IsBonusSpeed;
     }
 
     public void RemoveItemFromGrid(Item item)

@@ -7,8 +7,6 @@ public delegate void ScoreChangedEventHandler(PlayerEnum player, int score);
 public class ScoreManager : MonoBehaviour
 {
     private readonly HashSet<Vector2Int>[] _acquiredTilesByPlayer = new HashSet<Vector2Int>[GameConstants.NB_PLAYERS];
-    private readonly Dictionary<PlayerEnum, int> _eliminationsPerPlayer = new(GameConstants.NB_PLAYERS); //We could add other stats like deaths or items used
-    
     private bool _spreadMode = false;
     
     public event ScoreChangedEventHandler OnScoreChanged;
@@ -19,23 +17,20 @@ public class ScoreManager : MonoBehaviour
         {
             _acquiredTilesByPlayer[i] = new HashSet<Vector2Int>();
         }
-        for (int i = 1; i <= GameConstants.NB_PLAYERS; i++)
-        {
-            _eliminationsPerPlayer.Add((PlayerEnum)i, 0);
-        }
         
         _spreadMode = GameManager.Instance.IsSpreadingMode;
     }
 
     public void NewElimination(PlayerEnum player)
     {
-        if (player != PlayerEnum.None)
-            _eliminationsPerPlayer[player]++;
+        if (player == PlayerEnum.None) return;
+        
+        Player.ActivePlayers[(int)player - 1].NbKills++;
 
         if (_spreadMode) return;
         
-        OnScoreChanged?.Invoke(player, _eliminationsPerPlayer[player]);
-        if (_eliminationsPerPlayer[player] >= GameConstants.ELIMS_TO_WIN)
+        OnScoreChanged?.Invoke(player, Player.ActivePlayers[(int)player - 1].NbKills);
+        if (Player.ActivePlayers[(int)player - 1].NbKills >= GameConstants.ELIMS_TO_WIN)
         {
             GameManager.Instance.EndGame();
         }
