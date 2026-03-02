@@ -58,11 +58,8 @@ public class Player : MonoBehaviour
 
     private Vector2 _moveInput;
     private Vector3 _lastInput;
-    private BombEnum _currentBombType = BombEnum.NormalBomb;
     public bool ShouldNextBombBeTransparent = false;
     
-    private int _bombTypeCount;
-
     public PlayerEnum PlayerNb => playerNb;
 
     private CharacterController _characterController;
@@ -100,7 +97,7 @@ public class Player : MonoBehaviour
 
     public bool IsImmune { get; private set; } = false;
 
-    public static readonly Dictionary<PlayerEnum, Color> PlayerColorDict = new Dictionary<PlayerEnum, Color>();  // make it the other way around if we want to test color spreading
+    public static readonly Dictionary<PlayerEnum, Color> PlayerColorDict = new Dictionary<PlayerEnum, Color>();
     
     public event MoveCalledEventHandler OnMoveFunctionCalled;
     public event PlaceBomb OnPlaceBomb;
@@ -113,8 +110,6 @@ public class Player : MonoBehaviour
             playerItemsManager = gameObject.GetComponent<PlayerItemsManager>();
 
         playerItemsManager.Player = this;
-
-        _bombTypeCount = Enum.GetValues(typeof(BombEnum)).Length - 1; // -1 to avoid None
 
         ConfigurePlayers();
         
@@ -248,20 +243,12 @@ public class Player : MonoBehaviour
             OnPlaceBomb?.Invoke();
             Vector3 bombDirection = _moveInput.sqrMagnitude > 0.0001f ? GetBombPlacementDirection(_moveInput) : _lastInput;
 
-            if (GameManager.Instance.BombManager.CreateBomb(transform.position + (bombDirection * Tile.TileLength), playerNb,
-                    _currentBombType, _bombFusingStrategies[(int)BombFusingType], ShouldNextBombBeTransparent))
+
+            if (GameManager.Instance.BombManager.CreateBomb(transform.position + (bombDirection * Tile.TileLength),
+                    playerNb, _bombFusingStrategies[(int)BombFusingType], ShouldNextBombBeTransparent))
             {
                 OnBombExploded?.Invoke();
             }
-        }
-    }
-
-    public void OnChangeBomb(InputAction.CallbackContext ctx)
-    {
-        if (ctx.performed)
-        {
-            int nextBomb = ((int)_currentBombType % _bombTypeCount) + 1; // +1 to bring back above 0
-            _currentBombType = (BombEnum)nextBomb;
         }
     }
 

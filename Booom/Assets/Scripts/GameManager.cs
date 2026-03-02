@@ -1,12 +1,17 @@
 ﻿using System;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public class GameManager : MonoBehaviour
 {
     private static GameManager _instance;
     private static bool _isInstanceAssigned;
 
+    private float _timeRemaining;
+    private bool _timerRunning;
+
+    public int CurrentMinutes => Mathf.FloorToInt(_timeRemaining / 60f);
+    public int CurrentSeconds => Mathf.FloorToInt(_timeRemaining % 60f);
+    
     [SerializeField] 
     private bool _isSpreadingMode = true;
     public bool IsSpreadingMode => _isSpreadingMode;
@@ -21,8 +26,32 @@ public class GameManager : MonoBehaviour
     public ItemsManager ItemsManager { get; private set; }
     public ScoreManager ScoreManager { get; private set; }
     public UIManager UIManager { get; private set; }
+    public EventManager EventManager { get; private set; }
 
     // add other managers
+
+    private void Update()
+    {
+        if (!_timerRunning) return;
+
+        _timeRemaining -= Time.deltaTime;
+
+        if (_timeRemaining <= 0f)
+        {
+            _timeRemaining = 0f;
+            _timerRunning = false;
+            UIManager.UpdateTimerDisplay();
+            EndGame();
+        }
+
+        UIManager.UpdateTimerDisplay();
+    }
+
+    public void StartTimer()
+    {
+        _timeRemaining = GameConstants.GAME_DURATION;
+        _timerRunning = true;
+    }
 
     public static GameManager Instance
     {
@@ -75,6 +104,7 @@ public class GameManager : MonoBehaviour
         ItemsManager = FindFirstObjectByType<ItemsManager>();
         ScoreManager = FindFirstObjectByType<ScoreManager>();
         UIManager = FindFirstObjectByType<UIManager>();
+        EventManager = FindFirstObjectByType<EventManager>();
 
         if (GridManager == null)
         {
@@ -95,6 +125,10 @@ public class GameManager : MonoBehaviour
         if (UIManager == null)
         {
             throw new Exception("There's no active ui manager");
+        }
+        if (EventManager == null)
+        {
+            throw new Exception("There's no active event manager");
         }
         // add other managers
     }
