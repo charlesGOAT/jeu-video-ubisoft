@@ -1,6 +1,4 @@
 ﻿using System;
-
-using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -11,17 +9,11 @@ public enum SpawnMode
     Strategic = 2
 }
 
-[Serializable]
-public struct FixedPos
-{
-    public List<Vector2Int> fixedPosList;
-}
-
 [RequireComponent(typeof(ItemSpawner))]
 public class ItemsManager : MonoBehaviour
 {
     [SerializeField] 
-    public SpawnMode spawnMode = SpawnMode.Fixed;
+    private SpawnMode spawnMode = SpawnMode.Fixed;
 
     private readonly ItemSpawner[] _itemSpawnerPerItemType = new ItemSpawner[Enum.GetValues(typeof(ItemType)).Length];
     
@@ -39,8 +31,18 @@ public class ItemsManager : MonoBehaviour
 
     private void Awake()
     {
+#if !UNITY_EDITOR
+        ApplyRuntimeConfig();
+#endif
         InitialiseSpawners();
         StartSpawning();
+    }
+
+    private void ApplyRuntimeConfig()
+    {
+        RuntimeConfigData runtimeConfig = GameManager.Instance.RuntimeConfig;
+        spawnMode = runtimeConfig.SpawnMode;
+        isDropFromSky = runtimeConfig.IsDropFromSky;
     }
 
     private void InitialiseSpawners()

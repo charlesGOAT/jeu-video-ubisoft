@@ -24,7 +24,7 @@ public class ScoreManager : MonoBehaviour
             _eliminationsPerPlayer.Add((PlayerEnum)i, 0);
         }
         
-        _spreadMode = GameManager.Instance.isSpreadingMode;
+        _spreadMode = GameManager.Instance.IsSpreadingMode;
     }
 
     public void NewElimination(PlayerEnum player)

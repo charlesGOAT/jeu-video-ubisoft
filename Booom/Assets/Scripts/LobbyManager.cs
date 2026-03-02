@@ -10,7 +10,7 @@ public class LobbyManager : MonoBehaviour
 {
     public event LobbyPlayerCountChanged OnLobbyPlayerCountChanged;
     
-    public static List<PlayerInput> joinedPlayers = new ();
+    public static readonly List<PlayerInput> JoinedPlayers = new ();
     private PlayerInputManager _inputManager;
 
     private void Awake()
@@ -21,7 +21,6 @@ public class LobbyManager : MonoBehaviour
         if (FindObjectsByType<LobbyManager>(FindObjectsSortMode.None).Length > 1)
         {
             Destroy(gameObject);
-            return;
         }
     }
 
@@ -40,7 +39,7 @@ public class LobbyManager : MonoBehaviour
     public void GameStarted()
     {
         _inputManager.onPlayerJoined -= OnPlayerJoined; //Cannot join mid game
-        foreach (PlayerInput playerInput in joinedPlayers)
+        foreach (PlayerInput playerInput in JoinedPlayers)
         {
             playerInput.SwitchCurrentActionMap("Player");
             playerInput.ActivateInput();
@@ -84,7 +83,7 @@ public class LobbyManager : MonoBehaviour
         }
         
         DontDestroyOnLoad(playerInput.gameObject);
-        joinedPlayers.Add(playerInput);
+        JoinedPlayers.Add(playerInput);
 
         if (playerEnum == PlayerEnum.Player1)
         {

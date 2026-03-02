@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-
-
 public class PlayerItemsManager : MonoBehaviour
 {
     // Manages Items for each players
@@ -13,7 +11,6 @@ public class PlayerItemsManager : MonoBehaviour
 
     public Player Player { private get; set; }
     
-
     private void Awake()
     {
         foreach (ItemType itemType in Enum.GetValues(typeof(ItemType)))

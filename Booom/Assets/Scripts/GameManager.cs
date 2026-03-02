@@ -8,10 +8,13 @@ public class GameManager : MonoBehaviour
     private static GameManager _instance;
     private static bool _isInstanceAssigned;
 
-    [SerializeField] 
-    public bool isSpreadingMode = true;
     [SerializeField]
     private GameObject playerPrefab;
+    [SerializeField] 
+    public bool _isSpreadingMode = true;
+    public bool IsSpreadingMode => _isSpreadingMode;
+    
+    public RuntimeConfigData RuntimeConfig { get; private set; }
     
     public GridManagerStrategy GridManager { get; private set; }
     public BombManager BombManager { get; private set; }
@@ -30,6 +33,10 @@ public class GameManager : MonoBehaviour
                 var instance = FindFirstObjectByType<GameManager>() ?? AutoCreateInstance();
                 SetSingletonInstance(instance);
                 instance.GetManagers();
+                
+#if !UNITY_EDITOR
+                instance.InitializeRuntimeConfig();
+#endif
             }
 
             return _instance;
@@ -46,6 +53,12 @@ public class GameManager : MonoBehaviour
 
         _instance = instance;
         _isInstanceAssigned = true;
+    }
+
+    private void InitializeRuntimeConfig()
+    {
+        RuntimeConfig = RuntimeConfigLoader.GetConfig();
+        _isSpreadingMode = RuntimeConfig.IsSpreadingMode;
     }
 
     public void RemoveItemFromGrid(Item item)
@@ -87,7 +100,7 @@ public class GameManager : MonoBehaviour
 
     public void SpawnPlayers()
     {
-        foreach (var playerInput in LobbyManager.joinedPlayers) 
+        foreach (var playerInput in LobbyManager.JoinedPlayers) 
         {
             Vector2Int spawnPoint = GridManager.playerSpawnPoints[playerInput.playerIndex];
             spawnPoint *= GameConstants.UNITY_GRID_SIZE;
@@ -95,10 +108,10 @@ public class GameManager : MonoBehaviour
             PlayerInput newInput = PlayerInput.Instantiate(playerPrefab, playerIndex:playerInput.playerIndex, pairWithDevices:playerInput.devices.ToArray());
             newInput.transform.position = new Vector3(spawnPoint.x, 2.0f, spawnPoint.y);
             
-            Destroy(playerInput.gameObject);
+            Destroy(playerInput.gameObject); //Destroying dummy prefabs
         }
         
-        LobbyManager.joinedPlayers.Clear();
+        LobbyManager.JoinedPlayers.Clear();
     }
 
     public void EndGame()
