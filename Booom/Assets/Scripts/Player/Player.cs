@@ -105,7 +105,7 @@ public class Player : MonoBehaviour
     private int _elimsRangeBoost = 0;
     public int ElimsRangeBoost => _elimsRangeBoost;
     private float _elimsSpeedBoost = 1;
-    
+
     private int _nbKills = 0;
     public int NbKills { 
         get => _nbKills;
@@ -143,13 +143,13 @@ public class Player : MonoBehaviour
 
         InitializeArrow();
     }
-    
+
     private void Start()
     {
         CheckStartConditions();
         InitializeSpawner();
     }
-    
+
     private void CheckStartConditions()
     {
         if (playerNb == PlayerEnum.None)
