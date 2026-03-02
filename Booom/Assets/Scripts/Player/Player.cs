@@ -84,6 +84,38 @@ public class Player : MonoBehaviour
 
     public static List<Player> ActivePlayers = new List<Player>();
 
+    private static readonly Dictionary<int, float> _speedBoostPerKill =new ()
+    {
+        {0, 1f},
+        {1, 1.25f},
+        {2, 1.5f},
+        {3, 1.75f},
+        {4, 2f},
+        {5, 2.25f} // todo : add more or tweak
+    };
+    
+    private static readonly Dictionary<int, int> _rangeBoostPerKill = new ()
+    {
+        {0, 0},
+        {2, 1},
+        {4, 2},
+        {6, 3}  // todo : add more or tweak
+    };
+
+    private int _elimsRangeBoost = 0;
+    public int ElimsRangeBoost => _elimsRangeBoost;
+    private float _elimsSpeedBoost = 1;
+    
+    private int _nbKills = 0;
+    public int NbKills { 
+        get => _nbKills;
+        set
+        {
+            _nbKills = value;
+            OnNewElim(); 
+        } 
+    }
+
     public bool IsImmune { get; private set; } = false;
 
     public static readonly Dictionary<PlayerEnum, Color> PlayerColorDict = new Dictionary<PlayerEnum, Color>();  // make it the other way around if we want to test color spreading
@@ -111,19 +143,30 @@ public class Player : MonoBehaviour
 
         InitializeArrow();
     }
-
+    
     private void Start()
     {
         CheckStartConditions();
         InitializeSpawner();
     }
-
+    
     private void CheckStartConditions()
     {
         if (playerNb == PlayerEnum.None)
         {
             throw new Exception("Player cannot be set to PlayerEnum.None");
         }
+    }
+
+    private void OnNewElim()
+    {
+        if (_speedBoostPerKill.TryGetValue(NbKills, out float newSpeedBoost))
+            _elimsSpeedBoost = newSpeedBoost;
+
+        if (_rangeBoostPerKill.TryGetValue(NbKills, out int newRangeBoost))
+            _elimsRangeBoost = newRangeBoost;
+        
+        // todo : generate little animation or particle effect indicating kill streak
     }
 
     private void InitializeSpawner()
@@ -283,6 +326,8 @@ public class Player : MonoBehaviour
         _stateMachine.Trigger(GameConstants.PLAYER_HIT_TRIGGER);
         IsImmune = true;
         _actualImmuneTimer = immuneTimer;
+
+        NbKills = 0;
     }
 
     public void OnJump(Vector2Int jumpDirection) 
@@ -361,6 +406,8 @@ public class Player : MonoBehaviour
         Vector2 curMoveInput = _moveInput.normalized;
 
         float boost = CheckIfOnOwnColor() ? GameConstants.COLOR_BOOST : (CheckIfOnEnemyTerritory() ? GameConstants.COLOR_DEBUFF: 1);
+
+        boost *= GameManager.Instance.isBonusSpeed ? _elimsSpeedBoost : 1;
 
         Vector3 move = new Vector3(curMoveInput.y, 0, -curMoveInput.x) * (speed * boost);
         float tempMove = ApplyGravity(ref _verticalVelocity);

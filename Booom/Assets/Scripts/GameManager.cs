@@ -10,6 +10,9 @@ public class GameManager : MonoBehaviour
     [SerializeField] 
     public bool isSpreadingMode = true;
     
+    [SerializeField]
+    public bool isBonusSpeed = false;
+
     public GridManagerStrategy GridManager { get; private set; }
     public BombManager BombManager { get; private set; }
     public ItemsManager ItemsManager { get; private set; }

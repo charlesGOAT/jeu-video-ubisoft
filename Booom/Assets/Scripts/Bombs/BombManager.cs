@@ -11,7 +11,6 @@ public class BombManager : MonoBehaviour
 
     // Track each Player's bomb cooldown
     private readonly Dictionary<PlayerEnum, float> _nextBombTime = new (GameConstants.NB_PLAYERS);
-
     private readonly Dictionary<PlayerEnum, List<Bomb>> _chainedBombsPerPlayer = new (GameConstants.NB_PLAYERS);
 
     protected virtual void Awake()
