@@ -138,12 +138,12 @@ public class TargetBombFusingStrategy : BombFusingStrategy
         foreach (Player player in Player.ActivePlayers)
         {
             if (_associatedPlayer.PlayerNb == player.PlayerNb
-                || notAvailablePlayers.Contains(player.PlayerNb)) return;
+                || notAvailablePlayers.Contains(player.PlayerNb)) continue;
 
             Vector2Int playerPos = GridManagerStrategy.WorldToGridCoordinates(player.transform.position);
 
             if (!TryGetFreePosInPlayerSurroundings(playerPos, gridBombPos, out Vector2Int actualTargetPos))
-                return;
+                continue;
 
             float dist = Vector2Int.Distance(gridBombPos, playerPos);
             if (dist < minDistance)
