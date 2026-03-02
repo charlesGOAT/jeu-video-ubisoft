@@ -28,7 +28,7 @@ public abstract class BombItem : BaseItem
     
     protected virtual void PickupItemSpecific() {}
 
-    protected void FinishUsingItem()
+    public override void FinishUsingItem()
     {
         _associatedPlayer.OnPlaceBomb -= UseItem;
         _associatedPlayer.OnBombExploded -= BombPlacedExploded;
@@ -36,6 +36,6 @@ public abstract class BombItem : BaseItem
         FinishUsingItemSpecific();
         CallFinishUsingItemCallback();
     }
-    
-    protected virtual void FinishUsingItemSpecific() {}
+
+    protected abstract void FinishUsingItemSpecific();
 }

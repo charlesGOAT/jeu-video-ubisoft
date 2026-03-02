@@ -36,10 +36,16 @@ public class PaintBrushItem : BaseItem
         await StartDelayTask();
     }
 
-    public void UseTimeOver()
+    private void UseTimeOver()
     {
         _player.OnMoveFunctionCalled -= UseItem;
         CallFinishUsingItemCallback();
+    }
+
+    public override void FinishUsingItem()
+    {
+        _cts.Cancel();
+        UseTimeOver();
     }
 
     private async Awaitable StartDelayTask()

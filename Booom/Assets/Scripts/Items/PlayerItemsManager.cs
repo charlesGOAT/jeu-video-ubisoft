@@ -37,6 +37,16 @@ public class PlayerItemsManager : MonoBehaviour
         _itemsInventory.Remove(baseItem.ItemType);
     }
 
+    public void ResetInventory()
+    {
+        foreach (var item in _itemsInventory)
+        {
+            item.Value.FinishUsingItem();
+        }
+        
+        _itemsInventory.Clear();
+    }
+
     private BaseItem CreateItem(ItemType type)
     {
         switch (type)

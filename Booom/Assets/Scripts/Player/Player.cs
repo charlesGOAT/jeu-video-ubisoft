@@ -297,6 +297,7 @@ public class Player : MonoBehaviour
         _actualImmuneTimer = immuneTimer;
 
         NbKills = 0;
+        playerItemsManager.ResetInventory();
     }
 
     public void OnJump(Vector2Int jumpDirection) 

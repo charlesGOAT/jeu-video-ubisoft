@@ -14,5 +14,7 @@ public class ChainBombsItem : BombItem
     {
         _associatedPlayer.OnExplodeChainedBombs -= FinishUsingItem;
         _associatedPlayer.BombFusingType = BombFusingType.None;
+        
+        GameManager.Instance.BombManager.ExplodeChainedBombs(_associatedPlayer.PlayerNb);
     }
 }
