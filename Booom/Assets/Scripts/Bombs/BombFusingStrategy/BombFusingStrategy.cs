@@ -5,5 +5,5 @@
         bomb.StartBombCountDown();
     }
     
-    public virtual void OnCollision(Bomb bomb){}
+    public virtual void OnCollision(in Bomb bomb){}
 }
