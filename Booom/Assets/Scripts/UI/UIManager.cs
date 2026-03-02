@@ -49,8 +49,8 @@ public class UIManager : MonoBehaviour
     private void Start()
     {
         panel.SetActive(false);
-
-        if (GameManager.Instance.isSpreadingMode)
+        
+        if (GameManager.Instance.IsSpreadingMode)
             _statTracked = "Number of tiles owned";
 
         bombType.text = GameManager.Instance.EventManager.CurrentBombType.ToString().AddSpacesBeforeCaps();
