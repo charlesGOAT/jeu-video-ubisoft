@@ -193,7 +193,7 @@ public class Player : MonoBehaviour
         int mult = isMod2Zero ? intPlayerNb / 2 : (intPlayerNb + 1) / 2;
         Vector2Int spawnPointGrid = new Vector2Int(GameManager.Instance.GridManager.MapUpperLimit.x * mult, posY);
         
-        if(GameManager.Instance.isSpreadingMode)
+        if(GameManager.Instance.IsSpreadingMode)
             GameManager.Instance.GridManager.GetTileAtCoordinates(spawnPointGrid).ChangeTileColor(playerNb); 
         
         MovePlayerOnSpawnPoint(spawnPointGrid);
@@ -209,7 +209,7 @@ public class Player : MonoBehaviour
         if (tile.IsObstacle)
             throw new Exception($"Player spawn position {spawnPointGrid} is on an obstacle");
         
-        if(GameManager.Instance.isSpreadingMode)
+        if(GameManager.Instance.IsSpreadingMode)
             tile.ChangeTileColor(playerNb);
         
         MovePlayerOnSpawnPoint(spawnPointGrid);

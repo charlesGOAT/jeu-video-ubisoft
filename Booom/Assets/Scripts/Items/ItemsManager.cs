@@ -21,12 +21,14 @@ public struct FixedPos
 public class ItemsManager : MonoBehaviour
 {
     [SerializeField] 
-    public SpawnMode spawnMode = SpawnMode.Fixed;
+    private SpawnMode _spawnMode = SpawnMode.Fixed;
+    public SpawnMode SpawnMode => _spawnMode;
 
     private readonly ItemSpawner[] _itemSpawnerPerItemType = new ItemSpawner[Enum.GetValues(typeof(ItemType)).Length];
     
     [SerializeField]
-    private bool isDropFromSky = false;
+    private bool _isDropFromSky = false;
+    public bool IsDropFromSky => _isDropFromSky;
 
     public void RemoveItem(ItemType type)
     {
@@ -39,8 +41,16 @@ public class ItemsManager : MonoBehaviour
 
     private void Awake()
     {
+        ApplyRuntimeConfig();
         InitialiseSpawners();
         StartSpawning();
+    }
+
+    private void ApplyRuntimeConfig()
+    {
+        RuntimeConfigData runtimeConfig = GameManager.Instance.RuntimeConfig;
+        _spawnMode = runtimeConfig.SpawnMode;
+        _isDropFromSky = runtimeConfig.IsDropFromSky;
     }
 
     private void InitialiseSpawners()
@@ -57,7 +67,7 @@ public class ItemsManager : MonoBehaviour
     {
         foreach (var itemSpawner in _itemSpawnerPerItemType)
         {
-            itemSpawner.Spawn(spawnMode, isDropFromSky);
+            itemSpawner.Spawn(_spawnMode, _isDropFromSky);
         }
     }
 }

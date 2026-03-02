@@ -6,9 +6,6 @@ public class BombManager : MonoBehaviour
     [SerializeField]
     private Bomb[] bombPrefabs;
 
-    [SerializeField]
-    private float bombCooldown = 3f;
-
     // Track each Player's bomb cooldown
     private readonly Dictionary<PlayerEnum, float> _nextBombTime = new (GameConstants.NB_PLAYERS);
     private readonly Dictionary<PlayerEnum, List<Bomb>> _chainedBombsPerPlayer = new (GameConstants.NB_PLAYERS);
@@ -56,7 +53,7 @@ public class BombManager : MonoBehaviour
         if (isChained)
             _chainedBombsPerPlayer[playerEnum].Add(instantiatedBomb);
 
-        _nextBombTime[playerEnum] = Time.time + bombCooldown;
+        _nextBombTime[playerEnum] = Time.time + instantiatedBomb.Timer;
 
         return true;
     }

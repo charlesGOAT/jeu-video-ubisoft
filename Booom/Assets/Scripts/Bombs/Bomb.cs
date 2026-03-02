@@ -113,13 +113,17 @@ public class Bomb : MonoBehaviour
         if (bombTile == null) return;
 
         PlayerEnum currentOwner = bombTile.CurrentTileOwner;
+<<<<<<< 75-file-config
+        PlayerEnum newTileOwner = GameManager.Instance.IsSpreadingMode ? currentOwner : associatedPlayer;
+=======
         PlayerEnum newTileOwner = GameManager.Instance.isSpreadingMode ? currentOwner : AssociatedPlayer;
+>>>>>>> main
 
         PaintTile(_bombCoordinates, Vector2Int.zero, newTileOwner);
 
         foreach (Vector2Int direction in _directions)
         {
-            PaintTilesForDirection(_bombCoordinates, direction, ExplosionRange, newTileOwner);
+            PaintTilesForDirection(_bombCoordinates + direction, direction, explosionRange, newTileOwner);
         }
     }
 
@@ -137,9 +141,16 @@ public class Bomb : MonoBehaviour
                 PaintTilesForDirectionUsingPortal(portalTile.GetOtherPortalPosition() + direction, direction, tilesRemaining, newTileOwner);
                 return;
             }
-
-            if (!PaintTile(bombCoordinates, direction, newTileOwner))
+            
+            var explosionCoords = bombCoordinates + (rangeCounter * direction);
+            
+            if (!PaintTile(explosionCoords, direction, newTileOwner))
             {
+                if (IsTransparentBomb) 
+                {
+                    continue;
+                }
+                
                 return;
             }
         }
@@ -149,7 +160,7 @@ public class Bomb : MonoBehaviour
     {
         Tile tile = GameManager.Instance.GridManager.GetTileAtCoordinates(bombCoordinates);
 
-        if (tile == null || (tile.IsObstacle && !IsTransparentBomb))
+        if (tile == null || tile.IsObstacle)
         {
             return false;
         }

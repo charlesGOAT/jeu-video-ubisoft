@@ -18,7 +18,7 @@ public class ScoreManager : MonoBehaviour
             _acquiredTilesByPlayer[i] = new HashSet<Vector2Int>();
         }
         
-        _spreadMode = GameManager.Instance.isSpreadingMode;
+        _spreadMode = GameManager.Instance.IsSpreadingMode;
     }
 
     public void NewElimination(PlayerEnum player)
