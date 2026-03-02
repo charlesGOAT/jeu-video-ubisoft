@@ -22,7 +22,11 @@ public class SplashBomb : Bomb
         if (bombTile == null) return;
 
         PlayerEnum currentOwner = bombTile.CurrentTileOwner;
+<<<<<<< 75-file-config
         PlayerEnum newTileOwner = GameManager.Instance.IsSpreadingMode ? currentOwner : associatedPlayer;
+=======
+        PlayerEnum newTileOwner = GameManager.Instance.isSpreadingMode ? currentOwner : AssociatedPlayer;
+>>>>>>> main
 
         foreach (var offset in _offsets)
         {
