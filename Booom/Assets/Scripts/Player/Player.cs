@@ -112,7 +112,7 @@ public class Player : MonoBehaviour
         set
         {
             _nbKills = value;
-            OnNewElim(); 
+            OnNbKillsChanged(); 
         } 
     }
 
@@ -158,7 +158,7 @@ public class Player : MonoBehaviour
         }
     }
 
-    private void OnNewElim()
+    private void OnNbKillsChanged()
     {
         if (_speedBoostPerKill.TryGetValue(NbKills, out float newSpeedBoost))
             _elimsSpeedBoost = newSpeedBoost;
@@ -407,7 +407,7 @@ public class Player : MonoBehaviour
 
         float boost = CheckIfOnOwnColor() ? GameConstants.COLOR_BOOST : (CheckIfOnEnemyTerritory() ? GameConstants.COLOR_DEBUFF: 1);
 
-        boost *= GameManager.Instance.isBonusSpeed ? _elimsSpeedBoost : 1;
+        boost *= GameManager.Instance.IsBonusSpeed ? _elimsSpeedBoost : 1;
 
         Vector3 move = new Vector3(curMoveInput.y, 0, -curMoveInput.x) * (speed * boost);
         float tempMove = ApplyGravity(ref _verticalVelocity);

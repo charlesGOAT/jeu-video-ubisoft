@@ -47,7 +47,7 @@ public class Bomb : MonoBehaviour
         _bombCoordinates = GridManagerStrategy.WorldToGridCoordinates(trans.position);
         ActiveBombs.Add(_bombCoordinates);
 
-        if (!GameManager.Instance.isBonusSpeed && AssociatedPlayer != PlayerEnum.None)
+        if (!GameManager.Instance.IsBonusSpeed && AssociatedPlayer != PlayerEnum.None)
         {
             explosionRange += Player.ActivePlayers[(int)AssociatedPlayer - 1].ElimsRangeBoost;
         }
@@ -113,11 +113,7 @@ public class Bomb : MonoBehaviour
         if (bombTile == null) return;
 
         PlayerEnum currentOwner = bombTile.CurrentTileOwner;
-<<<<<<< 75-file-config
-        PlayerEnum newTileOwner = GameManager.Instance.IsSpreadingMode ? currentOwner : associatedPlayer;
-=======
-        PlayerEnum newTileOwner = GameManager.Instance.isSpreadingMode ? currentOwner : AssociatedPlayer;
->>>>>>> main
+        PlayerEnum newTileOwner = GameManager.Instance.IsSpreadingMode ? currentOwner : AssociatedPlayer;
 
         PaintTile(_bombCoordinates, Vector2Int.zero, newTileOwner);
 

@@ -1,5 +1,6 @@
 {
   "IsSpreadingMode": true,
-  "SpawnMode": 0,
+  "IsBonusSpeed": true,
+  "SpawnMode": 1,
   "IsDropFromSky": false
 }
