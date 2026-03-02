@@ -2620,11 +2620,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: GameplayAssembly::GameManager
   isSpreadingMode: 1
   playerPrefab: {fileID: 8693886412537445449, guid: e102793ed0fc404468ef9b40a27a2cf9, type: 3}
-  spawnPoints:
-  - {x: 0, y: 2, z: 0}
-  - {x: 0, y: 2, z: 0}
-  - {x: 0, y: 2, z: 0}
-  - {x: 0, y: 2, z: 0}
 --- !u!4 &373790066
 Transform:
   m_ObjectHideFlags: 0
@@ -10968,7 +10963,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GridManagerLevel
   capturableTilesCount: 0
   mainCamera: {fileID: 722509299}
-  playerSpawnPoints: []
+  playerSpawnPoints:
+  - {x: -4, y: 6}
+  - {x: 4, y: 6}
+  - {x: -4, y: -5}
+  - {x: 4, y: -5}
 --- !u!4 &1884964991 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 9017637209094971560, guid: 48d0be96f349ccc4983f8cc4ead433ad, type: 3}

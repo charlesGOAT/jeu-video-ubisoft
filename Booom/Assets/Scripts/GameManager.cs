@@ -12,8 +12,6 @@ public class GameManager : MonoBehaviour
     public bool isSpreadingMode = true;
     [SerializeField]
     private GameObject playerPrefab;
-    [SerializeField]
-    private Vector3[] spawnPoints;
     
     public GridManagerStrategy GridManager { get; private set; }
     public BombManager BombManager { get; private set; }
@@ -91,9 +89,11 @@ public class GameManager : MonoBehaviour
     {
         foreach (var playerInput in LobbyManager.joinedPlayers) 
         {
-            Vector3 spawnPoint = spawnPoints[playerInput.playerIndex];
+            Vector2Int spawnPoint = GridManager.playerSpawnPoints[playerInput.playerIndex];
+            spawnPoint *= GameConstants.UNITY_GRID_SIZE;
+            
             PlayerInput newInput = PlayerInput.Instantiate(playerPrefab, playerIndex:playerInput.playerIndex, pairWithDevices:playerInput.devices.ToArray());
-            newInput.transform.position = spawnPoint;
+            newInput.transform.position = new Vector3(spawnPoint.x, 2.0f, spawnPoint.y);
             
             Destroy(playerInput.gameObject);
         }

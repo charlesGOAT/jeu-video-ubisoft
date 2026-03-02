@@ -104,6 +104,7 @@ public class Player : MonoBehaviour
         
         InitializeStateMachine();
         GetComponents();
+        ActivePlayers.Add(this);
     }
 
     private void Start()
@@ -112,8 +113,6 @@ public class Player : MonoBehaviour
         InitializeArrow();
         CheckStartConditions();
         InitializeSpawner();
-        
-        ActivePlayers.Add(this);
     }
 
     private void CheckStartConditions()

@@ -29,7 +29,7 @@ public class GameUIManager : MonoBehaviour
 
     private void OnEnable()
     {
-        CreateLeaderBoard();
+        GameManager.Instance.ScoreManager.OnScoreChanged += Refresh;
     }
 
     private void OnDisable()
@@ -43,8 +43,6 @@ public class GameUIManager : MonoBehaviour
             _statTracked = "Number of tiles owned";
         
         leaderboard.text = _statTracked;
-
-        GameManager.Instance.ScoreManager.OnScoreChanged += Refresh;
         StartTimer();
     }
 
@@ -66,29 +64,24 @@ public class GameUIManager : MonoBehaviour
         UpdateTimerDisplay();
     }
 
-    public void CreateLeaderBoard()
+    public void CreateScorePlayer(PlayerEnum playerEnum)
     {
-        foreach (var player in Player.ActivePlayers)
-        {
-            PlayerEnum playerEnum = player.PlayerNb;
-            Color c = Player.PlayerColorDict[playerEnum];
-            
-            Debug.Log($"{playerEnum} - {c}");
-            
-            if (!_scorePerPlayer.ContainsKey(playerEnum))
-            {
-                var scorePlayer = Instantiate(scorePlayerPrefab, leaderboard.transform);
-                scorePlayer.SetColor(c);
-                scorePlayer.UpdateScore(0);
-                _scorePerPlayer[playerEnum] = scorePlayer;
-            
-                SortLeaderboard();
-            }
-        }
+        Color c = Player.PlayerColorDict[playerEnum];
+        
+        var scorePlayer = Instantiate(scorePlayerPrefab, leaderboard.transform);
+        scorePlayer.SetColor(c);
+        scorePlayer.UpdateScore(0);
+        _scorePerPlayer[playerEnum] = scorePlayer;
+    
+        SortLeaderboard();
     }
 
     private void Refresh(PlayerEnum player, int score)
     {
+        if (!_scorePerPlayer.ContainsKey(player))
+        {
+            CreateScorePlayer(player);
+        }
         _scorePerPlayer[player].UpdateScore(score);
         
         SortLeaderboard();
