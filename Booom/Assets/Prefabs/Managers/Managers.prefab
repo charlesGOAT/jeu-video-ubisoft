@@ -326,6 +326,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1669064132996479789}
     m_Modifications:
+    - target: {fileID: 4091976733857442020, guid: 16c5cd904395c8c4a89d9fdc42964820, type: 3}
+      propertyPath: bombEventPanel
+      value: 
+      objectReference: {fileID: 1807823731601073541}
     - target: {fileID: 5014444785665985340, guid: 16c5cd904395c8c4a89d9fdc42964820, type: 3}
       propertyPath: m_LocalPosition.x
       value: 946.8087
@@ -379,6 +383,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 16c5cd904395c8c4a89d9fdc42964820, type: 3}
+--- !u!1 &1807823731601073541 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8776957244266493038, guid: 16c5cd904395c8c4a89d9fdc42964820, type: 3}
+  m_PrefabInstance: {fileID: 6978514571997860331}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &2688166225510374103 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5014444785665985340, guid: 16c5cd904395c8c4a89d9fdc42964820, type: 3}
