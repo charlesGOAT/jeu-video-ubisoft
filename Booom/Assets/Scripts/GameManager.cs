@@ -8,7 +8,9 @@ public class GameManager : MonoBehaviour
     private static bool _isInstanceAssigned;
 
     [SerializeField] 
-    public bool isSpreadingMode = true;
+    private bool _isSpreadingMode = true;
+    public bool IsSpreadingMode => _isSpreadingMode;
+    public RuntimeConfigData RuntimeConfig { get; private set; }
     
     public GridManagerStrategy GridManager { get; private set; }
     public BombManager BombManager { get; private set; }
@@ -27,6 +29,7 @@ public class GameManager : MonoBehaviour
                 var instance = FindFirstObjectByType<GameManager>() ?? AutoCreateInstance();
                 SetSingletonInstance(instance);
                 instance.GetManagers();
+                instance.InitializeRuntimeConfig();
             }
 
             return _instance;
@@ -43,6 +46,12 @@ public class GameManager : MonoBehaviour
 
         _instance = instance;
         _isInstanceAssigned = true;
+    }
+
+    private void InitializeRuntimeConfig()
+    {
+        RuntimeConfig = RuntimeConfigLoader.GetConfig();
+        _isSpreadingMode = RuntimeConfig.IsSpreadingMode;
     }
 
     public void RemoveItemFromGrid(Item item)
