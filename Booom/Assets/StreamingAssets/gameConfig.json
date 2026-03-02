@@ -1,5 +1,5 @@
 {
-  "IsSpreadingMode": true,
-  "SpawnMode": 0,
+  "IsSpreadingMode": false,
+  "SpawnMode": 1,
   "IsDropFromSky": false
 }

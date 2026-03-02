@@ -29,7 +29,10 @@ public class GameManager : MonoBehaviour
                 var instance = FindFirstObjectByType<GameManager>() ?? AutoCreateInstance();
                 SetSingletonInstance(instance);
                 instance.GetManagers();
+                
+#if !UNITY_EDITOR
                 instance.InitializeRuntimeConfig();
+#endif
             }
 
             return _instance;
