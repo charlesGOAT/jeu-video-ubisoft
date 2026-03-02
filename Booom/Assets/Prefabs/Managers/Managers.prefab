@@ -263,6 +263,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: BombManager
       objectReference: {fileID: 0}
+    - target: {fileID: 3411160949131646692, guid: 87b723c18e21d754b8b46ee9cb44c4e2, type: 3}
+      propertyPath: bombPrefabs.Array.size
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 8906904349362407543, guid: 87b723c18e21d754b8b46ee9cb44c4e2, type: 3}
       propertyPath: m_LocalPosition.x
       value: -11.5266
