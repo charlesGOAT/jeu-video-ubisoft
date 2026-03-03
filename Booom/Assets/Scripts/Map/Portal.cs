@@ -21,29 +21,15 @@ public class Portal : Tile
 
         float playerLengthToPortalX = transform.position.x - player.transform.position.x;
         float playerLengthToPortalZ = transform.position.z - player.transform.position.z;
+        
+        Vector2Int portalDir = Vector2Int.zero;
 
         if (Mathf.Abs(playerLengthToPortalX) > Mathf.Abs(playerLengthToPortalZ))
-        {
-            if (playerLengthToPortalX >= 0)
-            {
-                player.OnPortal(Vector2Int.right, otherPortal.transform.position);
-            }
-            else
-            {
-                player.OnPortal(Vector2Int.left, otherPortal.transform.position);
-            }
-        }
+            portalDir = playerLengthToPortalX >= 0 ? Vector2Int.right : Vector2Int.left;
         else
-        {
-            if (playerLengthToPortalZ >= 0)
-            {
-                player.OnPortal(Vector2Int.up, otherPortal.transform.position);
-            }
-            else
-            {
-                player.OnPortal(Vector2Int.down, otherPortal.transform.position);
-            }
-        }
+            portalDir = playerLengthToPortalZ >= 0 ? Vector2Int.up : Vector2Int.down;
+        
+        player.OnPortal(portalDir, otherPortal.transform.position);
     }
 
     public Vector2Int GetOtherPortalPosition() => otherPortal.TileCoordinates;

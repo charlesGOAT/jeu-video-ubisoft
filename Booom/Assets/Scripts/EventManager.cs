@@ -18,28 +18,28 @@ public class EventManager : MonoBehaviour
     [SerializeField]
     private List<KeyValuePair> bombEvents = new ();
     
-    private readonly Dictionary<Tuple<int,int>, BombEnum> _bombEventsDict = new();  // <minutes, seconds> -> bomb type
+    private readonly Dictionary<Tuple<int, int>, Tuple<BombEnum, bool>> _bombEventsDict = new();  // <minutes, seconds> -> <bomb type, hasEventHappened>
 
     private void Awake()
     {
         foreach (var pair in bombEvents)
         {
-            _bombEventsDict.TryAdd(new Tuple<int, int>(pair.minutes, pair.seconds), pair.value);
+            _bombEventsDict.TryAdd(new Tuple<int, int>(pair.minutes, pair.seconds), new Tuple<BombEnum, bool>(pair.value, false));
         }
         
-        if (_bombEventsDict.TryGetValue(new Tuple<int, int>(0, 0), out BombEnum defaultBombType))
-            CurrentBombType = defaultBombType;
+        if (_bombEventsDict.TryGetValue(new Tuple<int, int>(0, 0), out Tuple<BombEnum, bool> defaultBombType))
+            CurrentBombType = defaultBombType.Item1;
     }
     private void Update()
     {
-        if (_bombEventsDict.TryGetValue(
-                new Tuple<int, int>(GameManager.Instance.CurrentMinutes, GameManager.Instance.CurrentSeconds),
-                out BombEnum bombType))
+        var timeTuple = new Tuple<int, int>(GameManager.Instance.CurrentMinutes, GameManager.Instance.CurrentSeconds);
+        if (_bombEventsDict.TryGetValue(timeTuple, out Tuple<BombEnum, bool> bombType) && !bombType.Item2)
         {
-            CurrentBombType = bombType;
+            CurrentBombType = bombType.Item1;
+            _bombEventsDict[timeTuple] = new Tuple<BombEnum, bool>(CurrentBombType, true);
             GameManager.Instance.GameUIManager.RefreshBombType(bombType.ToString().AddSpacesBeforeCaps());
             GameManager.Instance.GameUIManager.DisplayEventPanel(CurrentBombType.ToString().AddSpacesBeforeCaps());
-
+            SoundManager.Instance.OnBombEvent();
         }
     }
 }

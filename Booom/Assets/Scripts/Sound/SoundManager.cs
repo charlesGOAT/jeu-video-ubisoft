@@ -23,16 +23,24 @@ public class SoundManager : MonoBehaviour
     [Header("--- Bomb sounds ---")]
     [SerializeField] 
     private Audio bombFusedAudio;
-    
     [SerializeField] 
     private Audio bombExplodedAudio;
-    
+    [SerializeField] 
+    private Audio genericBombEventSound;
     [Space(3)]
     
     [Header("--- Item sounds ---")]
     [SerializeField] 
     private Audio pickUpItemSound;
-
+    [Space(3)]
+    
+    [Header("--- Movement sounds ---")]
+    [SerializeField] 
+    private Audio trampolineSound;
+    [SerializeField]
+    private Audio spikeSound;
+    [SerializeField] 
+    private Audio portalSound;
     [Space(3)]
 
     [Header("--- Game music ---")]
@@ -45,7 +53,7 @@ public class SoundManager : MonoBehaviour
     private AudioSource _audioSourceSFX;
     private AudioSource _audioSourceMusic;
 
-    private bool _isInMenu = false;
+    private static bool? _isInMenu = null;
 
     private bool IsSceneMenu(in Scene scene) => scene.name.Contains("menu", StringComparison.OrdinalIgnoreCase);
 
@@ -63,8 +71,6 @@ public class SoundManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
         
         InitializeAudioSources();
-        StartBackgroundMusic();
-        
         VerifyAudioClipsPresent();
         
         SceneManager.sceneLoaded += OnSceneLoaded;
@@ -77,15 +83,6 @@ public class SoundManager : MonoBehaviour
         _audioSourceSFX = audioSources[0];
         _audioSourceMusic = audioSources[1];
         _audioSourceMusic.loop = true;
-    }
-
-    private void StartBackgroundMusic()
-    {
-        _isInMenu = IsSceneMenu(SceneManager.GetActiveScene());
-        if (_isInMenu)
-            PlayAudioSourceMusic(backgroundMenuMusic);
-        else
-            PlayAudioSourceMusic(gameMusic);
     }
 
     private void PlayAudioSourceMusic(in Audio clip)
@@ -125,6 +122,22 @@ public class SoundManager : MonoBehaviour
         {
             throw new Exception($"Audio clip {nameof(pickUpItemSound)} cannot be null");
         }
+        if (genericBombEventSound.audioClip == null)
+        {
+            throw new Exception($"Audio clip {nameof(genericBombEventSound)} cannot be null");
+        }
+        if (trampolineSound.audioClip == null)
+        {
+            throw new Exception($"Audio clip {nameof(trampolineSound)} cannot be null");
+        }
+        if (spikeSound.audioClip == null)
+        {
+            throw new Exception($"Audio clip {nameof(spikeSound)} cannot be null");
+        }
+        if (portalSound.audioClip == null)
+        {
+            throw new Exception($"Audio clip {nameof(portalSound)} cannot be null");
+        }
     }
     
     public void OnBombFused(Bomb bomb)
@@ -142,9 +155,29 @@ public class SoundManager : MonoBehaviour
         _audioSourceSFX.PlayOneShot(buttonClickedAudio.audioClip, buttonClickedAudio.volume);
     }
 
+    public void OnBombEvent()
+    {
+        _audioSourceSFX.PlayOneShot(genericBombEventSound.audioClip, genericBombEventSound.volume);
+    }
+
     public void OnPickupItem(Vector3 position)
     {
         AudioSource.PlayClipAtPoint(pickUpItemSound.audioClip, position, pickUpItemSound.volume);
+    }
+
+    public void OnEnterTrampoline(Vector3 position)
+    {
+        AudioSource.PlayClipAtPoint(trampolineSound.audioClip, position, trampolineSound.volume);
+    }
+    
+    public void OnEnterPortal(Vector3 position)
+    {
+        AudioSource.PlayClipAtPoint(portalSound.audioClip, position, portalSound.volume);
+    }
+
+    public void OnEnterSpikes(Vector3 position)
+    {
+        AudioSource.PlayClipAtPoint(spikeSound.audioClip, position, spikeSound.volume);
     }
 
     public void OnGameEnded()
@@ -158,7 +191,7 @@ public class SoundManager : MonoBehaviour
         {
             // todo : voir s'il va y avoir plus qu'une menu scene / plus qu'une toune pour ces menus
             
-            if (_isInMenu) return;  // assumant qu'il n'y a qu'une toune pour tous les menus
+            if (_isInMenu.HasValue && _isInMenu.Value) return;  // assumant qu'il n'y a qu'une toune pour tous les menus
 
             _isInMenu = true;
             PlayAudioSourceMusic(backgroundMenuMusic);

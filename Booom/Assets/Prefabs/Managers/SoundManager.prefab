@@ -252,12 +252,24 @@ MonoBehaviour:
   bombExplodedAudio:
     audioClip: {fileID: 8300000, guid: 591e6ff8de4e1914dbfcf8247b2771af, type: 3}
     volume: 1
+  genericBombEventSound:
+    audioClip: {fileID: 8300000, guid: ca46be3ca9ba9064d8b7b47db8ebb20b, type: 3}
+    volume: 0.54
   pickUpItemSound:
     audioClip: {fileID: 8300000, guid: b15a7c80887c268469f106e4a098bae5, type: 3}
     volume: 1
+  trampolineSound:
+    audioClip: {fileID: 8300000, guid: 17d0e39b567a9474dbcff799e514d646, type: 3}
+    volume: 1
+  spikeSound:
+    audioClip: {fileID: 8300000, guid: 70c83bf160c01784d854f60e0a3ddb7e, type: 3}
+    volume: 1
+  portalSound:
+    audioClip: {fileID: 8300000, guid: d9dab23ab6af6cb4491d9fd26d0369c7, type: 3}
+    volume: 1
   gameMusic:
     audioClip: {fileID: 8300000, guid: fec69f1029b06364288d1c762088bc47, type: 3}
-    volume: 0.02
+    volume: 0.04
   endGameMusic:
     audioClip: {fileID: 8300000, guid: 7b364347fd6613b46ac301e8266dc9a9, type: 3}
     volume: 0.05

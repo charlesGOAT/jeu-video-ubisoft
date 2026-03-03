@@ -282,13 +282,17 @@ public class Player : MonoBehaviour
         }
     }
 
-    public void OnHit(Vector2Int hitDirection)
+    public void OnHit(Vector2Int hitDirection, bool isHitFromSpikes = false)
     {
         //etant donne que hitDirection est un Vector2Int, y est z dans se cas
         if (IsImmune)
         {
             return;
         }
+        
+        if(isHitFromSpikes)
+            SoundManager.Instance.OnEnterSpikes(transform.position);
+
         Vector3 forceDirection = new Vector3(hitDirection.x,1,hitDirection.y);
         ApplyKnockback(forceDirection, knockbackForce);
         _stateMachine.Trigger(GameConstants.PLAYER_HIT_TRIGGER);
@@ -303,6 +307,7 @@ public class Player : MonoBehaviour
     {
         if (_stateMachine.CurrentState is not JumpState)
         {
+            SoundManager.Instance.OnEnterTrampoline(transform.position);
             _jumpVelocity = CalculateJumpForce(jumpDirection);
             _stateMachine.Trigger(GameConstants.PLAYER_JUMP_TRIGGER);
         }
@@ -312,6 +317,7 @@ public class Player : MonoBehaviour
     {
         if (_stateMachine.CurrentState is not JumpState) 
         {
+            SoundManager.Instance.OnEnterPortal(transform.position);
             _characterController.enabled = false;
             this.gameObject.transform.position = otherPortalPosition;
             _jumpVelocity = CalculatePortalForce(playerDirection);
