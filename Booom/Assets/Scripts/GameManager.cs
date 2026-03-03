@@ -12,7 +12,10 @@ public class GameManager : MonoBehaviour
     private GameObject playerPrefab;
     private float _timeRemaining;
     private bool _timerRunning;
+    
+    [SerializeField]
     private float _gameDuration = GameConstants.GAME_DURATION;
+    public float  GameDuration => _gameDuration;
 
     public int CurrentMinutes => Mathf.FloorToInt(_timeRemaining / 60f);
     public int CurrentSeconds => Mathf.FloorToInt(_timeRemaining % 60f);
