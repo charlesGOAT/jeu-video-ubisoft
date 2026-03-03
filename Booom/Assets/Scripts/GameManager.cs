@@ -64,12 +64,7 @@ public class GameManager : MonoBehaviour
         {
             if (_instance == null)
             {
-                _instance = FindFirstObjectByType<GameManager>();
-
-                if (_instance == null)
-                {
-                    _instance = CreateInstance();
-                }
+                _instance = FindFirstObjectByType<GameManager>() ?? CreateInstance();
                 _instance.GetManagers();
             }
 
@@ -90,14 +85,8 @@ public class GameManager : MonoBehaviour
     InitializeRuntimeConfig();
 #endif
     }
-    
-    private static GameManager CreateInstance()
-    {
-        GameObject go = new GameObject($"{nameof(GameManager)} (Auto-Created)");
-        var manager = go.AddComponent<GameManager>();
-
-        return manager;
-    }
+    private static GameManager CreateInstance() => new GameObject($"{nameof(GameManager)} (Auto-Created)",
+        typeof(GameManager)).GetComponent<GameManager>();
 
     private void InitializeRuntimeConfig()
     {
@@ -182,5 +171,6 @@ public class GameManager : MonoBehaviour
     private void CleanGame()
     {
         Player.ActivePlayers.Clear();
+        Bomb.ActiveBombs.Clear();
     }
 }
