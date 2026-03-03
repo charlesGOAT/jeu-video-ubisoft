@@ -6,7 +6,7 @@ public class LevelPreview : MonoBehaviour
 {
     private Button _levelPreview;
 
-    private float _zoomSelectMultiplier = 1.3f;
+    private const float ZoomSelectMultiplier = 1.3f;
 
     private void Awake()
     {
@@ -15,7 +15,7 @@ public class LevelPreview : MonoBehaviour
 
     public void OnSelect(BaseEventData eventData)
     {
-        transform.localScale *= _zoomSelectMultiplier;
+        transform.localScale *= ZoomSelectMultiplier;
     }
 
     public void OnDeselect(BaseEventData eventData)
