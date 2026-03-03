@@ -34,7 +34,7 @@ public class ScoreManager : MonoBehaviour
         int newScore = _acquiredTilesByPlayer[(int)player - 1].Count;
         OnScoreChanged?.Invoke(player, newScore);
         
-        if (newScore >= 2)
+        if (newScore >= GameManager.Instance.GridManager.capturableTilesCount)
         {
             GameManager.Instance.EndGame();
         }
