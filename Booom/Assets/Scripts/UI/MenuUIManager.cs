@@ -8,6 +8,8 @@ public class MenuUIManager : MonoBehaviour
     
     [SerializeField] private PlayerSlot[] playerSlots;
     [SerializeField] private Button playButton;
+    [SerializeField] private Canvas mainMenuCanvas;
+    [SerializeField] private Canvas levelsCanvas;
     
     private LobbyManager _lobbyManager;
 
