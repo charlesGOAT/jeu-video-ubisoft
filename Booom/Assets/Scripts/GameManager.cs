@@ -12,6 +12,7 @@ public class GameManager : MonoBehaviour
     private GameObject playerPrefab;
     private float _timeRemaining;
     private bool _timerRunning;
+    private float _gameDuration = GameConstants.GAME_DURATION;
 
     public int CurrentMinutes => Mathf.FloorToInt(_timeRemaining / 60f);
     public int CurrentSeconds => Mathf.FloorToInt(_timeRemaining % 60f);
@@ -54,7 +55,7 @@ public class GameManager : MonoBehaviour
 
     public void StartTimer()
     {
-        _timeRemaining = GameConstants.GAME_DURATION;
+        _timeRemaining = _gameDuration;
         _timerRunning = true;
     }
 
@@ -93,6 +94,7 @@ public class GameManager : MonoBehaviour
         RuntimeConfig = RuntimeConfigLoader.GetConfig();
         _isSpreadingMode = RuntimeConfig.IsSpreadingMode;
         _isBonusSpeed = RuntimeConfig.IsBonusSpeed;
+        _gameDuration =  RuntimeConfig.GameDuration;
     }
 
     public void RemoveItemFromGrid(Item item)

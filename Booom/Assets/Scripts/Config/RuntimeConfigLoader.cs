@@ -9,6 +9,7 @@ public class RuntimeConfigData
     public bool IsBonusSpeed = true;
     public SpawnMode SpawnMode = SpawnMode.Fixed;
     public bool IsDropFromSky = false;
+    public float GameDuration = 120f;
 }
 
 public static class RuntimeConfigLoader
