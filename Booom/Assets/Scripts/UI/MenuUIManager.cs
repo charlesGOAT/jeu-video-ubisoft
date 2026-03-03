@@ -29,14 +29,14 @@ public class MenuUIManager : MonoBehaviour
     {
         playButton.interactable = playerCount > 1;
         
-        ShowPlayerJoined((PlayerEnum)playerCount);
+        ShowPlayerJoined(playerCount);
     }
 
-    public void ShowPlayerJoined(PlayerEnum playerEnum)
+    public void ShowPlayerJoined(int playerCount)
     {
-        var slot = playerSlots[(int)playerEnum -1];
+        var slot = playerSlots[(int)playerCount - 1];
 
-        slot.playerLabel.text = $"Player {(int)playerEnum}";
+        slot.playerLabel.text = $"Player {playerCount}";
         slot.lockedImage.gameObject.SetActive(false);
         slot.coloredCharacter.gameObject.SetActive(true);
     }

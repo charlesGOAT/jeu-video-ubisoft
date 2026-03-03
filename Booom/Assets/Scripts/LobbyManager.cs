@@ -64,7 +64,8 @@ public class LobbyManager : MonoBehaviour
         {
             throw new Exception("No active Player Input");
         }
-        PlayerEnum playerEnum = (PlayerEnum) playerInput.playerIndex + 1;
+        int intPlayerEnum = playerInput.playerIndex + 1;
+        PlayerEnum playerEnum = (PlayerEnum) intPlayerEnum;
 
         switch (playerEnum)
         {
@@ -81,7 +82,8 @@ public class LobbyManager : MonoBehaviour
                 Player.PlayerColorDict[playerEnum] = Color.yellow;
                 break;
             default:
-                throw new Exception("Player Input Manager tried to create invalid Player");
+                Debug.LogWarning("Maximum of " + GameConstants.NB_PLAYERS + " players reached. Extra device ignored.");
+                return;
         }
         
         DontDestroyOnLoad(playerInput.gameObject);
@@ -96,6 +98,6 @@ public class LobbyManager : MonoBehaviour
             playerInput.DeactivateInput(); //Idk if its problematic to not deactivate it
         }
         
-        OnLobbyPlayerCountChanged?.Invoke((int)playerEnum);
+        OnLobbyPlayerCountChanged?.Invoke(intPlayerEnum);
     }
 }
