@@ -10,11 +10,11 @@ public class TargetBombItem : BombItem
         if (!_associatedPlayer.BombFusingType.Equals(BombFusingType.Chained))
         {
             _associatedPlayer.BombFusingType = BombFusingType.Target;
-            _associatedPlayer.OnBombExploded += BombPlacedExploded;
+            _associatedPlayer.OnPlaceBombSuccessful += BombSuccessfullyPlaced;
         }
         else
         {
-            _associatedPlayer.OnBombExploded -= BombPlacedExploded; // ensures it's not triggered by chained bombs exploding
+            _associatedPlayer.OnPlaceBombSuccessful -= BombSuccessfullyPlaced; // ensures it's not triggered by chained bombs exploding
         }
     }
     

@@ -6,7 +6,7 @@ public abstract class BombItem : BaseItem
 
     protected Player _associatedPlayer;
 
-    protected void BombPlacedExploded()
+    protected void BombSuccessfullyPlaced()
     {
         _currentUseCount++;
         if (_currentUseCount >= maxUseCount)
@@ -21,7 +21,7 @@ public abstract class BombItem : BaseItem
     {
         _associatedPlayer = player;
         _associatedPlayer.OnPlaceBomb += UseItem;
-        _associatedPlayer.OnBombExploded += BombPlacedExploded;
+        _associatedPlayer.OnPlaceBombSuccessful += BombSuccessfullyPlaced;
         
         PickupItemSpecific();
     }
@@ -31,7 +31,7 @@ public abstract class BombItem : BaseItem
     public override void FinishUsingItem(bool hasDied = false)
     {
         _associatedPlayer.OnPlaceBomb -= UseItem;
-        _associatedPlayer.OnBombExploded -= BombPlacedExploded;
+        _associatedPlayer.OnPlaceBombSuccessful -= BombSuccessfullyPlaced;
         _currentUseCount = 0;
         FinishUsingItemSpecific(hasDied);
         CallFinishUsingItemCallback();

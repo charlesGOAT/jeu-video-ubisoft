@@ -103,6 +103,7 @@ public class Bomb : MonoBehaviour
     
     public void Explode()
     {
+        SoundManager.Instance.OnBombExploded(this);
         PaintTiles();
         Destroy(gameObject);
     }

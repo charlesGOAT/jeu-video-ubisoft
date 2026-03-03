@@ -20,6 +20,8 @@ public class TargetBombFusingStrategy : BombFusingStrategy
 
     public override async void Fuse(Bomb bomb)
     {
+        SoundManager.Instance.OnBombFused(bomb);
+
         _bomb = bomb;
         _associatedPlayer = Player.ActivePlayers.First(player => player.PlayerNb == _bomb.AssociatedPlayer);
         _cts = new CancellationTokenSource();

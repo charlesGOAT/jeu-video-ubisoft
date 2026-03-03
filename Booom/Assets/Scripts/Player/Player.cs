@@ -7,7 +7,7 @@ using UnityEngine.InputSystem.Interactions;
 public delegate void MoveCalledEventHandler();
 public delegate void PlaceBomb();
 public delegate void ExplodeChainedBombs();
-public delegate void BombExploded();
+public delegate void PlaceBombSuccessFul();
 
 [RequireComponent(typeof(PlayerItemsManager))]
 [RequireComponent(typeof(Renderer))]
@@ -102,7 +102,7 @@ public class Player : MonoBehaviour
     public event MoveCalledEventHandler OnMoveFunctionCalled;
     public event PlaceBomb OnPlaceBomb;
     public event ExplodeChainedBombs OnExplodeChainedBombs;
-    public event BombExploded OnBombExploded;
+    public event PlaceBombSuccessFul OnPlaceBombSuccessful;
 
     private void Awake()
     {
@@ -243,7 +243,7 @@ public class Player : MonoBehaviour
             if (GameManager.Instance.BombManager.CreateBomb(transform.position + (bombDirection * Tile.TileLength),
                     playerNb, _bombFusingStrategies[(int)BombFusingType], ShouldNextBombBeTransparent))
             {
-                OnBombExploded?.Invoke();
+                OnPlaceBombSuccessful?.Invoke();
             }
         }
     }
