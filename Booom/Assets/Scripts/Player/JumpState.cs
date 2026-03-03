@@ -9,13 +9,11 @@ public class JumpState : State
 
     public override void Enter()
     {
-        _player.OnTrampoline = true;
         _airDuration = GameConstants.AIR_STATE_DURATION;
     }
 
     public override void Exit()
     {
-        _player.OnTrampoline = false;
         _player.ResetJumpVelocity();
     }
 
