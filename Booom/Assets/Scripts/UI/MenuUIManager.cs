@@ -34,7 +34,7 @@ public class MenuUIManager : MonoBehaviour
 
     public void ShowPlayerJoined(int playerCount)
     {
-        var slot = playerSlots[(int)playerCount - 1];
+        var slot = playerSlots[playerCount - 1];
 
         slot.playerLabel.text = $"Player {playerCount}";
         slot.lockedImage.gameObject.SetActive(false);
