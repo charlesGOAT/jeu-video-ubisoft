@@ -17,7 +17,6 @@ public static class GameConstants
     public const float JUMP_HEIGHT_OFFSET = 2.5f;
     public const float JUMP_NUMBER_OF_TILES = 2.7f;
     public const float PORTAL_JUMP_HEIGHT = 1.0f;
-    public const int ELIMS_TO_WIN = 10;
     
     public static readonly Dictionary<int, float> SpeedBoostPerKill =new ()
     {

@@ -8,6 +8,7 @@ public delegate void LobbyPlayerCountChanged(int playerCount);
 
 public class LobbyManager : MonoBehaviour
 {
+    public static LobbyManager Instance { get; private set; }
     public event LobbyPlayerCountChanged OnLobbyPlayerCountChanged;
     
     public static readonly List<PlayerInput> JoinedPlayers = new ();
@@ -15,13 +16,14 @@ public class LobbyManager : MonoBehaviour
 
     private void Awake()
     {
-        _inputManager = GetComponent<PlayerInputManager>();
-        DontDestroyOnLoad(gameObject);
-        
-        if (FindObjectsByType<LobbyManager>(FindObjectsSortMode.None).Length > 1)
+        if (Instance != null && Instance != this)
         {
-            Destroy(gameObject);
+            Destroy(Instance.gameObject);
         }
+
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
+        _inputManager = GetComponent<PlayerInputManager>();
     }
 
     private void OnEnable()
