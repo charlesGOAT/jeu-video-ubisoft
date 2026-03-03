@@ -1,11 +1,14 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class GameManager : MonoBehaviour
 {
     private static GameManager _instance;
     private static bool _isInstanceAssigned;
 
+    [SerializeField]
+    private GameObject playerPrefab;
     private float _timeRemaining;
     private bool _timerRunning;
 
@@ -15,6 +18,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] 
     private bool _isSpreadingMode = true;
     public bool IsSpreadingMode => _isSpreadingMode;
+    
     public RuntimeConfigData RuntimeConfig { get; private set; }
     
     [SerializeField]
@@ -25,7 +29,7 @@ public class GameManager : MonoBehaviour
     public BombManager BombManager { get; private set; }
     public ItemsManager ItemsManager { get; private set; }
     public ScoreManager ScoreManager { get; private set; }
-    public UIManager UIManager { get; private set; }
+    public GameUIManager GameUIManager { get; private set; }
     public EventManager EventManager { get; private set; }
 
     // add other managers
@@ -40,11 +44,11 @@ public class GameManager : MonoBehaviour
         {
             _timeRemaining = 0f;
             _timerRunning = false;
-            UIManager.UpdateTimerDisplay();
+            GameUIManager.UpdateTimerDisplay();
             EndGame();
         }
 
-        UIManager.UpdateTimerDisplay();
+        GameUIManager.UpdateTimerDisplay();
     }
 
     public void StartTimer()
@@ -103,7 +107,7 @@ public class GameManager : MonoBehaviour
         BombManager = FindFirstObjectByType<BombManager>();
         ItemsManager = FindFirstObjectByType<ItemsManager>();
         ScoreManager = FindFirstObjectByType<ScoreManager>();
-        UIManager = FindFirstObjectByType<UIManager>();
+        GameUIManager = FindFirstObjectByType<GameUIManager>();
         EventManager = FindFirstObjectByType<EventManager>();
 
         if (GridManager == null)
@@ -122,9 +126,9 @@ public class GameManager : MonoBehaviour
         {
             throw new Exception("There's no active score manager");
         }
-        if (UIManager == null)
+        if (GameUIManager == null)
         {
-            throw new Exception("There's no active ui manager");
+            throw new Exception("There's no active game ui manager");
         }
         if (EventManager == null)
         {
@@ -133,8 +137,24 @@ public class GameManager : MonoBehaviour
         // add other managers
     }
 
+    public void SpawnPlayers()
+    {
+        foreach (var playerInput in LobbyManager.JoinedPlayers) 
+        {
+            Vector2Int spawnPoint = GridManager.playerSpawnPoints[playerInput.playerIndex];
+            spawnPoint *= GameConstants.UNITY_GRID_SIZE;
+            
+            PlayerInput newInput = PlayerInput.Instantiate(playerPrefab, playerIndex:playerInput.playerIndex, pairWithDevices:playerInput.devices.ToArray());
+            newInput.transform.position = new Vector3(spawnPoint.x, 2.0f, spawnPoint.y);
+            
+            Destroy(playerInput.gameObject); //Destroying dummy prefabs
+        }
+        
+        LobbyManager.JoinedPlayers.Clear();
+    }
+
     public void EndGame()
     {
-        UIManager.endGameImage.gameObject.SetActive(true);
+        GameUIManager.endGameImage.gameObject.SetActive(true);
     }
 }

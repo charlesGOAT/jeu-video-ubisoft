@@ -37,8 +37,8 @@ public class EventManager : MonoBehaviour
                 out BombEnum bombType))
         {
             CurrentBombType = bombType;
-            GameManager.Instance.UIManager.RefreshBombType(bombType.ToString().AddSpacesBeforeCaps());
-            GameManager.Instance.UIManager.DisplayEventPanel(CurrentBombType.ToString().AddSpacesBeforeCaps());
+            GameManager.Instance.GameUIManager.RefreshBombType(bombType.ToString().AddSpacesBeforeCaps());
+            GameManager.Instance.GameUIManager.DisplayEventPanel(CurrentBombType.ToString().AddSpacesBeforeCaps());
 
         }
     }

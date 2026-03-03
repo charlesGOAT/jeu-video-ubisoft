@@ -110,19 +110,16 @@ public class Player : MonoBehaviour
             playerItemsManager = gameObject.GetComponent<PlayerItemsManager>();
 
         playerItemsManager.Player = this;
-
-        ConfigurePlayers();
         
         InitializeStateMachine();
         GetComponents();
-
         ActivePlayers.Add(this);
-
-        InitializeArrow();
     }
 
     private void Start()
     {
+        ConfigurePlayers();
+        InitializeArrow();
         CheckStartConditions();
         InitializeSpawner();
     }
@@ -568,6 +565,7 @@ public enum PlayerEnum
     Player2 = 2,
     Player3 = 3,
     Player4 = 4
+    //Do not forget to add the new player enums in the switch case of LobbyManager and modifying GameConstants.NB_PLAYERS
 }
 
 public enum BombFusingType

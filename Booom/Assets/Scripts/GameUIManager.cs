@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
-public class UIManager : MonoBehaviour
+public class GameUIManager : MonoBehaviour
 {
     [SerializeField]
     private ScorePlayer scorePlayerPrefab;
@@ -42,8 +42,6 @@ public class UIManager : MonoBehaviour
     private void OnDisable()
     {
         GameManager.Instance.ScoreManager.OnScoreChanged -= RefreshScore;
-        if (PlayerInputManager.instance != null)
-            PlayerInputManager.instance.onPlayerJoined -= AddPlayer;
     }
 
     private void Start()
@@ -55,55 +53,28 @@ public class UIManager : MonoBehaviour
 
         bombType.text = GameManager.Instance.EventManager.CurrentBombType.ToString().AddSpacesBeforeCaps();
         leaderboard.text = _statTracked;
-        PlayerInputManager.instance.onPlayerJoined += AddPlayer;
 
         GameManager.Instance.StartTimer();
     }
 
-    public void AddPlayer(PlayerInput playerInput)
+    public void CreateScorePlayer(PlayerEnum playerEnum)
     {
-        if (playerInput != null)
-        {
-            switch (playerInput.playerIndex)
-            {
-                case 0:
-                    Player.PlayerColorDict[PlayerEnum.Player1] = Color.red;
-                    break;
-                case 1:
-                    Player.PlayerColorDict[PlayerEnum.Player2] = Color.green;
-                    break;
-                case 2:
-                    Player.PlayerColorDict[PlayerEnum.Player3] = Color.blue;
-                    break;
-                case 3:
-                    Player.PlayerColorDict[PlayerEnum.Player4] = Color.yellow;
-                    break;
-                default:
-                    throw new Exception("Player Input Manager tried to create invalid Player");
-            }
-        }
-        else
-        {
-            throw new Exception("There's no active player input");
-        }
-        
-        PlayerEnum playerEnum = (PlayerEnum) playerInput.playerIndex + 1;
         Color c = Player.PlayerColorDict[playerEnum];
         
-        
-        if (!_scorePerPlayer.ContainsKey(playerEnum))
-        {
-            var scorePlayer = Instantiate(scorePlayerPrefab, leaderboard.transform);
-            scorePlayer.SetColor(c);
-            scorePlayer.UpdateScore(0);
-            _scorePerPlayer[playerEnum] = scorePlayer;
-            
-            SortLeaderboard();
-        }
+        var scorePlayer = Instantiate(scorePlayerPrefab, leaderboard.transform);
+        scorePlayer.SetColor(c);
+        scorePlayer.UpdateScore(0);
+        _scorePerPlayer[playerEnum] = scorePlayer;
+    
+        SortLeaderboard();
     }
 
     private void RefreshScore(PlayerEnum player, int score)
     {
+        if (!_scorePerPlayer.ContainsKey(player))
+        {
+            CreateScorePlayer(player);
+        }
         _scorePerPlayer[player].UpdateScore(score);
         
         SortLeaderboard();
