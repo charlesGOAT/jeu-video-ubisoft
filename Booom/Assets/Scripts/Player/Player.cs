@@ -433,6 +433,8 @@ public class Player : MonoBehaviour
         playerItemsManager.AddNewItem(item);
         GameManager.Instance.RemoveItemFromGrid(item);
         Destroy(other.gameObject);
+        
+        SoundManager.Instance.OnPickupItem(transform.position);
     }
 
     private bool CheckIfOnOwnColor()

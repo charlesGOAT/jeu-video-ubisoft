@@ -155,6 +155,7 @@ public class GameManager : MonoBehaviour
 
     public void EndGame()
     {
+        SoundManager.Instance.OnGameEnded();
         GameUIManager.endGameImage.gameObject.SetActive(true);
     }
 }

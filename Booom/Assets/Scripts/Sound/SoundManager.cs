@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 struct Audio
 {
     public AudioClip audioClip;
+    [Range(0,1)]
     public float volume;
 }
 
@@ -27,10 +28,18 @@ public class SoundManager : MonoBehaviour
     private Audio bombExplodedAudio;
     
     [Space(3)]
+    
+    [Header("--- Item sounds ---")]
+    [SerializeField] 
+    private Audio pickUpItemSound;
+
+    [Space(3)]
 
     [Header("--- Game music ---")]
     [SerializeField] 
     private Audio gameMusic;
+    [SerializeField]
+    private Audio endGameMusic;
     [Space(3)]
 
     private AudioSource _audioSourceSFX;
@@ -90,23 +99,31 @@ public class SoundManager : MonoBehaviour
     {
         if (bombExplodedAudio.audioClip == null)
         {
-            throw new Exception($"Audio clip {nameof(bombExplodedAudio.audioClip)} cannot be null");
+            throw new Exception($"Audio clip {nameof(bombExplodedAudio)} cannot be null");
         }
         if (bombFusedAudio.audioClip == null)
         {
-            throw new Exception($"Audio clip {nameof(bombFusedAudio.audioClip)} cannot be null");
+            throw new Exception($"Audio clip {nameof(bombFusedAudio)} cannot be null");
         }
         if (buttonClickedAudio.audioClip == null)
         {
-            throw new Exception($"Audio clip {nameof(buttonClickedAudio.audioClip)} cannot be null");
+            throw new Exception($"Audio clip {nameof(buttonClickedAudio)} cannot be null");
         }
         if (backgroundMenuMusic.audioClip == null)
         {
-            throw new Exception($"Audio clip {nameof(backgroundMenuMusic.audioClip)} cannot be null");
+            throw new Exception($"Audio clip {nameof(backgroundMenuMusic)} cannot be null");
         }
         if (gameMusic.audioClip == null)
         {
-            throw new Exception($"Audio clip {nameof(gameMusic.audioClip)} cannot be null");
+            throw new Exception($"Audio clip {nameof(gameMusic)} cannot be null");
+        }
+        if (endGameMusic.audioClip == null)
+        {
+            throw new Exception($"Audio clip {nameof(endGameMusic)} cannot be null");
+        }
+        if (pickUpItemSound.audioClip == null)
+        {
+            throw new Exception($"Audio clip {nameof(pickUpItemSound)} cannot be null");
         }
     }
     
@@ -123,6 +140,16 @@ public class SoundManager : MonoBehaviour
     public void OnMenuButtonPressed()
     {
         _audioSourceSFX.PlayOneShot(buttonClickedAudio.audioClip, buttonClickedAudio.volume);
+    }
+
+    public void OnPickupItem(Vector3 position)
+    {
+        AudioSource.PlayClipAtPoint(pickUpItemSound.audioClip, position, pickUpItemSound.volume);
+    }
+
+    public void OnGameEnded()
+    {
+        PlayAudioSourceMusic(endGameMusic);
     }
 
     public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
