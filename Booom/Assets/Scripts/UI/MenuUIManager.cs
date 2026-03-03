@@ -10,6 +10,7 @@ public class MenuUIManager : MonoBehaviour
     [SerializeField] private Button playButton;
     [SerializeField] private Canvas mainMenuCanvas;
     [SerializeField] private Canvas levelsCanvas;
+    [SerializeField] private Image levelPreviewImage;
     
     private LobbyManager _lobbyManager;
 
@@ -33,7 +34,7 @@ public class MenuUIManager : MonoBehaviour
         ShowPlayerJoined(playerCount);
     }
 
-    public void ShowPlayerJoined(int playerCount)
+    private void ShowPlayerJoined(int playerCount)
     {
         var slot = playerSlots[playerCount - 1];
 
@@ -42,9 +43,26 @@ public class MenuUIManager : MonoBehaviour
         slot.coloredCharacter.gameObject.SetActive(true);
     }
 
+    public void ChangeMap()
+    {
+        mainMenuCanvas.gameObject.SetActive(false);
+        levelsCanvas.gameObject.SetActive(true);
+    }
+
+    public void ReturnToMainMenu()
+    {
+        levelsCanvas.gameObject.SetActive(false);
+        mainMenuCanvas.gameObject.SetActive(true);
+    }
+
     public void PlayGame()
     {
-        _lobbyManager.GameStarted();
+        _lobbyManager.GameStarted(levelPreviewImage.sprite.name);
         _lobbyManager.OnLobbyPlayerCountChanged -= UnlockPlayButton;
+    }
+
+    public void LevelSelected(Sprite sprite)
+    {
+        levelPreviewImage.sprite = sprite;
     }
 }
