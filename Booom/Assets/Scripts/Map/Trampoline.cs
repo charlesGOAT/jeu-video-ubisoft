@@ -14,28 +14,14 @@ public class Trampoline : Tile
     {
         float playerLengthToTrampolineX = transform.position.x - player.transform.position.x;
         float playerLengthToTrampolineZ = transform.position.z - player.transform.position.z;
-
+        
+        Vector2Int jumpDir = Vector2Int.zero;
+        
         if (Mathf.Abs(playerLengthToTrampolineX) > Mathf.Abs(playerLengthToTrampolineZ))
-        {
-            if (playerLengthToTrampolineX >= 0)
-            {
-                player.OnJump(Vector2Int.right);
-            }
-            else
-            {
-                player.OnJump(Vector2Int.left);
-            }
-        }
+            jumpDir = playerLengthToTrampolineX >= 0 ? Vector2Int.right : Vector2Int.left;
         else
-        {
-            if (playerLengthToTrampolineZ >= 0)
-            {
-                player.OnJump(Vector2Int.up);
-            }
-            else
-            {
-                player.OnJump(Vector2Int.down);
-            }
-        }
+            jumpDir = playerLengthToTrampolineZ >= 0 ? Vector2Int.up : Vector2Int.down;
+        
+        player.OnJump(jumpDir);
     }
 }
