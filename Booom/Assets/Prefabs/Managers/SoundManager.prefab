@@ -252,6 +252,9 @@ MonoBehaviour:
   bombExplodedAudio:
     audioClip: {fileID: 8300000, guid: 591e6ff8de4e1914dbfcf8247b2771af, type: 3}
     volume: 1
+  pickUpItemSound:
+    audioClip: {fileID: 8300000, guid: b15a7c80887c268469f106e4a098bae5, type: 3}
+    volume: 1
   gameMusic:
     audioClip: {fileID: 8300000, guid: fec69f1029b06364288d1c762088bc47, type: 3}
     volume: 0.02
