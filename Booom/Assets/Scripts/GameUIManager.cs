@@ -36,6 +36,7 @@ public class GameUIManager : MonoBehaviour
     private string _statTracked = "Eliminations";
     
     private readonly List<KeyValuePair<PlayerEnum, ScorePlayer>> _sortedPlayerScores = new();
+    private bool _isGameOver = false;
 
     private void OnEnable()
     {
@@ -74,6 +75,8 @@ public class GameUIManager : MonoBehaviour
 
     private void RefreshScore(PlayerEnum player, int score)
     {
+        if (_isGameOver) return;
+        
         if (!_scorePerPlayer.ContainsKey(player))
         {
             CreateScorePlayer(player);
@@ -117,8 +120,10 @@ public class GameUIManager : MonoBehaviour
 
     public void EndGame()
     {
-        endGameImage.enabled = true;
-        winnerText.enabled = true;
+        _isGameOver = true;
+        
+        endGameImage.gameObject.SetActive(true);
+        winnerText.gameObject.SetActive(true);
 
         PlayerEnum winner = GameManager.Instance.ScoreManager.FindPlayerWithMostGround();
         winnerText.text = $"Player {(int)winner} won!";

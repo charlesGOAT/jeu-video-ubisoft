@@ -7,7 +7,6 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
     private static GameManager _instance;
-    private static bool _isInstanceAssigned;
 
     [SerializeField]
     private GameObject playerPrefab;
@@ -63,31 +62,41 @@ public class GameManager : MonoBehaviour
     {
         get
         {
-            if (!_isInstanceAssigned)
+            if (_instance == null)
             {
-                var instance = FindFirstObjectByType<GameManager>() ?? AutoCreateInstance();
-                SetSingletonInstance(instance);
-                instance.GetManagers();
-                
-#if !UNITY_EDITOR
-                instance.InitializeRuntimeConfig();
-#endif
+                _instance = FindFirstObjectByType<GameManager>();
+
+                if (_instance == null)
+                {
+                    _instance = CreateInstance();
+                }
+                _instance.GetManagers();
             }
 
             return _instance;
         }
     }
-
-    private static GameManager AutoCreateInstance() =>
-        new GameObject($"{nameof(GameManager)} (Auto-Created)", typeof(GameManager)).GetComponent<GameManager>();
     
-    private static void SetSingletonInstance(GameManager instance)
+    private void Awake()
     {
-        if (instance == null)
-            throw new ArgumentNullException("instance must not be null");
+        if (_instance != null && _instance != this)
+        {
+            Destroy(gameObject);
+        }
+        _instance = this;
+        GetManagers();
 
-        _instance = instance;
-        _isInstanceAssigned = true;
+#if !UNITY_EDITOR
+    InitializeRuntimeConfig();
+#endif
+    }
+    
+    private static GameManager CreateInstance()
+    {
+        GameObject go = new GameObject($"{nameof(GameManager)} (Auto-Created)");
+        var manager = go.AddComponent<GameManager>();
+
+        return manager;
     }
 
     private void InitializeRuntimeConfig()
@@ -157,13 +166,21 @@ public class GameManager : MonoBehaviour
 
     public void EndGame()
     {
-        GameUIManager.EndGame();
         StartCoroutine(EndGameCoroutine());
     }
 
     private IEnumerator EndGameCoroutine()
     {
-        yield return new WaitForSeconds(3f);
+        Time.timeScale = 0f;
+        GameUIManager.EndGame();
+        CleanGame();
+        yield return new WaitForSecondsRealtime(3f);
+        Time.timeScale = 1f;
         SceneManager.LoadScene("Menu");
+    }
+
+    private void CleanGame()
+    {
+        Player.ActivePlayers.Clear();
     }
 }
