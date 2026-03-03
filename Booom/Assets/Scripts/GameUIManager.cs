@@ -33,7 +33,6 @@ public class GameUIManager : MonoBehaviour
     private TMP_Text winnerText;
 
     private readonly Dictionary<PlayerEnum, ScorePlayer> _scorePerPlayer = new ();
-    private string _statTracked = "Eliminations";
     
     private readonly List<KeyValuePair<PlayerEnum, ScorePlayer>> _sortedPlayerScores = new();
 
@@ -51,11 +50,8 @@ public class GameUIManager : MonoBehaviour
     {
         bombEventPanel.SetActive(false);
 
-        if (GameManager.Instance.IsSpreadingMode)
-            _statTracked = "Number of tiles owned";
-
         bombType.text = GameManager.Instance.EventManager.CurrentBombType.ToString().AddSpacesBeforeCaps();
-        leaderboard.text = _statTracked;
+        leaderboard.text = "Number of tiles owned";
 
         GameManager.Instance.StartTimer();
     }
