@@ -1,16 +1,19 @@
 ﻿using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    private static GameManager _instance;
-    private static bool _isInstanceAssigned;
-
     [SerializeField]
     private GameObject playerPrefab;
     private float _timeRemaining;
     private bool _timerRunning;
+    
+    [SerializeField]
+    private float _gameDuration = GameConstants.GAME_DURATION;
+    public float  GameDuration => _gameDuration;
 
     public int CurrentMinutes => Mathf.FloorToInt(_timeRemaining / 60f);
     public int CurrentSeconds => Mathf.FloorToInt(_timeRemaining % 60f);
@@ -53,46 +56,34 @@ public class GameManager : MonoBehaviour
 
     public void StartTimer()
     {
-        _timeRemaining = GameConstants.GAME_DURATION;
+        _timeRemaining = _gameDuration;
         _timerRunning = true;
     }
 
-    public static GameManager Instance
-    {
-        get
-        {
-            if (!_isInstanceAssigned)
-            {
-                var instance = FindFirstObjectByType<GameManager>() ?? AutoCreateInstance();
-                SetSingletonInstance(instance);
-                instance.GetManagers();
-                
-#if !UNITY_EDITOR
-                instance.InitializeRuntimeConfig();
-#endif
-            }
-
-            return _instance;
-        }
-    }
-
-    private static GameManager AutoCreateInstance() =>
-        new GameObject($"{nameof(GameManager)} (Auto-Created)", typeof(GameManager)).GetComponent<GameManager>();
+    public static GameManager Instance { get; private set; }
     
-    private static void SetSingletonInstance(GameManager instance)
+    private void Awake()
     {
-        if (instance == null)
-            throw new ArgumentNullException("instance must not be null");
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+        }
+        Instance = this;
+        GetManagers();
 
-        _instance = instance;
-        _isInstanceAssigned = true;
+#if !UNITY_EDITOR
+    InitializeRuntimeConfig();
+#endif
     }
+    private static GameManager CreateInstance() => new GameObject($"{nameof(GameManager)} (Auto-Created)",
+        typeof(GameManager)).GetComponent<GameManager>();
 
     private void InitializeRuntimeConfig()
     {
         RuntimeConfig = RuntimeConfigLoader.GetConfig();
         _isSpreadingMode = RuntimeConfig.IsSpreadingMode;
         _isBonusSpeed = RuntimeConfig.IsBonusSpeed;
+        _gameDuration =  RuntimeConfig.GameDuration;
     }
 
     public void RemoveItemFromGrid(Item item)
@@ -155,6 +146,22 @@ public class GameManager : MonoBehaviour
 
     public void EndGame()
     {
-        GameUIManager.endGameImage.gameObject.SetActive(true);
+        StartCoroutine(EndGameCoroutine());
+    }
+
+    private IEnumerator EndGameCoroutine()
+    {
+        Time.timeScale = 0f;
+        GameUIManager.EndGame();
+        CleanGame();
+        yield return new WaitForSecondsRealtime(3f);
+        Time.timeScale = 1f;
+        SceneManager.LoadScene("Menu");
+    }
+
+    private void CleanGame()
+    {
+        Player.ActivePlayers.Clear();
+        Bomb.ActiveBombs.Clear();
     }
 }

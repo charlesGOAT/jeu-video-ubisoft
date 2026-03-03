@@ -27,10 +27,12 @@ public class GameUIManager : MonoBehaviour
     private GameObject bombEventPanel;
     
     [SerializeField]
-    public Image endGameImage;
+    private Image endGameImage;
+    
+    [SerializeField]
+    private TMP_Text winnerText;
 
     private readonly Dictionary<PlayerEnum, ScorePlayer> _scorePerPlayer = new ();
-    private string _statTracked = "Eliminations";
     
     private readonly List<KeyValuePair<PlayerEnum, ScorePlayer>> _sortedPlayerScores = new();
 
@@ -48,11 +50,8 @@ public class GameUIManager : MonoBehaviour
     {
         bombEventPanel.SetActive(false);
 
-        if (GameManager.Instance.IsSpreadingMode)
-            _statTracked = "Number of tiles owned";
-
         bombType.text = GameManager.Instance.EventManager.CurrentBombType.ToString().AddSpacesBeforeCaps();
-        leaderboard.text = _statTracked;
+        leaderboard.text = "Number of tiles owned";
 
         GameManager.Instance.StartTimer();
     }
@@ -110,6 +109,16 @@ public class GameUIManager : MonoBehaviour
     {
         eventPanelText.text = $"Bomb type is now {bombTypeName}!";
         StartCoroutine(EventPanelCoroutine());
+    }
+
+    public void EndGame()
+    {
+        endGameImage.gameObject.SetActive(true);
+        winnerText.gameObject.SetActive(true);
+
+        PlayerEnum winner = GameManager.Instance.ScoreManager.FindPlayerWithMostGround();
+        winnerText.text = $"Player {(int)winner} won!";
+        winnerText.color = Player.PlayerColorDict[winner];
     }
 
     private IEnumerator EventPanelCoroutine()
