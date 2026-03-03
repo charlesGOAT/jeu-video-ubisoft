@@ -6,8 +6,6 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    private static GameManager _instance;
-
     [SerializeField]
     private GameObject playerPrefab;
     private float _timeRemaining;
@@ -62,27 +60,15 @@ public class GameManager : MonoBehaviour
         _timerRunning = true;
     }
 
-    public static GameManager Instance
-    {
-        get
-        {
-            if (_instance == null)
-            {
-                _instance = FindFirstObjectByType<GameManager>() ?? CreateInstance();
-                _instance.GetManagers();
-            }
-
-            return _instance;
-        }
-    }
+    public static GameManager Instance { get; private set; }
     
     private void Awake()
     {
-        if (_instance != null && _instance != this)
+        if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
         }
-        _instance = this;
+        Instance = this;
         GetManagers();
 
 #if !UNITY_EDITOR
