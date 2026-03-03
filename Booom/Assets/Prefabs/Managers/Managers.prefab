@@ -176,6 +176,22 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4323153949407937890, guid: 72f383359fcb0e943b8d219268c133dd, type: 3}
+      propertyPath: bombEvents.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4323153949407937890, guid: 72f383359fcb0e943b8d219268c133dd, type: 3}
+      propertyPath: bombEvents.Array.data[0].value
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4323153949407937890, guid: 72f383359fcb0e943b8d219268c133dd, type: 3}
+      propertyPath: bombEvents.Array.data[0].minutes
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4323153949407937890, guid: 72f383359fcb0e943b8d219268c133dd, type: 3}
+      propertyPath: bombEvents.Array.data[0].seconds
+      value: 50
+      objectReference: {fileID: 0}
     - target: {fileID: 8944476550725500117, guid: 72f383359fcb0e943b8d219268c133dd, type: 3}
       propertyPath: m_Name
       value: EventManager
@@ -264,10 +280,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1669064132996479789}
     m_Modifications:
-    - target: {fileID: 4091976733857442020, guid: 16c5cd904395c8c4a89d9fdc42964820, type: 3}
-      propertyPath: bombEventPanel
-      value: 
-      objectReference: {fileID: 1807823731601073541}
     - target: {fileID: 5014444785665985340, guid: 16c5cd904395c8c4a89d9fdc42964820, type: 3}
       propertyPath: m_LocalPosition.x
       value: 946.8087
@@ -308,10 +320,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5208690866537386214, guid: 16c5cd904395c8c4a89d9fdc42964820, type: 3}
-      propertyPath: m_fontSize
-      value: 69.55
-      objectReference: {fileID: 0}
     - target: {fileID: 6169298383064412074, guid: 16c5cd904395c8c4a89d9fdc42964820, type: 3}
       propertyPath: m_Name
       value: UIManager
@@ -321,11 +329,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 16c5cd904395c8c4a89d9fdc42964820, type: 3}
---- !u!1 &1807823731601073541 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8776957244266493038, guid: 16c5cd904395c8c4a89d9fdc42964820, type: 3}
-  m_PrefabInstance: {fileID: 6978514571997860331}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &2688166225510374103 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5014444785665985340, guid: 16c5cd904395c8c4a89d9fdc42964820, type: 3}

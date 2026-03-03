@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Bomb : MonoBehaviour
 {
-    protected static readonly HashSet<Vector2Int> ActiveBombs = new HashSet<Vector2Int>();
+    public static readonly HashSet<Vector2Int> ActiveBombs = new HashSet<Vector2Int>();
 
     [SerializeField]
     protected float timer = 3.0f;
