@@ -28,7 +28,6 @@ public class MenuUIManager : MonoBehaviour
     private void UnlockPlayButton(int playerCount)
     {
         playButton.interactable = playerCount > 1;
-        
         ShowPlayerJoined(playerCount);
     }
 
