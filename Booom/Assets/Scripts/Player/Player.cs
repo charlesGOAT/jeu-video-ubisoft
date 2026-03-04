@@ -76,8 +76,6 @@ public class Player : MonoBehaviour
 
     public BombFusingType BombFusingType { get; set; }
     
-    public bool OnTrampoline { private get; set; }
-
     //nom de caca
     private float _actualImmuneTimer;
 
@@ -231,7 +229,7 @@ public class Player : MonoBehaviour
 
     public void OnBomb(InputAction.CallbackContext ctx)
     {
-        if (OnTrampoline) return;
+        if (_stateMachine.CurrentState is JumpState) return;
         if (ctx.performed && ctx.interaction is HoldInteraction)
         {
             OnExplodeChainedBombs?.Invoke();

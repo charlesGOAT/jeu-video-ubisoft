@@ -36,12 +36,7 @@ public class GameUIManager : MonoBehaviour
     
     private readonly List<KeyValuePair<PlayerEnum, ScorePlayer>> _sortedPlayerScores = new();
 
-    private void OnEnable()
-    {
-        GameManager.Instance.ScoreManager.OnScoreChanged += RefreshScore;
-    }
-
-    private void OnDisable()
+    private void OnDestroy()
     {
         GameManager.Instance.ScoreManager.OnScoreChanged -= RefreshScore;
     }
@@ -53,6 +48,7 @@ public class GameUIManager : MonoBehaviour
         bombType.text = GameManager.Instance.EventManager.CurrentBombType.ToString().AddSpacesBeforeCaps();
         leaderboard.text = "Number of tiles owned";
 
+        GameManager.Instance.ScoreManager.OnScoreChanged += RefreshScore;
         GameManager.Instance.StartTimer();
     }
 
