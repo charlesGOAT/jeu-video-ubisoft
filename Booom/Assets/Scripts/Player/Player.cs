@@ -290,6 +290,8 @@ public class Player : MonoBehaviour
         
         if(isHitFromSpikes)
             SoundManager.Instance.OnEnterSpikes(transform.position);
+        else
+            SoundManager.Instance.OnPlayerHitByBomb(transform.position);
 
         Vector3 forceDirection = new Vector3(hitDirection.x,1,hitDirection.y);
         ApplyKnockback(forceDirection, knockbackForce);

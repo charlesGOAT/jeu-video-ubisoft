@@ -34,13 +34,15 @@ public class SoundManager : MonoBehaviour
     private Audio pickUpItemSound;
     [Space(3)]
     
-    [Header("--- Movement sounds ---")]
+    [Header("--- Player sounds ---")]
     [SerializeField] 
     private Audio trampolineSound;
     [SerializeField]
     private Audio spikeSound;
     [SerializeField] 
     private Audio portalSound;
+    [SerializeField] 
+    private Audio bombHitPlayerSound;
     [Space(3)]
 
     [Header("--- Game music ---")]
@@ -92,6 +94,74 @@ public class SoundManager : MonoBehaviour
         _audioSourceMusic.Play();
     }
 
+    public void OnBombFused(Bomb bomb)
+    {
+        AudioSource.PlayClipAtPoint(bombFusedAudio.audioClip, bomb.transform.position, bombFusedAudio.volume);
+    }
+
+    public void OnBombExploded(Bomb bomb)
+    {
+        AudioSource.PlayClipAtPoint(bombExplodedAudio.audioClip, bomb.transform.position, bombExplodedAudio.volume);
+    }
+
+    public void OnMenuButtonPressed()
+    {
+        _audioSourceSFX.PlayOneShot(buttonClickedAudio.audioClip, buttonClickedAudio.volume);
+    }
+
+    public void OnBombEvent()
+    {
+        _audioSourceSFX.PlayOneShot(genericBombEventSound.audioClip, genericBombEventSound.volume);
+    }
+
+    public void OnPickupItem(Vector3 position)
+    {
+        AudioSource.PlayClipAtPoint(pickUpItemSound.audioClip, position, pickUpItemSound.volume);
+    }
+
+    public void OnEnterTrampoline(Vector3 position)
+    {
+        AudioSource.PlayClipAtPoint(trampolineSound.audioClip, position, trampolineSound.volume);
+    }
+    
+    public void OnEnterPortal(Vector3 position)
+    {
+        AudioSource.PlayClipAtPoint(portalSound.audioClip, position, portalSound.volume);
+    }
+
+    public void OnEnterSpikes(Vector3 position)
+    {
+        AudioSource.PlayClipAtPoint(spikeSound.audioClip, position, spikeSound.volume);
+    }
+
+    public void OnPlayerHitByBomb(Vector3 position)
+    {
+        AudioSource.PlayClipAtPoint(bombHitPlayerSound.audioClip, position, bombHitPlayerSound.volume);
+    }
+
+    public void OnGameEnded()
+    {
+        PlayAudioSourceMusic(endGameMusic);
+    }
+
+    public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (IsSceneMenu(scene))
+        {
+            // todo : voir s'il va y avoir plus qu'une menu scene / plus qu'une toune pour ces menus
+            
+            if (_isInMenu.HasValue && _isInMenu.Value) return;  // assumant qu'il n'y a qu'une toune pour tous les menus
+
+            _isInMenu = true;
+            PlayAudioSourceMusic(backgroundMenuMusic);
+        }
+        else
+        {
+            _isInMenu = false;
+            PlayAudioSourceMusic(gameMusic);  // todo : voir s'il y a plus qu'une toune de jeu
+        }
+    }
+    
     private void VerifyAudioClipsPresent()
     {
         if (bombExplodedAudio.audioClip == null)
@@ -137,69 +207,10 @@ public class SoundManager : MonoBehaviour
         if (portalSound.audioClip == null)
         {
             throw new Exception($"Audio clip {nameof(portalSound)} cannot be null");
-        }
-    }
-    
-    public void OnBombFused(Bomb bomb)
-    {
-        AudioSource.PlayClipAtPoint(bombFusedAudio.audioClip, bomb.transform.position, bombFusedAudio.volume);
-    }
-
-    public void OnBombExploded(Bomb bomb)
-    {
-        AudioSource.PlayClipAtPoint(bombExplodedAudio.audioClip, bomb.transform.position, bombExplodedAudio.volume);
-    }
-
-    public void OnMenuButtonPressed()
-    {
-        _audioSourceSFX.PlayOneShot(buttonClickedAudio.audioClip, buttonClickedAudio.volume);
-    }
-
-    public void OnBombEvent()
-    {
-        _audioSourceSFX.PlayOneShot(genericBombEventSound.audioClip, genericBombEventSound.volume);
-    }
-
-    public void OnPickupItem(Vector3 position)
-    {
-        AudioSource.PlayClipAtPoint(pickUpItemSound.audioClip, position, pickUpItemSound.volume);
-    }
-
-    public void OnEnterTrampoline(Vector3 position)
-    {
-        AudioSource.PlayClipAtPoint(trampolineSound.audioClip, position, trampolineSound.volume);
-    }
-    
-    public void OnEnterPortal(Vector3 position)
-    {
-        AudioSource.PlayClipAtPoint(portalSound.audioClip, position, portalSound.volume);
-    }
-
-    public void OnEnterSpikes(Vector3 position)
-    {
-        AudioSource.PlayClipAtPoint(spikeSound.audioClip, position, spikeSound.volume);
-    }
-
-    public void OnGameEnded()
-    {
-        PlayAudioSourceMusic(endGameMusic);
-    }
-
-    public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
-    {
-        if (IsSceneMenu(scene))
+        } 
+        if (bombHitPlayerSound.audioClip == null)
         {
-            // todo : voir s'il va y avoir plus qu'une menu scene / plus qu'une toune pour ces menus
-            
-            if (_isInMenu.HasValue && _isInMenu.Value) return;  // assumant qu'il n'y a qu'une toune pour tous les menus
-
-            _isInMenu = true;
-            PlayAudioSourceMusic(backgroundMenuMusic);
-        }
-        else
-        {
-            _isInMenu = false;
-            PlayAudioSourceMusic(gameMusic);  // todo : voir s'il y a plus qu'une toune de jeu
+            throw new Exception($"Audio clip {nameof(bombHitPlayerSound)} cannot be null");
         }
     }
 }
