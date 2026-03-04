@@ -46,5 +46,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: GameplayAssembly::GameManager
   playerPrefab: {fileID: 0}
   _gameDuration: 120
-  _isSpreadingMode: 0
+  _isSpreadingMode: 1
   _isBonusSpeed: 0
