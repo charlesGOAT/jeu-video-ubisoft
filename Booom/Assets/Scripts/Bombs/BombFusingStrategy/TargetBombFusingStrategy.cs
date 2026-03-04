@@ -55,9 +55,9 @@ public class TargetBombFusingStrategy : BombFusingStrategy
 
     private async Awaitable MoveBombLoop()
     {
+        Vector2Int bombGridPos = new();
         while (!_cts.IsCancellationRequested)
         {
-            Vector2Int bombGridPos = new();
             lock (_lock)
             {
                 if (_bomb == null) break;
@@ -65,6 +65,7 @@ public class TargetBombFusingStrategy : BombFusingStrategy
             }
 
             Vector2Int nextGridStep = GetNextBombPos(bombGridPos, new());
+            Vector3 targetWorldPos = GridManagerStrategy.GridToWorldPosition(nextGridStep);
 
             if (nextGridStep != bombGridPos)
             {
@@ -72,8 +73,8 @@ public class TargetBombFusingStrategy : BombFusingStrategy
                 {
                     lock (_lock)
                     {
-                        if (_bomb == null || Vector2Int.Distance(bombGridPos, nextGridStep) <= 0.01f) break;
-                        MoveBomb(nextGridStep);
+                        if (_bomb == null || Vector3.Distance(_bomb.transform.position, targetWorldPos) <= 0.01f) break;
+                        MoveBomb(targetWorldPos);
                     }
                     
                     await Awaitable.NextFrameAsync(); 
@@ -94,10 +95,8 @@ public class TargetBombFusingStrategy : BombFusingStrategy
         }
     }
 
-    private void MoveBomb(in Vector2Int newBombPos)
+    private void MoveBomb(in Vector3 targetWorldPos)
     {
-        Vector3 targetWorldPos = GridManagerStrategy.GridToWorldPosition(newBombPos);
-
         _bomb.transform.position = Vector3.MoveTowards(
             _bomb.transform.position, 
             targetWorldPos, 

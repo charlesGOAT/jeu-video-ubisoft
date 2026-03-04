@@ -3,6 +3,13 @@ using System.IO;
 using UnityEngine;
 
 [Serializable]
+public class ItemSpawnerData
+{
+    public int MaxItems = 0;
+    public float TimeBetweenSpawns = 0;
+}
+
+[Serializable]
 public class RuntimeConfigData
 {
     public bool IsSpreadingMode = true;
@@ -11,6 +18,27 @@ public class RuntimeConfigData
     public bool IsDropFromSky = false;
     public float GameDuration = 120f;
     public float MovementSpeed = 15f;
+
+    public ItemSpawnerData PaintBrushItemSpawnerData = new()
+    {
+        MaxItems = 2,
+        TimeBetweenSpawns = 10
+    };
+    public ItemSpawnerData GhostBombItemSpawnerData = new()
+    {
+        MaxItems = 2,
+        TimeBetweenSpawns = 10
+    };
+    public ItemSpawnerData ChainedBombItemSpawnerData = new()
+    {
+        MaxItems = 2,
+        TimeBetweenSpawns = 10
+    };
+    public ItemSpawnerData TargetBombItemSpawnerData = new()
+    {
+        MaxItems = 2,
+        TimeBetweenSpawns = 10
+    };
 }
 
 public static class RuntimeConfigLoader

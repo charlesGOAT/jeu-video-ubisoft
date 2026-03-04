@@ -6,6 +6,8 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
+    private static GameManager _instance;
+
     [SerializeField]
     private GameObject playerPrefab;
     private float _timeRemaining;
@@ -36,6 +38,24 @@ public class GameManager : MonoBehaviour
     public EventManager EventManager { get; private set; }
 
     // add other managers
+    
+    public static GameManager Instance
+    {
+        get
+        {
+            if (_instance == null)
+            {
+                _instance = FindFirstObjectByType<GameManager>() ?? CreateInstance();
+                _instance.GetManagers(); 
+                
+#if !UNITY_EDITOR
+                _instance.InitializeRuntimeConfig();
+#endif
+            }
+
+            return _instance;
+        }
+    }
 
     private void Update()
     {
@@ -59,16 +79,15 @@ public class GameManager : MonoBehaviour
         _timeRemaining = _gameDuration;
         _timerRunning = true;
     }
-
-    public static GameManager Instance { get; private set; }
     
     private void Awake()
     {
-        if (Instance != null && Instance != this)
+        if (_instance != null && _instance != this)
         {
-            Destroy(gameObject);
+            Destroy(_instance.gameObject);
         }
-        Instance = this;
+        
+        _instance = this;
         GetManagers();
 
 #if !UNITY_EDITOR

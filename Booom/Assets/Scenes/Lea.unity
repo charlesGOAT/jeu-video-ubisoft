@@ -624,7 +624,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1036601968531846516, guid: 0d602448bd1f8d44793a5fc9f674005b, type: 3}
       propertyPath: bombEvents.Array.size
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1036601968531846516, guid: 0d602448bd1f8d44793a5fc9f674005b, type: 3}
       propertyPath: bombEvents.Array.data[0].value
