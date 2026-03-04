@@ -13,12 +13,12 @@ public class LevelPreview : MonoBehaviour
         _levelPreview = GetComponentInChildren<Button>();
     }
 
-    public void OnSelect(BaseEventData eventData)
+    public void OnSelect()
     {
         transform.localScale *= ZOOM_SELECT_MULTIPLIER;
     }
 
-    public void OnDeselect(BaseEventData eventData)
+    public void OnDeselect()
     {
         transform.localScale = Vector3.one;
     }

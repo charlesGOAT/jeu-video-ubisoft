@@ -18,12 +18,12 @@ public class LevelPreviewButton : MonoBehaviour, ISelectHandler, IDeselectHandle
     
     public void OnSelect(BaseEventData eventData)
     {
-        _parent?.OnSelect(eventData);
+        _parent.OnSelect();
     }
 
     public void OnDeselect(BaseEventData eventData)
     {
-        _parent?.OnDeselect(eventData);
+        _parent.OnDeselect();
     }
 
     public void LevelSelected()
