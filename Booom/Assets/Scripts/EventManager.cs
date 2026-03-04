@@ -37,7 +37,7 @@ public class EventManager : MonoBehaviour
         {
             CurrentBombType = bombType.Item1;
             _bombEventsDict[timeTuple] = new Tuple<BombEnum, bool>(CurrentBombType, true);
-            GameManager.Instance.GameUIManager.RefreshBombType(bombType.ToString().AddSpacesBeforeCaps());
+            GameManager.Instance.GameUIManager.RefreshBombType(bombType.Item1.ToString().AddSpacesBeforeCaps());
             GameManager.Instance.GameUIManager.DisplayEventPanel(CurrentBombType.ToString().AddSpacesBeforeCaps());
             SoundManager.Instance.OnBombEvent();
         }
