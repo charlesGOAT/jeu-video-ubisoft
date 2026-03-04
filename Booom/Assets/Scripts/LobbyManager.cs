@@ -3,15 +3,19 @@ using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 public delegate void LobbyPlayerCountChanged(int playerCount);
 
 public class LobbyManager : MonoBehaviour
 {
+    [SerializeField] 
+    private GameObject _menuPlayerPrefab;
+    
     public static LobbyManager Instance { get; private set; }
     public event LobbyPlayerCountChanged OnLobbyPlayerCountChanged;
     
-    public static readonly List<PlayerInput> JoinedPlayers = new ();
+    public static readonly Dictionary<PlayerEnum, PlayerInput> JoinedPlayers = new ();
     private PlayerInputManager _inputManager;
 
     private void Awake()
@@ -29,19 +33,21 @@ public class LobbyManager : MonoBehaviour
     private void OnEnable()
     {
         _inputManager.onPlayerJoined += OnPlayerJoined;
+        _inputManager.onPlayerLeft += OnPlayerLeft;
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
     private void OnDisable()
     {
         _inputManager.onPlayerJoined -= OnPlayerJoined;
+        _inputManager.onPlayerLeft -= OnPlayerLeft;
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
     public void GameStarted(string levelName)
     {
         _inputManager.onPlayerJoined -= OnPlayerJoined; //Cannot join mid game
-        foreach (PlayerInput playerInput in JoinedPlayers)
+        foreach (PlayerInput playerInput in JoinedPlayers.Values)
         {
             playerInput.SwitchCurrentActionMap("Player");
             playerInput.ActivateInput();
@@ -58,7 +64,20 @@ public class LobbyManager : MonoBehaviour
         }
     }
 
-    public void OnPlayerJoined(PlayerInput playerInput)
+    public void OnPlayerLeft(PlayerInput playerInput)
+    {
+        if (!JoinedPlayers.Values.Contains(playerInput)) return;
+        
+        int leavingIndex = playerInput.playerIndex;
+        PlayerEnum leavingPlayerEnum = (PlayerEnum) leavingIndex + 1;
+        
+        Player.PlayerColorDict.Remove(leavingPlayerEnum);
+        JoinedPlayers.Remove(leavingPlayerEnum);
+        
+        OnLobbyPlayerCountChanged?.Invoke(leavingIndex + 1);
+    }
+
+    private void OnPlayerJoined(PlayerInput playerInput)
     {
         if (playerInput == null)
         {
@@ -87,7 +106,7 @@ public class LobbyManager : MonoBehaviour
         }
         
         DontDestroyOnLoad(playerInput.gameObject);
-        JoinedPlayers.Add(playerInput);
+        JoinedPlayers[playerEnum] = playerInput;
 
         if (playerEnum == PlayerEnum.Player1)
         {
@@ -95,7 +114,7 @@ public class LobbyManager : MonoBehaviour
         }
         else
         {
-            playerInput.DeactivateInput(); //Idk if its problematic to not deactivate it
+            playerInput.DeactivateInput();
         }
         
         OnLobbyPlayerCountChanged?.Invoke(intPlayerEnum);

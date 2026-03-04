@@ -130,7 +130,7 @@ public class GameManager : MonoBehaviour
 
     public void SpawnPlayers()
     {
-        foreach (var playerInput in LobbyManager.JoinedPlayers) 
+        foreach (var playerInput in LobbyManager.JoinedPlayers.Values) 
         {
             Vector2Int spawnPoint = GridManager.playerSpawnPoints[playerInput.playerIndex];
             spawnPoint *= GameConstants.UNITY_GRID_SIZE;
