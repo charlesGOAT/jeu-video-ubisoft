@@ -3,5 +3,6 @@
   "IsBonusSpeed": true,
   "SpawnMode": 1,
   "IsDropFromSky": false,
-  "GameDuration": 120
+  "GameDuration": 120,
+  "MovementSpeed": 8
 }
