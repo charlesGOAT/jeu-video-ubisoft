@@ -7,7 +7,7 @@ using UnityEngine.InputSystem.Interactions;
 public delegate void MoveCalledEventHandler();
 public delegate void PlaceBomb();
 public delegate void ExplodeChainedBombs();
-public delegate void BombExploded();
+public delegate void PlaceBombSuccessFul();
 
 [RequireComponent(typeof(PlayerItemsManager))]
 [RequireComponent(typeof(Renderer))]
@@ -102,7 +102,7 @@ public class Player : MonoBehaviour
     public event MoveCalledEventHandler OnMoveFunctionCalled;
     public event PlaceBomb OnPlaceBomb;
     public event ExplodeChainedBombs OnExplodeChainedBombs;
-    public event BombExploded OnBombExploded;
+    public event PlaceBombSuccessFul OnPlaceBombSuccessful;
 
     private void Awake()
     {
@@ -244,7 +244,7 @@ public class Player : MonoBehaviour
             if (GameManager.Instance.BombManager.CreateBomb(transform.position + (bombDirection * Tile.TileLength),
                     playerNb, _bombFusingStrategies[(int)BombFusingType], ShouldNextBombBeTransparent))
             {
-                OnBombExploded?.Invoke();
+                OnPlaceBombSuccessful?.Invoke();
             }
         }
     }
@@ -280,13 +280,19 @@ public class Player : MonoBehaviour
         }
     }
 
-    public void OnHit(Vector2Int hitDirection)
+    public void OnHit(Vector2Int hitDirection, bool isHitFromSpikes = false)
     {
         //etant donne que hitDirection est un Vector2Int, y est z dans se cas
         if (IsImmune)
         {
             return;
         }
+        
+        if(isHitFromSpikes)
+            SoundManager.Instance.OnEnterSpikes(transform.position);
+        else
+            SoundManager.Instance.OnPlayerHitByBomb(transform.position);
+
         Vector3 forceDirection = new Vector3(hitDirection.x,1,hitDirection.y);
         ApplyKnockback(forceDirection, knockbackForce);
         _stateMachine.Trigger(GameConstants.PLAYER_HIT_TRIGGER);
@@ -301,6 +307,7 @@ public class Player : MonoBehaviour
     {
         if (_stateMachine.CurrentState is not JumpState)
         {
+            SoundManager.Instance.OnEnterTrampoline(transform.position);
             _jumpVelocity = CalculateJumpForce(jumpDirection);
             _stateMachine.Trigger(GameConstants.PLAYER_JUMP_TRIGGER);
         }
@@ -310,6 +317,7 @@ public class Player : MonoBehaviour
     {
         if (_stateMachine.CurrentState is not JumpState) 
         {
+            SoundManager.Instance.OnEnterPortal(transform.position);
             _characterController.enabled = false;
             this.gameObject.transform.position = otherPortalPosition;
             _jumpVelocity = CalculatePortalForce(playerDirection);
@@ -434,6 +442,8 @@ public class Player : MonoBehaviour
         playerItemsManager.AddNewItem(item);
         GameManager.Instance.RemoveItemFromGrid(item);
         Destroy(other.gameObject);
+        
+        SoundManager.Instance.OnPickupItem(transform.position);
     }
 
     private bool CheckIfOnOwnColor()

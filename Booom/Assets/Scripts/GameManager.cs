@@ -146,6 +146,7 @@ public class GameManager : MonoBehaviour
 
     public void EndGame()
     {
+        SoundManager.Instance.OnGameEnded();
         StartCoroutine(EndGameCoroutine());
     }
 

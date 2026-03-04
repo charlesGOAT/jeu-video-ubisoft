@@ -12,32 +12,17 @@ public class Spike : Tile
 
     public void HitPlayer(Player player)
     {
+        var position = player.transform.position;
+        float playerLengthToSpikeX = transform.position.x - position.x;
+        float playerLengthToSpikeZ = transform.position.z - position.z;
 
-        float playerLengthToSpikeX = transform.position.x - player.transform.position.x;
-        float playerLengthToSpikeZ = transform.position.z - player.transform.position.z;
+        Vector2Int hitDir = Vector2Int.zero;
 
         if (Mathf.Abs(playerLengthToSpikeX) > Mathf.Abs(playerLengthToSpikeZ))
-        {
-            if (playerLengthToSpikeX >= 0)
-            {
-                player.OnHit(Vector2Int.left);
-            }
-            else
-            {
-                player.OnHit(Vector2Int.right);
-            }
-
-        }
+            hitDir = playerLengthToSpikeX >= 0 ? Vector2Int.left : Vector2Int.right;
         else
-        {
-            if (playerLengthToSpikeZ >= 0)
-            {
-                player.OnHit(Vector2Int.down);
-            }
-            else
-            {
-                player.OnHit(Vector2Int.up);
-            }
-        }
+            hitDir = playerLengthToSpikeZ >= 0 ? Vector2Int.down : Vector2Int.up;
+        
+        player.OnHit(hitDir, true);
     }
 }
