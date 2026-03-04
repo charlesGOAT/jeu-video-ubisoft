@@ -38,7 +38,7 @@ public class LobbyManager : MonoBehaviour
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
-    public void GameStarted()
+    public void GameStarted(string levelName)
     {
         _inputManager.onPlayerJoined -= OnPlayerJoined; //Cannot join mid game
         foreach (PlayerInput playerInput in JoinedPlayers)
@@ -47,7 +47,7 @@ public class LobbyManager : MonoBehaviour
             playerInput.ActivateInput();
         }
         
-        SceneManager.LoadScene("TheRing");
+        SceneManager.LoadScene(levelName);
     }
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
