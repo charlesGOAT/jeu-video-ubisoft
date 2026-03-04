@@ -31,11 +31,15 @@ public class ItemsManager : MonoBehaviour
 
     private void Awake()
     {
+        InitialiseSpawners();
+        StartSpawning();
+    }
+
+    private void Start()
+    {
 #if !UNITY_EDITOR
         ApplyRuntimeConfig();
 #endif
-        InitialiseSpawners();
-        StartSpawning();
     }
 
     private void ApplyRuntimeConfig()

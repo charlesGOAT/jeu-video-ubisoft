@@ -15,7 +15,7 @@ public delegate void PlaceBombSuccessFul();
 public class Player : MonoBehaviour
 {
     [SerializeField]
-    private float speed = 5f;
+    private float speed = 8f;
 
     [SerializeField]
     private Bomb bombPrefab;
@@ -118,10 +118,18 @@ public class Player : MonoBehaviour
 
     private void Start()
     {
+#if !UNITY_EDITOR
+        GetConfigValues();
+#endif
         ConfigurePlayers();
         InitializeArrow();
         CheckStartConditions();
         InitializeSpawner();
+    }
+
+    private void GetConfigValues()
+    {
+        speed = GameManager.Instance.RuntimeConfig.MovementSpeed;
     }
 
     private void CheckStartConditions()

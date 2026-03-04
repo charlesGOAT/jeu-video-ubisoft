@@ -10,6 +10,7 @@ public class RuntimeConfigData
     public SpawnMode SpawnMode = SpawnMode.Fixed;
     public bool IsDropFromSky = false;
     public float GameDuration = 120f;
+    public float MovementSpeed = 15f;
 }
 
 public static class RuntimeConfigLoader
