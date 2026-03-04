@@ -14,10 +14,13 @@ public class MenuUIManager : MonoBehaviour
     
     private LobbyManager _lobbyManager;
 
-    private void Start()
+    private void Awake()
     {
         playButton.interactable = false;
-        
+    }
+    
+    private void Start()
+    {
         if (EventSystem.current != null)
         {
             EventSystem.current.SetSelectedGameObject(playButton.gameObject);
