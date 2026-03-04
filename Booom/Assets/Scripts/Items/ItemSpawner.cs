@@ -19,7 +19,7 @@ public class ItemSpawner : MonoBehaviour
     protected GameObject shadow;
     public ItemType AssociatedItemType => associatedItemType;
 
-    private void Awake()
+    private void Start()
     {
 #if !UNITY_EDITOR
         InitializeData(GetRightConfig());
