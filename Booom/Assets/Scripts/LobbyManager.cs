@@ -74,7 +74,7 @@ public class LobbyManager : MonoBehaviour
         }
     }
 
-    public void OnPlayerLeft(PlayerInput playerInput)
+    private void OnPlayerLeft(PlayerInput playerInput)
     {
         if (playerInput == null)
         {
