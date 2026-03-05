@@ -4,6 +4,7 @@ using UnityEngine.SceneManagement;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine.InputSystem.UI;
 
 public delegate void LobbyPlayerCountChanged(int playerCount);
 
@@ -17,6 +18,8 @@ public class LobbyManager : MonoBehaviour
     
     public static readonly Dictionary<PlayerEnum, PlayerInput> JoinedPlayers = new ();
     private PlayerInputManager _inputManager;
+    
+    private InputSystemUIInputModule[] _uiInputs;
 
     private void Awake()
     {
@@ -42,6 +45,11 @@ public class LobbyManager : MonoBehaviour
         _inputManager.onPlayerJoined -= OnPlayerJoined;
         _inputManager.onPlayerLeft -= OnPlayerLeft;
         SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    private void Start()
+    {
+       _uiInputs = FindObjectsByType<InputSystemUIInputModule>(FindObjectsSortMode.None);
     }
 
     public void GameStarted(string levelName)
@@ -75,6 +83,18 @@ public class LobbyManager : MonoBehaviour
         int leavingIndex = playerInput.playerIndex;
         PlayerEnum leavingPlayerEnum = (PlayerEnum) leavingIndex + 1;
         JoinedPlayers.Remove(leavingPlayerEnum);
+
+        if (playerInput.inputIsActive)
+        {
+            PlayerInput newUI = JoinedPlayers.First().Value;
+            newUI.SwitchCurrentActionMap("UI");
+            newUI.ActivateInput();
+
+            foreach (var uiInput in _uiInputs)
+            {
+                uiInput.actionsAsset = newUI.actions;
+            }
+        }
         
         OnLobbyPlayerCountChanged?.Invoke(leavingIndex + 1);
     }
@@ -110,7 +130,7 @@ public class LobbyManager : MonoBehaviour
         DontDestroyOnLoad(playerInput.gameObject);
         JoinedPlayers[playerEnum] = playerInput;
 
-        if (playerEnum == PlayerEnum.Player1)
+        if (JoinedPlayers.Count == 1)
         {
             playerInput.SwitchCurrentActionMap("UI"); //Only Player 1 can navigate in the menu
         }
