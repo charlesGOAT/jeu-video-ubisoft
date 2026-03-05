@@ -4,7 +4,9 @@ using UnityEngine.SceneManagement;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem.UI;
+using UnityEngine.UI;
 
 public delegate void LobbyPlayerCountChanged(int playerCount);
 
@@ -84,16 +86,10 @@ public class LobbyManager : MonoBehaviour
         PlayerEnum leavingPlayerEnum = (PlayerEnum) leavingIndex + 1;
         JoinedPlayers.Remove(leavingPlayerEnum);
 
-        if (playerInput.inputIsActive)
+        if (playerInput.inputIsActive && JoinedPlayers.Count > 0)
         {
             PlayerInput newUI = JoinedPlayers.First().Value;
-            newUI.SwitchCurrentActionMap("UI");
-            newUI.ActivateInput();
-
-            foreach (var uiInput in _uiInputs)
-            {
-                uiInput.actionsAsset = newUI.actions;
-            }
+            GiveUIControl(newUI);
         }
         
         OnLobbyPlayerCountChanged?.Invoke(leavingIndex + 1);
@@ -132,7 +128,7 @@ public class LobbyManager : MonoBehaviour
 
         if (JoinedPlayers.Count == 1)
         {
-            playerInput.SwitchCurrentActionMap("UI"); //Only Player 1 can navigate in the menu
+            GiveUIControl(playerInput);
         }
         else
         {
@@ -140,5 +136,21 @@ public class LobbyManager : MonoBehaviour
         }
         
         OnLobbyPlayerCountChanged?.Invoke(intPlayerEnum);
+    }
+
+    private void GiveUIControl(PlayerInput playerInput)
+    {
+        playerInput.SwitchCurrentActionMap("UI");
+        playerInput.ActivateInput();
+
+        foreach (var uiInput in _uiInputs)
+        {
+            uiInput.actionsAsset = playerInput.actions;
+        }
+        
+        EventSystem.current.SetSelectedGameObject(null);
+        
+        Selectable first = Selectable.allSelectablesArray.First();
+        EventSystem.current.SetSelectedGameObject(first.gameObject);
     }
 }
