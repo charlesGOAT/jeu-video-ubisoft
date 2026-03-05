@@ -21,13 +21,7 @@ public class MenuUIManager : MonoBehaviour
     
     private void Start()
     {
-        if (EventSystem.current != null)
-        {
-            EventSystem.current.SetSelectedGameObject(playButton.gameObject);
-        }
-
         _lobbyManager = LobbyManager.Instance;
-        
         _lobbyManager.OnLobbyPlayerCountChanged += UnlockPlayButton;
     }
 
