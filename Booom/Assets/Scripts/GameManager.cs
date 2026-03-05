@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
@@ -130,7 +131,9 @@ public class GameManager : MonoBehaviour
 
     public void SpawnPlayers()
     {
-        foreach (var playerInput in LobbyManager.JoinedPlayers.Values)
+        var playersToSpawn = LobbyManager.JoinedPlayers.Values.ToList();
+        
+        foreach (var playerInput in playersToSpawn)
         {
             Vector2Int spawnPoint = GridManager.playerSpawnPoints[playerInput.playerIndex];
             spawnPoint *= GameConstants.UNITY_GRID_SIZE;

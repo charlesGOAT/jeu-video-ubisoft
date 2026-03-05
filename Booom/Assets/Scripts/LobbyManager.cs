@@ -66,12 +66,14 @@ public class LobbyManager : MonoBehaviour
 
     public void OnPlayerLeft(PlayerInput playerInput)
     {
+        if (playerInput == null)
+        {
+            throw new Exception("No active Player Input Leaving");
+        }
         if (!JoinedPlayers.Values.Contains(playerInput)) return;
         
         int leavingIndex = playerInput.playerIndex;
         PlayerEnum leavingPlayerEnum = (PlayerEnum) leavingIndex + 1;
-        
-        Player.PlayerColorDict.Remove(leavingPlayerEnum);
         JoinedPlayers.Remove(leavingPlayerEnum);
         
         OnLobbyPlayerCountChanged?.Invoke(leavingIndex + 1);
@@ -81,7 +83,7 @@ public class LobbyManager : MonoBehaviour
     {
         if (playerInput == null)
         {
-            throw new Exception("No active Player Input");
+            throw new Exception("No active Player Input Joining");
         }
         int intPlayerEnum = playerInput.playerIndex + 1;
         PlayerEnum playerEnum = (PlayerEnum) intPlayerEnum;
