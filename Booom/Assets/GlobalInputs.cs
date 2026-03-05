@@ -4,25 +4,25 @@ using UnityEngine.InputSystem;
 
 public class GlobalInputs : MonoBehaviour
 {
-    private InputActions input;
+    private InputActions _input;
     private MenuUIManager _menuUI;
 
     private void Awake()
     {
-        input = new InputActions();
+        _input = new InputActions();
         _menuUI = FindFirstObjectByType<MenuUIManager>();
     }
 
     private void OnEnable()
     {
-        input.Global.Enable();
-        input.Global.Return.performed += OnReturn;
+        _input.Global.Enable();
+        _input.Global.Return.performed += OnReturn;
     }
 
     private void OnDisable()
     {
-        input.Global.Return.performed -= OnReturn;
-        input.Global.Disable();
+        _input.Global.Return.performed -= OnReturn;
+        _input.Global.Disable();
     }
 
     private void OnReturn(UnityEngine.InputSystem.InputAction.CallbackContext ctx)
@@ -32,7 +32,7 @@ public class GlobalInputs : MonoBehaviour
 
         if (_menuUI.isSelectingLevel)
         {
-            if (player.currentActionMap.enabled)
+            if (player.inputIsActive)
             {
                 _menuUI.ReturnToMainMenu();
             }
