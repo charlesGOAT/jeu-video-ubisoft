@@ -122,7 +122,6 @@ public class Player : MonoBehaviour
         GetConfigValues();
 #endif
         ConfigurePlayers();
-        InitializeArrow();
         CheckStartConditions();
         InitializeSpawner();
     }
@@ -204,34 +203,12 @@ public class Player : MonoBehaviour
         trans.position = new Vector3(worldPos.x, trans.position.y, worldPos.z);
     }
 
-    private void InitializeArrow()
-    {
-        foreach (var children in arrow.GetComponentsInChildren<Renderer>())
-        {
-            children.material.color = playerColor;
-        }
-    }
-
     public void OnMove(InputAction.CallbackContext ctx)
     {
         _moveInput = ctx.ReadValue<Vector2>();
         if (_moveInput != Vector2.zero) 
         {
             _lastInput = GetBombPlacementDirection(_moveInput);
-        }
-    
-        RotateArrow();
-    }
-    
-    private void RotateArrow()
-    {
-        Vector3 targetDirection = _lastInput * (float)(Tile.TileLength / 2.0);
-        if (targetDirection != Vector3.zero) 
-        {
-            Quaternion targetRotation = Quaternion.LookRotation(targetDirection, Vector3.up);
-
-            arrow.transform.rotation = targetRotation;
-            arrow.transform.position = transform.position + targetDirection;
         }
     }
 
@@ -247,9 +224,8 @@ public class Player : MonoBehaviour
                  (BombFusingType.Equals(BombFusingType.Chained) || !GameManager.Instance.BombManager.HasChainedBombs(playerNb)))
         {
             OnPlaceBomb?.Invoke();
-            Vector3 bombDirection = _moveInput.sqrMagnitude > 0.0001f ? GetBombPlacementDirection(_moveInput) : _lastInput;
-
-            if (GameManager.Instance.BombManager.CreateBomb(transform.position + (bombDirection * Tile.TileLength),
+            
+            if (GameManager.Instance.BombManager.CreateBomb(transform.position,
                     playerNb, _bombFusingStrategies[(int)BombFusingType], ShouldNextBombBeTransparent))
             {
                 OnPlaceBombSuccessful?.Invoke();
