@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 2e19d6e1252e29147be830dcaa63abf0
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 193819
+  packageName: CVD Filter (URP)
+  packageVersion: 2.0.0
+  assetPath: Assets/CVDFilter/Scripts/CVDProfiles.asset
+  uploadId: 507914

@@ -1,7 +1,7 @@
-using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using TMPro;
 
 public class MenuUIManager : MonoBehaviour
 {
@@ -11,6 +11,7 @@ public class MenuUIManager : MonoBehaviour
     [SerializeField] private Canvas mainMenuCanvas;
     [SerializeField] private Canvas levelsCanvas;
     [SerializeField] private Image levelPreviewImage;
+    [SerializeField] private TMP_Dropdown colorblindDropdown;
     
     private LobbyManager _lobbyManager;
 
@@ -44,6 +45,12 @@ public class MenuUIManager : MonoBehaviour
         slot.playerLabel.text = $"Player {playerCount}";
         slot.lockedImage.gameObject.SetActive(false);
         slot.coloredCharacter.gameObject.SetActive(true);
+    }
+
+    public void Settings()
+    {
+        var temp = colorblindDropdown.gameObject.activeSelf;
+        colorblindDropdown.gameObject.SetActive(!temp);
     }
 
     public void ChangeMap()
