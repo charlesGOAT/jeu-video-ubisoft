@@ -4,6 +4,27 @@ using System.Linq;
 
 public delegate void ScoreChangedEventHandler(PlayerEnum player, int score);
 
+public class EndGameResult
+{
+    public bool IsDraw { get; }
+    public PlayerEnum Winner { get; }
+    public IReadOnlyList<PlayerEnum> TiedPlayers { get; }
+
+    public EndGameResult(PlayerEnum winner)
+    {
+        IsDraw = false;
+        Winner = winner;
+        TiedPlayers = new List<PlayerEnum>();
+    }
+
+    public EndGameResult(IReadOnlyList<PlayerEnum> tiedPlayers)
+    {
+        IsDraw = true;
+        Winner = PlayerEnum.None;
+        TiedPlayers = tiedPlayers;
+    }
+}
+
 public class ScoreManager : MonoBehaviour
 {
     private readonly HashSet<Vector2Int>[] _acquiredTilesByPlayer = new HashSet<Vector2Int>[GameConstants.NB_PLAYERS];
@@ -78,6 +99,69 @@ public class ScoreManager : MonoBehaviour
         }
 
         return (PlayerEnum)(indexMax + 1);
+    }
+
+    public EndGameResult GetEndGameResultByTilesThenKills()
+    {
+        List<int> tileLeaders = new();
+        int maxTiles = -1;
+
+        for (int i = 0; i < _acquiredTilesByPlayer.Length; i++)
+        {
+            int tileCount = _acquiredTilesByPlayer[i].Count;
+            if (tileCount > maxTiles)
+            {
+                maxTiles = tileCount;
+                tileLeaders.Clear();
+                tileLeaders.Add(i);
+            }
+            else if (tileCount == maxTiles)
+            {
+                tileLeaders.Add(i);
+            }
+        }
+
+        if (tileLeaders.Count == 1)
+        {
+            return new EndGameResult((PlayerEnum)(tileLeaders[0] + 1));
+        }
+
+        List<int> killLeaders = new();
+        int maxKills = -1;
+
+        foreach (int playerIndex in tileLeaders)
+        {
+            PlayerEnum player = (PlayerEnum)(playerIndex + 1);
+            int kills = GetPlayerKills(player);
+
+            if (kills > maxKills)
+            {
+                maxKills = kills;
+                killLeaders.Clear();
+                killLeaders.Add(playerIndex);
+            }
+            else if (kills == maxKills)
+            {
+                killLeaders.Add(playerIndex);
+            }
+        }
+
+        if (killLeaders.Count == 1)
+        {
+            return new EndGameResult((PlayerEnum)(killLeaders[0] + 1));
+        }
+
+        List<PlayerEnum> tiedPlayers = killLeaders
+            .Select(index => (PlayerEnum)(index + 1))
+            .ToList();
+
+        return new EndGameResult(tiedPlayers);
+    }
+
+    private int GetPlayerKills(PlayerEnum player)
+    {
+        Player playerComponent = Player.ActivePlayers.FirstOrDefault(activePlayer => activePlayer.PlayerNb == player);
+        return playerComponent == null ? 0 : playerComponent.NbKills;
     }
 
     public HashSet<Vector2Int>[] GetAcquiredTilesByPlayer()
