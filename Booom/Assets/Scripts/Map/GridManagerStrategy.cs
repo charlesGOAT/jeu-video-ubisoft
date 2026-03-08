@@ -18,6 +18,28 @@ public abstract class GridManagerStrategy : MonoBehaviour
 
     [SerializeField]
     protected Camera mainCamera;
+
+    [Header("Camera Framing")]
+    [SerializeField]
+    private bool autoFrameCamera = true;
+
+    [SerializeField]
+    private Vector2 cameraAngles = new Vector2(55f, 45f);
+
+    [SerializeField]
+    private float cameraDistanceMultiplier = 1.15f;
+
+    [SerializeField]
+    private float cameraMinDistance = 10f;
+
+    [SerializeField]
+    private float cameraMaxDistance = 120f;
+
+    [SerializeField]
+    private float cameraVerticalPadding = 4f;
+
+    [SerializeField]
+    private bool autoAdjustOrthographicSize = true;
     
     [SerializeField] 
     public Vector2Int[] playerSpawnPoints;
@@ -92,8 +114,47 @@ public abstract class GridManagerStrategy : MonoBehaviour
         float centerX = (MapUpperLimit.x - ((MapUpperLimit.x - MapLowerLimit.x) / 2f)) * GameConstants.UNITY_GRID_SIZE;
         float centerZ = (MapUpperLimit.y - ((MapUpperLimit.y - MapLowerLimit.y) / 2f)) * GameConstants.UNITY_GRID_SIZE;
 
-        mainCamera.transform.position = new Vector3(centerX - (Height * GameConstants.UNITY_GRID_SIZE) / 2f, ((Width + Height) * GameConstants.UNITY_GRID_SIZE) / 2f, centerZ);
-        mainCamera.transform.rotation = Quaternion.Euler(60f, 90f, 0f);
+        Vector3 mapCenter = new Vector3(centerX, 0f, centerZ);
+        Vector3 mapSize = new Vector3(Width * GameConstants.UNITY_GRID_SIZE, 0f, Height * GameConstants.UNITY_GRID_SIZE);
+
+        Quaternion cameraRotation = Quaternion.Euler(cameraAngles.x, cameraAngles.y, 0f);
+        mainCamera.transform.rotation = cameraRotation;
+
+        if (!autoFrameCamera)
+        {
+            return;
+        }
+
+        float longestSide = Mathf.Max(mapSize.x, mapSize.z);
+        float diagonal = new Vector2(mapSize.x, mapSize.z).magnitude;
+        float framingBaseSize = Mathf.Max(longestSide, diagonal * 0.65f);
+
+        if (mainCamera.orthographic)
+        {
+            if (autoAdjustOrthographicSize)
+            {
+                mainCamera.orthographicSize = Mathf.Max(1f, (framingBaseSize * 0.5f) + cameraVerticalPadding);
+            }
+
+            float orthographicDistance = Mathf.Clamp(
+                framingBaseSize * cameraDistanceMultiplier,
+                cameraMinDistance,
+                cameraMaxDistance
+            );
+
+            mainCamera.transform.position = mapCenter - (mainCamera.transform.forward * orthographicDistance);
+            return;
+        }
+
+        float halfFovRad = mainCamera.fieldOfView * 0.5f * Mathf.Deg2Rad;
+        float requiredDistance = (framingBaseSize * 0.5f) / Mathf.Tan(halfFovRad);
+        float cameraDistance = Mathf.Clamp(
+            (requiredDistance + cameraVerticalPadding) * cameraDistanceMultiplier,
+            cameraMinDistance,
+            cameraMaxDistance
+        );
+
+        mainCamera.transform.position = mapCenter - (mainCamera.transform.forward * cameraDistance);
     }
 
     public Vector3 GetRandomPosOnGridWithNoItem()

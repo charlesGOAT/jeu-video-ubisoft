@@ -332,6 +332,36 @@ public class Player : MonoBehaviour
         return jumpInitialVelocity;
     }
 
+    private Vector3 GetCameraRelativeGridDirection(Vector2 input)
+    {
+        if (input.sqrMagnitude <= 0.0001f)
+        {
+            return Vector3.zero;
+        }
+
+        Camera currentCamera = Camera.main;
+        if (currentCamera == null)
+        {
+            return new Vector3(input.y, 0f, -input.x).normalized;
+        }
+
+        Vector3 cameraForward = currentCamera.transform.forward;
+        cameraForward.y = 0f;
+        cameraForward.Normalize();
+
+        Vector3 cameraRight = currentCamera.transform.right;
+        cameraRight.y = 0f;
+        cameraRight.Normalize();
+
+        Vector3 worldDirection = (cameraForward * input.y) + (cameraRight * input.x);
+        if (worldDirection.sqrMagnitude <= 0.0001f)
+        {
+            return Vector3.zero;
+        }
+
+        return worldDirection.normalized;
+    }
+
 
     public void UpdateJump() 
     {
@@ -355,7 +385,8 @@ public class Player : MonoBehaviour
 
         float boost = CheckIfOnOwnColor() ? GameConstants.COLOR_BOOST : (CheckIfOnEnemyTerritory() ? GameConstants.COLOR_DEBUFF: 1);
 
-        Vector3 move = new Vector3(curMoveInput.y, 0, -curMoveInput.x) * (speed * boost);
+        Vector3 moveDirection = GetCameraRelativeGridDirection(curMoveInput);
+        Vector3 move = moveDirection * (speed * boost);
         float tempMove = ApplyGravity(ref _verticalVelocity);
 
         _characterController.Move(move * Time.deltaTime);
@@ -456,8 +487,7 @@ public class Player : MonoBehaviour
 
     private Vector3 GetBombPlacementDirection(Vector2 input)
     {
-        //a cause de la camera les inputs sont weird
-        Vector3 worldDirection = new(input.y, 0f, -input.x);
+        Vector3 worldDirection = GetCameraRelativeGridDirection(input);
         float absX = Mathf.Abs(worldDirection.x);
         float absZ = Mathf.Abs(worldDirection.z);
 
