@@ -101,9 +101,15 @@ public class GameUIManager : MonoBehaviour
         timer.text = $"{GameManager.Instance.CurrentMinutes}:{GameManager.Instance.CurrentSeconds:D2}";
     }
 
-    public void DisplayEventPanel(string bombTypeName)
+    public void DisplayEventPanel()
     {
-        eventPanelText.text = $"Bomb type is now {bombTypeName}!";
+        eventPanelText.text = $"Bomb type is now {bombType.text}!";
+        StartCoroutine(EventPanelCoroutine());
+    }
+    
+    public void DisplayEventPanel(string eventText)
+    {
+        eventPanelText.text = eventText;
         StartCoroutine(EventPanelCoroutine());
     }
 

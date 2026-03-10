@@ -37,6 +37,8 @@ public class GameManager : MonoBehaviour
     public GameUIManager GameUIManager { get; private set; }
     public EventManager EventManager { get; private set; }
 
+    public readonly int[] CollisionLayers = new int[GameConstants.NB_PLAYERS] { 8, 9, 10, 11 };
+
     // add other managers
     
     public static GameManager Instance
@@ -153,7 +155,8 @@ public class GameManager : MonoBehaviour
         {
             Vector2Int spawnPoint = GridManager.playerSpawnPoints[playerInput.playerIndex];
             spawnPoint *= GameConstants.UNITY_GRID_SIZE;
-            
+
+            playerPrefab.layer = CollisionLayers[playerInput.playerIndex];
             PlayerInput newInput = PlayerInput.Instantiate(playerPrefab, playerIndex:playerInput.playerIndex, pairWithDevices:playerInput.devices.ToArray());
             newInput.transform.position = new Vector3(spawnPoint.x, 2.0f, spawnPoint.y);
             
