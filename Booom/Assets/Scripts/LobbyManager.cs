@@ -3,16 +3,25 @@ using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using UnityEngine.EventSystems;
+using UnityEngine.InputSystem.UI;
+using UnityEngine.UI;
 
 public delegate void LobbyPlayerCountChanged(int playerCount);
 
 public class LobbyManager : MonoBehaviour
 {
+    [SerializeField] 
+    private GameObject _menuPlayerPrefab;
+    
     public static LobbyManager Instance { get; private set; }
     public event LobbyPlayerCountChanged OnLobbyPlayerCountChanged;
     
-    public static readonly List<PlayerInput> JoinedPlayers = new ();
+    public static readonly Dictionary<PlayerEnum, PlayerInput> JoinedPlayers = new ();
     private PlayerInputManager _inputManager;
+    
+    private InputSystemUIInputModule[] _uiInputs;
 
     private void Awake()
     {
@@ -29,19 +38,26 @@ public class LobbyManager : MonoBehaviour
     private void OnEnable()
     {
         _inputManager.onPlayerJoined += OnPlayerJoined;
+        _inputManager.onPlayerLeft += OnPlayerLeft;
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
     private void OnDisable()
     {
         _inputManager.onPlayerJoined -= OnPlayerJoined;
+        _inputManager.onPlayerLeft -= OnPlayerLeft;
         SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    private void Start()
+    {
+       _uiInputs = FindObjectsByType<InputSystemUIInputModule>(FindObjectsSortMode.None);
     }
 
     public void GameStarted(string levelName)
     {
         _inputManager.onPlayerJoined -= OnPlayerJoined; //Cannot join mid game
-        foreach (PlayerInput playerInput in JoinedPlayers)
+        foreach (PlayerInput playerInput in JoinedPlayers.Values)
         {
             playerInput.SwitchCurrentActionMap("Player");
             playerInput.ActivateInput();
@@ -58,11 +74,32 @@ public class LobbyManager : MonoBehaviour
         }
     }
 
-    public void OnPlayerJoined(PlayerInput playerInput)
+    private void OnPlayerLeft(PlayerInput playerInput)
     {
         if (playerInput == null)
         {
-            throw new Exception("No active Player Input");
+            throw new Exception("No active Player Input Leaving");
+        }
+        if (!JoinedPlayers.Values.Contains(playerInput)) return;
+        
+        int leavingIndex = playerInput.playerIndex;
+        PlayerEnum leavingPlayerEnum = (PlayerEnum) leavingIndex + 1;
+        JoinedPlayers.Remove(leavingPlayerEnum);
+
+        if (playerInput.inputIsActive && JoinedPlayers.Count > 0)
+        {
+            PlayerInput newUI = JoinedPlayers.First().Value;
+            GiveUIControl(newUI);
+        }
+        
+        OnLobbyPlayerCountChanged?.Invoke(leavingIndex + 1);
+    }
+
+    private void OnPlayerJoined(PlayerInput playerInput)
+    {
+        if (playerInput == null)
+        {
+            throw new Exception("No active Player Input Joining");
         }
         int intPlayerEnum = playerInput.playerIndex + 1;
         PlayerEnum playerEnum = (PlayerEnum) intPlayerEnum;
@@ -87,17 +124,33 @@ public class LobbyManager : MonoBehaviour
         }
         
         DontDestroyOnLoad(playerInput.gameObject);
-        JoinedPlayers.Add(playerInput);
+        JoinedPlayers[playerEnum] = playerInput;
 
-        if (playerEnum == PlayerEnum.Player1)
+        if (JoinedPlayers.Count == 1)
         {
-            playerInput.SwitchCurrentActionMap("UI"); //Only Player 1 can navigate in the menu
+            GiveUIControl(playerInput);
         }
         else
         {
-            playerInput.DeactivateInput(); //Idk if its problematic to not deactivate it
+            playerInput.DeactivateInput();
         }
         
         OnLobbyPlayerCountChanged?.Invoke(intPlayerEnum);
+    }
+
+    private void GiveUIControl(PlayerInput playerInput)
+    {
+        playerInput.SwitchCurrentActionMap("UI");
+        playerInput.ActivateInput();
+
+        foreach (var uiInput in _uiInputs)
+        {
+            uiInput.actionsAsset = playerInput.actions;
+        }
+        
+        EventSystem.current.SetSelectedGameObject(null);
+        
+        Selectable first = Selectable.allSelectablesArray.First();
+        EventSystem.current.SetSelectedGameObject(first.gameObject);
     }
 }
