@@ -202,6 +202,14 @@ public class Bomb : MonoBehaviour
             
         BombFusingStrategy.OnCollision(this);
     }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            gameObject.layer = LayerMask.NameToLayer("Bomb");
+        }
+    }
 }
 
 public enum BombEnum

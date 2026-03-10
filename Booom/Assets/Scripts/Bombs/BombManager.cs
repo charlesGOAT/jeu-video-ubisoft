@@ -52,6 +52,7 @@ public class BombManager : MonoBehaviour
         Bomb instantiatedBomb = Instantiate(bombPrefabs[intBombType], worldPosition + bombHeight, Quaternion.identity);
         instantiatedBomb.BombFusingStrategy = bombStrat;
         instantiatedBomb.IsTransparentBomb = isTransparentBomb;
+        instantiatedBomb.gameObject.layer = LayerMask.NameToLayer("NewBomb");
 
         if (isChained)
             _chainedBombsPerPlayer[playerEnum].Add(instantiatedBomb);
