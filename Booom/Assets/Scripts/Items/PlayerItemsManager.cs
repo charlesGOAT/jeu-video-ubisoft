@@ -58,6 +58,8 @@ public class PlayerItemsManager : MonoBehaviour
                 return new ChainBombsItem();
             case ItemType.TargetBomb:
                 return new TargetBombItem();
+            case ItemType.FreezeBomb:
+                return new FreezeBombItem();
             
             // todo : add more
         }

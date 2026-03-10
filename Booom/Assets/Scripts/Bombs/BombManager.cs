@@ -25,7 +25,7 @@ public class BombManager : MonoBehaviour
         }
     }
     
-    public virtual bool CreateBomb(Vector3 position, PlayerEnum playerEnum, BombFusingStrategy bombStrat, bool isTransparentBomb = false)
+    public virtual bool CreateBomb(Vector3 position, PlayerEnum playerEnum, BombFusingStrategy bombStrat, bool isTransparentBomb = false, bool isNextBombFreeze = false)
     {
         bool isChained = bombStrat is ChainedBombFusingStrategy;
         

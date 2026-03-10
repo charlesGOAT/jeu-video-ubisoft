@@ -58,7 +58,6 @@ public class Player : MonoBehaviour
 
     private Vector2 _moveInput;
     private Vector3 _lastInput;
-    public bool ShouldNextBombBeTransparent = false;
     
     public PlayerEnum PlayerNb => playerNb;
 
@@ -75,6 +74,8 @@ public class Player : MonoBehaviour
     private JumpState _jumpState;
 
     public BombFusingType BombFusingType { get; set; }
+    public bool ShouldNextBombBeTransparent = false;
+    public bool ShouldNextBombFreezeBomb = false;
     
     //nom de caca
     private float _actualImmuneTimer;
@@ -250,7 +251,7 @@ public class Player : MonoBehaviour
             Vector3 bombDirection = _moveInput.sqrMagnitude > 0.0001f ? GetBombPlacementDirection(_moveInput) : _lastInput;
 
             if (GameManager.Instance.BombManager.CreateBomb(transform.position + (bombDirection * Tile.TileLength),
-                    playerNb, _bombFusingStrategies[(int)BombFusingType], ShouldNextBombBeTransparent))
+                    playerNb, _bombFusingStrategies[(int)BombFusingType], ShouldNextBombBeTransparent, ShouldNextBombFreezeBomb))
             {
                 OnPlaceBombSuccessful?.Invoke();
             }
