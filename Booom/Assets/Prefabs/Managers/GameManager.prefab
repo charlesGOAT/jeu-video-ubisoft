@@ -44,4 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84404692a4af4646b2526b76a139b5c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: GameplayAssembly::GameManager
-  isSpreadingMode: 0
+  playerPrefab: {fileID: 0}
+  _gameDuration: 120
+  _isSpreadingMode: 1
+  _isBonusSpeed: 0

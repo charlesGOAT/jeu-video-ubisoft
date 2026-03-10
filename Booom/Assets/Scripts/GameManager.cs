@@ -7,6 +7,8 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
+    private static GameManager _instance;
+
     [SerializeField]
     private GameObject playerPrefab;
     private float _timeRemaining;
@@ -36,7 +38,27 @@ public class GameManager : MonoBehaviour
     public GameUIManager GameUIManager { get; private set; }
     public EventManager EventManager { get; private set; }
 
+    public readonly int[] CollisionLayers = new int[GameConstants.NB_PLAYERS] { 8, 9, 10, 11 };
+
     // add other managers
+    
+    public static GameManager Instance
+    {
+        get
+        {
+            if (_instance == null)
+            {
+                _instance = FindFirstObjectByType<GameManager>() ?? CreateInstance();
+                _instance.GetManagers(); 
+                
+#if !UNITY_EDITOR
+                _instance.InitializeRuntimeConfig();
+#endif
+            }
+
+            return _instance;
+        }
+    }
 
     private void Update()
     {
@@ -60,16 +82,15 @@ public class GameManager : MonoBehaviour
         _timeRemaining = _gameDuration;
         _timerRunning = true;
     }
-
-    public static GameManager Instance { get; private set; }
     
     private void Awake()
     {
-        if (Instance != null && Instance != this)
+        if (_instance != null && _instance != this)
         {
-            Destroy(gameObject);
+            Destroy(_instance.gameObject);
         }
-        Instance = this;
+        
+        _instance = this;
         GetManagers();
 
 #if !UNITY_EDITOR
@@ -137,7 +158,8 @@ public class GameManager : MonoBehaviour
         {
             Vector2Int spawnPoint = GridManager.playerSpawnPoints[playerInput.playerIndex];
             spawnPoint *= GameConstants.UNITY_GRID_SIZE;
-            
+
+            playerPrefab.layer = CollisionLayers[playerInput.playerIndex];
             PlayerInput newInput = PlayerInput.Instantiate(playerPrefab, playerIndex:playerInput.playerIndex, pairWithDevices:playerInput.devices.ToArray());
             newInput.transform.position = new Vector3(spawnPoint.x, 2.0f, spawnPoint.y);
             
