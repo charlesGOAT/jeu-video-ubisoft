@@ -21,12 +21,12 @@ public class Tile : MonoBehaviour
             TileLength = transform.GetChild(0).localScale.x;
         }
 
-        _tileRenderer = transform.Find("TileMesh").GetComponent<Renderer>();
+        _tileRenderer = GetComponentInChildren<Renderer>();
         InitializeTileCoordinates();
 
         _neutralColor = _tileRenderer.material.color;
     }
-    
+
     public virtual void ChangeTileColor(PlayerEnum newOwner)
     {
         if (CurrentTileOwner != newOwner)
