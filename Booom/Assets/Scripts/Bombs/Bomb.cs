@@ -156,7 +156,7 @@ public class Bomb : MonoBehaviour
 
     private bool PaintTile(in Tile tile, PlayerEnum newTileOwner)
     {
-        if (tile == null || tile.IsObstacle)
+        if (tile == null || tile.IsObstacle || tile.IsSpawn)
         {
             return false;
         }
