@@ -11,6 +11,8 @@ public class MenuUIManager : MonoBehaviour
     [SerializeField] private Canvas mainMenuCanvas;
     [SerializeField] private Canvas levelsCanvas;
     [SerializeField] private Image levelPreviewImage;
+
+    public bool isSelectingLevel;
     
     private LobbyManager _lobbyManager;
 
@@ -25,29 +27,45 @@ public class MenuUIManager : MonoBehaviour
         _lobbyManager.OnLobbyPlayerCountChanged += UnlockPlayButton;
     }
 
-    private void UnlockPlayButton(int playerCount)
+    private void OnDestroy()
     {
-        playButton.interactable = playerCount > 1;
-        ShowPlayerJoined(playerCount);
+        _lobbyManager.OnLobbyPlayerCountChanged -= UnlockPlayButton;
     }
 
-    private void ShowPlayerJoined(int playerCount)
+    private void UnlockPlayButton(int playerCount)
+    {
+        playButton.interactable = LobbyManager.JoinedPlayers.Count > 1;
+        TogglePlayerUI(playerCount);
+    }
+
+    private void TogglePlayerUI(int playerCount)
     {
         var slot = playerSlots[playerCount - 1];
 
-        slot.playerLabel.text = $"Player {playerCount}";
-        slot.lockedImage.gameObject.SetActive(false);
-        slot.coloredCharacter.gameObject.SetActive(true);
+        if (slot.lockedImage.gameObject.activeSelf)
+        {
+            slot.playerLabel.text = $"Player {playerCount}";
+            slot.lockedImage.gameObject.SetActive(false);
+            slot.coloredCharacter.gameObject.SetActive(true);
+        }
+        else
+        {
+            slot.playerLabel.text = $"Press any button to join";
+            slot.lockedImage.gameObject.SetActive(true);
+            slot.coloredCharacter.gameObject.SetActive(false);
+        }
     }
 
     public void ChangeMap()
     {
+        isSelectingLevel = !isSelectingLevel;
         mainMenuCanvas.gameObject.SetActive(false);
         levelsCanvas.gameObject.SetActive(true);
     }
 
     public void ReturnToMainMenu()
     {
+        isSelectingLevel = !isSelectingLevel;
         levelsCanvas.gameObject.SetActive(false);
         mainMenuCanvas.gameObject.SetActive(true);
     }
