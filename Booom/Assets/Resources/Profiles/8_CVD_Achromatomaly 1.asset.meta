@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 7bc0cd8dfa8077b4bb529de8dc7e384c
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 193819
+  packageName: CVD Filter (URP)
+  packageVersion: 2.0.0
+  assetPath: Assets/CVDFilter/Profiles/8_CVD_Achromatomaly 1.asset
+  uploadId: 507914

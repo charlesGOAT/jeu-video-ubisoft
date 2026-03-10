@@ -1,7 +1,7 @@
-using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using TMPro;
 
 public class MenuUIManager : MonoBehaviour
 {
@@ -11,6 +11,7 @@ public class MenuUIManager : MonoBehaviour
     [SerializeField] private Canvas mainMenuCanvas;
     [SerializeField] private Canvas levelsCanvas;
     [SerializeField] private Image levelPreviewImage;
+    [SerializeField] private TMP_Dropdown colorblindDropdown;
 
     public bool isSelectingLevel;
     
@@ -54,6 +55,12 @@ public class MenuUIManager : MonoBehaviour
             slot.lockedImage.gameObject.SetActive(true);
             slot.coloredCharacter.gameObject.SetActive(false);
         }
+    }
+
+    public void Settings()
+    {
+        var temp = colorblindDropdown.gameObject.activeSelf;
+        colorblindDropdown.gameObject.SetActive(!temp);
     }
 
     public void ChangeMap()
