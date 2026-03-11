@@ -17,7 +17,7 @@ public class Tile : MonoBehaviour
 
     private Color _neutralColor;
 
-    public bool IsSpawn { get; private set; } = false;
+    public bool IsSpawn { get; set; }
 
     protected virtual void Awake()
     {

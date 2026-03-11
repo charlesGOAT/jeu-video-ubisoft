@@ -174,9 +174,13 @@ public class Player : MonoBehaviour
 
         int mult = isMod2Zero ? intPlayerNb / 2 : (intPlayerNb + 1) / 2;
         Vector2Int spawnPointGrid = new Vector2Int(GameManager.Instance.GridManager.MapUpperLimit.x * mult, posY);
-        
-        if(GameManager.Instance.IsSpreadingMode)
-            GameManager.Instance.GridManager.GetTileAtCoordinates(spawnPointGrid).ChangeTileColor(playerNb); 
+
+        if (GameManager.Instance.IsSpreadingMode)
+        {
+            Tile tile = GameManager.Instance.GridManager.GetTileAtCoordinates(spawnPointGrid);
+            tile.ChangeTileColor(playerNb);
+            tile.IsSpawn = true;
+        }
         
         MovePlayerOnSpawnPoint(spawnPointGrid);
     }
