@@ -54,7 +54,7 @@ public class BombManager : MonoBehaviour
         }
     }
     
-    public virtual bool CreateBomb(in Vector3 position, in Player player,in BombFusingStrategy bombStrat, bool isTransparentBomb = false)
+    public virtual bool CreateBomb(in Vector3 position, in Player player,in BombFusingStrategy bombStrat, bool isTransparentBomb = false, bool isFreezeBomb = false)
     {
         bool isChained = bombStrat is ChainedBombFusingStrategy;
         PlayerEnum playerEnum = player.PlayerNb;
@@ -82,6 +82,7 @@ public class BombManager : MonoBehaviour
         Bomb instantiatedBomb = Instantiate(bombPrefabs[intBombType], worldPosition + bombHeight, Quaternion.identity);
         instantiatedBomb.BombFusingStrategy = bombStrat;
         instantiatedBomb.IsTransparentBomb = isTransparentBomb;
+        instantiatedBomb.IsFreezeBomb = isFreezeBomb;
 
         if(ShouldBombCollideWithPlayers)
             StartCoroutine(ChangeColliderLayer(instantiatedBomb, player.gameObject));

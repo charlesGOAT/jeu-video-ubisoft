@@ -18,9 +18,6 @@ public class Player : MonoBehaviour
     private float speed = 8f;
 
     [SerializeField]
-    private Bomb bombPrefab;
-
-    [SerializeField]
     private Color playerColor = Color.red;
 
     [SerializeField]
@@ -41,9 +38,6 @@ public class Player : MonoBehaviour
     [SerializeField]
     private float tileDetectionTolerance = 0.35f;
 
-    [SerializeField]
-    private GameObject arrow;
-
     private BombFusingStrategy[] _bombFusingStrategies = new []
         {
             new BombFusingStrategy(),
@@ -58,7 +52,6 @@ public class Player : MonoBehaviour
 
     private Vector2 _moveInput;
     private Vector3 _lastInput;
-    public bool ShouldNextBombBeTransparent = false;
     
     public PlayerEnum PlayerNb => playerNb;
 
@@ -75,6 +68,8 @@ public class Player : MonoBehaviour
     private JumpState _jumpState;
 
     public BombFusingType BombFusingType { get; set; }
+    public bool ShouldNextBombBeTransparent = false;
+    public bool ShouldNextBombFreezeBomb = false;
     
     //nom de caca
     private float _actualImmuneTimer;
@@ -173,9 +168,13 @@ public class Player : MonoBehaviour
 
         int mult = isMod2Zero ? intPlayerNb / 2 : (intPlayerNb + 1) / 2;
         Vector2Int spawnPointGrid = new Vector2Int(GameManager.Instance.GridManager.MapUpperLimit.x * mult, posY);
-        
-        if(GameManager.Instance.IsSpreadingMode)
-            GameManager.Instance.GridManager.GetTileAtCoordinates(spawnPointGrid).ChangeTileColor(playerNb); 
+
+        if (GameManager.Instance.IsSpreadingMode)
+        {
+            Tile tile = GameManager.Instance.GridManager.GetTileAtCoordinates(spawnPointGrid);
+            tile.ChangeTileColor(playerNb);
+            tile.IsSpawn = true;
+        }
         
         MovePlayerOnSpawnPoint(spawnPointGrid);
     }
@@ -227,7 +226,7 @@ public class Player : MonoBehaviour
             Vector3 bombDirection = _moveInput.sqrMagnitude > 0.0001f ? GetBombPlacementDirection(_moveInput) : _lastInput;
 
             if (GameManager.Instance.BombManager.CreateBomb(transform.position,
-                    this, _bombFusingStrategies[(int)BombFusingType], ShouldNextBombBeTransparent))
+                    this, _bombFusingStrategies[(int)BombFusingType], ShouldNextBombBeTransparent, ShouldNextBombFreezeBomb))
             {
                 OnPlaceBombSuccessful?.Invoke();
             }

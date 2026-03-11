@@ -5,6 +5,7 @@
   "IsDropFromSky": false,
   "GameDuration": 120,
   "MovementSpeed": 8,
+  "FrozenTileDuration": 20,
   "PaintBrushItemSpawnerData": {
     "MaxItems": 2,
     "TimeBetweenSpawns": 10.0

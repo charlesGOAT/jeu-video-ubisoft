@@ -23,7 +23,8 @@ public class Bomb : MonoBehaviour
 
     public BombFusingStrategy BombFusingStrategy = new();
 
-    public bool IsTransparentBomb { private get; set; } = false;
+    public bool IsTransparentBomb { private get; set; }
+    public bool IsFreezeBomb { private get; set; }
 
     private readonly Vector2Int[] _directions =
     {
@@ -116,7 +117,7 @@ public class Bomb : MonoBehaviour
         PlayerEnum currentOwner = bombTile.CurrentTileOwner;
         PlayerEnum newTileOwner = GameManager.Instance.IsSpreadingMode ? currentOwner : AssociatedPlayer;
 
-        PaintTile(bombTile, newTileOwner);
+        ChoosePaintTile(bombTile, newTileOwner);
 
         foreach (Vector2Int direction in _directions)
         {
@@ -140,7 +141,7 @@ public class Bomb : MonoBehaviour
                 return;
             }
             
-            if (!PaintTile(tile, newTileOwner))
+            if (!ChoosePaintTile(tile, newTileOwner))
             {
                 if (IsTransparentBomb) 
                 {
@@ -154,9 +155,21 @@ public class Bomb : MonoBehaviour
         }
     }
 
+    private bool ChoosePaintTile(in Tile tile, PlayerEnum newTileOwner)
+    {
+        if (!IsFreezeBomb)
+        {
+            return PaintTile(tile, newTileOwner);
+        }
+        
+        if (!PaintTile(tile, newTileOwner)) return false;
+        StartCoroutine(tile.FreezeTile());
+        return true;
+    }
+
     private bool PaintTile(in Tile tile, PlayerEnum newTileOwner)
     {
-        if (tile == null || tile.IsObstacle || tile.IsSpawn)
+        if (tile == null || tile.IsObstacle)
         {
             return false;
         }

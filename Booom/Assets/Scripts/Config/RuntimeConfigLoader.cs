@@ -19,7 +19,7 @@ public class RuntimeConfigData
     public bool IsDropFromSky = false;
     public float GameDuration = 120f;
     public float MovementSpeed = 15f;
-
+    public int FrozenTileDuration = 30;
     public ItemSpawnerData PaintBrushItemSpawnerData = new()
     {
         MaxItems = 2,
