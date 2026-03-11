@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Linq;
 
 public class Tile : MonoBehaviour
 {
@@ -14,6 +15,8 @@ public class Tile : MonoBehaviour
 
     private Color _neutralColor;
 
+    public bool IsSpawn { get; private set; } = false;
+
     protected virtual void Awake()
     {
         if (TileLength == 0)
@@ -25,6 +28,11 @@ public class Tile : MonoBehaviour
         InitializeTileCoordinates();
 
         _neutralColor = _tileRenderer.material.color;
+    }
+
+    private void Start()
+    {
+        IsSpawn = GameManager.Instance.GridManager.playerSpawnPoints.Contains(TileCoordinates);
     }
 
     public virtual void ChangeTileColor(PlayerEnum newOwner)

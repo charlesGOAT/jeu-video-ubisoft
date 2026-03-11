@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,11 +8,10 @@ public class BombManager : MonoBehaviour
     private Bomb[] bombPrefabs;
 
     [SerializeField]
-    private float bombCooldown = 3f;
-
+    private bool ShouldBombCollideWithPlayers = true;
+    
     // Track each Player's bomb cooldown
     private readonly Dictionary<PlayerEnum, float> _nextBombTime = new (GameConstants.NB_PLAYERS);
-
     private readonly Dictionary<PlayerEnum, List<Bomb>> _chainedBombsPerPlayer = new (GameConstants.NB_PLAYERS);
 
     protected virtual void Awake()
@@ -28,9 +28,37 @@ public class BombManager : MonoBehaviour
             _chainedBombsPerPlayer.Add((PlayerEnum)i, new());
         }
     }
-    
-    public virtual bool CreateBomb(Vector3 position, PlayerEnum playerEnum, BombEnum bombEnum,  bool isTransparentBomb = false, bool isChained = false)
+
+    private void Start()
     {
+#if !UNITY_EDITOR
+        ShouldBombCollideWithPlayers = GameManager.Instance.RuntimeConfig.ShouldBombCollideWithPlayers;
+#endif
+
+        if (!ShouldBombCollideWithPlayers)
+        {
+            InitializeBombCollisionLayers();
+        }
+    }
+
+    private void InitializeBombCollisionLayers()
+    {
+        foreach (Bomb bomb in bombPrefabs)
+        {
+            Collider bombCol = bomb.GetComponent<Collider>();
+
+            foreach (var layer in GameManager.Instance.CollisionLayers)
+            {
+                bombCol.excludeLayers |= layer;
+            }
+        }
+    }
+    
+    public virtual bool CreateBomb(in Vector3 position, in Player player,in BombFusingStrategy bombStrat, bool isTransparentBomb = false)
+    {
+        bool isChained = bombStrat is ChainedBombFusingStrategy;
+        PlayerEnum playerEnum = player.PlayerNb;
+        
         if (Time.time < _nextBombTime[playerEnum] && !isChained)
         {
             return false;
@@ -45,17 +73,23 @@ public class BombManager : MonoBehaviour
             return false;
         }
 
+        BombEnum bombType = GameManager.Instance.EventManager.CurrentBombType;
+        int intBombType = (int)bombType - 1;
+        
         Vector3 worldPosition = GridManagerStrategy.GridToWorldPosition(gridCoordinates, tile.transform.position.y);
-        bombPrefabs[(int)bombEnum - 1].associatedPlayer = playerEnum;
+        bombPrefabs[intBombType].AssociatedPlayer = playerEnum;
 
-        bombPrefabs[(int)bombEnum - 1].IsChainedBomb = isChained;
-        Bomb instantiatedBomb = Instantiate(bombPrefabs[(int)bombEnum - 1], worldPosition + bombHeight, Quaternion.identity);
+        Bomb instantiatedBomb = Instantiate(bombPrefabs[intBombType], worldPosition + bombHeight, Quaternion.identity);
+        instantiatedBomb.BombFusingStrategy = bombStrat;
         instantiatedBomb.IsTransparentBomb = isTransparentBomb;
+
+        if(ShouldBombCollideWithPlayers)
+            StartCoroutine(ChangeColliderLayer(instantiatedBomb, player.gameObject));
 
         if (isChained)
             _chainedBombsPerPlayer[playerEnum].Add(instantiatedBomb);
 
-        _nextBombTime[playerEnum] = Time.time + bombCooldown;
+        _nextBombTime[playerEnum] = Time.time + instantiatedBomb.Timer;
 
         return true;
     }
@@ -73,5 +107,15 @@ public class BombManager : MonoBehaviour
     public bool HasChainedBombs(PlayerEnum player)
     {
         return _chainedBombsPerPlayer[player].Count != 0;
+    }
+
+    private IEnumerator ChangeColliderLayer(Bomb bomb, GameObject player)
+    {
+        Collider colComponent = bomb.GetComponent<Collider>();
+        var ogLayerMask = colComponent.excludeLayers.value;
+        var newLayer = ogLayerMask | (1 << player.layer);
+        colComponent.excludeLayers = newLayer;
+        yield return new WaitForSeconds(1.0f);
+        colComponent.excludeLayers = ogLayerMask;
     }
 }

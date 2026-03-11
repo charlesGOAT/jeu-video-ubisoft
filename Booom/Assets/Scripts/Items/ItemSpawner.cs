@@ -19,8 +19,11 @@ public class ItemSpawner : MonoBehaviour
     protected GameObject shadow;
     public ItemType AssociatedItemType => associatedItemType;
 
-    private void Awake()
+    private void Start()
     {
+#if !UNITY_EDITOR
+        InitializeData(GetRightConfig());
+#endif
         var validPositions = from pos in fixedPosList
             let tile = GameManager.Instance.GridManager.GetTileAtCoordinates(pos)
             where tile != null && !tile.IsObstacle
@@ -129,4 +132,36 @@ public class ItemSpawner : MonoBehaviour
         GameManager.Instance.GridManager.AddItemOnGrid(item);
         NbItemsOnMap++;
     }
+
+    private ItemSpawnerData GetRightConfig()
+    {
+        switch (associatedItemType)
+        {
+            case (ItemType.PaintBrush):
+            {
+                return GameManager.Instance.RuntimeConfig.PaintBrushItemSpawnerData;
+            }
+            case (ItemType.TransparentBomb):
+            {
+                return GameManager.Instance.RuntimeConfig.GhostBombItemSpawnerData;
+            }
+            case (ItemType.ChainBombs):
+            {
+                return GameManager.Instance.RuntimeConfig.ChainedBombItemSpawnerData;
+            }
+            case (ItemType.TargetBomb):
+            {
+                return GameManager.Instance.RuntimeConfig.TargetBombItemSpawnerData;
+            }
+        }
+
+        return new ItemSpawnerData();
+    }
+
+    private void InitializeData(ItemSpawnerData data)
+    {
+        maxItems = data.MaxItems;
+        timeBetweenSpawns = data.TimeBetweenSpawns;
+    }
+    
 }

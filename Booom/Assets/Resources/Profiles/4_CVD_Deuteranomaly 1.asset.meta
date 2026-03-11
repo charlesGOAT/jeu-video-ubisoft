@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 3e602309ca4649e4182e387e4e2c942e
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 193819
+  packageName: CVD Filter (URP)
+  packageVersion: 2.0.0
+  assetPath: Assets/CVDFilter/Profiles/4_CVD_Deuteranomaly 1.asset
+  uploadId: 507914

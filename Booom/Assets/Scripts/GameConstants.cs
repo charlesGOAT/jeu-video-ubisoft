@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 public static class GameConstants
 {
     public const short NB_PLAYERS = 4;
@@ -15,5 +17,22 @@ public static class GameConstants
     public const float JUMP_HEIGHT_OFFSET = 2.5f;
     public const float JUMP_NUMBER_OF_TILES = 2.7f;
     public const float PORTAL_JUMP_HEIGHT = 1.0f;
-    public const int ELIMS_TO_WIN = 10;
+    
+    public static readonly Dictionary<int, float> SpeedBoostPerKill =new ()
+    {
+        {0, 1f},
+        {1, 1.25f},
+        {2, 1.5f},
+        {3, 1.75f},
+        {4, 2f},
+        {5, 2.25f} // todo : add more or tweak
+    };
+    
+    public static readonly Dictionary<int, int> RangeBoostPerKill = new ()
+    {
+        {0, 0},
+        {2, 1},
+        {4, 2},
+        {6, 3}  // todo : add more or tweak
+    };
 }

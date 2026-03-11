@@ -1,5 +1,24 @@
 {
-  "isSpreadingMode": true,
-  "spawnMode": 0,
-  "isDropFromSky": false
+  "IsSpreadingMode": true,
+  "IsBonusSpeed": true,
+  "SpawnMode": 1,
+  "IsDropFromSky": false,
+  "GameDuration": 120,
+  "MovementSpeed": 8,
+  "PaintBrushItemSpawnerData": {
+    "MaxItems": 2,
+    "TimeBetweenSpawns": 10.0
+  },
+  "GhostBombItemSpawnerData": {
+    "MaxItems": 2,
+    "TimeBetweenSpawns": 7.0
+  },
+  "ChainedBombItemSpawnerData": {
+    "MaxItems": 2,
+    "TimeBetweenSpawns": 15.0
+  },
+  "TargetBombItemSpawnerData": {
+    "MaxItems": 2,
+    "TimeBetweenSpawns": 20.0
+  }
 }

@@ -3,16 +3,48 @@ using System.IO;
 using UnityEngine;
 
 [Serializable]
+public class ItemSpawnerData
+{
+    public int MaxItems = 0;
+    public float TimeBetweenSpawns = 0;
+}
+
+[Serializable]
 public class RuntimeConfigData
 {
-    public bool isSpreadingMode = true;
-    public SpawnMode spawnMode = SpawnMode.Fixed;
-    public bool isDropFromSky = false;
+    public bool IsSpreadingMode = true;
+    public bool IsBonusSpeed = true;
+    public bool ShouldBombCollideWithPlayers = true;
+    public SpawnMode SpawnMode = SpawnMode.Fixed;
+    public bool IsDropFromSky = false;
+    public float GameDuration = 120f;
+    public float MovementSpeed = 15f;
+
+    public ItemSpawnerData PaintBrushItemSpawnerData = new()
+    {
+        MaxItems = 2,
+        TimeBetweenSpawns = 10
+    };
+    public ItemSpawnerData GhostBombItemSpawnerData = new()
+    {
+        MaxItems = 2,
+        TimeBetweenSpawns = 10
+    };
+    public ItemSpawnerData ChainedBombItemSpawnerData = new()
+    {
+        MaxItems = 2,
+        TimeBetweenSpawns = 10
+    };
+    public ItemSpawnerData TargetBombItemSpawnerData = new()
+    {
+        MaxItems = 2,
+        TimeBetweenSpawns = 10
+    };
 }
 
 public static class RuntimeConfigLoader
 {
-    private const string ConfigFileName = "gameConfig.json";
+    private const string CONFIG_FILE_NAME = "gameConfig.json";
 
     private static bool _isLoaded;
     private static RuntimeConfigData _cachedConfig;
@@ -24,7 +56,7 @@ public static class RuntimeConfigLoader
             return _cachedConfig;
         }
 
-        string configPath = Path.Combine(Application.streamingAssetsPath, ConfigFileName);
+        string configPath = Path.Combine(Application.streamingAssetsPath, CONFIG_FILE_NAME);
 
         if (!File.Exists(configPath))
         {

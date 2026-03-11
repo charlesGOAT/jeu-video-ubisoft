@@ -7,7 +7,6 @@ public class JumpState : State
     {
     }
 
-
     public override void Enter()
     {
         _airDuration = GameConstants.AIR_STATE_DURATION;
@@ -35,6 +34,4 @@ public class JumpState : State
             }
         }
     }
-
-
 }

@@ -108,7 +108,7 @@ MonoBehaviour:
   pulseAmplitude: 0.2
   pulseSpeed: 8
   explosionRange: 3
-  associatedPlayer: 0
+  AssociatedPlayer: 0
 --- !u!65 &2591797792968393515
 BoxCollider:
   m_ObjectHideFlags: 0

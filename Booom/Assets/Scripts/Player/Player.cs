@@ -7,7 +7,7 @@ using UnityEngine.InputSystem.Interactions;
 public delegate void MoveCalledEventHandler();
 public delegate void PlaceBomb();
 public delegate void ExplodeChainedBombs();
-public delegate void BombExploded();
+public delegate void PlaceBombSuccessFul();
 
 [RequireComponent(typeof(PlayerItemsManager))]
 [RequireComponent(typeof(Renderer))]
@@ -15,7 +15,7 @@ public delegate void BombExploded();
 public class Player : MonoBehaviour
 {
     [SerializeField]
-    private float speed = 5f;
+    private float speed = 8f;
 
     [SerializeField]
     private Bomb bombPrefab;
@@ -44,17 +44,22 @@ public class Player : MonoBehaviour
     [SerializeField]
     private GameObject arrow;
 
+    private BombFusingStrategy[] _bombFusingStrategies = new []
+        {
+            new BombFusingStrategy(),
+            new ChainedBombFusingStrategy(),
+            new TargetBombFusingStrategy()
+            
+            // todo : add more here
+        };
+
     private PlayerInput _playerInput;
     private Renderer _renderer;
 
     private Vector2 _moveInput;
     private Vector3 _lastInput;
-    private BombEnum _currentBombType = BombEnum.NormalBomb;
-    private bool _shouldNextBombBeTransparent = false;
-    public bool isChainingBombs = false;
+    public bool ShouldNextBombBeTransparent = false;
     
-    private int _bombTypeCount;
-
     public PlayerEnum PlayerNb => playerNb;
 
     private CharacterController _characterController;
@@ -69,19 +74,35 @@ public class Player : MonoBehaviour
     private RunState _runState;
     private JumpState _jumpState;
 
+    public BombFusingType BombFusingType { get; set; }
+    
     //nom de caca
     private float _actualImmuneTimer;
 
     public static List<Player> ActivePlayers = new List<Player>();
 
+    private int _elimsRangeBoost = 0;
+    public int ElimsRangeBoost => _elimsRangeBoost;
+    private float _elimsSpeedBoost = 1;
+
+    private int _nbKills = 0;
+    public int NbKills { 
+        get => _nbKills;
+        set
+        {
+            _nbKills = value;
+            OnNbKillsChanged(); 
+        } 
+    }
+
     public bool IsImmune { get; private set; } = false;
 
-    public static readonly Dictionary<PlayerEnum, Color> PlayerColorDict = new Dictionary<PlayerEnum, Color>();  // make it the other way around if we want to test color spreading
+    public static readonly Dictionary<PlayerEnum, Color> PlayerColorDict = new Dictionary<PlayerEnum, Color>();
     
     public event MoveCalledEventHandler OnMoveFunctionCalled;
     public event PlaceBomb OnPlaceBomb;
     public event ExplodeChainedBombs OnExplodeChainedBombs;
-    public event BombExploded OnBombExploded;
+    public event PlaceBombSuccessFul OnPlaceBombSuccessful;
 
     private void Awake()
     {
@@ -89,23 +110,25 @@ public class Player : MonoBehaviour
             playerItemsManager = gameObject.GetComponent<PlayerItemsManager>();
 
         playerItemsManager.Player = this;
-
-        _bombTypeCount = Enum.GetValues(typeof(BombEnum)).Length - 1; // -1 to avoid None
-
-        ConfigurePlayers();
         
         InitializeStateMachine();
         GetComponents();
-
         ActivePlayers.Add(this);
-
-        InitializeArrow();
     }
 
     private void Start()
     {
+#if !UNITY_EDITOR
+        GetConfigValues();
+#endif
+        ConfigurePlayers();
         CheckStartConditions();
         InitializeSpawner();
+    }
+
+    private void GetConfigValues()
+    {
+        speed = GameManager.Instance.RuntimeConfig.MovementSpeed;
     }
 
     private void CheckStartConditions()
@@ -114,6 +137,17 @@ public class Player : MonoBehaviour
         {
             throw new Exception("Player cannot be set to PlayerEnum.None");
         }
+    }
+
+    private void OnNbKillsChanged()
+    {
+        if (GameConstants.SpeedBoostPerKill.TryGetValue(NbKills, out float newSpeedBoost))
+            _elimsSpeedBoost = newSpeedBoost;
+
+        if (GameConstants.RangeBoostPerKill.TryGetValue(NbKills, out int newRangeBoost))
+            _elimsRangeBoost = newRangeBoost;
+        
+        // todo : generate little animation or particle effect indicating kill streak
     }
 
     private void InitializeSpawner()
@@ -140,7 +174,7 @@ public class Player : MonoBehaviour
         int mult = isMod2Zero ? intPlayerNb / 2 : (intPlayerNb + 1) / 2;
         Vector2Int spawnPointGrid = new Vector2Int(GameManager.Instance.GridManager.MapUpperLimit.x * mult, posY);
         
-        if(GameManager.Instance.isSpreadingMode)
+        if(GameManager.Instance.IsSpreadingMode)
             GameManager.Instance.GridManager.GetTileAtCoordinates(spawnPointGrid).ChangeTileColor(playerNb); 
         
         MovePlayerOnSpawnPoint(spawnPointGrid);
@@ -156,7 +190,7 @@ public class Player : MonoBehaviour
         if (tile.IsObstacle)
             throw new Exception($"Player spawn position {spawnPointGrid} is on an obstacle");
         
-        if(GameManager.Instance.isSpreadingMode)
+        if(GameManager.Instance.IsSpreadingMode)
             tile.ChangeTileColor(playerNb);
         
         MovePlayerOnSpawnPoint(spawnPointGrid);
@@ -169,14 +203,6 @@ public class Player : MonoBehaviour
         trans.position = new Vector3(worldPos.x, trans.position.y, worldPos.z);
     }
 
-    private void InitializeArrow()
-    {
-        foreach (var children in arrow.GetComponentsInChildren<Renderer>())
-        {
-            children.material.color = playerColor;
-        }
-    }
-
     public void OnMove(InputAction.CallbackContext ctx)
     {
         _moveInput = ctx.ReadValue<Vector2>();
@@ -184,52 +210,27 @@ public class Player : MonoBehaviour
         {
             _lastInput = GetBombPlacementDirection(_moveInput);
         }
-    
-        RotateArrow();
     }
     
-    private void RotateArrow()
-    {
-        Vector3 targetDirection = _lastInput * (float)(Tile.TileLength / 2.0);
-        if (targetDirection != Vector3.zero) 
-        {
-            Quaternion targetRotation = Quaternion.LookRotation(targetDirection, Vector3.up);
-
-            arrow.transform.rotation = targetRotation;
-            arrow.transform.position = transform.position + targetDirection;
-        }
-    }
-
     public void OnBomb(InputAction.CallbackContext ctx)
     {
+        if (_stateMachine.CurrentState is JumpState) return;
         if (ctx.performed && ctx.interaction is HoldInteraction)
         {
             OnExplodeChainedBombs?.Invoke();
-            isChainingBombs = false;
-            GameManager.Instance.BombManager.ExplodeChainedBombs(playerNb);
+            GameManager.Instance.BombManager.ExplodeChainedBombs(PlayerNb);
         }
-        else if (ctx.performed && (isChainingBombs || !GameManager.Instance.BombManager.HasChainedBombs(playerNb)))
+        else if (ctx.performed && 
+                 (BombFusingType.Equals(BombFusingType.Chained) || !GameManager.Instance.BombManager.HasChainedBombs(playerNb)))
         {
             OnPlaceBomb?.Invoke();
             Vector3 bombDirection = _moveInput.sqrMagnitude > 0.0001f ? GetBombPlacementDirection(_moveInput) : _lastInput;
 
-            if (GameManager.Instance.BombManager.CreateBomb(transform.position + (bombDirection * Tile.TileLength), playerNb,
-                    _currentBombType, _shouldNextBombBeTransparent, isChainingBombs))
+            if (GameManager.Instance.BombManager.CreateBomb(transform.position,
+                    this, _bombFusingStrategies[(int)BombFusingType], ShouldNextBombBeTransparent))
             {
-                OnBombExploded?.Invoke();
+                OnPlaceBombSuccessful?.Invoke();
             }
-                
-            _shouldNextBombBeTransparent = false;
-        }
-        
-    }
-
-    public void OnChangeBomb(InputAction.CallbackContext ctx)
-    {
-        if (ctx.performed)
-        {
-            int nextBomb = ((int)_currentBombType % _bombTypeCount) + 1; // +1 to bring back above 0
-            _currentBombType = (BombEnum)nextBomb;
         }
     }
 
@@ -264,24 +265,34 @@ public class Player : MonoBehaviour
         }
     }
 
-    public void OnHit(Vector2Int hitDirection)
+    public void OnHit(Vector2Int hitDirection, bool isHitFromSpikes = false)
     {
         //etant donne que hitDirection est un Vector2Int, y est z dans se cas
         if (IsImmune)
         {
             return;
         }
+        
+        if(isHitFromSpikes)
+            SoundManager.Instance.OnEnterSpikes(transform.position);
+        else
+            SoundManager.Instance.OnPlayerHitByBomb(transform.position);
+
         Vector3 forceDirection = new Vector3(hitDirection.x,1,hitDirection.y);
         ApplyKnockback(forceDirection, knockbackForce);
         _stateMachine.Trigger(GameConstants.PLAYER_HIT_TRIGGER);
         IsImmune = true;
         _actualImmuneTimer = immuneTimer;
+
+        NbKills = 0;
+        playerItemsManager.ResetInventory();
     }
 
     public void OnJump(Vector2Int jumpDirection) 
     {
         if (_stateMachine.CurrentState is not JumpState)
         {
+            SoundManager.Instance.OnEnterTrampoline(transform.position);
             _jumpVelocity = CalculateJumpForce(jumpDirection);
             _stateMachine.Trigger(GameConstants.PLAYER_JUMP_TRIGGER);
         }
@@ -291,6 +302,7 @@ public class Player : MonoBehaviour
     {
         if (_stateMachine.CurrentState is not JumpState) 
         {
+            SoundManager.Instance.OnEnterPortal(transform.position);
             _characterController.enabled = false;
             this.gameObject.transform.position = otherPortalPosition;
             _jumpVelocity = CalculatePortalForce(playerDirection);
@@ -444,6 +456,8 @@ public class Player : MonoBehaviour
         playerItemsManager.AddNewItem(item);
         GameManager.Instance.RemoveItemFromGrid(item);
         Destroy(other.gameObject);
+        
+        SoundManager.Instance.OnPickupItem(transform.position);
     }
 
     private bool CheckIfOnOwnColor()
@@ -566,11 +580,6 @@ public class Player : MonoBehaviour
         
         gameObject.GetComponent<Renderer>().material.color = playerColor;
     }
-    
-    public void CreateNextBombTransparent()
-    {
-        _shouldNextBombBeTransparent = true;
-    }
 }
 
 public enum PlayerEnum
@@ -580,6 +589,14 @@ public enum PlayerEnum
     Player2 = 2,
     Player3 = 3,
     Player4 = 4
+    //Do not forget to add the new player enums in the switch case of LobbyManager and modifying GameConstants.NB_PLAYERS
+}
+
+public enum BombFusingType
+{
+    None = 0,
+    Chained = 1,
+    Target = 2
 }
 
 

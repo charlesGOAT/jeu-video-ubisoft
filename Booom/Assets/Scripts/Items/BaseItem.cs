@@ -8,6 +8,8 @@ public abstract class BaseItem
     
     public virtual void RepickUpItem(){}
 
+    public abstract void FinishUsingItem(bool hasDied = false);
+
     protected void CallFinishUsingItemCallback()
     {
         OnFinishUsingItem?.Invoke(this);

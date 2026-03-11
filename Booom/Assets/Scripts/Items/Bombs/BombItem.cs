@@ -1,6 +1,4 @@
 ﻿
-using System;
-
 public abstract class BombItem : BaseItem
 {
     protected virtual int maxUseCount => 1;
@@ -8,7 +6,7 @@ public abstract class BombItem : BaseItem
 
     protected Player _associatedPlayer;
 
-    private void BombPlacedExploded()
+    protected void BombSuccessfullyPlaced()
     {
         _currentUseCount++;
         if (_currentUseCount >= maxUseCount)
@@ -17,27 +15,27 @@ public abstract class BombItem : BaseItem
         }
     }
 
-    protected abstract void UseItem();
+    protected virtual void UseItem() {}
 
     public override void PickupItem(Player player)
     {
         _associatedPlayer = player;
         _associatedPlayer.OnPlaceBomb += UseItem;
-        _associatedPlayer.OnBombExploded += BombPlacedExploded;
+        _associatedPlayer.OnPlaceBombSuccessful += BombSuccessfullyPlaced;
         
         PickupItemSpecific();
     }
     
     protected virtual void PickupItemSpecific() {}
 
-    protected void FinishUsingItem()
+    public override void FinishUsingItem(bool hasDied = false)
     {
         _associatedPlayer.OnPlaceBomb -= UseItem;
-        _associatedPlayer.OnBombExploded -= BombPlacedExploded;
+        _associatedPlayer.OnPlaceBombSuccessful -= BombSuccessfullyPlaced;
         _currentUseCount = 0;
-        FinishUsingItemSpecific();
+        FinishUsingItemSpecific(hasDied);
         CallFinishUsingItemCallback();
     }
-    
-    protected virtual void FinishUsingItemSpecific() {}
+
+    protected abstract void FinishUsingItemSpecific(bool hasDied = false);
 }
