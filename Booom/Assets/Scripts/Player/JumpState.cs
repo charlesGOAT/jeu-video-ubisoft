@@ -9,11 +9,13 @@ public class JumpState : State
 
     public override void Enter()
     {
+        _player.Animator.Play("PlayerJump");
         _airDuration = GameConstants.AIR_STATE_DURATION;
     }
 
     public override void Exit()
     {
+        _player.Animator.StopPlayback();
         _player.ResetJumpVelocity();
     }
 

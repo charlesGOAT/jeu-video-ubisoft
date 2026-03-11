@@ -10,11 +10,12 @@ public class IdleState : State
     {
         //Jouer l'animation d'idle
         //Pour l'instant on ne fait rien
+        _player.Animator.Play("PlayerIdle");
     }
 
     public override void Exit()
     {
-        //Arrêter l'animation d'idle
+        _player.Animator.StopPlayback();
     }
 
     public override void Handle(float time)

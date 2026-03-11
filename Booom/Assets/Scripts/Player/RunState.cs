@@ -9,9 +9,11 @@ public class RunState : State
     {
         //Jouer l'animation de course
         //Pour l'instant on ne fait rien
+        _player.Animator.Play("PlayerRun");
     }
     public override void Exit()
     {
+        _player.Animator.StopPlayback();
         //Arreter l'animation de course
     }
     public override void Handle(float time)

@@ -10,7 +10,6 @@ public delegate void ExplodeChainedBombs();
 public delegate void PlaceBombSuccessFul();
 
 [RequireComponent(typeof(PlayerItemsManager))]
-[RequireComponent(typeof(Renderer))]
 [RequireComponent(typeof(PlayerInput))]
 public class Player : MonoBehaviour
 {
@@ -96,6 +95,7 @@ public class Player : MonoBehaviour
     }
 
     public bool IsImmune { get; private set; } = false;
+    public Animator Animator { get; private set; }
 
     public static readonly Dictionary<PlayerEnum, Color> PlayerColorDict = new Dictionary<PlayerEnum, Color>();
     
@@ -104,16 +104,18 @@ public class Player : MonoBehaviour
     public event ExplodeChainedBombs OnExplodeChainedBombs;
     public event PlaceBombSuccessFul OnPlaceBombSuccessful;
 
+
     private void Awake()
     {
         if (playerItemsManager == null)
             playerItemsManager = gameObject.GetComponent<PlayerItemsManager>();
 
         playerItemsManager.Player = this;
-        
+        Animator = GetComponentInChildren<Animator>();
         InitializeStateMachine();
         GetComponents();
         ActivePlayers.Add(this);
+
     }
 
     private void Start()
