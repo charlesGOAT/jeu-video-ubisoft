@@ -38,8 +38,24 @@ public abstract class GridManagerStrategy : MonoBehaviour
     [SerializeField]
     private float cameraVerticalPadding = 4f;
 
+    [Header("Dynamic Camera")]
     [SerializeField]
-    private bool autoAdjustOrthographicSize = true;
+    private bool enableDynamicCamera = true;
+
+    [SerializeField]
+    private float dynamicPositionSmoothTime = 0.1f;
+
+    [SerializeField]
+    private float dynamicZoomSmoothTime = 0.14f;
+
+    [SerializeField]
+    private float dynamicZoomPadding = 1.2f;
+
+    [SerializeField]
+    private float dynamicMinDistance = 14f;
+
+    [SerializeField]
+    private float dynamicMaxDistance = 100f;
     
     [SerializeField] 
     public Vector2Int[] playerSpawnPoints;
@@ -129,22 +145,7 @@ public abstract class GridManagerStrategy : MonoBehaviour
         float diagonal = new Vector2(mapSize.x, mapSize.z).magnitude;
         float framingBaseSize = Mathf.Max(longestSide, diagonal * 0.65f);
 
-        if (mainCamera.orthographic)
-        {
-            if (autoAdjustOrthographicSize)
-            {
-                mainCamera.orthographicSize = Mathf.Max(1f, (framingBaseSize * 0.5f) + cameraVerticalPadding);
-            }
-
-            float orthographicDistance = Mathf.Clamp(
-                framingBaseSize * cameraDistanceMultiplier,
-                cameraMinDistance,
-                cameraMaxDistance
-            );
-
-            mainCamera.transform.position = mapCenter - (mainCamera.transform.forward * orthographicDistance);
-            return;
-        }
+        mainCamera.orthographic = false;
 
         float halfFovRad = mainCamera.fieldOfView * 0.5f * Mathf.Deg2Rad;
         float requiredDistance = (framingBaseSize * 0.5f) / Mathf.Tan(halfFovRad);
@@ -155,6 +156,31 @@ public abstract class GridManagerStrategy : MonoBehaviour
         );
 
         mainCamera.transform.position = mapCenter - (mainCamera.transform.forward * cameraDistance);
+        ConfigureDynamicCamera(mapCenter, mapSize);
+    }
+
+    private void ConfigureDynamicCamera(Vector3 mapCenter, Vector3 mapSize)
+    {
+        if (!enableDynamicCamera || mainCamera == null)
+        {
+            return;
+        }
+
+        DynamicArenaCamera dynamicCamera = mainCamera.GetComponent<DynamicArenaCamera>();
+        if (dynamicCamera == null)
+        {
+            dynamicCamera = mainCamera.gameObject.AddComponent<DynamicArenaCamera>();
+        }
+
+        dynamicCamera.Configure(
+            mapCenter,
+            mapSize,
+            dynamicMinDistance,
+            dynamicMaxDistance,
+            dynamicZoomPadding,
+            dynamicPositionSmoothTime,
+            dynamicZoomSmoothTime
+        );
     }
 
     public Vector3 GetRandomPosOnGridWithNoItem()
