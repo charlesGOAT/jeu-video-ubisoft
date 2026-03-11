@@ -4,6 +4,8 @@ public class Tile : MonoBehaviour
 {
     public Vector2Int TileCoordinates { get; private set; }
 
+    public bool IsFrozen = false;
+
     public virtual bool IsObstacle => false;
 
     public static float TileLength { get; private set; }
@@ -29,7 +31,7 @@ public class Tile : MonoBehaviour
 
     public virtual void ChangeTileColor(PlayerEnum newOwner)
     {
-        if (CurrentTileOwner != newOwner)
+        if (CurrentTileOwner != newOwner && !IsFrozen)
         {
             GameManager.Instance.ScoreManager.LoseTile(CurrentTileOwner, TileCoordinates);
             GameManager.Instance.ScoreManager.AcquireNewTile(newOwner, TileCoordinates);

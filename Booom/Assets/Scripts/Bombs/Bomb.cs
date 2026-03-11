@@ -23,7 +23,8 @@ public class Bomb : MonoBehaviour
 
     public BombFusingStrategy BombFusingStrategy = new();
 
-    public bool IsTransparentBomb { private get; set; } = false;
+    public bool IsTransparentBomb { private get; set; }
+    public bool IsFreezeBomb { private get; set; }
 
     private readonly Vector2Int[] _directions =
     {
@@ -116,7 +117,7 @@ public class Bomb : MonoBehaviour
         PlayerEnum currentOwner = bombTile.CurrentTileOwner;
         PlayerEnum newTileOwner = GameManager.Instance.IsSpreadingMode ? currentOwner : AssociatedPlayer;
 
-        PaintTile(bombTile, newTileOwner);
+        ChoosePaintTile(bombTile, newTileOwner);
 
         foreach (Vector2Int direction in _directions)
         {
@@ -140,7 +141,7 @@ public class Bomb : MonoBehaviour
                 return;
             }
             
-            if (!PaintTile(tile, newTileOwner))
+            if (!ChoosePaintTile(tile, newTileOwner))
             {
                 if (IsTransparentBomb) 
                 {
@@ -152,6 +153,42 @@ public class Bomb : MonoBehaviour
             
             HitPlayers(explosionCoords, direction);
         }
+    }
+
+    private bool ChoosePaintTile(in Tile tile, PlayerEnum newTileOwner)
+    {
+        if (!IsFreezeBomb)
+        {
+            return PaintTile(tile, newTileOwner);
+        }
+        
+        if (!PaintTile(tile, newTileOwner)) return false;
+        StartCoroutine(FreezeTile(tile));
+        return true;
+    }
+    
+    private IEnumerator FreezeTile(Tile tile)
+    {
+        tile.IsFrozen = true;
+        Renderer tileRenderer = tile.GetComponentInChildren<Renderer>();
+        AddSnowflakeMaterial(tileRenderer);
+        yield return new WaitForSeconds(GameManager.Instance.FrozenTileDuration);
+        tile.IsFrozen = false;
+        RemoveSnowflakeMaterial(tileRenderer);
+    }
+
+    private void AddSnowflakeMaterial(in Renderer tileRenderer)
+    {
+        Material[] materials = tileRenderer.materials;
+        materials[1] = GameManager.Instance.snowflakeMaterial;
+        tileRenderer.materials = materials;
+    }
+    
+    private void RemoveSnowflakeMaterial(in Renderer tileRenderer)
+    {
+        Material[] materials = tileRenderer.materials;
+        materials[1] = null;
+        tileRenderer.materials = materials;
     }
 
     private bool PaintTile(in Tile tile, PlayerEnum newTileOwner)

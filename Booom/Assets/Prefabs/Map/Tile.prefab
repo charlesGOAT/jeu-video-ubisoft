@@ -94,7 +94,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1387300225600965012}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9541d86e2fd84c1d9990edf0852d74ab, type: 3}
   m_Name: 
@@ -194,8 +194,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b5d1d7ecfdfcbb14fbd8235b0e74769d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CoordinateLabeler
-  _color: {r: 1, g: 1, b: 1, a: 1}
-  UnityGridSize: 2
+  color: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &3024078105062584004
 GameObject:
   m_ObjectHideFlags: 0
@@ -242,8 +241,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 371ab536306e39d4c8a1d23b875da2d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Tile
-  isObstacle: 0
-  UnityGridSize: 2
+  IsFrozen: 0
 --- !u!1 &3884438457466546373
 GameObject:
   m_ObjectHideFlags: 0
@@ -311,6 +309,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
+  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
   - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0

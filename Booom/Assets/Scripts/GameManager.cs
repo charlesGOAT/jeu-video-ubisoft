@@ -15,6 +15,10 @@ public class GameManager : MonoBehaviour
     
     [SerializeField]
     private float _gameDuration = GameConstants.GAME_DURATION;
+
+    [SerializeField] 
+    public Material snowflakeMaterial;
+    
     public float  GameDuration => _gameDuration;
 
     public int CurrentMinutes => Mathf.FloorToInt(_timeRemaining / 60f);
@@ -28,6 +32,10 @@ public class GameManager : MonoBehaviour
     
     [SerializeField]
     private bool _isBonusSpeed = false;
+
+    [SerializeField] 
+    public int FrozenTileDuration = 30;
+    
     public bool IsBonusSpeed => _isBonusSpeed;
 
     public GridManagerStrategy GridManager { get; private set; }
@@ -103,6 +111,7 @@ public class GameManager : MonoBehaviour
         _isSpreadingMode = RuntimeConfig.IsSpreadingMode;
         _isBonusSpeed = RuntimeConfig.IsBonusSpeed;
         _gameDuration =  RuntimeConfig.GameDuration;
+        FrozenTileDuration = RuntimeConfig.FrozenTileDuration;
     }
 
     public void RemoveItemFromGrid(Item item)
@@ -143,6 +152,10 @@ public class GameManager : MonoBehaviour
         if (EventManager == null)
         {
             throw new Exception("There's no active event manager");
+        }
+        if (snowflakeMaterial == null)
+        {
+            throw new Exception("Snowflake material cannot be null");
         }
         // add other managers
     }
