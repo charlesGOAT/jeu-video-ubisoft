@@ -12,9 +12,4 @@ public class FreezeBombItem : BombItem
     {
         _associatedPlayer.ShouldNextBombFreezeBomb = false;
     }
-
-    private void FinishUsingChainedBombs()
-    {
-        FinishUsingItem();
-    }
 }
