@@ -1,3 +1,5 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 
@@ -35,6 +37,7 @@ public class Tile : MonoBehaviour
     private void Start()
     {
         IsSpawn = GameManager.Instance.GridManager.playerSpawnPoints.Contains(TileCoordinates);
+        RemoveSnowflakeMaterial(); // because unity editor is broken yay
     }
 
     public virtual void ChangeTileColor(PlayerEnum newOwner)
@@ -56,5 +59,28 @@ public class Tile : MonoBehaviour
     public void InitializeTileCoordinates()
     {
         TileCoordinates = GridManagerStrategy.WorldToGridCoordinates(transform.position);
+    }
+
+    public IEnumerator FreezeTile()
+    {
+        IsFrozen = true;
+        AddSnowflakeMaterial();
+        yield return new WaitForSeconds(GameManager.Instance.FrozenTileDuration);
+        IsFrozen = false;
+        RemoveSnowflakeMaterial();
+    }
+
+    private void AddSnowflakeMaterial()
+    {
+        Material[] materials = _tileRenderer.materials;
+        materials[1] = GameManager.Instance.snowflakeMaterial;
+        _tileRenderer.materials = materials;
+    }
+    
+    private void RemoveSnowflakeMaterial()
+    {
+        Material[] materials = _tileRenderer.materials;
+        materials[1] = GameManager.Instance.transparentMat;
+        _tileRenderer.materials = materials;
     }
 }

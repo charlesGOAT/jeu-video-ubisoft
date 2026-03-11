@@ -164,6 +164,7 @@ MonoBehaviour:
   tileDetectionTolerance: 0.35
   arrow: {fileID: 0}
   ShouldNextBombBeTransparent: 0
+  ShouldNextBombFreezeBomb: 0
 --- !u!114 &1141182974104389932
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -18,9 +18,6 @@ public class Player : MonoBehaviour
     private float speed = 8f;
 
     [SerializeField]
-    private Bomb bombPrefab;
-
-    [SerializeField]
     private Color playerColor = Color.red;
 
     [SerializeField]
@@ -40,9 +37,6 @@ public class Player : MonoBehaviour
 
     [SerializeField]
     private float tileDetectionTolerance = 0.35f;
-
-    [SerializeField]
-    private GameObject arrow;
 
     private BombFusingStrategy[] _bombFusingStrategies = new []
         {
@@ -231,7 +225,7 @@ public class Player : MonoBehaviour
             OnPlaceBomb?.Invoke();
             Vector3 bombDirection = _moveInput.sqrMagnitude > 0.0001f ? GetBombPlacementDirection(_moveInput) : _lastInput;
 
-            if (GameManager.Instance.BombManager.CreateBomb(transform.position + (bombDirection * Tile.TileLength),
+            if (GameManager.Instance.BombManager.CreateBomb(transform.position,
                     this, _bombFusingStrategies[(int)BombFusingType], ShouldNextBombBeTransparent, ShouldNextBombFreezeBomb))
             {
                 OnPlaceBombSuccessful?.Invoke();

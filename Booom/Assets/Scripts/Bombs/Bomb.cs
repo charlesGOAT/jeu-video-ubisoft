@@ -163,32 +163,8 @@ public class Bomb : MonoBehaviour
         }
         
         if (!PaintTile(tile, newTileOwner)) return false;
-        StartCoroutine(FreezeTile(tile));
+        StartCoroutine(tile.FreezeTile());
         return true;
-    }
-    
-    private IEnumerator FreezeTile(Tile tile)
-    {
-        tile.IsFrozen = true;
-        Renderer tileRenderer = tile.GetComponentInChildren<Renderer>();
-        AddSnowflakeMaterial(tileRenderer);
-        yield return new WaitForSeconds(GameManager.Instance.FrozenTileDuration);
-        tile.IsFrozen = false;
-        RemoveSnowflakeMaterial(tileRenderer);
-    }
-
-    private void AddSnowflakeMaterial(in Renderer tileRenderer)
-    {
-        Material[] materials = tileRenderer.materials;
-        materials[1] = GameManager.Instance.snowflakeMaterial;
-        tileRenderer.materials = materials;
-    }
-    
-    private void RemoveSnowflakeMaterial(in Renderer tileRenderer)
-    {
-        Material[] materials = tileRenderer.materials;
-        materials[1] = null;
-        tileRenderer.materials = materials;
     }
 
     private bool PaintTile(in Tile tile, PlayerEnum newTileOwner)

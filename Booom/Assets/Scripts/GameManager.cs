@@ -19,7 +19,8 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] 
     public Material snowflakeMaterial;
-    
+    [SerializeField] 
+    public Material transparentMat;
     public float  GameDuration => _gameDuration;
 
     public int CurrentMinutes => Mathf.FloorToInt(_timeRemaining / 60f);
@@ -159,6 +160,10 @@ public class GameManager : MonoBehaviour
         if (snowflakeMaterial == null)
         {
             throw new Exception("Snowflake material cannot be null");
+        }
+        if (transparentMat == null)
+        {
+            throw new Exception("Transparent material cannot be null");
         }
         // add other managers
     }
