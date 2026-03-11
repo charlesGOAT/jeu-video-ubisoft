@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
@@ -44,6 +45,8 @@ public class GameManager : MonoBehaviour
     public ScoreManager ScoreManager { get; private set; }
     public GameUIManager GameUIManager { get; private set; }
     public EventManager EventManager { get; private set; }
+
+    public readonly int[] CollisionLayers = new int[GameConstants.NB_PLAYERS] { 8, 9, 10, 11 };
 
     // add other managers
     
@@ -162,11 +165,14 @@ public class GameManager : MonoBehaviour
 
     public void SpawnPlayers()
     {
-        foreach (var playerInput in LobbyManager.JoinedPlayers)
+        var playersToSpawn = LobbyManager.JoinedPlayers.Values.ToList();
+        
+        foreach (var playerInput in playersToSpawn)
         {
             Vector2Int spawnPoint = GridManager.playerSpawnPoints[playerInput.playerIndex];
             spawnPoint *= GameConstants.UNITY_GRID_SIZE;
-            
+
+            playerPrefab.layer = CollisionLayers[playerInput.playerIndex];
             PlayerInput newInput = PlayerInput.Instantiate(playerPrefab, playerIndex:playerInput.playerIndex, pairWithDevices:playerInput.devices.ToArray());
             newInput.transform.position = new Vector3(spawnPoint.x, 2.0f, spawnPoint.y);
             

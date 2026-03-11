@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: f5516546680882942b5e386f9a491666
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 193819
+  packageName: CVD Filter (URP)
+  packageVersion: 2.0.0
+  assetPath: Assets/CVDFilter/Profiles/7_CVD_Achromatopsia 1.asset
+  uploadId: 507914

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: d2a3a27f4dd10dd4a97eaa42c7782dfb
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 193819
+  packageName: CVD Filter (URP)
+  packageVersion: 2.0.0
+  assetPath: Assets/CVDFilter/Profiles/3_CVD_Deuteranopia 1.asset
+  uploadId: 507914

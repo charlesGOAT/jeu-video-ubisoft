@@ -14,6 +14,7 @@ public class RuntimeConfigData
 {
     public bool IsSpreadingMode = true;
     public bool IsBonusSpeed = true;
+    public bool ShouldBombCollideWithPlayers = true;
     public SpawnMode SpawnMode = SpawnMode.Fixed;
     public bool IsDropFromSky = false;
     public float GameDuration = 120f;

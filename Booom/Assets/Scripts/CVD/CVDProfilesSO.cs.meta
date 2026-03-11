@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: e2728d8dce3fc28489fb252c88fce1d7
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 193819
+  packageName: CVD Filter (URP)
+  packageVersion: 2.0.0
+  assetPath: Assets/CVDFilter/Scripts/CVDProfilesSO.cs
+  uploadId: 507914

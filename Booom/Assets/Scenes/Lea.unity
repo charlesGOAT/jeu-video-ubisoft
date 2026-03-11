@@ -184,6 +184,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BombManager
   bombPrefabs: []
+  ShouldBombCollideWithPlayers: 1
 --- !u!1001 &22799394
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -685,6 +686,14 @@ PrefabInstance:
     - target: {fileID: 3282167894468318723, guid: 0d602448bd1f8d44793a5fc9f674005b, type: 3}
       propertyPath: isSpreadingMode
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4113202097553523575, guid: 0d602448bd1f8d44793a5fc9f674005b, type: 3}
+      propertyPath: m_Camera
+      value: 
+      objectReference: {fileID: 722509299}
+    - target: {fileID: 4113202097553523575, guid: 0d602448bd1f8d44793a5fc9f674005b, type: 3}
+      propertyPath: m_RenderMode
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5458572291720775804, guid: 0d602448bd1f8d44793a5fc9f674005b, type: 3}
       propertyPath: m_AnchoredPosition.x

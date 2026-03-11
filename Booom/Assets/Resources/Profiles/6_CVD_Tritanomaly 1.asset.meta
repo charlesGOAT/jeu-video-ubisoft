@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 1873546f515006e4bb067b6fc08614b1
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 193819
+  packageName: CVD Filter (URP)
+  packageVersion: 2.0.0
+  assetPath: Assets/CVDFilter/Profiles/6_CVD_Tritanomaly 1.asset
+  uploadId: 507914
