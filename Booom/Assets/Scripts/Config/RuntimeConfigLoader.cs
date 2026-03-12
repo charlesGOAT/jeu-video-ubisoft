@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
@@ -39,6 +40,22 @@ public class RuntimeConfigData
     {
         MaxItems = 2,
         TimeBetweenSpawns = 10
+    };
+    public Dictionary<int, float> SpeedBoostPerKill = new ()
+    {
+        {0, 1f},
+        {1, 1.25f},
+        {2, 1.5f},
+        {3, 1.75f},
+        {4, 2f},
+        {5, 2.25f}
+    };
+    public Dictionary<int, int> RangeBoostPerKill = new ()
+    {
+        {0, 0},
+        {2, 1},
+        {4, 2},
+        {6, 3}
     };
 }
 
