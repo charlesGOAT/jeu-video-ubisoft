@@ -2,8 +2,9 @@ using UnityEngine;
 
 public class Trampoline : Tile
 {
-
     public override bool IsObstacle => true;
+
+    protected override void Start(){}
 
     public override void StepOnTile(Player player)
     {

@@ -33,8 +33,8 @@ public class Tile : MonoBehaviour
 
         _neutralColor = _tileRenderer.material.color;
     }
-
-    private void Start()
+    
+    protected virtual void Start()
     {
         IsSpawn = GameManager.Instance.GridManager.playerSpawnPoints.Contains(TileCoordinates);
         RemoveSnowflakeMaterial(); // because unity editor is broken yay
