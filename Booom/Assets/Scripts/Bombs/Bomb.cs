@@ -104,7 +104,8 @@ public class Bomb : MonoBehaviour
     
     public void Explode()
     {
-        SoundManager.Instance.OnBombExploded(this);
+        if(!IsFreezeBomb) SoundManager.Instance.OnBombExploded();
+        else SoundManager.Instance.OnDefenseBombExploded();
         PaintTiles();
         Destroy(gameObject);
     }

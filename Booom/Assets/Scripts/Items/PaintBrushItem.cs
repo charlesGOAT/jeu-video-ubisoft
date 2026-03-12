@@ -33,11 +33,14 @@ public class PaintBrushItem : BaseItem
         _player = player;
         player.OnMoveFunctionCalled += UseItem;
 
+        SoundManager.Instance.OnUsePaintBrush(true);
         await StartDelayTask();
     }
 
     private void UseTimeOver()
     {
+        SoundManager.Instance.OnUsePaintBrush(false);
+
         _player.OnMoveFunctionCalled -= UseItem;
         CallFinishUsingItemCallback();
     }

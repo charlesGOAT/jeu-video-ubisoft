@@ -143,10 +143,15 @@ public class Player : MonoBehaviour
     private void OnNbKillsChanged()
     {
         if (GameConstants.SpeedBoostPerKill.TryGetValue(NbKills, out float newSpeedBoost))
+        {
             _elimsSpeedBoost = newSpeedBoost;
-
+            SoundManager.Instance.OnNewKillStreak();
+        }
         if (GameConstants.RangeBoostPerKill.TryGetValue(NbKills, out int newRangeBoost))
+        {
             _elimsRangeBoost = newRangeBoost;
+            SoundManager.Instance.OnNewKillStreak();
+        }
         
         // todo : generate little animation or particle effect indicating kill streak
     }
@@ -279,9 +284,9 @@ public class Player : MonoBehaviour
         }
         
         if(isHitFromSpikes)
-            SoundManager.Instance.OnEnterSpikes(transform.position);
+            SoundManager.Instance.OnEnterSpikes();
         else
-            SoundManager.Instance.OnPlayerHitByBomb(transform.position);
+            SoundManager.Instance.OnPlayerHitByBomb();
 
         Vector3 forceDirection = new Vector3(hitDirection.x,1,hitDirection.y);
         ApplyKnockback(forceDirection, knockbackForce);
@@ -289,7 +294,6 @@ public class Player : MonoBehaviour
         IsImmune = true;
         _actualImmuneTimer = immuneTimer;
 
-        NbKills = 0;
         playerItemsManager.ResetInventory();
     }
 
@@ -297,7 +301,7 @@ public class Player : MonoBehaviour
     {
         if (_stateMachine.CurrentState is not JumpState)
         {
-            SoundManager.Instance.OnEnterTrampoline(transform.position);
+            SoundManager.Instance.OnEnterTrampoline();
             _jumpVelocity = CalculateJumpForce(jumpDirection);
             _stateMachine.Trigger(GameConstants.PLAYER_JUMP_TRIGGER);
         }
@@ -307,7 +311,7 @@ public class Player : MonoBehaviour
     {
         if (_stateMachine.CurrentState is not JumpState) 
         {
-            SoundManager.Instance.OnEnterPortal(transform.position);
+            SoundManager.Instance.OnEnterPortal();
             _characterController.enabled = false;
             this.gameObject.transform.position = otherPortalPosition;
             _jumpVelocity = CalculatePortalForce(playerDirection);
@@ -348,7 +352,6 @@ public class Player : MonoBehaviour
 
         return jumpInitialVelocity;
     }
-
 
     public void UpdateJump() 
     {
@@ -433,7 +436,7 @@ public class Player : MonoBehaviour
         GameManager.Instance.RemoveItemFromGrid(item);
         Destroy(other.gameObject);
         
-        SoundManager.Instance.OnPickupItem(transform.position);
+        SoundManager.Instance.OnPickupItem();
     }
 
     private bool CheckIfOnOwnColor()

@@ -3661,6 +3661,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d00abcfd2ff9b8840a604215b1cd7124, type: 3}
+--- !u!114 &2014711448 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4795752124082758741, guid: d00abcfd2ff9b8840a604215b1cd7124, type: 3}
+  m_PrefabInstance: {fileID: 2014711447}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3708f6989a414693903821b139604a1a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: GameplayAssembly::SoundManager
 --- !u!1 &2016641642
 GameObject:
   m_ObjectHideFlags: 0
@@ -4278,9 +4289,37 @@ PrefabInstance:
       value: PlayButton
       objectReference: {fileID: 0}
     - target: {fileID: 3766028279757574878, guid: c6219db4318fa6d49bd009908fad2060, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3766028279757574878, guid: c6219db4318fa6d49bd009908fad2060, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3766028279757574878, guid: c6219db4318fa6d49bd009908fad2060, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1933444547}
+    - target: {fileID: 3766028279757574878, guid: c6219db4318fa6d49bd009908fad2060, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 2014711448}
+    - target: {fileID: 3766028279757574878, guid: c6219db4318fa6d49bd009908fad2060, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3766028279757574878, guid: c6219db4318fa6d49bd009908fad2060, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: OnMenuButtonPressed
+      objectReference: {fileID: 0}
+    - target: {fileID: 3766028279757574878, guid: c6219db4318fa6d49bd009908fad2060, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_TargetAssemblyTypeName
+      value: SoundManager, GameplayAssembly
+      objectReference: {fileID: 0}
+    - target: {fileID: 3766028279757574878, guid: c6219db4318fa6d49bd009908fad2060, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 4888586578805340669, guid: c6219db4318fa6d49bd009908fad2060, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
