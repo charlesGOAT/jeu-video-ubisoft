@@ -30,14 +30,12 @@ public class Tile : MonoBehaviour
 
         _tileRenderer = GetComponentInChildren<Renderer>();
         InitializeTileCoordinates();
-
-        _neutralColor = _tileRenderer.material.color;
     }
 
     protected virtual void Start()
     {
+        _neutralColor = _tileRenderer.material.color;
         IsSpawn = GameManager.Instance.GridManager.playerSpawnPoints.Contains(TileCoordinates);
-        RemoveSnowflakeMaterial(); // because unity editor is broken yay
     }
 
     public virtual void ChangeTileColor(PlayerEnum newOwner)
@@ -61,7 +59,7 @@ public class Tile : MonoBehaviour
         TileCoordinates = GridManagerStrategy.WorldToGridCoordinates(transform.position);
     }
 
-    public IEnumerator FreezeTile()
+    private IEnumerator FreezeTileCoroutine()
     {
         IsFrozen = true;
         AddSnowflakeMaterial();
@@ -70,17 +68,22 @@ public class Tile : MonoBehaviour
         RemoveSnowflakeMaterial();
     }
 
+    public void FreezeTile()
+    {
+        StartCoroutine(FreezeTileCoroutine());
+    }
+
     private void AddSnowflakeMaterial()
     {
         Material[] materials = _tileRenderer.materials;
-        materials[1] = GameManager.Instance.snowflakeMaterial;
+        materials[2] = GameManager.Instance.snowflakeMaterial;
         _tileRenderer.materials = materials;
     }
     
     private void RemoveSnowflakeMaterial()
     {
         Material[] materials = _tileRenderer.materials;
-        materials[1] = GameManager.Instance.transparentMat;
+        materials[2] = GameManager.Instance.transparentMat;
         _tileRenderer.materials = materials;
     }
 }
