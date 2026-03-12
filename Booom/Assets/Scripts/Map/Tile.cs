@@ -33,7 +33,7 @@ public class Tile : MonoBehaviour
 
         _neutralColor = _tileRenderer.material.color;
     }
-    
+
     protected virtual void Start()
     {
         IsSpawn = GameManager.Instance.GridManager.playerSpawnPoints.Contains(TileCoordinates);
