@@ -241,6 +241,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 58f818a7db04e624ea48a742df3a6d10, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Portal
+  IsFrozen: 0
   otherPortal: {fileID: 0}
 --- !u!1 &3884438457466546373
 GameObject:
@@ -310,6 +311,7 @@ MeshRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: 547b1b832e759114085fd87b05867c76, type: 2}
   - {fileID: 2100000, guid: 547b1b832e759114085fd87b05867c76, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
