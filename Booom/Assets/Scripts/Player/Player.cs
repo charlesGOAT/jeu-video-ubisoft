@@ -1,5 +1,7 @@
+using Codice.Client.BaseCommands;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Interactions;
@@ -52,8 +54,12 @@ public class Player : MonoBehaviour
             // todo : add more here
         };
 
+    [SerializeField]
+    private Material[] playerMaterials;
+
     private PlayerInput _playerInput;
-    private Renderer _renderer;
+    private Renderer[] _renderers;
+    private bool[] _rendererDefaultStates;
 
     private Vector2 _moveInput;
     private Vector3 _lastInput;
@@ -72,7 +78,6 @@ public class Player : MonoBehaviour
     private HitState _hitState;
     private RunState _runState;
     private JumpState _jumpState;
-
     public BombFusingType BombFusingType { get; set; }
     
     //nom de caca
@@ -231,6 +236,7 @@ public class Player : MonoBehaviour
             if (GameManager.Instance.BombManager.CreateBomb(transform.position,
                     this, _bombFusingStrategies[(int)BombFusingType], ShouldNextBombBeTransparent))
             {
+                Animator.SetTrigger("DropBomb");
                 OnPlaceBombSuccessful?.Invoke();
             }
         }
@@ -280,6 +286,8 @@ public class Player : MonoBehaviour
         else
             SoundManager.Instance.OnPlayerHitByBomb(transform.position);
 
+
+        Animator.SetTrigger("HitPlayer");
         Vector3 forceDirection = new Vector3(hitDirection.x,1,hitDirection.y);
         ApplyKnockback(forceDirection, knockbackForce);
         _stateMachine.Trigger(GameConstants.PLAYER_HIT_TRIGGER);
@@ -357,9 +365,9 @@ public class Player : MonoBehaviour
     public void ResetJumpVelocity() => _jumpVelocity = Vector3.zero;
 
 
-    public void FlickerPlayerOnHit(float elapsedT) => _renderer.enabled = Mathf.Sin(elapsedT * hitFlickerFrequency) > 0;
+    public void FlickerPlayerOnHit(float elapsedT) => SetRenderersVisible(Mathf.Sin(elapsedT * hitFlickerFrequency) > 0);
 
-    private void SetRendererVisible() => _renderer.enabled = true;
+    private void SetRendererVisible() => SetRenderersVisible(true);
 
     public bool IsMoving() => _moveInput.sqrMagnitude > 0.01f;
 
@@ -374,10 +382,13 @@ public class Player : MonoBehaviour
         Vector3 move = new Vector3(curMoveInput.y, 0, -curMoveInput.x) * (speed * boost);
         float tempMove = ApplyGravity(ref _verticalVelocity);
 
+        UpdatePlayerYRotation(curMoveInput);
         _characterController.Move(move * Time.deltaTime);
         _characterController.Move(Vector3.down * Math.Abs(tempMove));
         OnMoveFunctionCalled?.Invoke();
     }
+
+    public void UpdatePlayerYRotation(Vector2 moveInput) => transform.rotation = IsMoving() ? Quaternion.Euler(0, Mathf.Atan2(moveInput.y, -moveInput.x) * Mathf.Rad2Deg, 0) : transform.rotation;
 
     //Peut etre faire une meilleure fonction
     private float ApplyGravity(ref float currentVerticalVelocity)
@@ -521,6 +532,7 @@ public class Player : MonoBehaviour
         _runState = new RunState(_stateMachine, this);
         _jumpState = new JumpState(_stateMachine, this);
 
+
         _stateMachine.AddTransition<IdleState>(GameConstants.PLAYER_RUN_TRIGGER, _runState);
         _stateMachine.AddTransition<RunState>(GameConstants.PLAYER_IDLE_TRIGGER, _idleState);
         _stateMachine.AddTransition<JumpState>(GameConstants.PLAYER_IDLE_TRIGGER, _idleState);
@@ -534,8 +546,68 @@ public class Player : MonoBehaviour
     private void GetComponents()
     {
         _characterController = GetComponent<CharacterController>();
-        _renderer = GetComponent<Renderer>();
         _playerInput = GetComponent<PlayerInput>();
+        CachePlayerRenderers();
+    }
+
+    private void CachePlayerRenderers()
+    {
+        List<Renderer> playerRenderers = new();
+
+        foreach (Renderer renderer in GetComponentsInChildren<Renderer>(true))
+        {
+            playerRenderers.Add(renderer);
+        }
+
+        _renderers = playerRenderers.ToArray();
+        _rendererDefaultStates = new bool[_renderers.Length];
+
+        for (int i = 0; i < _renderers.Length; i++)
+        {
+            _rendererDefaultStates[i] = _renderers[i].enabled;
+        }
+    }
+
+    private void SetRenderersVisible(bool isVisible)
+    {
+        if (_renderers == null)
+        {
+            return;
+        }
+
+        for (int i = 0; i < _renderers.Length; i++)
+        {
+            if (_renderers[i] == null)
+            {
+                continue;
+            }
+
+            _renderers[i].enabled = _rendererDefaultStates[i] && isVisible;
+        }
+    }
+
+    private void SetPlayerTexture() 
+    {
+        if (_renderers == null)
+        {
+            return;
+        }
+
+        Material playerMaterial = playerMaterials[(int)playerNb - 1];
+
+        for (int i = 0; i < _renderers.Length; ++i)
+        {
+            Material[] mats = _renderers[i].materials;
+            for (int j = 0; j < mats.Length; ++j)
+            {
+                if (mats[j].name.Contains("PlayerTextureGrid"))
+                {
+                    mats[j] = playerMaterial;
+                }
+            }
+            
+            _renderers[i].materials = mats;
+        }
     }
 
     private void ConfigurePlayers()
@@ -551,8 +623,7 @@ public class Player : MonoBehaviour
         }
         
         playerColor = PlayerColorDict[playerNb];
-        
-        gameObject.GetComponent<Renderer>().material.color = playerColor;
+        SetPlayerTexture();
     }
 }
 

@@ -1,6 +1,3 @@
-using System.Collections;
-using UnityEngine;
-
 public class HitState : State
 {
     private float _hitDuration = GameConstants.HIT_STATE_DURATION;
@@ -10,15 +7,13 @@ public class HitState : State
 
     public override void Enter()
     {
-        //Jouer l'animation de hit
-        _player.Animator.Play("PlayerHit");
+        _player.Animator.SetBool("IsHit", true);
         _player.DisableInputActions();
     }
 
     public override void Exit()
     {
-        //Arr�ter l'animation de hit
-        _player.Animator.StopPlayback();
+        _player.Animator.SetBool("IsHit", false);
         _hitDuration = GameConstants.HIT_STATE_DURATION;
         _player.EnableInputActions();
     }
