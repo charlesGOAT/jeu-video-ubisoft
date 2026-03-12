@@ -37,7 +37,7 @@ public class Tile : MonoBehaviour
     protected virtual void Start()
     {
         IsSpawn = GameManager.Instance.GridManager.playerSpawnPoints.Contains(TileCoordinates);
-        RemoveSnowflakeMaterial(); // because unity editor is broken yay
+        //RemoveSnowflakeMaterial(); // because unity editor is broken yay
     }
 
     public virtual void ChangeTileColor(PlayerEnum newOwner)
