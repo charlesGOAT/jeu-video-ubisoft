@@ -9,8 +9,8 @@ public abstract class GridManagerStrategy : MonoBehaviour
 
     // Camera style "classique Bomberman"
     private static readonly Vector2 CODE_CAMERA_ANGLES = new Vector2(78f, 90f);
-    private const float CODE_CAMERA_DISTANCE_MULTIPLIER = 1.18f;
-    private const float CODE_CAMERA_MIN_DISTANCE = 6f;
+    private const float CODE_CAMERA_DISTANCE_MULTIPLIER = 0.86f;
+    private const float CODE_CAMERA_MIN_DISTANCE = 4.5f;
     private const float CODE_CAMERA_MAX_DISTANCE = 42f;
     private const float CODE_CAMERA_VERTICAL_PADDING = 1.5f;
     private const float CODE_CAMERA_FIELD_OF_VIEW = 62f;
