@@ -8,6 +8,13 @@ public class KeyValuePair {
     public int minutes;
     public int seconds;
     public BombEnum value;
+    
+    public KeyValuePair(int mins, int secs, BombEnum type)
+    {
+        minutes = mins;
+        seconds = secs;
+        value = type;
+    }
 }
 
 [Serializable]
@@ -15,6 +22,13 @@ public class KeyValuePairText {
     public int minutes;
     public int seconds;
     public string value;
+    
+    public KeyValuePairText(int mins, int secs, string val)
+    {
+        minutes = mins;
+        seconds = secs;
+        value = val;
+    }
 }
 
 public class EventManager : MonoBehaviour
@@ -33,8 +47,11 @@ public class EventManager : MonoBehaviour
     private readonly Dictionary<Tuple<int, int>, Tuple<BombEnum, bool>> _bombEventsDict = new();  // <minutes, seconds> -> <bomb type, hasEventHappened>
     private readonly Dictionary<Tuple<int, int>, Tuple<string, bool>> _textEventsDict = new();  // <minutes, seconds> -> <string, hasEventHappened>
 
-    private void Awake()
+    private void Start()
     {
+#if !UNITY_EDITOR
+    SetUpConfigValues();
+#endif
         foreach (var pair in bombEvents)
         {
             _bombEventsDict.TryAdd(new Tuple<int, int>(pair.minutes, pair.seconds), new Tuple<BombEnum, bool>(pair.value, false));
@@ -48,11 +65,18 @@ public class EventManager : MonoBehaviour
         if (_bombEventsDict.TryGetValue(new Tuple<int, int>(0, 0), out Tuple<BombEnum, bool> defaultBombType))
             CurrentBombType = defaultBombType.Item1;
     }
+    
     private void Update()
     {
         var timeTuple = new Tuple<int, int>(GameManager.Instance.CurrentMinutes, GameManager.Instance.CurrentSeconds);
         if (ManageEvents(timeTuple)) return;
         ManageBombEvents(timeTuple);
+    }
+
+    private void SetUpConfigValues()
+    {
+        bombEvents = GameManager.Instance.RuntimeConfig.BombEvents;
+        textEvents = GameManager.Instance.RuntimeConfig.TextEvents;
     }
 
     private void ManageBombEvents(in Tuple<int, int> timeTuple)

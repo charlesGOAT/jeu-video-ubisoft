@@ -7,12 +7,12 @@
   "MovementSpeed": 8,
   "FrozenTileDuration": 20,
   "PaintBrushItemSpawnerData": {
-    "MaxItems": 2,
-    "TimeBetweenSpawns": 10.0
+    "MaxItems": 1,
+    "TimeBetweenSpawns": 12.0
   },
   "GhostBombItemSpawnerData": {
-    "MaxItems": 2,
-    "TimeBetweenSpawns": 7.0
+    "MaxItems": 0,
+    "TimeBetweenSpawns": 0
   },
   "ChainedBombItemSpawnerData": {
     "MaxItems": 2,
@@ -21,6 +21,10 @@
   "TargetBombItemSpawnerData": {
     "MaxItems": 2,
     "TimeBetweenSpawns": 20.0
+  },
+  "FreezeBombItemSpawnerData": {
+    "MaxItems": 2,
+    "TimeBetweenSpawns": 15.0
   },
   "SpeedBoostPerKill": {
     "0": 1.0,
@@ -35,5 +39,24 @@
     "2": 1,
     "4": 2,
     "6": 3
-  }
+  },
+  "bombEvents": [
+    {
+      "minutes": 0,
+      "seconds": 0,
+      "value": 0
+    },
+    {
+      "minutes": 0,
+      "seconds": 30,
+      "value": 1
+    }
+  ],
+  "textEvents": [
+    {
+      "minutes": 2,
+      "seconds": 0,
+      "value": "Start placing bombs to spread your zone!"
+    }
+  ]
 }
