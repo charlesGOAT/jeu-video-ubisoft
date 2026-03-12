@@ -4,10 +4,28 @@ using UnityEngine;
 
 public abstract class GridManagerStrategy : MonoBehaviour
 {
+    // Preset force par code pour obtenir un cadrage stable entre toutes les scenes.
+    private const bool FORCE_CAMERA_PRESET_FROM_CODE = true;
+
+    // Camera style "classique Bomberman"
+    private static readonly Vector2 CODE_CAMERA_ANGLES = new Vector2(88f, 180f);
+    private const float CODE_CAMERA_DISTANCE_MULTIPLIER = 1.10f;
+    private const float CODE_CAMERA_MIN_DISTANCE = 6f;
+    private const float CODE_CAMERA_MAX_DISTANCE = 42f;
+    private const float CODE_CAMERA_VERTICAL_PADDING = 1f;
+    private const float CODE_CAMERA_FIELD_OF_VIEW = 58f;
+
+    // Pas de decalage pour garder un cadrage propre et centre
+    private const float CODE_CAMERA_LOOK_AHEAD_OFFSET = 0f;
+    private const float CODE_CAMERA_FORWARD_NUDGE = 0f;
+    private const float CODE_CAMERA_HEIGHT_OFFSET = 0f;
+
+    private const bool CODE_ENABLE_DYNAMIC_CAMERA = false;
+
     protected Dictionary<Vector2Int, Tile> _tiles = new Dictionary<Vector2Int, Tile>();
     protected Dictionary<Vector2Int, Tile> _ownableTiles = new Dictionary<Vector2Int, Tile>();
     protected Dictionary<Vector2Int, Item> _itemTiles = new Dictionary<Vector2Int, Item>();
-    
+
     public int capturableTilesCount;
 
     public Vector2Int MapUpperLimit { get; protected set; } = Vector2Int.zero;
@@ -18,8 +36,46 @@ public abstract class GridManagerStrategy : MonoBehaviour
 
     [SerializeField]
     protected Camera mainCamera;
-    
-    [SerializeField] 
+
+    [Header("Camera Framing")]
+    [SerializeField]
+    private bool autoFrameCamera = true;
+
+    [SerializeField]
+    private Vector2 cameraAngles = new Vector2(55f, 45f);
+
+    [SerializeField]
+    private float cameraDistanceMultiplier = 1.15f;
+
+    [SerializeField]
+    private float cameraMinDistance = 10f;
+
+    [SerializeField]
+    private float cameraMaxDistance = 120f;
+
+    [SerializeField]
+    private float cameraVerticalPadding = 4f;
+
+    [Header("Dynamic Camera")]
+    [SerializeField]
+    private bool enableDynamicCamera = true;
+
+    [SerializeField]
+    private float dynamicPositionSmoothTime = 0.1f;
+
+    [SerializeField]
+    private float dynamicZoomSmoothTime = 0.14f;
+
+    [SerializeField]
+    private float dynamicZoomPadding = 1.2f;
+
+    [SerializeField]
+    private float dynamicMinDistance = 14f;
+
+    [SerializeField]
+    private float dynamicMaxDistance = 100f;
+
+    [SerializeField]
     public Vector2Int[] playerSpawnPoints;
 
     public virtual Tile GetTileAtCoordinates(Vector2Int vector2Int)
@@ -47,10 +103,39 @@ public abstract class GridManagerStrategy : MonoBehaviour
 
     private void Awake()
     {
+        if (mainCamera == null)
+        {
+            mainCamera = Camera.main;
+        }
+
+        ApplyCodeCameraPreset();
+
         CreateGrid();
         SetOwnableTiles();
         capturableTilesCount = _ownableTiles.Count;
         PositionCamera();
+    }
+
+    private void ApplyCodeCameraPreset()
+    {
+        if (!FORCE_CAMERA_PRESET_FROM_CODE)
+        {
+            return;
+        }
+
+        autoFrameCamera = true;
+        cameraAngles = CODE_CAMERA_ANGLES;
+        cameraDistanceMultiplier = CODE_CAMERA_DISTANCE_MULTIPLIER;
+        cameraMinDistance = CODE_CAMERA_MIN_DISTANCE;
+        cameraMaxDistance = CODE_CAMERA_MAX_DISTANCE;
+        cameraVerticalPadding = CODE_CAMERA_VERTICAL_PADDING;
+
+        if (mainCamera != null)
+        {
+            mainCamera.fieldOfView = CODE_CAMERA_FIELD_OF_VIEW;
+        }
+
+        enableDynamicCamera = CODE_ENABLE_DYNAMIC_CAMERA;
     }
 
     protected abstract void CreateGrid();
@@ -59,12 +144,12 @@ public abstract class GridManagerStrategy : MonoBehaviour
     {
         return _itemTiles.ContainsKey(pos);
     }
-    
+
     public void AddItemOnGrid(Item item)
     {
         _itemTiles[item.posOnMap] = item;
     }
-    
+
     public void RemoveItemFromGrid(Item item)
     {
         _itemTiles.Remove(item.posOnMap);
@@ -81,41 +166,134 @@ public abstract class GridManagerStrategy : MonoBehaviour
         }
     }
 
-    //A besoin d'un peu de peaufinage mais marche pour l'instant
-    //Je peut le faire dans un autre task
-    //Manque encore du peaufinage lol
-    //Manque de peaufinage en tbnk
     protected void PositionCamera()
     {
         if (mainCamera == null) return;
+        if (!autoFrameCamera) return;
 
         float centerX = (MapUpperLimit.x - ((MapUpperLimit.x - MapLowerLimit.x) / 2f)) * GameConstants.UNITY_GRID_SIZE;
         float centerZ = (MapUpperLimit.y - ((MapUpperLimit.y - MapLowerLimit.y) / 2f)) * GameConstants.UNITY_GRID_SIZE;
 
-        mainCamera.transform.position = new Vector3(centerX - (Height * GameConstants.UNITY_GRID_SIZE) / 2f, ((Width + Height) * GameConstants.UNITY_GRID_SIZE) / 2f, centerZ);
-        mainCamera.transform.rotation = Quaternion.Euler(60f, 90f, 0f);
+        Vector3 mapCenter = new Vector3(centerX, 0f, centerZ);
+        Vector3 mapSize = new Vector3(
+            Width * GameConstants.UNITY_GRID_SIZE,
+            0f,
+            Height * GameConstants.UNITY_GRID_SIZE
+        );
+
+        Quaternion cameraRotation = Quaternion.Euler(cameraAngles.x, cameraAngles.y, 0f);
+        mainCamera.transform.rotation = cameraRotation;
+        mainCamera.orthographic = false;
+
+        Vector3 horizontalForward = Vector3.ProjectOnPlane(mainCamera.transform.forward, Vector3.up).normalized;
+        Vector3 framedCenter = mapCenter + horizontalForward * CODE_CAMERA_LOOK_AHEAD_OFFSET;
+
+        float longestSide = Mathf.Max(mapSize.x, mapSize.z);
+        float diagonal = new Vector2(mapSize.x, mapSize.z).magnitude;
+
+        // Un peu plus genereux pour eviter de couper le haut / le bas.
+        float framingBaseSize = Mathf.Max(longestSide, diagonal * 0.75f);
+
+        float halfFovRad = mainCamera.fieldOfView * 0.5f * Mathf.Deg2Rad;
+        float requiredDistance = (framingBaseSize * 0.5f) / Mathf.Tan(halfFovRad);
+
+        float cameraDistance = Mathf.Clamp(
+            (requiredDistance + cameraVerticalPadding) * cameraDistanceMultiplier,
+            cameraMinDistance,
+            cameraMaxDistance
+        );
+
+        Vector3 finalPosition = framedCenter - (mainCamera.transform.forward * cameraDistance);
+        finalPosition += mainCamera.transform.forward * CODE_CAMERA_FORWARD_NUDGE;
+        finalPosition += Vector3.up * CODE_CAMERA_HEIGHT_OFFSET;
+
+        mainCamera.transform.position = finalPosition;
+
+        ConfigureDynamicCamera(framedCenter, mapSize);
+    }
+
+    private void ConfigureDynamicCamera(Vector3 mapCenter, Vector3 mapSize)
+    {
+        if (!enableDynamicCamera || mainCamera == null)
+        {
+            return;
+        }
+
+        // Optional feature: avoid hard reference so project still compiles if the script is missing.
+        var dynamicArenaCameraType = ResolveTypeByName("DynamicArenaCamera");
+        if (dynamicArenaCameraType == null)
+        {
+            return;
+        }
+
+        var dynamicCamera = mainCamera.GetComponent(dynamicArenaCameraType);
+        if (dynamicCamera == null)
+        {
+            dynamicCamera = mainCamera.gameObject.AddComponent(dynamicArenaCameraType);
+        }
+
+        var configureMethod = dynamicArenaCameraType.GetMethod("Configure");
+        if (configureMethod == null)
+        {
+            return;
+        }
+
+        configureMethod.Invoke(dynamicCamera, new object[]
+        {
+            mapCenter,
+            mapSize,
+            dynamicMinDistance,
+            dynamicMaxDistance,
+            dynamicZoomPadding,
+            dynamicPositionSmoothTime,
+            dynamicZoomSmoothTime
+        });
+    }
+
+    private static System.Type ResolveTypeByName(string typeName)
+    {
+        foreach (var assembly in System.AppDomain.CurrentDomain.GetAssemblies())
+        {
+            var type = assembly.GetType(typeName);
+            if (type != null)
+            {
+                return type;
+            }
+
+            type = assembly.GetTypes().FirstOrDefault(t => t.Name == typeName);
+            if (type != null)
+            {
+                return type;
+            }
+        }
+
+        return null;
     }
 
     public Vector3 GetRandomPosOnGridWithNoItem()
     {
         var rand = new System.Random();
-        var noItemGrid = _ownableTiles.Where(tile => !IsItemAtPos(tile.Key)).Select(tile => tile.Key).ToArray();
+        var noItemGrid = _ownableTiles
+            .Where(tile => !IsItemAtPos(tile.Key))
+            .Select(tile => tile.Key)
+            .ToArray();
+
         int ind = rand.Next(0, noItemGrid.Length);
         return GridToWorldPosition(noItemGrid[ind]);
     }
-    
+
     public IEnumerable<Vector2Int> GetPlayerTilesWithNoItem(PlayerEnum player)
     {
         if (player == PlayerEnum.None)
-            return new []{WorldToGridCoordinates(GetRandomPosOnGridWithNoItem())};
+            return new[] { WorldToGridCoordinates(GetRandomPosOnGridWithNoItem()) };
 
         var acquiredTiles = GameManager.Instance.ScoreManager.GetAcquiredTilesByPlayer();
         var tilesWithNoItem = acquiredTiles[(int)player - 1].Where(pos => !IsItemAtPos(pos));
 
         var playerTilesWithNoItem = tilesWithNoItem as Vector2Int[] ?? tilesWithNoItem.ToArray();
         if (playerTilesWithNoItem.Length > 0) return playerTilesWithNoItem;
-        
-        return new []{WorldToGridCoordinates(GetRandomPosOnGridWithNoItem())};
+
+        return new[] { WorldToGridCoordinates(GetRandomPosOnGridWithNoItem()) };
     }
 
     private HashSet<Vector2Int> GetAllTilesOwned()

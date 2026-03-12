@@ -368,7 +368,8 @@ public class Player : MonoBehaviour
 
         boost *= GameManager.Instance.IsBonusSpeed ? _elimsSpeedBoost : 1;
 
-        Vector3 move = new Vector3(curMoveInput.y, 0, -curMoveInput.x) * (speed * boost);
+        Vector3 moveDirection = GetWorldDirectionFromInput(curMoveInput);
+        Vector3 move = moveDirection * (speed * boost);
         float tempMove = ApplyGravity(ref _verticalVelocity);
 
         _characterController.Move(move * Time.deltaTime);
@@ -471,8 +472,7 @@ public class Player : MonoBehaviour
 
     private Vector3 GetBombPlacementDirection(Vector2 input)
     {
-        //a cause de la camera les inputs sont weird
-        Vector3 worldDirection = new(input.y, 0f, -input.x);
+        Vector3 worldDirection = GetWorldDirectionFromInput(input.normalized);
         float absX = Mathf.Abs(worldDirection.x);
         float absZ = Mathf.Abs(worldDirection.z);
 
@@ -508,6 +508,35 @@ public class Player : MonoBehaviour
         }
 
         return xDistance < zDistance ? xCandidate : zCandidate;
+    }
+
+    private static Vector3 GetWorldDirectionFromInput(Vector2 input)
+    {
+        if (input.sqrMagnitude <= 0.0001f)
+        {
+            return Vector3.zero;
+        }
+
+        Camera cam = Camera.main;
+        if (cam == null)
+        {
+            return new Vector3(input.x, 0f, input.y).normalized;
+        }
+
+        Vector3 camRight = cam.transform.right;
+        Vector3 camForward = cam.transform.forward;
+        camRight.y = 0f;
+        camForward.y = 0f;
+
+        if (camRight.sqrMagnitude <= 0.0001f || camForward.sqrMagnitude <= 0.0001f)
+        {
+            return new Vector3(input.x, 0f, input.y).normalized;
+        }
+
+        camRight.Normalize();
+        camForward.Normalize();
+
+        return (camRight * input.x + camForward * input.y).normalized;
     }
 
     private void InitializeStateMachine()
