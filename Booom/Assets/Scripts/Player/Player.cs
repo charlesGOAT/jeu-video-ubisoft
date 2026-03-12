@@ -47,6 +47,9 @@ public class Player : MonoBehaviour
             // todo : add more here
         };
 
+    private Dictionary<int, float> _speedBoostPerKill = GameConstants.SpeedBoostPerKill;
+    private Dictionary<int, int> _rangeBoostPerKill = GameConstants.RangeBoostPerKill;
+
     private PlayerInput _playerInput;
     private Renderer _renderer;
 
@@ -123,7 +126,10 @@ public class Player : MonoBehaviour
 
     private void GetConfigValues()
     {
-        speed = GameManager.Instance.RuntimeConfig.MovementSpeed;
+        var runtimeConfig = GameManager.Instance.RuntimeConfig;
+        speed = runtimeConfig.MovementSpeed;
+        _rangeBoostPerKill = runtimeConfig.RangeBoostPerKill;
+        _speedBoostPerKill = runtimeConfig.SpeedBoostPerKill;
     }
 
     private void CheckStartConditions()
