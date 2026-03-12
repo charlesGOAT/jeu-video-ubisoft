@@ -22,34 +22,48 @@ public class SoundManager : MonoBehaviour
     
     [Header("--- Bomb sounds ---")]
     [SerializeField] 
-    private Audio bombFusedAudio;
+    private AudioSource bombFusedAudio;
     [SerializeField] 
-    private Audio bombExplodedAudio;
+    private AudioSource bombExplodedAudio;
     [SerializeField] 
-    private Audio genericBombEventSound;
+    private AudioSource genericBombEventSound;
+    [SerializeField]
+    private AudioSource targetBombMovingSound;
+    [SerializeField]
+    private Audio defenseBombSound;
     [Space(3)]
     
     [Header("--- Item sounds ---")]
     [SerializeField] 
     private Audio pickUpItemSound;
+    [SerializeField]
+    private AudioSource usePaintBrushSound;
     [Space(3)]
     
     [Header("--- Player sounds ---")]
     [SerializeField] 
-    private Audio trampolineSound;
+    private AudioSource trampolineSound;
     [SerializeField]
-    private Audio spikeSound;
+    private AudioSource spikeSound;
     [SerializeField] 
-    private Audio portalSound;
+    private AudioSource portalSound;
     [SerializeField] 
-    private Audio bombHitPlayerSound;
+    private AudioSource bombHitPlayerSound;
+    [SerializeField] 
+    private AudioSource newKillStreakSound;
     [Space(3)]
 
     [Header("--- Game music ---")]
     [SerializeField] 
-    private Audio gameMusic;
+    private Audio gameStartsSound;
+    [SerializeField] 
+    private Audio mainTheme;
+    [SerializeField] 
+    private Audio acceleratedGameMusic;
+    [SerializeField] 
+    private Audio colorAlternationMusic;
     [SerializeField]
-    private Audio endGameMusic;
+    private Audio victoryThemeMusic;
     [Space(3)]
 
     private AudioSource _audioSourceSFX;
@@ -94,14 +108,14 @@ public class SoundManager : MonoBehaviour
         _audioSourceMusic.Play();
     }
 
-    public void OnBombFused(Bomb bomb)
+    public void OnBombFused()
     {
-        AudioSource.PlayClipAtPoint(bombFusedAudio.audioClip, bomb.transform.position, bombFusedAudio.volume);
+        bombFusedAudio.Play();
     }
 
-    public void OnBombExploded(Bomb bomb)
+    public void OnBombExploded()
     {
-        AudioSource.PlayClipAtPoint(bombExplodedAudio.audioClip, bomb.transform.position, bombExplodedAudio.volume);
+        bombExplodedAudio.Play();
     }
 
     public void OnMenuButtonPressed()
@@ -111,37 +125,74 @@ public class SoundManager : MonoBehaviour
 
     public void OnBombEvent()
     {
-        _audioSourceSFX.PlayOneShot(genericBombEventSound.audioClip, genericBombEventSound.volume);
+        genericBombEventSound.Play();
     }
 
-    public void OnPickupItem(Vector3 position)
+    public void OnPickupItem()
     {
-        AudioSource.PlayClipAtPoint(pickUpItemSound.audioClip, position, pickUpItemSound.volume);
+        _audioSourceSFX.PlayOneShot(pickUpItemSound.audioClip, pickUpItemSound.volume);
     }
 
-    public void OnEnterTrampoline(Vector3 position)
+    public void OnEnterTrampoline()
     {
-        AudioSource.PlayClipAtPoint(trampolineSound.audioClip, position, trampolineSound.volume);
+        trampolineSound.Play();
     }
     
-    public void OnEnterPortal(Vector3 position)
+    public void OnEnterPortal()
     {
-        AudioSource.PlayClipAtPoint(portalSound.audioClip, position, portalSound.volume);
+        portalSound.Play();
     }
 
-    public void OnEnterSpikes(Vector3 position)
+    public void OnEnterSpikes()
     {
-        AudioSource.PlayClipAtPoint(spikeSound.audioClip, position, spikeSound.volume);
+        spikeSound.Play();
     }
 
-    public void OnPlayerHitByBomb(Vector3 position)
+    public void OnPlayerHitByBomb()
     {
-        AudioSource.PlayClipAtPoint(bombHitPlayerSound.audioClip, position, bombHitPlayerSound.volume);
+        bombHitPlayerSound.Play();
     }
 
     public void OnGameEnded()
     {
-        PlayAudioSourceMusic(endGameMusic);
+        PlayAudioSourceMusic(victoryThemeMusic);
+    }
+
+    public void OnTargetBombMoving(bool isMoving)
+    {
+        if(isMoving) targetBombMovingSound.Play();
+        else targetBombMovingSound.Stop();
+    }
+
+    public void OnDefenseBombExploded()
+    {
+        _audioSourceSFX.PlayOneShot(defenseBombSound.audioClip, defenseBombSound.volume);
+    }
+
+    public void OnPlayAcceleratedGameMusic()
+    {
+        PlayAudioSourceMusic(acceleratedGameMusic);
+    }
+
+    public void OnUsePaintBrush(bool isUsing)
+    {
+        if(isUsing) usePaintBrushSound.Play();
+        else usePaintBrushSound.Stop();
+    }
+
+    public void OnNewKillStreak()
+    {
+        newKillStreakSound.PlayOneShot(newKillStreakSound.clip); // so they can overlap
+    }
+
+    public void OnColorAlternate() // todo :  call when needed
+    {
+        PlayAudioSourceMusic(colorAlternationMusic);
+    }
+
+    public void OnGameStarted()
+    {
+        _audioSourceSFX.PlayOneShot(gameStartsSound.audioClip, gameStartsSound.volume);
     }
 
     public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -158,17 +209,17 @@ public class SoundManager : MonoBehaviour
         else
         {
             _isInMenu = false;
-            PlayAudioSourceMusic(gameMusic);  // todo : voir s'il y a plus qu'une toune de jeu
+            PlayAudioSourceMusic(mainTheme);  // todo : voir s'il y a plus qu'une toune de jeu
         }
     }
     
     private void VerifyAudioClipsPresent()
     {
-        if (bombExplodedAudio.audioClip == null)
+        if (bombExplodedAudio == null)
         {
             throw new Exception($"Audio clip {nameof(bombExplodedAudio)} cannot be null");
         }
-        if (bombFusedAudio.audioClip == null)
+        if (bombFusedAudio == null)
         {
             throw new Exception($"Audio clip {nameof(bombFusedAudio)} cannot be null");
         }
@@ -180,37 +231,65 @@ public class SoundManager : MonoBehaviour
         {
             throw new Exception($"Audio clip {nameof(backgroundMenuMusic)} cannot be null");
         }
-        if (gameMusic.audioClip == null)
+        if (mainTheme.audioClip == null)
         {
-            throw new Exception($"Audio clip {nameof(gameMusic)} cannot be null");
+            throw new Exception($"Audio clip {nameof(mainTheme)} cannot be null");
         }
-        if (endGameMusic.audioClip == null)
+        if (victoryThemeMusic.audioClip == null)
         {
-            throw new Exception($"Audio clip {nameof(endGameMusic)} cannot be null");
+            throw new Exception($"Audio clip {nameof(victoryThemeMusic)} cannot be null");
         }
         if (pickUpItemSound.audioClip == null)
         {
             throw new Exception($"Audio clip {nameof(pickUpItemSound)} cannot be null");
         }
-        if (genericBombEventSound.audioClip == null)
+        if (genericBombEventSound == null)
         {
             throw new Exception($"Audio clip {nameof(genericBombEventSound)} cannot be null");
         }
-        if (trampolineSound.audioClip == null)
+        if (trampolineSound == null)
         {
             throw new Exception($"Audio clip {nameof(trampolineSound)} cannot be null");
         }
-        if (spikeSound.audioClip == null)
+        if (spikeSound == null)
         {
             throw new Exception($"Audio clip {nameof(spikeSound)} cannot be null");
         }
-        if (portalSound.audioClip == null)
+        if (portalSound == null)
         {
             throw new Exception($"Audio clip {nameof(portalSound)} cannot be null");
         } 
-        if (bombHitPlayerSound.audioClip == null)
+        if (bombHitPlayerSound == null)
         {
             throw new Exception($"Audio clip {nameof(bombHitPlayerSound)} cannot be null");
+        }
+        if (defenseBombSound.audioClip == null)
+        {
+            throw new Exception($"Audio clip {nameof(defenseBombSound)} cannot be null");
+        }
+        if (targetBombMovingSound == null)
+        {
+            throw new Exception($"Audio clip {nameof(targetBombMovingSound)} cannot be null");
+        }
+        if (acceleratedGameMusic.audioClip == null)
+        {
+            throw new Exception($"Audio clip {nameof(acceleratedGameMusic)} cannot be null");
+        }
+        if (gameStartsSound.audioClip == null)
+        {
+            throw new Exception($"Audio clip {nameof(gameStartsSound)} cannot be null");
+        }
+        if (newKillStreakSound == null)
+        {
+            throw new Exception($"Audio clip {nameof(newKillStreakSound)} cannot be null");
+        }
+        if (colorAlternationMusic.audioClip == null)
+        {
+            throw new Exception($"Audio clip {nameof(colorAlternationMusic)} cannot be null");
+        }
+        if (usePaintBrushSound == null)
+        {
+            throw new Exception($"Audio clip {nameof(colorAlternationMusic)} cannot be null");
         }
     }
 }

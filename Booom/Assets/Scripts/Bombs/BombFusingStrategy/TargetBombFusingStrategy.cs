@@ -15,12 +15,11 @@ public class TargetBombFusingStrategy : BombFusingStrategy
     
     private const float MOVE_SPEED = 8f;
 
-
     private readonly System.Object _lock = new ();
 
     public override async void Fuse(Bomb bomb)
     {
-        SoundManager.Instance.OnBombFused(bomb);
+        SoundManager.Instance.OnBombFused();
 
         _bomb = bomb;
         _associatedPlayer = Player.ActivePlayers.First(player => player.PlayerNb == _bomb.AssociatedPlayer);
@@ -30,6 +29,8 @@ public class TargetBombFusingStrategy : BombFusingStrategy
 
         Awaitable timerTask = ManageActiveTime(); // bomb explodes after the Timer is over even if it hasn't reached any player
         Awaitable movementTask = MoveBombLoop();
+        
+        SoundManager.Instance.OnTargetBombMoving(true);
 
         await timerTask;
         await movementTask;
@@ -50,6 +51,7 @@ public class TargetBombFusingStrategy : BombFusingStrategy
             if (_bomb == null) return;
             _bomb.SetBombCoordinates(GridManagerStrategy.WorldToGridCoordinates(_bomb.transform.position));
             _bomb.Explode();
+            SoundManager.Instance.OnTargetBombMoving(false);
         }
     }
 
@@ -253,6 +255,7 @@ public class TargetBombFusingStrategy : BombFusingStrategy
             if (_bomb == null) return;
             bomb.SetBombCoordinates(GridManagerStrategy.WorldToGridCoordinates(bomb.transform.position));
             bomb.Explode();
+            SoundManager.Instance.OnTargetBombMoving(false);
         }
     }
 }

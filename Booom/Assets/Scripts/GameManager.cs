@@ -84,10 +84,21 @@ public class GameManager : MonoBehaviour
         }
 
         GameUIManager.UpdateTimerDisplay();
+        
+        UpdateMusic();
+    }
+
+    private void UpdateMusic()
+    {
+        if (_timeRemaining <= 60)
+        {
+            SoundManager.Instance.OnPlayAcceleratedGameMusic();
+        }
     }
 
     public void StartTimer()
     {
+        SoundManager.Instance.OnGameStarted();
         _timeRemaining = _gameDuration;
         _timerRunning = true;
     }
