@@ -241,6 +241,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c2a556ea87ef18b4991a37afaec492da, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Spike
+  IsFrozen: 0
 --- !u!1 &3884438457466546373
 GameObject:
   m_ObjectHideFlags: 0
@@ -308,7 +309,8 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: 8f25574808671a24abff67861acd5bf5, type: 2}
+  - {fileID: 2100000, guid: c361f5faee2d4214995f0d23138f7c77, type: 2}
   - {fileID: 2100000, guid: 2ef1aff06d3c67c40ad9bbca53580065, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
