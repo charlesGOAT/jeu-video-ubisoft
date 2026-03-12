@@ -2,7 +2,7 @@
 {
     public virtual void Fuse(Bomb bomb)
     {
-        SoundManager.Instance.OnBombFused(bomb);
+        SoundManager.Instance.OnBombFused();
         bomb.StartBombCountDown();
     }
 

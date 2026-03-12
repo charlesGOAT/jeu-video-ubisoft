@@ -138,21 +138,15 @@ public class ItemSpawner : MonoBehaviour
         switch (associatedItemType)
         {
             case (ItemType.PaintBrush):
-            {
                 return GameManager.Instance.RuntimeConfig.PaintBrushItemSpawnerData;
-            }
             case (ItemType.TransparentBomb):
-            {
                 return GameManager.Instance.RuntimeConfig.GhostBombItemSpawnerData;
-            }
             case (ItemType.ChainBombs):
-            {
                 return GameManager.Instance.RuntimeConfig.ChainedBombItemSpawnerData;
-            }
             case (ItemType.TargetBomb):
-            {
                 return GameManager.Instance.RuntimeConfig.TargetBombItemSpawnerData;
-            }
+            case ItemType.FreezeBomb:
+                return GameManager.Instance.RuntimeConfig.FreezeBombItemSpawnerData;
         }
 
         return new ItemSpawnerData();

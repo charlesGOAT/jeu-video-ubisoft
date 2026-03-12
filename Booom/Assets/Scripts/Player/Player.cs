@@ -19,9 +19,6 @@ public class Player : MonoBehaviour
     private float speed = 8f;
 
     [SerializeField]
-    private Bomb bombPrefab;
-
-    [SerializeField]
     private Color playerColor = Color.red;
 
     [SerializeField]
@@ -42,9 +39,6 @@ public class Player : MonoBehaviour
     [SerializeField]
     private float tileDetectionTolerance = 0.35f;
 
-    [SerializeField]
-    private GameObject arrow;
-
     private BombFusingStrategy[] _bombFusingStrategies = new []
         {
             new BombFusingStrategy(),
@@ -56,6 +50,8 @@ public class Player : MonoBehaviour
 
     [SerializeField]
     private Material[] playerMaterials;
+    private Dictionary<int, float> _speedBoostPerKill = GameConstants.SpeedBoostPerKill;
+    private Dictionary<int, int> _rangeBoostPerKill = GameConstants.RangeBoostPerKill;
 
     private PlayerInput _playerInput;
     private Renderer[] _renderers;
@@ -63,7 +59,6 @@ public class Player : MonoBehaviour
 
     private Vector2 _moveInput;
     private Vector3 _lastInput;
-    public bool ShouldNextBombBeTransparent = false;
     
     public PlayerEnum PlayerNb => playerNb;
 
@@ -79,6 +74,8 @@ public class Player : MonoBehaviour
     private RunState _runState;
     private JumpState _jumpState;
     public BombFusingType BombFusingType { get; set; }
+    public bool ShouldNextBombBeTransparent = false;
+    public bool ShouldNextBombFreezeBomb = false;
     
     //nom de caca
     private float _actualImmuneTimer;
@@ -135,7 +132,10 @@ public class Player : MonoBehaviour
 
     private void GetConfigValues()
     {
-        speed = GameManager.Instance.RuntimeConfig.MovementSpeed;
+        var runtimeConfig = GameManager.Instance.RuntimeConfig;
+        speed = runtimeConfig.MovementSpeed;
+        _rangeBoostPerKill = runtimeConfig.RangeBoostPerKill;
+        _speedBoostPerKill = runtimeConfig.SpeedBoostPerKill;
     }
 
     private void CheckStartConditions()
@@ -149,10 +149,15 @@ public class Player : MonoBehaviour
     private void OnNbKillsChanged()
     {
         if (GameConstants.SpeedBoostPerKill.TryGetValue(NbKills, out float newSpeedBoost))
+        {
             _elimsSpeedBoost = newSpeedBoost;
-
+            SoundManager.Instance.OnNewKillStreak();
+        }
         if (GameConstants.RangeBoostPerKill.TryGetValue(NbKills, out int newRangeBoost))
+        {
             _elimsRangeBoost = newRangeBoost;
+            SoundManager.Instance.OnNewKillStreak();
+        }
         
         // todo : generate little animation or particle effect indicating kill streak
     }
@@ -180,9 +185,13 @@ public class Player : MonoBehaviour
 
         int mult = isMod2Zero ? intPlayerNb / 2 : (intPlayerNb + 1) / 2;
         Vector2Int spawnPointGrid = new Vector2Int(GameManager.Instance.GridManager.MapUpperLimit.x * mult, posY);
-        
-        if(GameManager.Instance.IsSpreadingMode)
-            GameManager.Instance.GridManager.GetTileAtCoordinates(spawnPointGrid).ChangeTileColor(playerNb); 
+
+        if (GameManager.Instance.IsSpreadingMode)
+        {
+            Tile tile = GameManager.Instance.GridManager.GetTileAtCoordinates(spawnPointGrid);
+            tile.ChangeTileColor(playerNb);
+            tile.IsSpawn = true;
+        }
         
         MovePlayerOnSpawnPoint(spawnPointGrid);
     }
@@ -234,7 +243,7 @@ public class Player : MonoBehaviour
             Vector3 bombDirection = _moveInput.sqrMagnitude > 0.0001f ? GetBombPlacementDirection(_moveInput) : _lastInput;
 
             if (GameManager.Instance.BombManager.CreateBomb(transform.position,
-                    this, _bombFusingStrategies[(int)BombFusingType], ShouldNextBombBeTransparent))
+                    this, _bombFusingStrategies[(int)BombFusingType], ShouldNextBombBeTransparent, ShouldNextBombFreezeBomb))
             {
                 Animator.SetTrigger("DropBomb");
                 OnPlaceBombSuccessful?.Invoke();
@@ -282,9 +291,9 @@ public class Player : MonoBehaviour
         }
         
         if(isHitFromSpikes)
-            SoundManager.Instance.OnEnterSpikes(transform.position);
+            SoundManager.Instance.OnEnterSpikes();
         else
-            SoundManager.Instance.OnPlayerHitByBomb(transform.position);
+            SoundManager.Instance.OnPlayerHitByBomb();
 
 
         Animator.SetTrigger("HitPlayer");
@@ -294,7 +303,6 @@ public class Player : MonoBehaviour
         IsImmune = true;
         _actualImmuneTimer = immuneTimer;
 
-        NbKills = 0;
         playerItemsManager.ResetInventory();
     }
 
@@ -302,7 +310,7 @@ public class Player : MonoBehaviour
     {
         if (_stateMachine.CurrentState is not JumpState)
         {
-            SoundManager.Instance.OnEnterTrampoline(transform.position);
+            SoundManager.Instance.OnEnterTrampoline();
             _jumpVelocity = CalculateJumpForce(jumpDirection);
             _stateMachine.Trigger(GameConstants.PLAYER_JUMP_TRIGGER);
         }
@@ -312,7 +320,7 @@ public class Player : MonoBehaviour
     {
         if (_stateMachine.CurrentState is not JumpState) 
         {
-            SoundManager.Instance.OnEnterPortal(transform.position);
+            SoundManager.Instance.OnEnterPortal();
             _characterController.enabled = false;
             this.gameObject.transform.position = otherPortalPosition;
             _jumpVelocity = CalculatePortalForce(playerDirection);
@@ -353,7 +361,6 @@ public class Player : MonoBehaviour
 
         return jumpInitialVelocity;
     }
-
 
     public void UpdateJump() 
     {
@@ -441,7 +448,7 @@ public class Player : MonoBehaviour
         GameManager.Instance.RemoveItemFromGrid(item);
         Destroy(other.gameObject);
         
-        SoundManager.Instance.OnPickupItem(transform.position);
+        SoundManager.Instance.OnPickupItem();
     }
 
     private bool CheckIfOnOwnColor()

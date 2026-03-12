@@ -1,4 +1,3 @@
-using Unity.VisualScripting;
 
 public class Obstacle : Tile
 {
@@ -14,4 +13,5 @@ public class Obstacle : Tile
             ObstacleHeight = transform.GetChild(0).localScale.y;
         }
     }
+    protected override void Start(){}
 }

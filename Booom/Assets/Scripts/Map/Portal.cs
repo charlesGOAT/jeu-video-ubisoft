@@ -6,6 +6,8 @@ public class Portal : Tile
     private Portal otherPortal;
 
     public override bool IsObstacle => true;
+    
+    protected override void Start(){}
 
     public override void StepOnTile(Player player)
     {

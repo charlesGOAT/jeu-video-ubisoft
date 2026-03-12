@@ -1,9 +1,13 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 
 public class Tile : MonoBehaviour
 {
     public Vector2Int TileCoordinates { get; private set; }
+
+    public bool IsFrozen = false;
 
     public virtual bool IsObstacle => false;
 
@@ -15,7 +19,7 @@ public class Tile : MonoBehaviour
 
     private Color _neutralColor;
 
-    public bool IsSpawn { get; private set; } = false;
+    public bool IsSpawn { get; set; }
 
     protected virtual void Awake()
     {
@@ -30,14 +34,15 @@ public class Tile : MonoBehaviour
         _neutralColor = _tileRenderer.material.color;
     }
 
-    private void Start()
+    protected virtual void Start()
     {
         IsSpawn = GameManager.Instance.GridManager.playerSpawnPoints.Contains(TileCoordinates);
+        RemoveSnowflakeMaterial(); // because unity editor is broken yay
     }
 
     public virtual void ChangeTileColor(PlayerEnum newOwner)
     {
-        if (CurrentTileOwner != newOwner)
+        if (CurrentTileOwner != newOwner && (!IsSpawn || _tileRenderer.material.color == _neutralColor) && !IsFrozen)
         {
             GameManager.Instance.ScoreManager.LoseTile(CurrentTileOwner, TileCoordinates);
             GameManager.Instance.ScoreManager.AcquireNewTile(newOwner, TileCoordinates);
@@ -54,5 +59,28 @@ public class Tile : MonoBehaviour
     public void InitializeTileCoordinates()
     {
         TileCoordinates = GridManagerStrategy.WorldToGridCoordinates(transform.position);
+    }
+
+    public IEnumerator FreezeTile()
+    {
+        IsFrozen = true;
+        AddSnowflakeMaterial();
+        yield return new WaitForSeconds(GameManager.Instance.FrozenTileDuration);
+        IsFrozen = false;
+        RemoveSnowflakeMaterial();
+    }
+
+    private void AddSnowflakeMaterial()
+    {
+        Material[] materials = _tileRenderer.materials;
+        materials[1] = GameManager.Instance.snowflakeMaterial;
+        _tileRenderer.materials = materials;
+    }
+    
+    private void RemoveSnowflakeMaterial()
+    {
+        Material[] materials = _tileRenderer.materials;
+        materials[1] = GameManager.Instance.transparentMat;
+        _tileRenderer.materials = materials;
     }
 }

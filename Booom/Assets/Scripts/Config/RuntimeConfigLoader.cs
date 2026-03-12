@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
@@ -19,7 +20,7 @@ public class RuntimeConfigData
     public bool IsDropFromSky = false;
     public float GameDuration = 120f;
     public float MovementSpeed = 15f;
-
+    public int FrozenTileDuration = 30;
     public ItemSpawnerData PaintBrushItemSpawnerData = new()
     {
         MaxItems = 2,
@@ -39,6 +40,36 @@ public class RuntimeConfigData
     {
         MaxItems = 2,
         TimeBetweenSpawns = 10
+    };
+    public ItemSpawnerData FreezeBombItemSpawnerData = new()
+    {
+        MaxItems = 2,
+        TimeBetweenSpawns = 10
+    };
+    public Dictionary<int, float> SpeedBoostPerKill = new ()
+    {
+        {0, 1f},
+        {1, 1.25f},
+        {2, 1.5f},
+        {3, 1.75f},
+        {4, 2f},
+        {5, 2.25f}
+    };
+    public Dictionary<int, int> RangeBoostPerKill = new ()
+    {
+        {0, 0},
+        {2, 1},
+        {4, 2},
+        {6, 3}
+    };
+    public List<KeyValuePair> BombEvents = new ()
+    {
+        new (0, 0, BombEnum.NormalBomb),
+        new (0, 30, BombEnum.FastBomb)
+    };
+    public List<KeyValuePairText> TextEvents = new ()
+    {
+        new (2,0, "Start placing bombs to spread your zone!")
     };
 }
 
