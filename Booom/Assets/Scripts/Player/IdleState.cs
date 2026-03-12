@@ -1,5 +1,6 @@
 using UnityEngine;
 
+public delegate bool OnBombPerformed();
 public class IdleState : State
 {
     public IdleState(StateMachine stateMachine, Player player) : base(stateMachine, player)
@@ -8,17 +9,17 @@ public class IdleState : State
 
     public override void Enter()
     {
-        //Jouer l'animation d'idle
-        //Pour l'instant on ne fait rien
+        _player.Animator.SetBool("IsIdle", true);
     }
 
     public override void Exit()
     {
-        //Arrêter l'animation d'idle
+        _player.Animator.SetBool("IsIdle", false);
     }
 
     public override void Handle(float time)
     {
+        //Peut causer des issues? a revoir
         _player.UpdateMovement();
 
         if (_player.IsMoving())

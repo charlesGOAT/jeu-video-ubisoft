@@ -9,6 +9,7 @@ public static class GameConstants
     public const string PLAYER_RUN_TRIGGER = "Run";
     public const string PLAYER_HIT_TRIGGER = "Hit";
     public const string PLAYER_JUMP_TRIGGER = "Jump";
+    public const string PLAYER_BOMB_TRIGGER = "DropBomb";
     public const int UNITY_GRID_SIZE = 2;
     public const int HIT_STATE_DURATION = 3;
     public const float GAME_DURATION = 120f;
