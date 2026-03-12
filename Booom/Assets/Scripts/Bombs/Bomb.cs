@@ -171,12 +171,10 @@ public class Bomb : MonoBehaviour
     private bool ChoosePaintTile(in Tile tile, PlayerEnum newTileOwner)
     {
         if (!IsFreezeBomb)
-        {
             return PaintTile(tile, newTileOwner);
-        }
         
         if (!PaintTile(tile, newTileOwner)) return false;
-        StartCoroutine(tile.FreezeTile());
+        tile.FreezeTile();
         return true;
     }
 

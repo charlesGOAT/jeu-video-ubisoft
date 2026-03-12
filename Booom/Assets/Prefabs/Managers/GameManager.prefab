@@ -50,4 +50,4 @@ MonoBehaviour:
   transparentMat: {fileID: 2100000, guid: 83362e70b2d66854f90bb73ac663e2d0, type: 2}
   _isSpreadingMode: 1
   _isBonusSpeed: 0
-  FrozenTileDuration: 30
+  FrozenTileDuration: 5
