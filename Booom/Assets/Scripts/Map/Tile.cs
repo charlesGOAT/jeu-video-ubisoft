@@ -80,7 +80,7 @@ public class Tile : MonoBehaviour
     private void RemoveSnowflakeMaterial()
     {
         Material[] materials = _tileRenderer.materials;
-        materials[1] = GameManager.Instance.transparentMat;
+        materials[1] = GameManager.Instance.cadreMat;
         _tileRenderer.materials = materials;
     }
 }

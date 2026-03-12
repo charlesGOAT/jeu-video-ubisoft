@@ -1,5 +1,7 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Interactions;
@@ -37,6 +39,9 @@ public class Player : MonoBehaviour
 
     [SerializeField]
     private float tileDetectionTolerance = 0.35f;
+
+    [SerializeField] 
+    private TextMeshProUGUI killStreakText;
 
     private BombFusingStrategy[] _bombFusingStrategies = new []
         {
@@ -146,14 +151,23 @@ public class Player : MonoBehaviour
         {
             _elimsSpeedBoost = newSpeedBoost;
             SoundManager.Instance.OnNewKillStreak();
+            StartCoroutine(DisplayKillStreak());
         }
         if (GameConstants.RangeBoostPerKill.TryGetValue(NbKills, out int newRangeBoost))
         {
             _elimsRangeBoost = newRangeBoost;
             SoundManager.Instance.OnNewKillStreak();
+            StartCoroutine(DisplayKillStreak());
         }
         
         // todo : generate little animation or particle effect indicating kill streak
+    }
+
+    private IEnumerator DisplayKillStreak()
+    {
+        killStreakText.text = "New kill streak!";
+        yield return new WaitForSeconds(1.7f);
+        killStreakText.text = "";
     }
 
     private void InitializeSpawner()
@@ -334,7 +348,6 @@ public class Player : MonoBehaviour
         float velocityX = (Tile.TileLength * GameConstants.JUMP_NUMBER_OF_TILES) /(GameConstants.AIR_STATE_DURATION);
         Vector3 jumpInitialVelocity = new(velocityX * jumpDirection.x, velocityY, jumpDirection.y * velocityX);
 
-
         return jumpInitialVelocity;
     }
 
@@ -349,7 +362,6 @@ public class Player : MonoBehaviour
         float velocityX = Tile.TileLength / GameConstants.PORTAL_AIR_DURATION;
         Vector3 jumpInitialVelocity = new(velocityX * jumpDirection.x, velocityY, jumpDirection.y * velocityX);
 
-
         return jumpInitialVelocity;
     }
 
@@ -361,7 +373,6 @@ public class Player : MonoBehaviour
     }
 
     public void ResetJumpVelocity() => _jumpVelocity = Vector3.zero;
-
 
     public void FlickerPlayerOnHit(float elapsedT) => _renderer.enabled = Mathf.Sin(elapsedT * hitFlickerFrequency) > 0;
 

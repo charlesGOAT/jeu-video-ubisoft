@@ -26,6 +26,8 @@ public class Bomb : MonoBehaviour
     public bool IsTransparentBomb { private get; set; }
     public bool IsFreezeBomb { private get; set; }
 
+    public Collider ColliderComp;
+
     private readonly Vector2Int[] _directions =
     {
         Vector2Int.up,
@@ -51,6 +53,16 @@ public class Bomb : MonoBehaviour
         if (!GameManager.Instance.IsBonusSpeed && AssociatedPlayer != PlayerEnum.None)
         {
             explosionRange += Player.ActivePlayers[(int)AssociatedPlayer - 1].ElimsRangeBoost;
+        }
+
+        ColliderComp = GetComponent<Collider>();
+
+        GameManager.Instance.BombManager.OnPaintbrushActivated += OnPaintbrushActivated;
+        GameManager.Instance.BombManager.OnPaintbrushDeactivated += OnPaintbrushDeactivated;
+
+        foreach (int layer in GameManager.Instance.BombManager.LayersToExclude)
+        {
+            OnPaintbrushActivated(layer);
         }
     }
 
@@ -215,6 +227,18 @@ public class Bomb : MonoBehaviour
             player.PlayerNb == AssociatedPlayer) return;
             
         BombFusingStrategy.OnCollision(this);
+    }
+
+    private void OnPaintbrushActivated(int layer)
+    {
+        if(ColliderComp != null)
+            ColliderComp.excludeLayers = ColliderComp.excludeLayers.value | (1 << layer);
+    }
+    
+    private void OnPaintbrushDeactivated(int layer)
+    {
+        if(ColliderComp != null)
+            ColliderComp.excludeLayers = ColliderComp.excludeLayers.value & ~(1 << layer);
     }
 }
 
