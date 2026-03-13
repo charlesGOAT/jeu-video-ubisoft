@@ -32,9 +32,29 @@ public class GameUIManager : MonoBehaviour
     [SerializeField]
     private TMP_Text winnerText;
 
+    [Header("Tutorial")]
+    [SerializeField]
+    private bool showIntroTutorial = true;
+
+    [SerializeField]
+    [TextArea(1, 3)]
+    private string introTutorialText = "Capture un maximum de tuiles en evitant les pieges.";
+
+    [SerializeField]
+    private float introTutorialDuration = 3f;
+
+    [SerializeField]
+    [Range(0f, 1f)]
+    private float introSoftRedAlpha = 0.22f;
+
+    [SerializeField]
+    private Color introSoftRedColor = new Color(1f, 0.35f, 0.35f, 1f);
+
     private readonly Dictionary<PlayerEnum, ScorePlayer> _scorePerPlayer = new ();
     
     private readonly List<KeyValuePair<PlayerEnum, ScorePlayer>> _sortedPlayerScores = new();
+    private readonly List<Image> _eventPanelBackgroundImages = new();
+    private readonly List<Color> _eventPanelBaseColors = new();
 
     private void OnDestroy()
     {
@@ -44,12 +64,18 @@ public class GameUIManager : MonoBehaviour
     private void Start()
     {
         bombEventPanel.SetActive(false);
+        CacheEventPanelBackgroundImages();
 
         bombType.text = GameManager.Instance.EventManager.CurrentBombType.ToString().AddSpacesBeforeCaps();
         leaderboard.text = "Number of tiles owned";
 
         GameManager.Instance.ScoreManager.OnScoreChanged += RefreshScore;
         GameManager.Instance.StartTimer();
+
+        if (showIntroTutorial && !string.IsNullOrWhiteSpace(introTutorialText))
+        {
+            StartCoroutine(ShowIntroTutorialCoroutine());
+        }
     }
 
     public void CreateScorePlayer(PlayerEnum playerEnum)
@@ -104,13 +130,13 @@ public class GameUIManager : MonoBehaviour
     public void DisplayEventPanel()
     {
         eventPanelText.text = $"Bomb type is now {bombType.text}!";
-        StartCoroutine(EventPanelCoroutine());
+        StartCoroutine(EventPanelCoroutine(3f));
     }
     
     public void DisplayEventPanel(string eventText)
     {
         eventPanelText.text = eventText;
-        StartCoroutine(EventPanelCoroutine());
+        StartCoroutine(EventPanelCoroutine(3f));
     }
 
     public void EndGame()
@@ -123,10 +149,71 @@ public class GameUIManager : MonoBehaviour
         winnerText.color = Player.PlayerColorDict[winner];
     }
 
-    private IEnumerator EventPanelCoroutine()
+    private IEnumerator EventPanelCoroutine(float duration)
     {
         bombEventPanel.SetActive(true);
-        yield return new WaitForSeconds(3); // to tweak
+        yield return new WaitForSeconds(duration);
         bombEventPanel.SetActive(false);
+    }
+
+    private IEnumerator ShowIntroTutorialCoroutine()
+    {
+        eventPanelText.text = introTutorialText;
+        ApplyIntroSoftRedBackground();
+
+        yield return EventPanelCoroutine(introTutorialDuration);
+
+        RestoreEventPanelBackgroundColors();
+    }
+
+    private void CacheEventPanelBackgroundImages()
+    {
+        _eventPanelBackgroundImages.Clear();
+        _eventPanelBaseColors.Clear();
+
+        if (bombEventPanel == null)
+        {
+            return;
+        }
+
+        Image[] images = bombEventPanel.GetComponentsInChildren<Image>(true);
+        foreach (Image image in images)
+        {
+            if (eventPanelText != null && image.gameObject == eventPanelText.gameObject)
+            {
+                continue;
+            }
+
+            _eventPanelBackgroundImages.Add(image);
+            _eventPanelBaseColors.Add(image.color);
+        }
+    }
+
+    private void ApplyIntroSoftRedBackground()
+    {
+        for (int i = 0; i < _eventPanelBackgroundImages.Count; i++)
+        {
+            if (_eventPanelBackgroundImages[i] == null)
+            {
+                continue;
+            }
+
+            Color c = introSoftRedColor;
+            c.a = introSoftRedAlpha;
+            _eventPanelBackgroundImages[i].color = c;
+        }
+    }
+
+    private void RestoreEventPanelBackgroundColors()
+    {
+        for (int i = 0; i < _eventPanelBackgroundImages.Count && i < _eventPanelBaseColors.Count; i++)
+        {
+            if (_eventPanelBackgroundImages[i] == null)
+            {
+                continue;
+            }
+
+            _eventPanelBackgroundImages[i].color = _eventPanelBaseColors[i];
+        }
     }
 }
