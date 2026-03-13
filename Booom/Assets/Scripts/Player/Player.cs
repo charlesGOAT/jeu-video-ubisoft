@@ -1,9 +1,7 @@
-using Codice.Client.BaseCommands;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Interactions;
@@ -54,13 +52,14 @@ public class Player : MonoBehaviour
         };
 
     [SerializeField]
-    private Material[] playerMaterials;
+    private List<Material> playerMaterials;
     private Dictionary<int, float> _speedBoostPerKill = GameConstants.SpeedBoostPerKill;
     private Dictionary<int, int> _rangeBoostPerKill = GameConstants.RangeBoostPerKill;
 
     private PlayerInput _playerInput;
     private Renderer[] _renderers;
     private bool[] _rendererDefaultStates;
+    private List<Material[]> _initialMats = new();
 
     private Vector2 _moveInput;
     private Vector3 _lastInput;
@@ -604,7 +603,40 @@ public class Player : MonoBehaviour
         }
     }
 
-    private void SetPlayerTexture() 
+    public void ActivatePaintbrushEffect()
+    {
+        if (_renderers == null)
+        {
+            return;
+        }
+
+        Material playerMaterial = GameManager.Instance.paintBrushEffect;
+
+        for (int i = 0; i < _renderers.Length; ++i)
+        {
+            Material[] mats = _renderers[i].materials;
+            for (int j = 0; j < mats.Length; ++j)
+            {
+                mats[j] = playerMaterial;
+            }
+            
+            _renderers[i].materials = mats;
+        }
+    }
+
+    public void ResetPlayerTexture()
+    {
+        if (_renderers == null)
+        {
+            return;
+        }
+
+        for (int i = 0; i < _renderers.Length && i < _initialMats.Count; ++i)
+        {
+            _renderers[i].materials = _initialMats[i];
+        }
+    }
+    public void SetPlayerTexture()
     {
         if (_renderers == null)
         {
@@ -624,6 +656,7 @@ public class Player : MonoBehaviour
                 }
             }
             
+            if(_initialMats.Count <= i) _initialMats.Add(mats);
             _renderers[i].materials = mats;
         }
     }

@@ -7,7 +7,7 @@ using Object = UnityEngine.Object;
 public class PaintBrushItem : BaseItem
 {
     public override ItemType ItemType => ItemType.PaintBrush;
-    private const float ACTIVE_TIME = 10f;
+    private const float ACTIVE_TIME = 2.5f;
 
     private Dictionary<Collider, int> _modifiedBombs = new();
 
@@ -38,8 +38,7 @@ public class PaintBrushItem : BaseItem
         player.OnMoveFunctionCalled += UseItem;
         
         GameManager.Instance.BombManager.ActivatePaintBrush(_player.gameObject.layer);
-        
-        // todo : add material
+        _player.ActivatePaintbrushEffect();
 
         SoundManager.Instance.OnUsePaintBrush(true);
         await StartDelayTask();
@@ -48,7 +47,7 @@ public class PaintBrushItem : BaseItem
     private void UseTimeOver()
     {
         SoundManager.Instance.OnUsePaintBrush(false);
-        // todo : remove material
+        _player.ResetPlayerTexture();
         
         GameManager.Instance.BombManager.DeactivatePaintBrush(_player.gameObject.layer);
 

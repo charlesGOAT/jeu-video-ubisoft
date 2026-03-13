@@ -20,8 +20,6 @@ public class GameManager : MonoBehaviour
     [SerializeField] 
     public Material snowflakeMaterial;
     [SerializeField] 
-    public Material cadreMat;
-    [SerializeField] 
     public Material transparentMat;
     [SerializeField] 
     public Material paintBrushEffect;
@@ -176,9 +174,13 @@ public class GameManager : MonoBehaviour
         {
             throw new Exception("Snowflake material cannot be null");
         }
-        if (cadreMat == null)
+        if (transparentMat == null)
         {
             throw new Exception("Transparent material cannot be null");
+        }
+        if (paintBrushEffect == null)
+        {
+            throw new Exception("Paintbrush effect cannot be null");
         }
         // add other managers
     }
