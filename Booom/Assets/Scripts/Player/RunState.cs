@@ -1,5 +1,3 @@
-using UnityEngine;
-
 public class RunState : State
 {
     public RunState(StateMachine stateMachine, Player player) : base(stateMachine, player)
@@ -7,12 +5,11 @@ public class RunState : State
     }
     public override void Enter()
     {
-        //Jouer l'animation de course
-        //Pour l'instant on ne fait rien
+        _player.Animator.SetBool("IsRunning", true);
     }
     public override void Exit()
     {
-        //Arrêter l'animation de course
+        _player.Animator.SetBool("IsRunning", false);
     }
     public override void Handle(float time)
     {

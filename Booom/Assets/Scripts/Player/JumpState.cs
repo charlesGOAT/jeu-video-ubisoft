@@ -1,4 +1,3 @@
-
 public class JumpState : State
 {
     private float _airDuration = GameConstants.AIR_STATE_DURATION;
@@ -7,14 +6,15 @@ public class JumpState : State
     {
     }
 
-
     public override void Enter()
     {
+        _player.Animator.SetBool("IsJumping", true);
         _airDuration = GameConstants.AIR_STATE_DURATION;
     }
 
     public override void Exit()
     {
+        _player.Animator.SetBool("IsJumping", false);
         _player.ResetJumpVelocity();
     }
 
@@ -35,6 +35,4 @@ public class JumpState : State
             }
         }
     }
-
-
 }

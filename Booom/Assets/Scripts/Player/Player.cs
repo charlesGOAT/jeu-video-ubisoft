@@ -1,5 +1,7 @@
+using Codice.Client.BaseCommands;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Interactions;
@@ -7,18 +9,21 @@ using UnityEngine.InputSystem.Interactions;
 public delegate void MoveCalledEventHandler();
 public delegate void PlaceBomb();
 public delegate void ExplodeChainedBombs();
-public delegate void BombExploded();
+public delegate void PlaceBombSuccessFul();
 
 [RequireComponent(typeof(PlayerItemsManager))]
-[RequireComponent(typeof(Renderer))]
 [RequireComponent(typeof(PlayerInput))]
 public class Player : MonoBehaviour
 {
     [SerializeField]
+<<<<<<< HEAD
     private float speed = 9f;
 
     [SerializeField]
     private Bomb bombPrefab;
+=======
+    private float speed = 8f;
+>>>>>>> main
 
     [SerializeField]
     private Color playerColor = Color.red;
@@ -41,17 +46,27 @@ public class Player : MonoBehaviour
     [SerializeField]
     private float tileDetectionTolerance = 0.35f;
 
+    private BombFusingStrategy[] _bombFusingStrategies = new []
+        {
+            new BombFusingStrategy(),
+            new ChainedBombFusingStrategy(),
+            new TargetBombFusingStrategy()
+            
+            // todo : add more here
+        };
+
+    [SerializeField]
+    private Material[] playerMaterials;
+    private Dictionary<int, float> _speedBoostPerKill = GameConstants.SpeedBoostPerKill;
+    private Dictionary<int, int> _rangeBoostPerKill = GameConstants.RangeBoostPerKill;
+
     private PlayerInput _playerInput;
-    private Renderer _renderer;
+    private Renderer[] _renderers;
+    private bool[] _rendererDefaultStates;
 
     private Vector2 _moveInput;
     private Vector3 _lastInput;
-    private BombEnum _currentBombType = BombEnum.NormalBomb;
-    private bool _shouldNextBombBeTransparent = false;
-    public bool isChainingBombs = false;
     
-    private int _bombTypeCount;
-
     public PlayerEnum PlayerNb => playerNb;
 
     private CharacterController _characterController;
@@ -65,20 +80,39 @@ public class Player : MonoBehaviour
     private HitState _hitState;
     private RunState _runState;
     private JumpState _jumpState;
-
+    public BombFusingType BombFusingType { get; set; }
+    public bool ShouldNextBombBeTransparent = false;
+    public bool ShouldNextBombFreezeBomb = false;
+    
     //nom de caca
     private float _actualImmuneTimer;
 
     public static List<Player> ActivePlayers = new List<Player>();
 
-    public bool IsImmune { get; private set; } = false;
+    private int _elimsRangeBoost = 0;
+    public int ElimsRangeBoost => _elimsRangeBoost;
+    private float _elimsSpeedBoost = 1;
 
-    public static readonly Dictionary<PlayerEnum, Color> PlayerColorDict = new Dictionary<PlayerEnum, Color>();  // make it the other way around if we want to test color spreading
+    private int _nbKills = 0;
+    public int NbKills { 
+        get => _nbKills;
+        set
+        {
+            _nbKills = value;
+            OnNbKillsChanged(); 
+        } 
+    }
+
+    public bool IsImmune { get; private set; } = false;
+    public Animator Animator { get; private set; }
+
+    public static readonly Dictionary<PlayerEnum, Color> PlayerColorDict = new Dictionary<PlayerEnum, Color>();
     
     public event MoveCalledEventHandler OnMoveFunctionCalled;
     public event PlaceBomb OnPlaceBomb;
     public event ExplodeChainedBombs OnExplodeChainedBombs;
-    public event BombExploded OnBombExploded;
+    public event PlaceBombSuccessFul OnPlaceBombSuccessful;
+
 
     private void Awake()
     {
@@ -86,21 +120,29 @@ public class Player : MonoBehaviour
             playerItemsManager = gameObject.GetComponent<PlayerItemsManager>();
 
         playerItemsManager.Player = this;
-
-        _bombTypeCount = Enum.GetValues(typeof(BombEnum)).Length - 1; // -1 to avoid None
-
-        ConfigurePlayers();
-        
+        Animator = GetComponentInChildren<Animator>();
         InitializeStateMachine();
         GetComponents();
-
         ActivePlayers.Add(this);
+
     }
-    
+
     private void Start()
     {
+#if !UNITY_EDITOR
+        GetConfigValues();
+#endif
+        ConfigurePlayers();
         CheckStartConditions();
-        if(GameManager.Instance.isSpreadingMode) InitializeSpawner();
+        InitializeSpawner();
+    }
+
+    private void GetConfigValues()
+    {
+        var runtimeConfig = GameManager.Instance.RuntimeConfig;
+        speed = runtimeConfig.MovementSpeed;
+        _rangeBoostPerKill = runtimeConfig.RangeBoostPerKill;
+        _speedBoostPerKill = runtimeConfig.SpeedBoostPerKill;
     }
 
     private void CheckStartConditions()
@@ -111,8 +153,25 @@ public class Player : MonoBehaviour
         }
     }
 
+    private void OnNbKillsChanged()
+    {
+        if (GameConstants.SpeedBoostPerKill.TryGetValue(NbKills, out float newSpeedBoost))
+        {
+            _elimsSpeedBoost = newSpeedBoost;
+            SoundManager.Instance.OnNewKillStreak();
+        }
+        if (GameConstants.RangeBoostPerKill.TryGetValue(NbKills, out int newRangeBoost))
+        {
+            _elimsRangeBoost = newRangeBoost;
+            SoundManager.Instance.OnNewKillStreak();
+        }
+        
+        // todo : generate little animation or particle effect indicating kill streak
+    }
+
     private void InitializeSpawner()
     {
+<<<<<<< HEAD
         if (GameManager.Instance.GridManager.playerSpawnPoints == null)
         {
             int intPlayerNb = (int)PlayerNb - 1;
@@ -130,6 +189,61 @@ public class Player : MonoBehaviour
         {
             GameManager.Instance.GridManager.GetTileAtCoordinates(GameManager.Instance.GridManager.playerSpawnPoints[(int)playerNb - 1]).ChangeTileColor(playerNb); 
         }
+=======
+        if (GameManager.Instance.GridManager.playerSpawnPoints.Length < (int)playerNb)
+        {
+            InitializeSpawnerWithDynamicSpawnPos();
+        }
+        else
+        {
+            InitializeSpawnerWithFixedSpawnPos();
+        }
+    }
+
+    private void InitializeSpawnerWithDynamicSpawnPos()
+    {
+        int intPlayerNb = (int)PlayerNb - 1;
+        bool isMod2Zero = intPlayerNb % 2 == 0;
+        
+        int posY = isMod2Zero
+            ? GameManager.Instance.GridManager.MapUpperLimit.y
+            : GameManager.Instance.GridManager.MapLowerLimit.y;
+
+        int mult = isMod2Zero ? intPlayerNb / 2 : (intPlayerNb + 1) / 2;
+        Vector2Int spawnPointGrid = new Vector2Int(GameManager.Instance.GridManager.MapUpperLimit.x * mult, posY);
+
+        if (GameManager.Instance.IsSpreadingMode)
+        {
+            Tile tile = GameManager.Instance.GridManager.GetTileAtCoordinates(spawnPointGrid);
+            tile.ChangeTileColor(playerNb);
+            tile.IsSpawn = true;
+        }
+        
+        MovePlayerOnSpawnPoint(spawnPointGrid);
+    }
+
+    private void InitializeSpawnerWithFixedSpawnPos()
+    {
+        Vector2Int spawnPointGrid = GameManager.Instance.GridManager.playerSpawnPoints[(int)playerNb - 1];
+        Tile tile = GameManager.Instance.GridManager.GetTileAtCoordinates(spawnPointGrid);
+        
+        if (tile == null)
+            throw new Exception($"There's no tile at player spawn point position {spawnPointGrid}");
+        if (tile.IsObstacle)
+            throw new Exception($"Player spawn position {spawnPointGrid} is on an obstacle");
+        
+        if(GameManager.Instance.IsSpreadingMode)
+            tile.ChangeTileColor(playerNb);
+        
+        MovePlayerOnSpawnPoint(spawnPointGrid);
+    }
+
+    private void MovePlayerOnSpawnPoint(Vector2Int gridPos)
+    {
+        Vector3 worldPos = GridManagerStrategy.GridToWorldPosition(gridPos);
+        var trans = transform;
+        trans.position = new Vector3(worldPos.x, trans.position.y, worldPos.z);
+>>>>>>> main
     }
 
     public void OnMove(InputAction.CallbackContext ctx)
@@ -140,19 +254,26 @@ public class Player : MonoBehaviour
             _lastInput = GetBombPlacementDirection(_moveInput);
         }
     }
-
+    
     public void OnBomb(InputAction.CallbackContext ctx)
     {
+        if (_stateMachine.CurrentState is JumpState) return;
         if (ctx.performed && ctx.interaction is HoldInteraction)
         {
             OnExplodeChainedBombs?.Invoke();
+<<<<<<< HEAD
             isChainingBombs = false;
             GameManager.Instance.BombManager.ExplodeChainedBombs(playerNb);
+=======
+            GameManager.Instance.BombManager.ExplodeChainedBombs(PlayerNb);
+>>>>>>> main
         }
-        else if (ctx.performed && (isChainingBombs || !GameManager.Instance.BombManager.HasChainedBombs(playerNb)))
+        else if (ctx.performed && 
+                 (BombFusingType.Equals(BombFusingType.Chained) || !GameManager.Instance.BombManager.HasChainedBombs(playerNb)))
         {
             OnPlaceBomb?.Invoke();
             Vector3 bombDirection = _moveInput.sqrMagnitude > 0.0001f ? GetBombPlacementDirection(_moveInput) : _lastInput;
+<<<<<<< HEAD
 
             if (GameManager.Instance.BombManager.CreateBomb(transform.position + (bombDirection * Tile.TileLength), playerNb,
                     _currentBombType, _shouldNextBombBeTransparent, isChainingBombs))
@@ -164,13 +285,15 @@ public class Player : MonoBehaviour
         }
         
     }
+=======
+>>>>>>> main
 
-    public void OnChangeBomb(InputAction.CallbackContext ctx)
-    {
-        if (ctx.performed)
-        {
-            int nextBomb = ((int)_currentBombType % _bombTypeCount) + 1; // +1 to bring back above 0
-            _currentBombType = (BombEnum)nextBomb;
+            if (GameManager.Instance.BombManager.CreateBomb(transform.position,
+                    this, _bombFusingStrategies[(int)BombFusingType], ShouldNextBombBeTransparent, ShouldNextBombFreezeBomb))
+            {
+                Animator.SetTrigger("DropBomb");
+                OnPlaceBombSuccessful?.Invoke();
+            }
         }
     }
 
@@ -205,24 +328,35 @@ public class Player : MonoBehaviour
         }
     }
 
-    public void OnHit(Vector2Int hitDirection)
+    public void OnHit(Vector2Int hitDirection, bool isHitFromSpikes = false)
     {
         //etant donne que hitDirection est un Vector2Int, y est z dans se cas
         if (IsImmune)
         {
             return;
         }
+        
+        if(isHitFromSpikes)
+            SoundManager.Instance.OnEnterSpikes();
+        else
+            SoundManager.Instance.OnPlayerHitByBomb();
+
+
+        Animator.SetTrigger("HitPlayer");
         Vector3 forceDirection = new Vector3(hitDirection.x,1,hitDirection.y);
         ApplyKnockback(forceDirection, knockbackForce);
         _stateMachine.Trigger(GameConstants.PLAYER_HIT_TRIGGER);
         IsImmune = true;
         _actualImmuneTimer = immuneTimer;
+
+        playerItemsManager.ResetInventory();
     }
 
     public void OnJump(Vector2Int jumpDirection) 
     {
         if (_stateMachine.CurrentState is not JumpState)
         {
+            SoundManager.Instance.OnEnterTrampoline();
             _jumpVelocity = CalculateJumpForce(jumpDirection);
             _stateMachine.Trigger(GameConstants.PLAYER_JUMP_TRIGGER);
         }
@@ -232,6 +366,7 @@ public class Player : MonoBehaviour
     {
         if (_stateMachine.CurrentState is not JumpState) 
         {
+            SoundManager.Instance.OnEnterPortal();
             _characterController.enabled = false;
             this.gameObject.transform.position = otherPortalPosition;
             _jumpVelocity = CalculatePortalForce(playerDirection);
@@ -273,7 +408,6 @@ public class Player : MonoBehaviour
         return jumpInitialVelocity;
     }
 
-
     public void UpdateJump() 
     {
         float moveY = ApplyGravity(ref _jumpVelocity.y);
@@ -284,9 +418,9 @@ public class Player : MonoBehaviour
     public void ResetJumpVelocity() => _jumpVelocity = Vector3.zero;
 
 
-    public void FlickerPlayerOnHit(float elapsedT) => _renderer.enabled = Mathf.Sin(elapsedT * hitFlickerFrequency) > 0;
+    public void FlickerPlayerOnHit(float elapsedT) => SetRenderersVisible(Mathf.Sin(elapsedT * hitFlickerFrequency) > 0);
 
-    private void SetRendererVisible() => _renderer.enabled = true;
+    private void SetRendererVisible() => SetRenderersVisible(true);
 
     public bool IsMoving() => _moveInput.sqrMagnitude > 0.01f;
 
@@ -296,13 +430,18 @@ public class Player : MonoBehaviour
 
         float boost = CheckIfOnOwnColor() ? GameConstants.COLOR_BOOST : (CheckIfOnEnemyTerritory() ? GameConstants.COLOR_DEBUFF: 1);
 
+        boost *= GameManager.Instance.IsBonusSpeed ? _elimsSpeedBoost : 1;
+
         Vector3 move = new Vector3(curMoveInput.y, 0, -curMoveInput.x) * (speed * boost);
         float tempMove = ApplyGravity(ref _verticalVelocity);
 
+        UpdatePlayerYRotation(curMoveInput);
         _characterController.Move(move * Time.deltaTime);
         _characterController.Move(Vector3.down * Math.Abs(tempMove));
         OnMoveFunctionCalled?.Invoke();
     }
+
+    public void UpdatePlayerYRotation(Vector2 moveInput) => transform.rotation = IsMoving() ? Quaternion.Euler(0, Mathf.Atan2(moveInput.y, -moveInput.x) * Mathf.Rad2Deg, 0) : transform.rotation;
 
     //Peut etre faire une meilleure fonction
     private float ApplyGravity(ref float currentVerticalVelocity)
@@ -352,8 +491,10 @@ public class Player : MonoBehaviour
         if (!other.tag.Equals("Item") || !other.gameObject.TryGetComponent(out Item item)) return;
 
         playerItemsManager.AddNewItem(item);
-        GameManager.Instance.RemoveItemFromGrid(item.ItemType);
+        GameManager.Instance.RemoveItemFromGrid(item);
         Destroy(other.gameObject);
+        
+        SoundManager.Instance.OnPickupItem();
     }
 
     private bool CheckIfOnOwnColor()
@@ -370,7 +511,12 @@ public class Player : MonoBehaviour
 
     private bool CheckIfOnEnemyTerritory() 
     {
+<<<<<<< HEAD
         Tile tile = GetPlayerTile();
+=======
+        Vector2Int gridCoordinates = GridManagerStrategy.WorldToGridCoordinates(transform.position);
+        Tile tile = GameManager.Instance.GridManager.GetTileAtCoordinates(gridCoordinates);
+>>>>>>> main
         if (tile == null)
         {
             return false;
@@ -419,9 +565,10 @@ public class Player : MonoBehaviour
         Vector3 xCandidate = new(Mathf.Sign(worldDirection.x), 0f, 0f);
         Vector3 zCandidate = new(0f, 0f, Mathf.Sign(worldDirection.z));
 
-        Vector3 intendedTarget = transform.position + worldDirection.normalized * Tile.TileLength;
-        Vector3 xTarget = transform.position + xCandidate * Tile.TileLength;
-        Vector3 zTarget = transform.position + zCandidate * Tile.TileLength;
+        var position = transform.position;
+        Vector3 intendedTarget = position + worldDirection.normalized * Tile.TileLength;
+        Vector3 xTarget = position + xCandidate * Tile.TileLength;
+        Vector3 zTarget = position + zCandidate * Tile.TileLength;
 
         float xDistance = (intendedTarget - xTarget).sqrMagnitude;
         float zDistance = (intendedTarget - zTarget).sqrMagnitude;
@@ -442,6 +589,7 @@ public class Player : MonoBehaviour
         _runState = new RunState(_stateMachine, this);
         _jumpState = new JumpState(_stateMachine, this);
 
+
         _stateMachine.AddTransition<IdleState>(GameConstants.PLAYER_RUN_TRIGGER, _runState);
         _stateMachine.AddTransition<RunState>(GameConstants.PLAYER_IDLE_TRIGGER, _idleState);
         _stateMachine.AddTransition<JumpState>(GameConstants.PLAYER_IDLE_TRIGGER, _idleState);
@@ -455,8 +603,68 @@ public class Player : MonoBehaviour
     private void GetComponents()
     {
         _characterController = GetComponent<CharacterController>();
-        _renderer = GetComponent<Renderer>();
         _playerInput = GetComponent<PlayerInput>();
+        CachePlayerRenderers();
+    }
+
+    private void CachePlayerRenderers()
+    {
+        List<Renderer> playerRenderers = new();
+
+        foreach (Renderer renderer in GetComponentsInChildren<Renderer>(true))
+        {
+            playerRenderers.Add(renderer);
+        }
+
+        _renderers = playerRenderers.ToArray();
+        _rendererDefaultStates = new bool[_renderers.Length];
+
+        for (int i = 0; i < _renderers.Length; i++)
+        {
+            _rendererDefaultStates[i] = _renderers[i].enabled;
+        }
+    }
+
+    private void SetRenderersVisible(bool isVisible)
+    {
+        if (_renderers == null)
+        {
+            return;
+        }
+
+        for (int i = 0; i < _renderers.Length; i++)
+        {
+            if (_renderers[i] == null)
+            {
+                continue;
+            }
+
+            _renderers[i].enabled = _rendererDefaultStates[i] && isVisible;
+        }
+    }
+
+    private void SetPlayerTexture() 
+    {
+        if (_renderers == null)
+        {
+            return;
+        }
+
+        Material playerMaterial = playerMaterials[(int)playerNb - 1];
+
+        for (int i = 0; i < _renderers.Length; ++i)
+        {
+            Material[] mats = _renderers[i].materials;
+            for (int j = 0; j < mats.Length; ++j)
+            {
+                if (mats[j].name.Contains("PlayerTextureGrid"))
+                {
+                    mats[j] = playerMaterial;
+                }
+            }
+            
+            _renderers[i].materials = mats;
+        }
     }
 
     private void ConfigurePlayers()
@@ -472,13 +680,7 @@ public class Player : MonoBehaviour
         }
         
         playerColor = PlayerColorDict[playerNb];
-        
-        gameObject.GetComponent<Renderer>().material.color = playerColor;
-    }
-    
-    public void CreateNextBombTransparent()
-    {
-        _shouldNextBombBeTransparent = true;
+        SetPlayerTexture();
     }
 }
 
@@ -489,5 +691,14 @@ public enum PlayerEnum
     Player2 = 2,
     Player3 = 3,
     Player4 = 4
+    //Do not forget to add the new player enums in the switch case of LobbyManager and modifying GameConstants.NB_PLAYERS
 }
+
+public enum BombFusingType
+{
+    None = 0,
+    Chained = 1,
+    Target = 2
+}
+
 

@@ -5,6 +5,10 @@ public abstract class BaseItem
     public virtual ItemType ItemType => ItemType.PaintBrush;
     public abstract void PickupItem(Player player);
     public event FinishUsingItem OnFinishUsingItem;
+    
+    public virtual void RepickUpItem(){}
+
+    public abstract void FinishUsingItem(bool hasDied = false);
 
     protected void CallFinishUsingItemCallback()
     {

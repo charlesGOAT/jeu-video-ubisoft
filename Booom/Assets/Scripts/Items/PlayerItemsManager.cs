@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-
-
 public class PlayerItemsManager : MonoBehaviour
 {
     // Manages Items for each players
@@ -13,7 +11,6 @@ public class PlayerItemsManager : MonoBehaviour
 
     public Player Player { private get; set; }
     
-
     private void Awake()
     {
         foreach (ItemType itemType in Enum.GetValues(typeof(ItemType)))
@@ -25,7 +22,11 @@ public class PlayerItemsManager : MonoBehaviour
     public void AddNewItem(Item item)
     {
         BaseItem newBaseItem = _allItems[item.ItemType];
-        if (!_itemsInventory.TryAdd(item.ItemType, newBaseItem)) return;
+        if (!_itemsInventory.TryAdd(item.ItemType, newBaseItem))
+        {
+            _itemsInventory[item.ItemType].RepickUpItem();
+            return;
+        }
         
         newBaseItem.PickupItem(Player);
         newBaseItem.OnFinishUsingItem += FinishUsingItem;
@@ -36,22 +37,30 @@ public class PlayerItemsManager : MonoBehaviour
         _itemsInventory.Remove(baseItem.ItemType);
     }
 
+    public void ResetInventory()
+    {
+        foreach (ItemType itemType in Enum.GetValues(typeof(ItemType)))
+        {
+            if(_itemsInventory.TryGetValue(itemType, out BaseItem item))
+                item.FinishUsingItem(true);
+        }
+    }
+
     private BaseItem CreateItem(ItemType type)
     {
         switch (type)
         {
             case ItemType.PaintBrush:
-            {
                 return new PaintBrushItem();
-            }
             case ItemType.TransparentBomb:
-            {
                 return new TransparentBombItem();
-            }
             case ItemType.ChainBombs:
-            {
                 return new ChainBombsItem();
-            }
+            case ItemType.TargetBomb:
+                return new TargetBombItem();
+            case ItemType.FreezeBomb:
+                return new FreezeBombItem();
+            
             // todo : add more
         }
 

@@ -5,6 +5,9 @@ using UnityEngine;
 public abstract class GridManagerStrategy : MonoBehaviour
 {
     protected Dictionary<Vector2Int, Tile> _tiles = new Dictionary<Vector2Int, Tile>();
+    protected Dictionary<Vector2Int, Tile> _ownableTiles = new Dictionary<Vector2Int, Tile>();
+    protected Dictionary<Vector2Int, Item> _itemTiles = new Dictionary<Vector2Int, Item>();
+    
     public int capturableTilesCount;
 
     public Vector2Int MapUpperLimit { get; protected set; } = Vector2Int.zero;
@@ -45,11 +48,42 @@ public abstract class GridManagerStrategy : MonoBehaviour
     private void Awake()
     {
         CreateGrid();
+<<<<<<< HEAD
         capturableTilesCount = _tiles.Select(tile => !tile.Value.IsObstacle).Count();
+=======
+        SetOwnableTiles();
+        capturableTilesCount = _ownableTiles.Count;
+>>>>>>> main
         PositionCamera();
     }
 
     protected abstract void CreateGrid();
+
+    public bool IsItemAtPos(Vector2Int pos)
+    {
+        return _itemTiles.ContainsKey(pos);
+    }
+    
+    public void AddItemOnGrid(Item item)
+    {
+        _itemTiles[item.posOnMap] = item;
+    }
+    
+    public void RemoveItemFromGrid(Item item)
+    {
+        _itemTiles.Remove(item.posOnMap);
+    }
+
+    private void SetOwnableTiles()
+    {
+        foreach (var posTile in _tiles)
+        {
+            if (!posTile.Value.IsObstacle)
+            {
+                _ownableTiles[posTile.Key] = posTile.Value;
+            }
+        }
+    }
 
     //A besoin d'un peu de peaufinage mais marche pour l'instant
     //Je peut le faire dans un autre task
@@ -67,8 +101,9 @@ public abstract class GridManagerStrategy : MonoBehaviour
         mainCamera.transform.rotation = Quaternion.Euler(60f, 90f, 0f);
     }
 
-    public Vector3 GetRandomPosOnGrid()
+    public Vector3 GetRandomPosOnGridWithNoItem()
     {
+<<<<<<< HEAD
         int ind = 0;
         
         do
@@ -79,23 +114,33 @@ public abstract class GridManagerStrategy : MonoBehaviour
         } while (_tiles[_tiles.Keys.ToArray()[ind]].IsObstacle);
         
         return GridToWorldPosition(_tiles.Keys.ToArray()[ind]);
+=======
+        var rand = new System.Random();
+        var noItemGrid = _ownableTiles.Where(tile => !IsItemAtPos(tile.Key)).Select(tile => tile.Key).ToArray();
+        int ind = rand.Next(0, noItemGrid.Length);
+        return GridToWorldPosition(noItemGrid[ind]);
+>>>>>>> main
     }
     
-    public HashSet<Vector2Int> GetPlayerTiles(PlayerEnum player)
+    public IEnumerable<Vector2Int> GetPlayerTilesWithNoItem(PlayerEnum player)
     {
         if (player == PlayerEnum.None)
-            return new HashSet<Vector2Int>();
-        
-        var acquiredTiles = GameManager.Instance.ScoreManager.GetAcquiredTilesByPlayer();
+            return new []{WorldToGridCoordinates(GetRandomPosOnGridWithNoItem())};
 
-        return acquiredTiles[(int)player - 1];
+        var acquiredTiles = GameManager.Instance.ScoreManager.GetAcquiredTilesByPlayer();
+        var tilesWithNoItem = acquiredTiles[(int)player - 1].Where(pos => !IsItemAtPos(pos));
+
+        var playerTilesWithNoItem = tilesWithNoItem as Vector2Int[] ?? tilesWithNoItem.ToArray();
+        if (playerTilesWithNoItem.Length > 0) return playerTilesWithNoItem;
+        
+        return new []{WorldToGridCoordinates(GetRandomPosOnGridWithNoItem())};
     }
-    
+
     private HashSet<Vector2Int> GetAllTilesOwned()
     {
         HashSet<Vector2Int> allTilesOwned = new();
         var acquiredTiles = GameManager.Instance.ScoreManager.GetAcquiredTilesByPlayer();
-        
+
         foreach (var list in acquiredTiles)
         {
             allTilesOwned.UnionWith(list);
@@ -110,4 +155,3 @@ public abstract class GridManagerStrategy : MonoBehaviour
         return _tiles.Keys.Except(allTilesOwned);
     }
 }
-

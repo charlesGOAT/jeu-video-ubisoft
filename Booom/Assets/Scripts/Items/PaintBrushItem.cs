@@ -1,12 +1,13 @@
-﻿
-using System.Collections;
-using System.Threading.Tasks;
+﻿using System;
+using System.Threading;
 using UnityEngine;
 
 public class PaintBrushItem : BaseItem
 {
     public override ItemType ItemType => ItemType.PaintBrush;
     private const float ACTIVE_TIME = 2.5f;
+
+    private CancellationTokenSource _cts;
     
     private Player _player;
 
@@ -20,22 +21,53 @@ public class PaintBrushItem : BaseItem
         tile.ChangeTileColor(_player.PlayerNb);
     }
 
+    public override async void RepickUpItem()
+    {
+        _cts.Cancel();
+        _cts.Dispose();
+        await StartDelayTask();
+    }
+
     public override async void PickupItem(Player player)
     {
         _player = player;
         player.OnMoveFunctionCalled += UseItem;
-        await ManageActiveTime();
+
+        SoundManager.Instance.OnUsePaintBrush(true);
+        await StartDelayTask();
     }
 
-    public void UseTimeOver()
+    private void UseTimeOver()
     {
+        SoundManager.Instance.OnUsePaintBrush(false);
+
         _player.OnMoveFunctionCalled -= UseItem;
         CallFinishUsingItemCallback();
     }
-    
-    private async Task ManageActiveTime()
+
+    public override void FinishUsingItem(bool hasDied = false)
     {
-        await Task.Delay((int)(ACTIVE_TIME * 1000));
+        _cts.Cancel();
+        UseTimeOver();
+    }
+
+    private async Awaitable StartDelayTask()
+    {
+        _cts = new CancellationTokenSource();
+        await ManageActiveTime();
+    }
+    
+    private async Awaitable ManageActiveTime()
+    {
+        try
+        {
+            await Awaitable.WaitForSecondsAsync(ACTIVE_TIME, _cts.Token);
+        }
+        catch (OperationCanceledException)
+        {
+            return;
+        }
+        
         UseTimeOver();
     }
 }

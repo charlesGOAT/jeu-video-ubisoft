@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: f9bf24c5333fe3d439a84af59596ebfd
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 193819
+  packageName: CVD Filter (URP)
+  packageVersion: 2.0.0
+  assetPath: Assets/CVDFilter/Profiles/2_CVD_Protanomaly 1.asset
+  uploadId: 507914

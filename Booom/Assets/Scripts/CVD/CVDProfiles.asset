@@ -1,0 +1,51 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e2728d8dce3fc28489fb252c88fce1d7, type: 3}
+  m_Name: CVDProfiles
+  m_EditorClassIdentifier: 
+  <VisionTypes>k__BackingField:
+  - typeName: 0
+    description: No color modifications applied
+    profile: {fileID: 11400000, guid: 96c866f0d764d1247b51d065eb25d716, type: 2}
+    previewImage: {fileID: 2800000, guid: 886695989578f0d4daa95215ba2b2a39, type: 3}
+  - typeName: 1
+    description: Red protosensitivity severely reduced
+    profile: {fileID: 11400000, guid: eb90601249cc06c428301c589091fb1d, type: 2}
+    previewImage: {fileID: 2800000, guid: 372d1681a4be6064c8efa15b24680b15, type: 3}
+  - typeName: 2
+    description: Red protosensitivity moderately reduced
+    profile: {fileID: 11400000, guid: f9bf24c5333fe3d439a84af59596ebfd, type: 2}
+    previewImage: {fileID: 2800000, guid: a927f836c7c011442a3f9598a9c875c4, type: 3}
+  - typeName: 3
+    description: Green protosensitivity severely reduced
+    profile: {fileID: 11400000, guid: 3e602309ca4649e4182e387e4e2c942e, type: 2}
+    previewImage: {fileID: 2800000, guid: 0b5aca49e2c08674d8345002b605e22a, type: 3}
+  - typeName: 4
+    description: Green protosensitivity moderately reduced
+    profile: {fileID: 11400000, guid: 3e602309ca4649e4182e387e4e2c942e, type: 2}
+    previewImage: {fileID: 2800000, guid: fd98ff6668d6eb342ba82b08b4a07f1b, type: 3}
+  - typeName: 5
+    description: Blue protosensitivity severely reduced
+    profile: {fileID: 11400000, guid: 81d4ba98cf846434fb2a75e69abdab41, type: 2}
+    previewImage: {fileID: 2800000, guid: aa89c5913391b3c4889e9dc82ab35d69, type: 3}
+  - typeName: 6
+    description: Blue protosensitivity moderately reduced
+    profile: {fileID: 11400000, guid: 1873546f515006e4bb067b6fc08614b1, type: 2}
+    previewImage: {fileID: 2800000, guid: db294036afbfe5c49a571e2a2ee2bc49, type: 3}
+  - typeName: 7
+    description: Red, Green, and Blue protosensitivity severely reduced
+    profile: {fileID: 11400000, guid: f5516546680882942b5e386f9a491666, type: 2}
+    previewImage: {fileID: 2800000, guid: 7733b4ec1d3773f4eaba9aa3a469fe5d, type: 3}
+  - typeName: 8
+    description: Red, Green, and Blue protosensitivity moderately reduced
+    profile: {fileID: 11400000, guid: 7bc0cd8dfa8077b4bb529de8dc7e384c, type: 2}
+    previewImage: {fileID: 2800000, guid: 7275d7c0fbecdde4785879a27e9e4880, type: 3}

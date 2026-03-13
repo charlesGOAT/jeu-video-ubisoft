@@ -1,4 +1,3 @@
-using Unity.VisualScripting;
 
 public class Obstacle : Tile
 {
@@ -6,7 +5,7 @@ public class Obstacle : Tile
 
     public static float ObstacleHeight;
 
-    private void Awake()
+    protected override void Awake()
     {
         base.Awake();
         if (ObstacleHeight == 0)
@@ -14,4 +13,5 @@ public class Obstacle : Tile
             ObstacleHeight = transform.GetChild(0).localScale.y;
         }
     }
+    protected override void Start(){}
 }
