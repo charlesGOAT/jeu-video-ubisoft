@@ -6,9 +6,7 @@ public class Bomb : MonoBehaviour
 {
     public static readonly HashSet<Vector2Int> ActiveBombs = new HashSet<Vector2Int>();
 
-    [SerializeField]
-    protected float timer = 3.0f;
-    public float Timer => timer;
+    public virtual float Timer => 3.0f;
 
     [SerializeField]
     private float pulseAmplitude = 0.2f;
@@ -84,7 +82,7 @@ public class Bomb : MonoBehaviour
     private IEnumerator CountdownAndExplode()
     {
         float elapsed = 0f;
-        while (elapsed < timer)
+        while (elapsed < Timer)
         {
             DoPulseMath(ref elapsed);
             yield return null;
@@ -95,7 +93,7 @@ public class Bomb : MonoBehaviour
     private IEnumerator Pulse()
     {
         float elapsed = 0f;
-        while (elapsed < timer)
+        while (elapsed < Timer)
         {
             DoPulseMath(ref elapsed);
             yield return null;
