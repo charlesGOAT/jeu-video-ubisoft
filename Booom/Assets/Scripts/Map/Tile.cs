@@ -23,6 +23,8 @@ public class Tile : MonoBehaviour
 
     private Material _highlightMat;
 
+    private readonly Color _colorAdjust = new Color(75f/255f, 75f/255f, 75f/255f);
+
     public bool IsSpawn { get; set; }
 
     protected virtual void Awake()
@@ -101,7 +103,16 @@ public class Tile : MonoBehaviour
     {
         if (_currentPlayersOnTile.Count == 0 || mutliplePlayers)
         {
-            _highlightMat.SetColor("_BorderColor", Player.PlayerColorDict[player]);
+            Color newColor = _tileRenderer.material.color;
+            if (GameManager.Instance.HighlightOwnColor)
+            {
+                newColor = newColor == Player.PlayerColorDict[player]
+                    ? Player.PlayerColorDict[player] + _colorAdjust
+                    : Player.PlayerColorDict[player];
+            }
+            else newColor += _colorAdjust;
+                
+            _highlightMat.SetColor("_BorderColor", newColor);
             ChangeTileMaterial(3, _highlightMat);
         }
         

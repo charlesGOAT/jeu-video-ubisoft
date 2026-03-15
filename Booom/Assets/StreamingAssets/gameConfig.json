@@ -3,6 +3,7 @@
   "IsBonusSpeed": true,
   "SpawnMode": 1,
   "IsDropFromSky": false,
+  "HighlightOwnColor": false,
   "GameDuration": 120,
   "MovementSpeed": 8,
   "FrozenTileDuration": 20,

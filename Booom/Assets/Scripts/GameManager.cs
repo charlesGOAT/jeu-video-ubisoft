@@ -50,6 +50,8 @@ public class GameManager : MonoBehaviour
     public EventManager EventManager { get; private set; }
 
     public readonly int[] CollisionLayers = new int[GameConstants.NB_PLAYERS] { 8, 9, 10, 11 };
+
+    public bool HighlightOwnColor = false;
     
     // add other managers
     
@@ -129,6 +131,7 @@ public class GameManager : MonoBehaviour
         _isBonusSpeed = RuntimeConfig.IsBonusSpeed;
         _gameDuration =  RuntimeConfig.GameDuration;
         FrozenTileDuration = RuntimeConfig.FrozenTileDuration;
+        HighlightOwnColor = RuntimeConfig.HighlightOwnColor;
     }
 
     public void RemoveItemFromGrid(Item item)
