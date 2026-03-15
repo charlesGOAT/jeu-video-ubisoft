@@ -21,6 +21,8 @@ public class GameManager : MonoBehaviour
     public Material snowflakeMaterial;
     [SerializeField] 
     public Material transparentMat;
+    [SerializeField]
+    public Material highlightMat;
     public float  GameDuration => _gameDuration;
 
     public int CurrentMinutes => Mathf.FloorToInt(_timeRemaining / 60f);
@@ -48,7 +50,7 @@ public class GameManager : MonoBehaviour
     public EventManager EventManager { get; private set; }
 
     public readonly int[] CollisionLayers = new int[GameConstants.NB_PLAYERS] { 8, 9, 10, 11 };
-
+    
     // add other managers
     
     public static GameManager Instance

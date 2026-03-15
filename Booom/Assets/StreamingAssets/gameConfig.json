@@ -40,7 +40,7 @@
     "4": 2,
     "6": 3
   },
-  "bombEvents": [
+  "BombEvents": [
     {
       "minutes": 0,
       "seconds": 0,
@@ -52,7 +52,7 @@
       "value": 1
     }
   ],
-  "textEvents": [
+  "TextEvents": [
     {
       "minutes": 2,
       "seconds": 0,
