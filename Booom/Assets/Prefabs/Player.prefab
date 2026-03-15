@@ -35,8 +35,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 10, y: 10}
+  m_AnchoredPosition: {x: -3.73, y: 0}
+  m_SizeDelta: {x: 13.0025, y: 10}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7609387167798878098
 CanvasRenderer:
@@ -100,7 +100,7 @@ MonoBehaviour:
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
-  m_HorizontalAlignment: 1
+  m_HorizontalAlignment: 2
   m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0
@@ -373,7 +373,7 @@ MonoBehaviour:
   hitFlickerFrequency: 50
   immuneTimer: 5
   tileDetectionTolerance: 0.35
-  killStreakText: {fileID: 0}
+  killStreakText: {fileID: 3632974485974624701}
   playerMaterials:
   - {fileID: 2100000, guid: c66c3dfb21d46c946aabc57402e1915b, type: 2}
   - {fileID: 2100000, guid: 197af8cc7b5a46f4a8ccedf1d6d2fa56, type: 2}
