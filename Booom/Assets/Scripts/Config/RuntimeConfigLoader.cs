@@ -62,11 +62,8 @@ public class RuntimeConfigData
         {4, 2},
         {6, 3}
     };
-    public List<KeyValuePair> BombEvents = new ()
-    {
-        new (0, 0, BombEnum.NormalBomb),
-        new (0, 30, BombEnum.FastBomb)
-    };
+
+    public List<KeyValuePair> BombEvents = new();
     public List<KeyValuePairText> TextEvents = new ()
     {
         new (2,0, "Start placing bombs to spread your zone!")
