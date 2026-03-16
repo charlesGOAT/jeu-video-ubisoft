@@ -49,7 +49,10 @@ public class GameManager : MonoBehaviour
 
     public readonly int[] CollisionLayers = new int[GameConstants.NB_PLAYERS] { 8, 9, 10, 11 };
 
-    public bool HighlightOwnColor = false;
+    public bool HighlightOwnColor { get; private set; }
+
+    public float ColorDebuff { get; private set; } = GameConstants.COLOR_DEBUFF;
+    public float ColorBoost { get; private set; } = GameConstants.COLOR_BOOST;
 
     private bool _hasChangedForFastMusic = false;
     
@@ -132,6 +135,8 @@ public class GameManager : MonoBehaviour
         _isBonusSpeed = RuntimeConfig.IsBonusSpeed;
         _gameDuration =  RuntimeConfig.GameDuration;
         FrozenTileDuration = RuntimeConfig.FrozenTileDuration;
+        ColorBoost = RuntimeConfig.ColorBoost;
+        ColorDebuff = RuntimeConfig.ColorDebuff;
     }
 
     public void RemoveItemFromGrid(Item item)
@@ -195,7 +200,7 @@ public class GameManager : MonoBehaviour
 
             playerPrefab.layer = CollisionLayers[playerInput.playerIndex];
             PlayerInput newInput = PlayerInput.Instantiate(playerPrefab, playerIndex:playerInput.playerIndex, pairWithDevices:playerInput.devices.ToArray());
-            newInput.transform.position = new Vector3(spawnPoint.x, 2.0f, spawnPoint.y);
+            newInput.transform.position = new Vector3(spawnPoint.x, 0.0f, spawnPoint.y);
             
             Destroy(playerInput.gameObject); //Destroying dummy prefabs
         }

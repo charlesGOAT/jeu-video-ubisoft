@@ -23,11 +23,10 @@ public class Tile : MonoBehaviour
 
     protected virtual void Awake()
     {
-        if (TileLength == 0)
+        if (TileLength == 0 && transform.childCount > 0)
         {
             TileLength = transform.GetChild(0).localScale.x;
         }
-
         _tileRenderer = GetComponentInChildren<Renderer>();
         InitializeTileCoordinates();
     }

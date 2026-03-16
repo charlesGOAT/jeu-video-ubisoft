@@ -21,6 +21,8 @@ public class RuntimeConfigData
     public float GameDuration = 120f;
     public float MovementSpeed = 15f;
     public int FrozenTileDuration = 30;
+    public float ColorBoost = 1.5f;
+    public float ColorDebuff = 0.7f;
     public ItemSpawnerData PaintBrushItemSpawnerData = new()
     {
         MaxItems = 2,
