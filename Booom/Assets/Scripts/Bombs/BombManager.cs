@@ -2,6 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public delegate void PaintbrushActivated(int layer);
+public delegate void PaintbrushDeactivated(int layer);
+
+
 public class BombManager : MonoBehaviour
 {
     [SerializeField]
@@ -9,11 +13,16 @@ public class BombManager : MonoBehaviour
 
     [SerializeField]
     private bool ShouldBombCollideWithPlayers = true;
-    
+
     // Track each Player's bomb cooldown
     private readonly Dictionary<PlayerEnum, float> _nextBombTime = new (GameConstants.NB_PLAYERS);
     private readonly Dictionary<PlayerEnum, List<Bomb>> _chainedBombsPerPlayer = new (GameConstants.NB_PLAYERS);
 
+    public List<int> LayersToExclude = new List<int>();
+    
+    public event PaintbrushActivated OnPaintbrushActivated;
+    public event PaintbrushDeactivated OnPaintbrushDeactivated;
+    
     protected virtual void Awake()
     {
         if (bombPrefabs == null)
@@ -112,11 +121,21 @@ public class BombManager : MonoBehaviour
 
     private IEnumerator ChangeColliderLayer(Bomb bomb, GameObject player)
     {
-        Collider colComponent = bomb.GetComponent<Collider>();
-        var ogLayerMask = colComponent.excludeLayers.value;
+        var ogLayerMask = bomb.ColliderComp.excludeLayers.value;
         var newLayer = ogLayerMask | (1 << player.layer);
-        colComponent.excludeLayers = newLayer;
+        bomb.ColliderComp.excludeLayers = newLayer;
         yield return new WaitForSeconds(1.0f);
-        colComponent.excludeLayers = ogLayerMask;
+        bomb.ColliderComp.excludeLayers = ogLayerMask;
+    }
+
+    public void ActivatePaintBrush(int layer)
+    {
+        LayersToExclude.Add(layer);
+        OnPaintbrushActivated?.Invoke(layer);
+    }
+    public void DeactivatePaintBrush(int layer)
+    {
+        LayersToExclude.Remove(layer);
+        OnPaintbrushDeactivated?.Invoke(layer);
     }
 }
