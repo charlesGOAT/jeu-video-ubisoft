@@ -6,7 +6,7 @@ public class Bomb : MonoBehaviour
 {
     public static readonly HashSet<Vector2Int> ActiveBombs = new HashSet<Vector2Int>();
 
-    public virtual float Timer => 3.0f;
+    public virtual float Timer { get; protected set; } = 3.0f;
 
     [SerializeField]
     private float pulseAmplitude = 0.2f;
@@ -66,7 +66,15 @@ public class Bomb : MonoBehaviour
 
     protected virtual void Start()
     {
+#if !UNITY_EDITOR
+        ConfigureValues();
+#endif
         BombFusingStrategy.Fuse(this);
+    }
+
+    protected virtual void ConfigureValues()
+    {
+        Timer = GameManager.Instance.RuntimeConfig.NormalBombTimer;
     }
 
     public static bool IsBombAt(Vector2Int gridCoordinates)

@@ -9,6 +9,8 @@
   "FrozenTileDuration": 20,
   "ColorBoost": 1.5,
   "ColorDebuff": 0.7,
+  "NormalBombTimer": 3.0,
+  "FastBombTimer": 1.0,
   "PaintBrushItemSpawnerData": {
     "MaxItems": 1,
     "TimeBetweenSpawns": 12.0
