@@ -208,6 +208,10 @@ PrefabInstance:
       propertyPath: trampolineSound.audioClip
       value: 
       objectReference: {fileID: 8300000, guid: 0240a31590f64d6418b1cc9f1d171c61, type: 3}
+    - target: {fileID: 4795752124082758741, guid: d00abcfd2ff9b8840a604215b1cd7124, type: 3}
+      propertyPath: defenseBombSound.audioClip
+      value: 
+      objectReference: {fileID: 8300000, guid: ca46be3ca9ba9064d8b7b47db8ebb20b, type: 3}
     - target: {fileID: 8383112355637515104, guid: d00abcfd2ff9b8840a604215b1cd7124, type: 3}
       propertyPath: m_LocalPosition.x
       value: 8.70812

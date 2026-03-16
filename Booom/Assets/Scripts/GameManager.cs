@@ -51,7 +51,9 @@ public class GameManager : MonoBehaviour
 
     public readonly int[] CollisionLayers = new int[GameConstants.NB_PLAYERS] { 8, 9, 10, 11 };
 
-    public bool HighlightOwnColor = false;
+    public bool HighlightOwnColor {get; private set;}
+
+    private bool _hasChangedForFastMusic = false;
     
     // add other managers
     
@@ -94,9 +96,10 @@ public class GameManager : MonoBehaviour
 
     private void UpdateMusic()
     {
-        if (_timeRemaining <= 60)
+        if (_timeRemaining <= 60 && _hasChangedForFastMusic)
         {
             SoundManager.Instance.OnPlayAcceleratedGameMusic();
+            _hasChangedForFastMusic = true;
         }
     }
 
