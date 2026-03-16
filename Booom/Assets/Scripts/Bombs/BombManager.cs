@@ -12,7 +12,6 @@ public class BombManager : MonoBehaviour
     
     // Track each Player's bomb cooldown
     private readonly Dictionary<PlayerEnum, float> _nextBombTime = new (GameConstants.NB_PLAYERS);
-    private readonly Dictionary<PlayerEnum, List<Bomb>> _chainedBombsPerPlayer = new (GameConstants.NB_PLAYERS);
 
     protected virtual void Awake()
     {
@@ -25,7 +24,6 @@ public class BombManager : MonoBehaviour
         for (int i = 1; i <= GameConstants.NB_PLAYERS; i++)
         {
             _nextBombTime.Add((PlayerEnum)i, 0f);
-            _chainedBombsPerPlayer.Add((PlayerEnum)i, new());
         }
     }
 
@@ -54,12 +52,11 @@ public class BombManager : MonoBehaviour
         }
     }
     
-    public virtual bool CreateBomb(in Vector3 position, in Player player,in BombFusingStrategy bombStrat, bool isTransparentBomb = false, bool isFreezeBomb = false)
+    public virtual bool CreateBomb(in Vector3 position, in Player player,in BombFusingStrategy bombStrat, in BombItems bombItems)
     {
-        bool isChained = bombStrat is ChainedBombFusingStrategy;
         PlayerEnum playerEnum = player.PlayerNb;
         
-        if (Time.time < _nextBombTime[playerEnum] && !isChained)
+        if (Time.time < _nextBombTime[playerEnum])
         {
             return false;
         }
@@ -81,33 +78,15 @@ public class BombManager : MonoBehaviour
 
         Bomb instantiatedBomb = Instantiate(bombPrefabs[intBombType], worldPosition + bombHeight, Quaternion.identity);
         instantiatedBomb.BombFusingStrategy = bombStrat;
-        instantiatedBomb.IsTransparentBomb = isTransparentBomb;
-        instantiatedBomb.IsFreezeBomb = isFreezeBomb;
+        instantiatedBomb.IsFreezeBomb = bombItems.HasFlag(BombItems.FreezeBombs);
 
         if(ShouldBombCollideWithPlayers)
             StartCoroutine(ChangeColliderLayer(instantiatedBomb, player.gameObject));
 
-        if (isChained)
-            _chainedBombsPerPlayer[playerEnum].Add(instantiatedBomb);
-
-        _nextBombTime[playerEnum] = Time.time + instantiatedBomb.Timer;
+        float timeToAdd = bombItems.HasFlag(BombItems.ChainedBombs) ? 0 : instantiatedBomb.Timer;
+        _nextBombTime[playerEnum] = Time.time + timeToAdd;
 
         return true;
-    }
-
-    public void ExplodeChainedBombs(PlayerEnum player)
-    {
-        foreach (Bomb bomb in _chainedBombsPerPlayer[player])
-        {
-            bomb.Explode();
-        }
-        
-        _chainedBombsPerPlayer[player].Clear();
-    }
-
-    public bool HasChainedBombs(PlayerEnum player)
-    {
-        return _chainedBombsPerPlayer[player].Count != 0;
     }
 
     private IEnumerator ChangeColliderLayer(Bomb bomb, GameObject player)

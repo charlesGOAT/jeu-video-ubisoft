@@ -11,10 +11,6 @@
     "MaxItems": 1,
     "TimeBetweenSpawns": 12.0
   },
-  "GhostBombItemSpawnerData": {
-    "MaxItems": 0,
-    "TimeBetweenSpawns": 0
-  },
   "ChainedBombItemSpawnerData": {
     "MaxItems": 2,
     "TimeBetweenSpawns": 15.0

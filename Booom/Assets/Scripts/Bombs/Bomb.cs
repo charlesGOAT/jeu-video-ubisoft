@@ -23,7 +23,6 @@ public class Bomb : MonoBehaviour
 
     public BombFusingStrategy BombFusingStrategy = new();
 
-    public bool IsTransparentBomb { private get; set; }
     public bool IsFreezeBomb { private get; set; }
 
     private readonly Vector2Int[] _directions =
@@ -144,11 +143,6 @@ public class Bomb : MonoBehaviour
             
             if (!ChoosePaintTile(tile, newTileOwner))
             {
-                if (IsTransparentBomb) 
-                {
-                    continue;
-                }
-                
                 return;
             }
             

@@ -1,14 +1,10 @@
-using Codice.Client.BaseCommands;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.Interactions;
 
 public delegate void MoveCalledEventHandler();
 public delegate void PlaceBomb();
-public delegate void ExplodeChainedBombs();
 public delegate void PlaceBombSuccessFul();
 
 [RequireComponent(typeof(PlayerItemsManager))]
@@ -42,7 +38,6 @@ public class Player : MonoBehaviour
     private BombFusingStrategy[] _bombFusingStrategies = new []
         {
             new BombFusingStrategy(),
-            new ChainedBombFusingStrategy(),
             new TargetBombFusingStrategy()
             
             // todo : add more here
@@ -77,8 +72,7 @@ public class Player : MonoBehaviour
     private Tile _currentTile;
     
     public BombFusingType BombFusingType { get; set; }
-    public bool ShouldNextBombBeTransparent = false;
-    public bool ShouldNextBombFreezeBomb = false;
+    public BombItems NextBombBombItems = 0;
     
     //nom de caca
     private float _actualImmuneTimer;
@@ -106,9 +100,7 @@ public class Player : MonoBehaviour
     
     public event MoveCalledEventHandler OnMoveFunctionCalled;
     public event PlaceBomb OnPlaceBomb;
-    public event ExplodeChainedBombs OnExplodeChainedBombs;
     public event PlaceBombSuccessFul OnPlaceBombSuccessful;
-
 
     private void Awake()
     {
@@ -226,28 +218,18 @@ public class Player : MonoBehaviour
     public void OnMove(InputAction.CallbackContext ctx)
     {
         _moveInput = ctx.ReadValue<Vector2>();
-        if (_moveInput != Vector2.zero) 
-        {
-            _lastInput = GetBombPlacementDirection(_moveInput);
-        }
     }
     
     public void OnBomb(InputAction.CallbackContext ctx)
     {
         if (_stateMachine.CurrentState is JumpState) return;
-        if (ctx.performed && ctx.interaction is HoldInteraction)
-        {
-            OnExplodeChainedBombs?.Invoke();
-            GameManager.Instance.BombManager.ExplodeChainedBombs(PlayerNb);
-        }
-        else if (ctx.performed && 
-                 (BombFusingType.Equals(BombFusingType.Chained) || !GameManager.Instance.BombManager.HasChainedBombs(playerNb)))
+
+        if (ctx.performed)
         {
             OnPlaceBomb?.Invoke();
-            Vector3 bombDirection = _moveInput.sqrMagnitude > 0.0001f ? GetBombPlacementDirection(_moveInput) : _lastInput;
 
             if (GameManager.Instance.BombManager.CreateBomb(transform.position,
-                    this, _bombFusingStrategies[(int)BombFusingType], ShouldNextBombBeTransparent, ShouldNextBombFreezeBomb))
+                    this, _bombFusingStrategies[(int)BombFusingType], NextBombBombItems))
             {
                 Animator.SetTrigger("DropBomb");
                 OnPlaceBombSuccessful?.Invoke();
@@ -508,47 +490,6 @@ public class Player : MonoBehaviour
         return Mathf.Abs(playerFeetY - tileSurfaceY) <= tileDetectionTolerance ? tile : null;
     }
 
-    private Vector3 GetBombPlacementDirection(Vector2 input)
-    {
-        //a cause de la camera les inputs sont weird
-        Vector3 worldDirection = new(input.y, 0f, -input.x);
-        float absX = Mathf.Abs(worldDirection.x);
-        float absZ = Mathf.Abs(worldDirection.z);
-
-        if (absX < 0.001f && absZ < 0.001f)
-        {
-            return _lastInput;
-        }
-
-        if (absX < 0.001f)
-        {
-            return new Vector3(0f, 0f, Mathf.Sign(worldDirection.z));
-        }
-
-        if (absZ < 0.001f)
-        {
-            return new Vector3(Mathf.Sign(worldDirection.x), 0f, 0f);
-        }
-
-        Vector3 xCandidate = new(Mathf.Sign(worldDirection.x), 0f, 0f);
-        Vector3 zCandidate = new(0f, 0f, Mathf.Sign(worldDirection.z));
-
-        var position = transform.position;
-        Vector3 intendedTarget = position + worldDirection.normalized * Tile.TileLength;
-        Vector3 xTarget = position + xCandidate * Tile.TileLength;
-        Vector3 zTarget = position + zCandidate * Tile.TileLength;
-
-        float xDistance = (intendedTarget - xTarget).sqrMagnitude;
-        float zDistance = (intendedTarget - zTarget).sqrMagnitude;
-
-        if (Mathf.Abs(xDistance - zDistance) <= 0.0001f)
-        {
-            return absX >= absZ ? xCandidate : zCandidate;
-        }
-
-        return xDistance < zDistance ? xCandidate : zCandidate;
-    }
-
     private void InitializeStateMachine()
     {
         _stateMachine = new StateMachine();
@@ -665,8 +606,13 @@ public enum PlayerEnum
 public enum BombFusingType
 {
     None = 0,
-    Chained = 1,
-    Target = 2
+    Target = 1
 }
 
-
+[Flags]
+public enum BombItems
+{
+    None = 0,
+    ChainedBombs = 1,
+    FreezeBombs = 2
+}

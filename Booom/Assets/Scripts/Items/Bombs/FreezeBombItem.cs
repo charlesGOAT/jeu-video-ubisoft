@@ -5,11 +5,11 @@ public class FreezeBombItem : BombItem
     
     protected override void PickupItemSpecific()
     {
-        _associatedPlayer.ShouldNextBombFreezeBomb = true;
+        _associatedPlayer.NextBombBombItems |= BombItems.FreezeBombs;
     }
 
     protected override void FinishUsingItemSpecific(bool hasDied = false)
     {
-        _associatedPlayer.ShouldNextBombFreezeBomb = false;
+        _associatedPlayer.NextBombBombItems &= ~BombItems.FreezeBombs;
     }
 }

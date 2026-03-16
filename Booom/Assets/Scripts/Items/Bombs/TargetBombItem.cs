@@ -7,15 +7,8 @@ public class TargetBombItem : BombItem
     
     protected override void UseItem()
     {
-        if (!_associatedPlayer.BombFusingType.Equals(BombFusingType.Chained))
-        {
-            _associatedPlayer.BombFusingType = BombFusingType.Target;
-            _associatedPlayer.OnPlaceBombSuccessful += BombSuccessfullyPlaced;
-        }
-        else
-        {
-            _associatedPlayer.OnPlaceBombSuccessful -= BombSuccessfullyPlaced; // ensures it's not triggered by chained bombs exploding
-        }
+        _associatedPlayer.BombFusingType = BombFusingType.Target;
+        _associatedPlayer.OnPlaceBombSuccessful += BombSuccessfullyPlaced;
     }
     
     protected override void FinishUsingItemSpecific(bool hasDied = false)
