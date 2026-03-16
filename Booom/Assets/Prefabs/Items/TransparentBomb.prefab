@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 484057500649795882}
   - component: {fileID: 9097049114423687419}
   - component: {fileID: 4617351842077654283}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: TransparentBomb
   m_TagString: Item
   m_Icon: {fileID: 0}
@@ -102,7 +102,7 @@ BoxCollider:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 3840
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0

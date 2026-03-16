@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 7148449890927070707}
   - component: {fileID: 1141182974104389932}
   - component: {fileID: 1158385441533370530}
+  - component: {fileID: 2355489495213929110}
   m_Layer: 9
   m_Name: Player
   m_TagString: Player
@@ -55,12 +56,12 @@ CharacterController:
   m_Enabled: 1
   serializedVersion: 3
   m_Height: 1
-  m_Radius: 1
+  m_Radius: 0.5
   m_SlopeLimit: 45
   m_StepOffset: 0.3
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
-  m_Center: {x: 0, y: 1, z: 0}
+  m_Center: {x: 0, y: 0.25, z: 0}
 --- !u!114 &7148449890927070707
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -222,6 +223,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8bfe7f3768ca4f01a33d5bca26b111b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerItemsManager
+--- !u!136 &2355489495213929110
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8693886412537445449}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 4096
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 4095
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.90645885
+  m_Height: 3.260477
+  m_Direction: 1
+  m_Center: {x: 0.020844698, y: 0.7237797, z: 0}
 --- !u!1001 &3854131326832701420
 PrefabInstance:
   m_ObjectHideFlags: 0
