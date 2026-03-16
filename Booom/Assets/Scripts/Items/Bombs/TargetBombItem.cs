@@ -1,6 +1,4 @@
 ﻿
-using System.Threading;
-
 public class TargetBombItem : BombItem
 {
     public override ItemType ItemType => ItemType.TargetBomb;
@@ -8,7 +6,6 @@ public class TargetBombItem : BombItem
     protected override void UseItem()
     {
         _associatedPlayer.BombFusingType = BombFusingType.Target;
-        _associatedPlayer.OnPlaceBombSuccessful += BombSuccessfullyPlaced;
     }
     
     protected override void FinishUsingItemSpecific(bool hasDied = false)
