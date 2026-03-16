@@ -152,18 +152,21 @@ public class Player : MonoBehaviour
 
     private void OnNbKillsChanged()
     {
+        bool shouldDisplay = false;
         if (GameConstants.SpeedBoostPerKill.TryGetValue(NbKills, out float newSpeedBoost))
         {
             _elimsSpeedBoost = newSpeedBoost;
             SoundManager.Instance.OnNewKillStreak();
-            StartCoroutine(DisplayKillStreak());
+            shouldDisplay = true;
         }
         if (GameConstants.RangeBoostPerKill.TryGetValue(NbKills, out int newRangeBoost))
         {
             _elimsRangeBoost = newRangeBoost;
             SoundManager.Instance.OnNewKillStreak();
-            StartCoroutine(DisplayKillStreak());
+            shouldDisplay = true;
         }
+        
+        if(shouldDisplay) StartCoroutine(DisplayKillStreak());
         
         // todo : generate little animation or particle effect indicating kill streak
     }

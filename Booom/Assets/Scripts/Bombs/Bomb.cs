@@ -214,6 +214,8 @@ public class Bomb : MonoBehaviour
     protected virtual void OnDestroy()
     {
         ActiveBombs.Remove(_bombCoordinates);
+        GameManager.Instance.BombManager.OnPaintbrushActivated -= OnPaintbrushActivated;
+        GameManager.Instance.BombManager.OnPaintbrushDeactivated -= OnPaintbrushDeactivated;
     }
     
     private void OnCollisionEnter(Collision collision)
