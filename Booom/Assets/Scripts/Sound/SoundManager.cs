@@ -92,6 +92,14 @@ public class SoundManager : MonoBehaviour
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
+    private void Start()
+    {
+        if (!_isInMenu.HasValue)
+        {
+            OnSceneLoaded(SceneManager.GetActiveScene(), LoadSceneMode.Single);
+        }
+    }
+
     private void InitializeAudioSources()
     {
         var audioSources = gameObject.GetComponents<AudioSource>();
