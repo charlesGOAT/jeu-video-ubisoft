@@ -12,8 +12,8 @@ public delegate void LobbyPlayerCountChanged(int playerCount);
 
 public class LobbyManager : MonoBehaviour
 {
-    [SerializeField] 
-    private GameObject _menuPlayerPrefab;
+    [SerializeField]
+    private GameObject changeMapButton;
     
     public static LobbyManager Instance { get; private set; }
     public event LobbyPlayerCountChanged OnLobbyPlayerCountChanged;
@@ -51,7 +51,7 @@ public class LobbyManager : MonoBehaviour
 
     private void Start()
     {
-       _uiInputs = FindObjectsByType<InputSystemUIInputModule>(FindObjectsSortMode.None);
+       _uiInputs = FindObjectsByType<InputSystemUIInputModule>(FindObjectsInactive.Include, FindObjectsSortMode.None);
     }
 
     public void GameStarted(string levelName)
@@ -149,8 +149,6 @@ public class LobbyManager : MonoBehaviour
         }
         
         EventSystem.current.SetSelectedGameObject(null);
-        
-        Selectable first = Selectable.allSelectablesArray.First();
-        EventSystem.current.SetSelectedGameObject(first.gameObject);
+        EventSystem.current.SetSelectedGameObject(changeMapButton);
     }
 }
