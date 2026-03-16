@@ -1,6 +1,7 @@
 Booom/.vsconfig
 Booom/.vscode/
 Booom/Assets/Resources.meta
+Booom/Assets/Fonts/boogaloo.*
 *.sln
 *.slnx
 Build/
