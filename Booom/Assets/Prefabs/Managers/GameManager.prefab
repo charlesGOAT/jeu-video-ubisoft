@@ -49,6 +49,7 @@ MonoBehaviour:
   snowflakeMaterial: {fileID: 2100000, guid: e53f6297236c3d54aaeeffac705cf639, type: 2}
   transparentMat: {fileID: 2100000, guid: 83362e70b2d66854f90bb73ac663e2d0, type: 2}
   paintBrushEffect: {fileID: -876546973899608171, guid: 71e5d836fb0ecbc4cbb7811d38f6e37e, type: 3}
+  highlightMat: {fileID: -876546973899608171, guid: 09382425bfd23854ebc0da323bff48b4, type: 3}
   _isSpreadingMode: 1
   _isBonusSpeed: 0
   FrozenTileDuration: 5
