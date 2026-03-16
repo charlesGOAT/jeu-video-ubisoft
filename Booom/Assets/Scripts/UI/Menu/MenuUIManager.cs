@@ -9,11 +9,13 @@ public class MenuUIManager : MonoBehaviour
     [SerializeField] private PlayerSlot[] playerSlots;
     [SerializeField] private Button playButton;
     [SerializeField] private Canvas mainMenuCanvas;
+    
     [SerializeField] private Canvas levelsCanvas;
     [SerializeField] private Image levelPreviewImage;
-    [SerializeField] private TMP_Dropdown colorblindDropdown;
+    
+    [SerializeField] private Canvas settingsCanvas;
 
-    public bool isSelectingLevel;
+    public bool isNotMainMenu;
     
     private LobbyManager _lobbyManager;
 
@@ -59,21 +61,23 @@ public class MenuUIManager : MonoBehaviour
 
     public void Settings()
     {
-        var temp = colorblindDropdown.gameObject.activeSelf;
-        colorblindDropdown.gameObject.SetActive(!temp);
+        isNotMainMenu = !isNotMainMenu;
+        mainMenuCanvas.gameObject.SetActive(false);
+        settingsCanvas.gameObject.SetActive(true);
     }
 
     public void ChangeMap()
     {
-        isSelectingLevel = !isSelectingLevel;
+        isNotMainMenu = !isNotMainMenu;
         mainMenuCanvas.gameObject.SetActive(false);
         levelsCanvas.gameObject.SetActive(true);
     }
 
     public void ReturnToMainMenu()
     {
-        isSelectingLevel = !isSelectingLevel;
+        isNotMainMenu = !isNotMainMenu;
         levelsCanvas.gameObject.SetActive(false);
+        settingsCanvas.gameObject.SetActive(false);
         mainMenuCanvas.gameObject.SetActive(true);
     }
 
@@ -86,5 +90,10 @@ public class MenuUIManager : MonoBehaviour
     public void LevelSelected(Sprite sprite)
     {
         levelPreviewImage.sprite = sprite;
+    }
+
+    public void ToggleItems()
+    {
+        //todo activate or deactivate items
     }
 }
