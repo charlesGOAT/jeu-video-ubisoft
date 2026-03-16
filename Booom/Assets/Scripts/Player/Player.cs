@@ -73,6 +73,9 @@ public class Player : MonoBehaviour
     private HitState _hitState;
     private RunState _runState;
     private JumpState _jumpState;
+
+    private Tile _currentTile;
+    
     public BombFusingType BombFusingType { get; set; }
     public bool ShouldNextBombBeTransparent = false;
     public bool ShouldNextBombFreezeBomb = false;
@@ -217,6 +220,7 @@ public class Player : MonoBehaviour
         Vector3 worldPos = GridManagerStrategy.GridToWorldPosition(gridPos);
         var trans = transform;
         trans.position = new Vector3(worldPos.x, trans.position.y, worldPos.z);
+        _currentTile = GameManager.Instance.GridManager.GetTileAtCoordinates(gridPos);
     }
 
     public void OnMove(InputAction.CallbackContext ctx)
@@ -392,7 +396,21 @@ public class Player : MonoBehaviour
         UpdatePlayerYRotation(curMoveInput);
         _characterController.Move(move * Time.deltaTime);
         _characterController.Move(Vector3.down * Math.Abs(tempMove));
+
+        HighlightCurrentTile();
+        
         OnMoveFunctionCalled?.Invoke();
+    }
+
+    private void HighlightCurrentTile()
+    {
+        Tile newTile = GetPlayerTile();
+
+        if (newTile != null && newTile != _currentTile)
+        {
+            _currentTile.RemoveHighlight(PlayerNb);
+            _currentTile = newTile;
+        }
     }
 
     public void UpdatePlayerYRotation(Vector2 moveInput) => transform.rotation = IsMoving() ? Quaternion.Euler(0, Mathf.Atan2(moveInput.y, -moveInput.x) * Mathf.Rad2Deg, 0) : transform.rotation;

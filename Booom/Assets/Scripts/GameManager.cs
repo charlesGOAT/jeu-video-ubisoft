@@ -21,6 +21,8 @@ public class GameManager : MonoBehaviour
     public Material snowflakeMaterial;
     [SerializeField] 
     public Material transparentMat;
+    [SerializeField]
+    public Material highlightMat;
     public float  GameDuration => _gameDuration;
 
     public int CurrentMinutes => Mathf.FloorToInt(_timeRemaining / 60f);
@@ -49,7 +51,7 @@ public class GameManager : MonoBehaviour
 
     public readonly int[] CollisionLayers = new int[GameConstants.NB_PLAYERS] { 8, 9, 10, 11 };
 
-    public bool HighlightOwnColor = false;
+    public bool HighlightOwnColor {get; private set;}
 
     private bool _hasChangedForFastMusic = false;
     
@@ -132,6 +134,7 @@ public class GameManager : MonoBehaviour
         _isBonusSpeed = RuntimeConfig.IsBonusSpeed;
         _gameDuration =  RuntimeConfig.GameDuration;
         FrozenTileDuration = RuntimeConfig.FrozenTileDuration;
+        HighlightOwnColor = RuntimeConfig.HighlightOwnColor;
     }
 
     public void RemoveItemFromGrid(Item item)
