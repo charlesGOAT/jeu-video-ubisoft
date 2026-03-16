@@ -21,6 +21,13 @@ public class GameManager : MonoBehaviour
     public Material snowflakeMaterial;
     [SerializeField] 
     public Material transparentMat;
+
+    [SerializeField] 
+    public Material paintBrushEffect;
+
+    [SerializeField]
+    public Material highlightMat;
+
     public float  GameDuration => _gameDuration;
 
     public int CurrentMinutes => Mathf.FloorToInt(_timeRemaining / 60f);
@@ -49,10 +56,9 @@ public class GameManager : MonoBehaviour
 
     public readonly int[] CollisionLayers = new int[GameConstants.NB_PLAYERS] { 8, 9, 10, 11 };
 
-    public bool HighlightOwnColor { get; private set; }
-
     public float ColorDebuff { get; private set; } = GameConstants.COLOR_DEBUFF;
     public float ColorBoost { get; private set; } = GameConstants.COLOR_BOOST;
+    public bool HighlightOwnColor { get; private set; }
 
     private bool _hasChangedForFastMusic = false;
     
@@ -137,6 +143,7 @@ public class GameManager : MonoBehaviour
         FrozenTileDuration = RuntimeConfig.FrozenTileDuration;
         ColorBoost = RuntimeConfig.ColorBoost;
         ColorDebuff = RuntimeConfig.ColorDebuff;
+        HighlightOwnColor = RuntimeConfig.HighlightOwnColor;
     }
 
     public void RemoveItemFromGrid(Item item)
@@ -185,6 +192,10 @@ public class GameManager : MonoBehaviour
         if (transparentMat == null)
         {
             throw new Exception("Transparent material cannot be null");
+        }
+        if (paintBrushEffect == null)
+        {
+            throw new Exception("Paintbrush effect cannot be null");
         }
         // add other managers
     }

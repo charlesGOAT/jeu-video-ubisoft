@@ -17,7 +17,13 @@ public class Tile : MonoBehaviour
 
     public PlayerEnum CurrentTileOwner { get; private set; } = PlayerEnum.None;
 
+    private List<PlayerEnum> _currentPlayersOnTile = new List<PlayerEnum>(GameConstants.NB_PLAYERS);
+
     private Color _neutralColor;
+
+    private Material _highlightMat;
+
+    private readonly Color _colorAdjust = new Color(75f/255f, 75f/255f, 75f/255f);
 
     public bool IsSpawn { get; set; }
 
@@ -35,6 +41,7 @@ public class Tile : MonoBehaviour
     {
         _neutralColor = _tileRenderer.material.color;
         IsSpawn = GameManager.Instance.GridManager.playerSpawnPoints.Contains(TileCoordinates);
+        _highlightMat = new Material(GameManager.Instance.highlightMat);
     }
 
     public virtual void ChangeTileColor(PlayerEnum newOwner)
@@ -51,6 +58,7 @@ public class Tile : MonoBehaviour
 
     public virtual void StepOnTile(Player player)
     {
+        HighlightTile(player.PlayerNb);
     }
 
     public void InitializeTileCoordinates()
@@ -72,17 +80,52 @@ public class Tile : MonoBehaviour
         StartCoroutine(FreezeTileCoroutine());
     }
 
-    private void AddSnowflakeMaterial()
+    private void ChangeTileMaterial(int matIndex, in Material mat)
     {
         Material[] materials = _tileRenderer.materials;
-        materials[2] = GameManager.Instance.snowflakeMaterial;
+        materials[matIndex] = mat;
         _tileRenderer.materials = materials;
+    }
+
+
+    private void AddSnowflakeMaterial()
+    {
+        ChangeTileMaterial(2, GameManager.Instance.snowflakeMaterial);
     }
     
     private void RemoveSnowflakeMaterial()
     {
-        Material[] materials = _tileRenderer.materials;
-        materials[2] = GameManager.Instance.transparentMat;
-        _tileRenderer.materials = materials;
+        ChangeTileMaterial(2, GameManager.Instance.transparentMat);
+    }
+
+    private void HighlightTile(PlayerEnum player, bool mutliplePlayers = false)
+    {
+        if (_currentPlayersOnTile.Count == 0 || mutliplePlayers)
+        {
+            Color newColor = _tileRenderer.material.color;
+            if (GameManager.Instance.HighlightOwnColor)
+            {
+                newColor = newColor == Player.PlayerColorDict[player]
+                    ? Player.PlayerColorDict[player] + _colorAdjust
+                    : Player.PlayerColorDict[player];
+            }
+            else newColor += _colorAdjust;
+                
+            _highlightMat.SetColor("_BorderColor", newColor);
+            ChangeTileMaterial(3, _highlightMat);
+        }
+        
+        if (_currentPlayersOnTile.Contains(player)) return;
+        _currentPlayersOnTile.Add(player);
+    }
+    
+    public void RemoveHighlight(PlayerEnum player)
+    {
+        _currentPlayersOnTile.Remove(player);
+
+        if(_currentPlayersOnTile.Count == 0)
+            ChangeTileMaterial(3, GameManager.Instance.transparentMat);
+        else
+            HighlightTile(_currentPlayersOnTile[0], true);
     }
 }

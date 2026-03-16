@@ -1,7 +1,7 @@
-using Codice.Client.BaseCommands;
 using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Interactions;
@@ -39,6 +39,9 @@ public class Player : MonoBehaviour
     [SerializeField]
     private float tileDetectionTolerance = 0.35f;
 
+    [SerializeField] 
+    private TextMeshProUGUI killStreakText;
+
     private BombFusingStrategy[] _bombFusingStrategies = new []
         {
             new BombFusingStrategy(),
@@ -49,13 +52,14 @@ public class Player : MonoBehaviour
         };
 
     [SerializeField]
-    private Material[] playerMaterials;
+    private List<Material> playerMaterials;
     private Dictionary<int, float> _speedBoostPerKill = GameConstants.SpeedBoostPerKill;
     private Dictionary<int, int> _rangeBoostPerKill = GameConstants.RangeBoostPerKill;
 
     private PlayerInput _playerInput;
     private Renderer[] _renderers;
     private bool[] _rendererDefaultStates;
+    private List<Material[]> _initialMats = new();
 
     private Vector2 _moveInput;
     private Vector3 _lastInput;
@@ -73,6 +77,9 @@ public class Player : MonoBehaviour
     private HitState _hitState;
     private RunState _runState;
     private JumpState _jumpState;
+
+    private Tile _currentTile;
+    
     public BombFusingType BombFusingType { get; set; }
     public bool ShouldNextBombBeTransparent = false;
     public bool ShouldNextBombFreezeBomb = false;
@@ -148,18 +155,30 @@ public class Player : MonoBehaviour
 
     private void OnNbKillsChanged()
     {
+        bool shouldDisplay = false;
         if (GameConstants.SpeedBoostPerKill.TryGetValue(NbKills, out float newSpeedBoost))
         {
             _elimsSpeedBoost = newSpeedBoost;
             SoundManager.Instance.OnNewKillStreak();
+            shouldDisplay = true;
         }
         if (GameConstants.RangeBoostPerKill.TryGetValue(NbKills, out int newRangeBoost))
         {
             _elimsRangeBoost = newRangeBoost;
             SoundManager.Instance.OnNewKillStreak();
+            shouldDisplay = true;
         }
         
+        if(shouldDisplay) StartCoroutine(DisplayKillStreak());
+        
         // todo : generate little animation or particle effect indicating kill streak
+    }
+
+    private IEnumerator DisplayKillStreak()
+    {
+        killStreakText.text = "New kill streak!";
+        yield return new WaitForSeconds(1.7f);
+        killStreakText.text = "";
     }
 
     private void InitializeSpawner()
@@ -217,6 +236,7 @@ public class Player : MonoBehaviour
         Vector3 worldPos = GridManagerStrategy.GridToWorldPosition(gridPos);
         var trans = transform;
         trans.position = new Vector3(worldPos.x, trans.position.y, worldPos.z);
+        _currentTile = GameManager.Instance.GridManager.GetTileAtCoordinates(gridPos);
     }
 
     public void OnMove(InputAction.CallbackContext ctx)
@@ -342,7 +362,6 @@ public class Player : MonoBehaviour
         float velocityX = (Tile.TileLength * GameConstants.JUMP_NUMBER_OF_TILES) /(GameConstants.AIR_STATE_DURATION);
         Vector3 jumpInitialVelocity = new(velocityX * jumpDirection.x, velocityY, jumpDirection.y * velocityX);
 
-
         return jumpInitialVelocity;
     }
 
@@ -357,7 +376,6 @@ public class Player : MonoBehaviour
         float velocityX = Tile.TileLength / GameConstants.PORTAL_AIR_DURATION;
         Vector3 jumpInitialVelocity = new(velocityX * jumpDirection.x, velocityY, jumpDirection.y * velocityX);
 
-
         return jumpInitialVelocity;
     }
 
@@ -369,8 +387,7 @@ public class Player : MonoBehaviour
     }
 
     public void ResetJumpVelocity() => _jumpVelocity = Vector3.zero;
-
-
+    
     public void FlickerPlayerOnHit(float elapsedT) => SetRenderersVisible(Mathf.Sin(elapsedT * hitFlickerFrequency) > 0);
 
     private void SetRendererVisible() => SetRenderersVisible(true);
@@ -391,7 +408,21 @@ public class Player : MonoBehaviour
         UpdatePlayerYRotation(curMoveInput);
         _characterController.Move(move * Time.deltaTime);
         _characterController.Move(Vector3.down * Math.Abs(tempMove));
+
+        HighlightCurrentTile();
+        
         OnMoveFunctionCalled?.Invoke();
+    }
+
+    private void HighlightCurrentTile()
+    {
+        Tile newTile = GetPlayerTile();
+
+        if (newTile != null && newTile != _currentTile)
+        {
+            _currentTile.RemoveHighlight(PlayerNb);
+            _currentTile = newTile;
+        }
     }
 
     public void UpdatePlayerYRotation(Vector2 moveInput) => transform.rotation = IsMoving() ? Quaternion.Euler(0, Mathf.Atan2(moveInput.y, -moveInput.x) * Mathf.Rad2Deg, 0) : transform.rotation;
@@ -592,7 +623,40 @@ public class Player : MonoBehaviour
         }
     }
 
-    private void SetPlayerTexture() 
+    public void ActivatePaintbrushEffect()
+    {
+        if (_renderers == null)
+        {
+            return;
+        }
+
+        Material playerMaterial = GameManager.Instance.paintBrushEffect;
+
+        for (int i = 0; i < _renderers.Length; ++i)
+        {
+            Material[] mats = _renderers[i].materials;
+            for (int j = 0; j < mats.Length; ++j)
+            {
+                mats[j] = playerMaterial;
+            }
+            
+            _renderers[i].materials = mats;
+        }
+    }
+
+    public void ResetPlayerTexture()
+    {
+        if (_renderers == null)
+        {
+            return;
+        }
+
+        for (int i = 0; i < _renderers.Length && i < _initialMats.Count; ++i)
+        {
+            _renderers[i].materials = _initialMats[i];
+        }
+    }
+    public void SetPlayerTexture()
     {
         if (_renderers == null)
         {
@@ -612,6 +676,7 @@ public class Player : MonoBehaviour
                 }
             }
             
+            if(_initialMats.Count <= i) _initialMats.Add(mats);
             _renderers[i].materials = mats;
         }
     }

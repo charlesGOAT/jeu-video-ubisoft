@@ -15,7 +15,7 @@ public class RuntimeConfigData
 {
     public bool IsSpreadingMode = true;
     public bool IsBonusSpeed = true;
-    public bool ShouldBombCollideWithPlayers = true;
+    public bool HighlightOwnColor = false;
     public SpawnMode SpawnMode = SpawnMode.Fixed;
     public bool IsDropFromSky = false;
     public float GameDuration = 120f;
@@ -64,11 +64,8 @@ public class RuntimeConfigData
         {4, 2},
         {6, 3}
     };
-    public List<KeyValuePair> BombEvents = new ()
-    {
-        new (0, 0, BombEnum.NormalBomb),
-        new (0, 30, BombEnum.FastBomb)
-    };
+
+    public List<KeyValuePair> BombEvents = new();
     public List<KeyValuePairText> TextEvents = new ()
     {
         new (2,0, "Start placing bombs to spread your zone!")

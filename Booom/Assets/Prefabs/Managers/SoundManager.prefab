@@ -252,7 +252,7 @@ MonoBehaviour:
   targetBombMovingSound: {fileID: 4335417321031931550}
   defenseBombSound:
     audioClip: {fileID: 8300000, guid: ca46be3ca9ba9064d8b7b47db8ebb20b, type: 3}
-    volume: 0
+    volume: 1
   pickUpItemSound:
     audioClip: {fileID: 8300000, guid: b15a7c80887c268469f106e4a098bae5, type: 3}
     volume: 1
