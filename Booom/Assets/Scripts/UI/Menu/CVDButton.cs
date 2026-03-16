@@ -1,7 +1,5 @@
 using TMPro;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using System.Collections;
 
 public delegate void ChangeFilterCalledEventHandler(int index);
 
