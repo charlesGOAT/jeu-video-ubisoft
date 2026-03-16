@@ -255,7 +255,6 @@ GameObject:
   - component: {fileID: 5890822120100910012}
   - component: {fileID: 5818708947701121955}
   - component: {fileID: 6139040360490747015}
-  - component: {fileID: 8779998495903785874}
   m_Layer: 0
   m_Name: TileMesh
   m_TagString: Untagged

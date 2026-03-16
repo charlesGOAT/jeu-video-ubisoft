@@ -184,6 +184,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BombManager
   bombPrefabs: []
   ShouldBombCollideWithPlayers: 1
+  LayersToExclude: 
 --- !u!1001 &22799394
 PrefabInstance:
   m_ObjectHideFlags: 0
