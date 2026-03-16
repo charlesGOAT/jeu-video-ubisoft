@@ -6,9 +6,7 @@ public class Bomb : MonoBehaviour
 {
     public static readonly HashSet<Vector2Int> ActiveBombs = new HashSet<Vector2Int>();
 
-    [SerializeField]
-    protected float timer = 3.0f;
-    public float Timer => timer;
+    public virtual float Timer => 3.0f;
 
     [SerializeField]
     private float pulseAmplitude = 0.2f;
@@ -24,6 +22,8 @@ public class Bomb : MonoBehaviour
     public BombFusingStrategy BombFusingStrategy = new();
 
     public bool IsFreezeBomb { private get; set; }
+
+    public Collider ColliderComp;
 
     private readonly Vector2Int[] _directions =
     {
@@ -51,6 +51,16 @@ public class Bomb : MonoBehaviour
         {
             explosionRange += Player.ActivePlayers[(int)AssociatedPlayer - 1].ElimsRangeBoost;
         }
+
+        ColliderComp = GetComponent<Collider>();
+
+        GameManager.Instance.BombManager.OnPaintbrushActivated += OnPaintbrushActivated;
+        GameManager.Instance.BombManager.OnPaintbrushDeactivated += OnPaintbrushDeactivated;
+
+        foreach (int layer in GameManager.Instance.BombManager.LayersToExclude)
+        {
+            OnPaintbrushActivated(layer);
+        }
     }
 
     protected virtual void Start()
@@ -71,7 +81,7 @@ public class Bomb : MonoBehaviour
     private IEnumerator CountdownAndExplode()
     {
         float elapsed = 0f;
-        while (elapsed < timer)
+        while (elapsed < Timer)
         {
             DoPulseMath(ref elapsed);
             yield return null;
@@ -82,7 +92,7 @@ public class Bomb : MonoBehaviour
     private IEnumerator Pulse()
     {
         float elapsed = 0f;
-        while (elapsed < timer)
+        while (elapsed < Timer)
         {
             DoPulseMath(ref elapsed);
             yield return null;
@@ -198,6 +208,8 @@ public class Bomb : MonoBehaviour
     protected virtual void OnDestroy()
     {
         ActiveBombs.Remove(_bombCoordinates);
+        GameManager.Instance.BombManager.OnPaintbrushActivated -= OnPaintbrushActivated;
+        GameManager.Instance.BombManager.OnPaintbrushDeactivated -= OnPaintbrushDeactivated;
     }
     
     private void OnCollisionEnter(Collision collision)
@@ -207,6 +219,18 @@ public class Bomb : MonoBehaviour
             player.PlayerNb == AssociatedPlayer) return;
             
         BombFusingStrategy.OnCollision(this);
+    }
+
+    private void OnPaintbrushActivated(int layer)
+    {
+        if(ColliderComp != null)
+            ColliderComp.excludeLayers = ColliderComp.excludeLayers.value | (1 << layer);
+    }
+    
+    private void OnPaintbrushDeactivated(int layer)
+    {
+        if(ColliderComp != null)
+            ColliderComp.excludeLayers = ColliderComp.excludeLayers.value & ~(1 << layer);
     }
 }
 
