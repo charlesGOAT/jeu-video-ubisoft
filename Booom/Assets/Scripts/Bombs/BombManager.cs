@@ -98,6 +98,10 @@ public class BombManager : MonoBehaviour
 
         if (isChained)
             _chainedBombsPerPlayer[playerEnum].Add(instantiatedBomb);
+        
+#if !UNITY_EDITOR
+        instantiatedBomb.ConfigureValues();
+#endif
 
         _nextBombTime[playerEnum] = Time.time + instantiatedBomb.Timer;
 

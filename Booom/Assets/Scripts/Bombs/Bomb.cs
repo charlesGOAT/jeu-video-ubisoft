@@ -66,13 +66,10 @@ public class Bomb : MonoBehaviour
 
     protected virtual void Start()
     {
-#if !UNITY_EDITOR
-        ConfigureValues();
-#endif
         BombFusingStrategy.Fuse(this);
     }
 
-    protected virtual void ConfigureValues()
+    public virtual void ConfigureValues()
     {
         Timer = GameManager.Instance.RuntimeConfig.NormalBombTimer;
     }
