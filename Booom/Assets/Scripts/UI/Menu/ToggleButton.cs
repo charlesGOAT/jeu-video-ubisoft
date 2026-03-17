@@ -4,7 +4,6 @@ using UnityEngine.UI;
 public class ToggleButton : MonoBehaviour
 {
     [SerializeField] private GameObject trueBackground;
-    [SerializeField] private GameObject falseBackground;
     
     private Toggle _toggle;
 
