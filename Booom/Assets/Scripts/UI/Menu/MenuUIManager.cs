@@ -61,24 +61,24 @@ public class MenuUIManager : MonoBehaviour
 
     public void Settings()
     {
-        isNotMainMenu = !isNotMainMenu;
-        mainMenuCanvas.gameObject.SetActive(false);
-        settingsCanvas.gameObject.SetActive(true);
+        isNotMainMenu = false;
+        mainMenuCanvas.gameObject.SetActive(isNotMainMenu);
+        settingsCanvas.gameObject.SetActive(!isNotMainMenu);
     }
 
     public void ChangeMap()
     {
-        isNotMainMenu = !isNotMainMenu;
-        mainMenuCanvas.gameObject.SetActive(false);
-        levelsCanvas.gameObject.SetActive(true);
+        isNotMainMenu = false;
+        mainMenuCanvas.gameObject.SetActive(isNotMainMenu);
+        levelsCanvas.gameObject.SetActive(!isNotMainMenu);
     }
 
     public void ReturnToMainMenu()
     {
-        isNotMainMenu = !isNotMainMenu;
-        levelsCanvas.gameObject.SetActive(false);
-        settingsCanvas.gameObject.SetActive(false);
-        mainMenuCanvas.gameObject.SetActive(true);
+        isNotMainMenu = true;
+        levelsCanvas.gameObject.SetActive(!isNotMainMenu);
+        settingsCanvas.gameObject.SetActive(!isNotMainMenu);
+        mainMenuCanvas.gameObject.SetActive(isNotMainMenu);
     }
 
     public void PlayGame()

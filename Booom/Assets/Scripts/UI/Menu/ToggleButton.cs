@@ -15,15 +15,6 @@ public class ToggleButton : MonoBehaviour
 
     public void ValueChanged()
     {
-        if (_toggle.isOn)
-        {
-            trueBackground.SetActive(true);
-            // falseBackground.SetActive(false);
-        }
-        else
-        {
-            trueBackground.SetActive(false);
-            // falseBackground.SetActive(true);
-        }
+        trueBackground.SetActive(_toggle.isOn);
     }
 }
