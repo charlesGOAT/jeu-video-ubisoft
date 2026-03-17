@@ -26,7 +26,7 @@ public class BombAnimation : MonoBehaviour
 
     private int[] _changingDiscoSquaresSlots;
 
-    public float animationDuration = 2f;
+    public float AnimationDuration;
 
     private float _animationCurrentTime = 0f;
 
@@ -74,17 +74,17 @@ public class BombAnimation : MonoBehaviour
 
     private void InitializeMaterialAnimationCurve()
     {
-        _materialAnimationCurve = new(animationCurve.keys.Select(k => new Keyframe(k.time * animationDuration, k.value * YFACTOR)).ToArray());
+        _materialAnimationCurve = new(animationCurve.keys.Select(k => new Keyframe(k.time * AnimationDuration, k.value * YFACTOR)).ToArray());
     }
 
     private void InitializeScaleAnimationCurve()
     {
-        _scaleAnimationCurve = new(animationCurve.keys.Select(k => new Keyframe(k.time * animationDuration, 1 + (k.value * YFACTOR))).ToArray());
+        _scaleAnimationCurve = new(animationCurve.keys.Select(k => new Keyframe(k.time * AnimationDuration, 1 + (k.value * YFACTOR))).ToArray());
     }
 
     private void InitializeEmissionIntensityCurve()
     {
-        emissionIntensityCurve = new(emissionIntensityCurve.keys.Select(k => new Keyframe(k.time * animationDuration, k.value * YFACTOR)).ToArray());
+        emissionIntensityCurve = new(emissionIntensityCurve.keys.Select(k => new Keyframe(k.time * AnimationDuration, k.value * YFACTOR)).ToArray());
     }
 
     private void CacheDiscoMaterials()
