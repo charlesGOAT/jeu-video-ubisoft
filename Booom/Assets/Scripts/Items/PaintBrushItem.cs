@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
 
@@ -6,6 +7,8 @@ public class PaintBrushItem : BaseItem
 {
     public override ItemType ItemType => ItemType.PaintBrush;
     private const float ACTIVE_TIME = 2.5f;
+
+    private Dictionary<Collider, int> _modifiedBombs = new();
 
     private CancellationTokenSource _cts;
     
@@ -32,6 +35,9 @@ public class PaintBrushItem : BaseItem
     {
         _player = player;
         player.OnMoveFunctionCalled += UseItem;
+        
+        GameManager.Instance.BombManager.ActivatePaintBrush(_player.gameObject.layer);
+        _player.ActivatePaintbrushEffect();
 
         SoundManager.Instance.OnUsePaintBrush(true);
         await StartDelayTask();
@@ -40,6 +46,9 @@ public class PaintBrushItem : BaseItem
     private void UseTimeOver()
     {
         SoundManager.Instance.OnUsePaintBrush(false);
+        _player.ResetPlayerTexture();
+        
+        GameManager.Instance.BombManager.DeactivatePaintBrush(_player.gameObject.layer);
 
         _player.OnMoveFunctionCalled -= UseItem;
         CallFinishUsingItemCallback();

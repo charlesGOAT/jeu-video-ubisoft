@@ -8,9 +8,7 @@ public class Bomb : MonoBehaviour
 {
     public static readonly HashSet<Vector2Int> ActiveBombs = new HashSet<Vector2Int>();
 
-    [SerializeField]
-    protected float timer = 3.0f;
-    public float Timer => timer;
+    public virtual float Timer => 3.0f;
 
     [SerializeField]
     protected int explosionRange = 3;
@@ -26,6 +24,8 @@ public class Bomb : MonoBehaviour
 
     public bool IsTransparentBomb { private get; set; }
     public bool IsFreezeBomb { private get; set; }
+
+    public Collider ColliderComp;
 
     private readonly Vector2Int[] _directions =
     {
@@ -53,8 +53,17 @@ public class Bomb : MonoBehaviour
         }
 
         _bombAnimation = GetComponent<BombAnimation>();
-        _bombAnimation.InitializeAnimation(timer);
+        _bombAnimation.InitializeAnimation(Timer);
 
+        ColliderComp = GetComponent<Collider>();
+
+        GameManager.Instance.BombManager.OnPaintbrushActivated += OnPaintbrushActivated;
+        GameManager.Instance.BombManager.OnPaintbrushDeactivated += OnPaintbrushDeactivated;
+
+        foreach (int layer in GameManager.Instance.BombManager.LayersToExclude)
+        {
+            OnPaintbrushActivated(layer);
+        }
     }
 
     protected virtual void Start()
@@ -75,7 +84,7 @@ public class Bomb : MonoBehaviour
 
     private IEnumerator CountdownAndExplode()
     {
-        yield return new WaitForSeconds(timer);
+        yield return new WaitForSeconds(Timer);
         Explode();
     }
 
@@ -122,11 +131,6 @@ public class Bomb : MonoBehaviour
             
             if (!ChoosePaintTile(tile, newTileOwner))
             {
-                if (IsTransparentBomb) 
-                {
-                    continue;
-                }
-                
                 return;
             }
             
@@ -190,6 +194,8 @@ public class Bomb : MonoBehaviour
     {
         UnsubscribeFromCurrentTileColor();
         ActiveBombs.Remove(_bombCoordinates);
+        GameManager.Instance.BombManager.OnPaintbrushActivated -= OnPaintbrushActivated;
+        GameManager.Instance.BombManager.OnPaintbrushDeactivated -= OnPaintbrushDeactivated;
     }
 
     private void SubscribeToCurrentTileColor()
@@ -239,6 +245,18 @@ public class Bomb : MonoBehaviour
             player.PlayerNb == AssociatedPlayer) return;
             
         BombFusingStrategy.OnCollision(this);
+    }
+
+    private void OnPaintbrushActivated(int layer)
+    {
+        if(ColliderComp != null)
+            ColliderComp.excludeLayers = ColliderComp.excludeLayers.value | (1 << layer);
+    }
+    
+    private void OnPaintbrushDeactivated(int layer)
+    {
+        if(ColliderComp != null)
+            ColliderComp.excludeLayers = ColliderComp.excludeLayers.value & ~(1 << layer);
     }
 }
 
