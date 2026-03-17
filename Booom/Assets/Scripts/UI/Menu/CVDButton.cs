@@ -5,14 +5,13 @@ public delegate void ChangeFilterCalledEventHandler(int index);
 
 public class CVDButton : MonoBehaviour
 {
-    [SerializeField]
-    private TMP_Text _text;
+    [SerializeField] 
+    private GameObject toggleGroup;
 
-    private int _index;
+    private bool _isInitialized = false;
 
     private string[] _filterNames =
     {
-        "PRESS TO CHANGE",
         "PROTANOPIA",
         "PROTANOMALY",
         "DEUTERANOPIA",
@@ -25,31 +24,23 @@ public class CVDButton : MonoBehaviour
     
     public event ChangeFilterCalledEventHandler OnChangeFilterCalled;
 
-    private void Start()
+    public void ChangeFilter(int index)
     {
-        Reset();
+        OnChangeFilterCalled?.Invoke(index);
     }
 
-    public void Reset()
+    public void DisplayColorBlindToggles()
     {
-        _index = 0;
-        _text.text = _filterNames[_index];
-        OnChangeFilterCalled?.Invoke(_index);
-    }
-    
-    public void ChangeFilter()
-    {
-        if (_index < _filterNames.Length - 1)
+        if (_isInitialized) return;
+        var texts = toggleGroup.GetComponentsInChildren<TMP_Text>();
+        var toggles = toggleGroup.GetComponentsInChildren<CVDToggle>();
+
+        for(int i = 0; i < _filterNames.Length && i < texts.Length; i++)
         {
-            _index++;
+            toggles[i].Index = i;
+            texts[i].text = _filterNames[i];
         }
-        else
-        {
-            _index = 0;
-        }
-        
-        _text.text = _filterNames[_index];
-        OnChangeFilterCalled?.Invoke(_index);
-        
+
+        _isInitialized = true;
     }
 }
