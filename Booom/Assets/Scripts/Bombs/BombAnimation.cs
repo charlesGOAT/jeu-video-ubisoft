@@ -51,12 +51,6 @@ public class BombAnimation : MonoBehaviour
         EnableEmissionKeyword();
     }
 
-    private void Start()
-    {
-        CacheDiscoMaterials();
-        StartCoroutine(ChangeDiscoColorsCoroutine());
-    }
-
     private void Update()
     {
         UpdateScale();
@@ -189,6 +183,8 @@ public class BombAnimation : MonoBehaviour
         InitializeMaterialAnimationCurve();
         InitializeScaleAnimationCurve();
         InitializeEmissionIntensityCurve();
+        CacheDiscoMaterials();
+        StartCoroutine(ChangeDiscoColorsCoroutine());
     }
 
 }
