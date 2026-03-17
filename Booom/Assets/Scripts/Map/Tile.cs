@@ -81,7 +81,7 @@ public class Tile : MonoBehaviour
         StartCoroutine(FreezeTileCoroutine());
     }
 
-    private void ChangeTileMaterial(int matIndex, in Material mat)
+    protected virtual void ChangeTileMaterial(int matIndex, in Material mat)
     {
         Material[] materials = _tileRenderer.materials;
         materials[matIndex] = mat;

@@ -1,10 +1,8 @@
 using UnityEngine;
 
-public class Spike : Tile
+public class Spike : SpecialTile
 {
     public override bool IsObstacle => true;
-
-    protected override void Start(){}
 
     public override void StepOnTile(Player player)
     {
