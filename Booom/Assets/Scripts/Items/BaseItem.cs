@@ -1,7 +1,12 @@
-﻿
+﻿using System;
+using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
+
 public delegate void FinishUsingItem(BaseItem baseItem);
 public abstract class BaseItem
 {
+    public Sprite IconSprite;
     public virtual ItemType ItemType => ItemType.PaintBrush;
     public abstract void PickupItem(Player player);
     public event FinishUsingItem OnFinishUsingItem;
@@ -13,5 +18,10 @@ public abstract class BaseItem
     protected void CallFinishUsingItemCallback()
     {
         OnFinishUsingItem?.Invoke(this);
+    }
+
+    protected void DisplayPopUp(Player player, ItemType itemType, Sprite iconSprite)
+    {
+        player.DisplayPopUp(itemType, iconSprite);
     }
 }

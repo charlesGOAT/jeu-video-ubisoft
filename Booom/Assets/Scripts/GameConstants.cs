@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using UnityEngine;
 
 public static class GameConstants
 {
@@ -18,6 +19,7 @@ public static class GameConstants
     public const float JUMP_HEIGHT_OFFSET = 2.5f;
     public const float JUMP_NUMBER_OF_TILES = 2.7f;
     public const float PORTAL_JUMP_HEIGHT = 1.0f;
+    public const float POPUP_DURATION = 2.0f;
     
     public static readonly Dictionary<int, float> SpeedBoostPerKill =new ()
     {
@@ -35,5 +37,12 @@ public static class GameConstants
         {2, 1},
         {4, 2},
         {6, 3}  // todo : add more or tweak
+    };
+    public static readonly Dictionary<ItemType, Color> ItemsColorDict = new ()
+    {
+        { ItemType.PaintBrush , Color.red },
+        { ItemType.ChainBombs , Color.green },
+        { ItemType.TargetBomb , Color.yellow },
+        { ItemType.FreezeBomb , Color.blue },
     };
 }

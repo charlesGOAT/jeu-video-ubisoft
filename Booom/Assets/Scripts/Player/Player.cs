@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public delegate void MoveCalledEventHandler();
 public delegate void PlaceBomb();
@@ -39,6 +40,20 @@ public class Player : MonoBehaviour
 
     [SerializeField] 
     private TextMeshProUGUI killStreakText;
+
+    [SerializeField]
+    private Image itemTextPopUp;
+    
+    [SerializeField]
+    private Image itemIconBackground;
+
+    [SerializeField]
+    private RawImage itemIconPrefab;
+    
+    [SerializeField]
+    private Transform itemIconsContainer;
+    
+    private List<RawImage> _activeIcons = new();
 
     private BombFusingStrategy[] _bombFusingStrategies = new []
         {
@@ -639,6 +654,62 @@ public class Player : MonoBehaviour
         
         playerColor = PlayerColorDict[playerNb];
         SetPlayerTexture();
+    }
+
+    public void DisplayPopUp(ItemType itemType, Sprite iconSprite)
+    {
+        itemTextPopUp.color = GameConstants.ItemsColorDict[itemType];
+        // itemIconBackground.color = GameConstants.ItemsColorDict[itemType];
+        AddIcon(itemType, iconSprite);
+        
+        String text = itemType.ToString().AddSpacesBeforeCaps().ToUpper();
+        itemTextPopUp.GetComponentInChildren<TMP_Text>().text = text;
+        
+        StartCoroutine(DisplayPopUpCoroutine());
+    }
+
+    public void RemoveItemPopUp()
+    {
+        // itemIconBackground.gameObject.SetActive(false);
+        RemoveIcon();
+    }
+
+    IEnumerator DisplayPopUpCoroutine()
+    {
+        // itemIconBackground.gameObject.SetActive(true);
+        itemTextPopUp.gameObject.SetActive(true);
+        yield return new WaitForSeconds(GameConstants.POPUP_DURATION);
+        itemTextPopUp.gameObject.SetActive(false);
+    }
+    
+    private void AddIcon(ItemType itemType, Sprite sprite)
+    {
+        var icon = Instantiate(itemIconPrefab, itemIconsContainer);
+        icon.color = GameConstants.ItemsColorDict[itemType];
+        icon.GetComponentInChildren<Image>().sprite = sprite;
+        _activeIcons.Add(icon);
+
+        if (itemType == ItemType.PaintBrush)
+            StartCoroutine(RemovePaintBrushIcon(icon));
+    }
+    
+    IEnumerator RemovePaintBrushIcon(RawImage icon)
+    {
+        yield return new WaitForSeconds(GameConstants.POPUP_DURATION);
+        if (icon != null) // Paintbrush canceled by bomb
+        {
+            _activeIcons.Remove(icon);
+            Destroy(icon.gameObject);
+        }
+    }
+    
+    private void RemoveIcon()
+    {
+        if (_activeIcons.Count == 0) return;
+
+        var icon = _activeIcons[0]; // or last, depending on your logic
+        _activeIcons.RemoveAt(0);
+        Destroy(icon.gameObject);
     }
 }
 

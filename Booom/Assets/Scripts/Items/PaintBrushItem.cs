@@ -38,6 +38,8 @@ public class PaintBrushItem : BaseItem
         
         GameManager.Instance.BombManager.ActivatePaintBrush(_player.gameObject.layer);
         _player.ActivatePaintbrushEffect();
+        
+        DisplayPopUp(player, ItemType, IconSprite);
 
         SoundManager.Instance.OnUsePaintBrush(true);
         await StartDelayTask();
