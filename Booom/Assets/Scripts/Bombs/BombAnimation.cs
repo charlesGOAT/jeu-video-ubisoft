@@ -26,7 +26,7 @@ public class BombAnimation : MonoBehaviour
 
     private int[] _changingDiscoSquaresSlots;
 
-    public float AnimationDuration;
+    private float _animationDuration;
 
     private float _animationCurrentTime = 0f;
 
@@ -53,9 +53,6 @@ public class BombAnimation : MonoBehaviour
 
     private void Start()
     {
-        InitializeMaterialAnimationCurve();
-        InitializeScaleAnimationCurve();
-        InitializeEmissionIntensityCurve();
         CacheDiscoMaterials();
         StartCoroutine(ChangeDiscoColorsCoroutine());
     }
@@ -74,17 +71,17 @@ public class BombAnimation : MonoBehaviour
 
     private void InitializeMaterialAnimationCurve()
     {
-        _materialAnimationCurve = new(animationCurve.keys.Select(k => new Keyframe(k.time * AnimationDuration, k.value * YFACTOR)).ToArray());
+        _materialAnimationCurve = new(animationCurve.keys.Select(k => new Keyframe(k.time * _animationDuration, k.value * YFACTOR)).ToArray());
     }
 
     private void InitializeScaleAnimationCurve()
     {
-        _scaleAnimationCurve = new(animationCurve.keys.Select(k => new Keyframe(k.time * AnimationDuration, 1 + (k.value * YFACTOR))).ToArray());
+        _scaleAnimationCurve = new(animationCurve.keys.Select(k => new Keyframe(k.time * _animationDuration, 1 + (k.value * YFACTOR))).ToArray());
     }
 
     private void InitializeEmissionIntensityCurve()
     {
-        emissionIntensityCurve = new(emissionIntensityCurve.keys.Select(k => new Keyframe(k.time * AnimationDuration, k.value * YFACTOR)).ToArray());
+        emissionIntensityCurve = new(emissionIntensityCurve.keys.Select(k => new Keyframe(k.time * _animationDuration, k.value * YFACTOR)).ToArray());
     }
 
     private void CacheDiscoMaterials()
@@ -184,6 +181,14 @@ public class BombAnimation : MonoBehaviour
     public void SetBombColor(Color newColor)
     {
         _changingDiscoSquaresColor = newColor;
+    }
+
+    public void InitializeAnimation(float duration)
+    {
+        _animationDuration = duration;
+        InitializeMaterialAnimationCurve();
+        InitializeScaleAnimationCurve();
+        InitializeEmissionIntensityCurve();
     }
 
 }

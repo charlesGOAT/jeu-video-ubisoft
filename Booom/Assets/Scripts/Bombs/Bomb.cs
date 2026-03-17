@@ -53,7 +53,7 @@ public class Bomb : MonoBehaviour
         }
 
         _bombAnimation = GetComponent<BombAnimation>();
-        _bombAnimation.AnimationDuration = timer;
+        _bombAnimation.InitializeAnimation(timer);
 
     }
 
