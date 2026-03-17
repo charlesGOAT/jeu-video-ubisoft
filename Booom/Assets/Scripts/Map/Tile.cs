@@ -1,7 +1,10 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using System.Linq;
+using UnityEngine;
+
+public delegate void OnTileColorChanged(Color newColor);
 
 public class Tile : MonoBehaviour
 {
@@ -23,6 +26,8 @@ public class Tile : MonoBehaviour
     private Color _neutralColor;
 
     private Material _highlightMat;
+
+    public event OnTileColorChanged OnTileColorChanged;
 
     private readonly Color _colorAdjust = new Color(75f/255f, 75f/255f, 75f/255f);
 
