@@ -25,8 +25,6 @@ public class TargetBombFusingStrategy : BombFusingStrategy
         _associatedPlayer = Player.ActivePlayers.First(player => player.PlayerNb == _bomb.AssociatedPlayer);
         _cts = new CancellationTokenSource();
 
-        _bomb.StartPulseCoroutine();
-
         Awaitable timerTask = ManageActiveTime(); // bomb explodes after the Timer is over even if it hasn't reached any player
         Awaitable movementTask = MoveBombLoop();
         

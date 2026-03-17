@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public delegate void OnExplode();
+
 public class Bomb : MonoBehaviour
 {
     public static readonly HashSet<Vector2Int> ActiveBombs = new HashSet<Vector2Int>();
@@ -11,17 +13,16 @@ public class Bomb : MonoBehaviour
     public float Timer => timer;
 
     [SerializeField]
-    private float pulseAmplitude = 0.2f;
-
-    [SerializeField]
-    private float pulseSpeed = 8f;
-
-    [SerializeField]
     protected int explosionRange = 3;
 
     public int ExplosionRange => explosionRange;
 
     public BombFusingStrategy BombFusingStrategy = new();
+
+    private BombAnimation _bombAnimation;
+    private Tile _subscribedTile;
+
+    public event OnExplode OnExplode;
 
     public bool IsTransparentBomb { private get; set; }
     public bool IsFreezeBomb { private get; set; }
@@ -34,7 +35,6 @@ public class Bomb : MonoBehaviour
         Vector2Int.right
     };
 
-    private Vector3 _initialScale;
 
     protected Vector2Int _bombCoordinates;
 
@@ -44,7 +44,6 @@ public class Bomb : MonoBehaviour
     {
         Transform trans = transform;
 
-        _initialScale = trans.localScale;
         _bombCoordinates = GridManagerStrategy.WorldToGridCoordinates(trans.position);
         ActiveBombs.Add(_bombCoordinates);
 
@@ -52,10 +51,15 @@ public class Bomb : MonoBehaviour
         {
             explosionRange += Player.ActivePlayers[(int)AssociatedPlayer - 1].ElimsRangeBoost;
         }
+
+        _bombAnimation = GetComponent<BombAnimation>();
+        _bombAnimation.animationDuration = timer;
+
     }
 
     protected virtual void Start()
     {
+        SubscribeToCurrentTileColor();
         BombFusingStrategy.Fuse(this);
     }
 
@@ -71,42 +75,16 @@ public class Bomb : MonoBehaviour
 
     private IEnumerator CountdownAndExplode()
     {
-        float elapsed = 0f;
-        while (elapsed < timer)
-        {
-            DoPulseMath(ref elapsed);
-            yield return null;
-        }
+        yield return new WaitForSeconds(timer);
         Explode();
     }
 
-    private IEnumerator Pulse()
-    {
-        float elapsed = 0f;
-        while (elapsed < timer)
-        {
-            DoPulseMath(ref elapsed);
-            yield return null;
-        }
-    }
-
-    private void DoPulseMath(ref float elapsed)
-    {
-        float pulse = 1f + (Mathf.Abs(Mathf.Sin(elapsed * pulseSpeed)) * pulseAmplitude);
-        transform.localScale = _initialScale * pulse;
-        elapsed += Time.deltaTime;
-    }
-
-    public void StartPulseCoroutine()
-    {
-        StartCoroutine(Pulse());
-    }
-    
     public void Explode()
     {
         if(!IsFreezeBomb) SoundManager.Instance.OnBombExploded();
         else SoundManager.Instance.OnDefenseBombExploded();
         PaintTiles();
+        NotifyExplosionSubscribers();
         Destroy(gameObject);
     }
 
@@ -196,14 +174,62 @@ public class Bomb : MonoBehaviour
 
     public void SetBombCoordinates(Vector2Int newBombCoordinates)
     {
+        UnsubscribeFromCurrentTileColor();
         ActiveBombs.Remove(_bombCoordinates);
         _bombCoordinates = newBombCoordinates;
         ActiveBombs.Add(_bombCoordinates);
+        SubscribeToCurrentTileColor();
+    }
+
+    public void NotifyExplosionSubscribers() 
+    {
+        OnExplode?.Invoke();
     }
 
     protected virtual void OnDestroy()
     {
+        UnsubscribeFromCurrentTileColor();
         ActiveBombs.Remove(_bombCoordinates);
+    }
+
+    private void SubscribeToCurrentTileColor()
+    {
+        Tile tile = GameManager.Instance.GridManager.GetTileAtCoordinates(_bombCoordinates);
+        if (tile == null || _bombAnimation == null)
+        {
+            return;
+        }
+
+        _subscribedTile = tile;
+        _subscribedTile.OnTileColorChanged += OnTileColorChanged;
+        OnTileColorChanged(GetCurrentTileColor(tile));
+    }
+
+    private void UnsubscribeFromCurrentTileColor()
+    {
+        if (_subscribedTile == null)
+        {
+            return;
+        }
+
+        _subscribedTile.OnTileColorChanged -= OnTileColorChanged;
+        _subscribedTile = null;
+    }
+
+    private void OnTileColorChanged(Color tileColor)
+    {
+        _bombAnimation.SetBombColor(tileColor);
+    }
+
+    private Color GetCurrentTileColor(Tile tile)
+    {
+        return tile.CurrentTileOwner != PlayerEnum.None ? Player.PlayerColorDict[tile.CurrentTileOwner] : GetNeutralTileColor(tile);
+    }
+
+    private static Color GetNeutralTileColor(Tile tile)
+    {
+        Renderer tileRenderer = tile.GetComponentInChildren<Renderer>();
+        return tileRenderer != null ? tileRenderer.material.color : Color.white;
     }
     
     private void OnCollisionEnter(Collision collision)

@@ -22,7 +22,6 @@ public class GameManager : MonoBehaviour
     [SerializeField] 
     public Material transparentMat;
     public float  GameDuration => _gameDuration;
-
     public int CurrentMinutes => Mathf.FloorToInt(_timeRemaining / 60f);
     public int CurrentSeconds => Mathf.FloorToInt(_timeRemaining % 60f);
     
@@ -37,7 +36,7 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] 
     public int FrozenTileDuration = 30;
-    
+
     public bool IsBonusSpeed => _isBonusSpeed;
 
     public GridManagerStrategy GridManager { get; private set; }
@@ -200,6 +199,7 @@ public class GameManager : MonoBehaviour
 
     public void EndGame()
     {
+        //a fix plus tard quand la fin de la game arrive
         SoundManager.Instance.OnGameEnded();
         StartCoroutine(EndGameCoroutine());
     }

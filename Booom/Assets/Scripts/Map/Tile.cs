@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -20,6 +21,7 @@ public class Tile : MonoBehaviour
     private Color _neutralColor;
 
     public bool IsSpawn { get; set; }
+    public event Action<Color> OnTileColorChanged;
 
     protected virtual void Awake()
     {
@@ -40,13 +42,13 @@ public class Tile : MonoBehaviour
 
     public virtual void ChangeTileColor(PlayerEnum newOwner)
     {
-        if (CurrentTileOwner != newOwner && (!IsSpawn || _tileRenderer.material.color == _neutralColor) && !IsFrozen)
+        if (CurrentTileOwner != newOwner && (!IsSpawn || CurrentTileOwner == PlayerEnum.None) && !IsFrozen)
         {
             GameManager.Instance.ScoreManager.LoseTile(CurrentTileOwner, TileCoordinates);
             GameManager.Instance.ScoreManager.AcquireNewTile(newOwner, TileCoordinates);
 
-            _tileRenderer.material.color = newOwner != PlayerEnum.None ? Player.PlayerColorDict[newOwner] : _neutralColor;
             CurrentTileOwner = newOwner;
+            RefreshTileColor();
         }
     }
 
@@ -71,6 +73,13 @@ public class Tile : MonoBehaviour
     public void FreezeTile()
     {
         StartCoroutine(FreezeTileCoroutine());
+    }
+
+    private void RefreshTileColor()
+    {
+        Color tileColor = CurrentTileOwner != PlayerEnum.None ? Player.PlayerColorDict[CurrentTileOwner] : _neutralColor;
+        _tileRenderer.material.color = tileColor;
+        OnTileColorChanged?.Invoke(tileColor);
     }
 
     private void AddSnowflakeMaterial()
