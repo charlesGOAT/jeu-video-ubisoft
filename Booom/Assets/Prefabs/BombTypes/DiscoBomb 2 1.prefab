@@ -4870,7 +4870,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: e4a03622c200cda4f868485e078e44d8, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.7071067
+      value: 0.7071068
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: e4a03622c200cda4f868485e078e44d8, type: 3}
       propertyPath: m_LocalRotation.x
@@ -4878,15 +4878,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: e4a03622c200cda4f868485e078e44d8, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: e4a03622c200cda4f868485e078e44d8, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: e4a03622c200cda4f868485e078e44d8, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
+      value: -90
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: e4a03622c200cda4f868485e078e44d8, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
@@ -4913,6 +4913,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: e4a03622c200cda4f868485e078e44d8, type: 3}
       insertIndex: -1
       addedObject: {fileID: 7207285722012907993}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: e4a03622c200cda4f868485e078e44d8, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2389463407321986286}
   m_SourcePrefab: {fileID: 100100000, guid: e4a03622c200cda4f868485e078e44d8, type: 3}
 --- !u!1 &3730341114857618201 stripped
 GameObject:
@@ -5058,10 +5061,29 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: GameplayAssembly::Bomb
   timer: 3
-  pulseAmplitude: 0.2
-  pulseSpeed: 8
   explosionRange: 3
   AssociatedPlayer: 0
+--- !u!65 &2389463407321986286
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3730341114857618201}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!4 &4075482605694165411 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: e4a03622c200cda4f868485e078e44d8, type: 3}

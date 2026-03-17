@@ -15,6 +15,7 @@ public class Tile : MonoBehaviour
     public static float TileLength { get; private set; }
 
     private Renderer _tileRenderer;
+    private TileAnimation _tileAnimation;
 
     public PlayerEnum CurrentTileOwner { get; private set; } = PlayerEnum.None;
 
@@ -31,6 +32,14 @@ public class Tile : MonoBehaviour
         }
 
         _tileRenderer = GetComponentInChildren<Renderer>();
+        _tileAnimation = GetComponent<TileAnimation>();
+
+        if (_tileAnimation == null)
+        {
+            _tileAnimation = gameObject.AddComponent<TileAnimation>();
+        }
+
+        _tileAnimation.Initialize(_tileRenderer);
         InitializeTileCoordinates();
     }
 
@@ -78,7 +87,7 @@ public class Tile : MonoBehaviour
     private void RefreshTileColor()
     {
         Color tileColor = CurrentTileOwner != PlayerEnum.None ? Player.PlayerColorDict[CurrentTileOwner] : _neutralColor;
-        _tileRenderer.material.color = tileColor;
+        _tileAnimation.AnimateTileColorChange(tileColor);
         OnTileColorChanged?.Invoke(tileColor);
     }
 

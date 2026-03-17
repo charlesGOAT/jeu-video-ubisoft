@@ -9802,13 +9802,17 @@ PrefabInstance:
     m_TransformParent: {fileID: 479289092}
     m_Modifications:
     - target: {fileID: 671780071549981273, guid: 0d602448bd1f8d44793a5fc9f674005b, type: 3}
+      propertyPath: spawnMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 671780071549981273, guid: 0d602448bd1f8d44793a5fc9f674005b, type: 3}
       propertyPath: _spawnMode
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1165453328561432431, guid: 0d602448bd1f8d44793a5fc9f674005b, type: 3}
       propertyPath: 'bombPrefabs.Array.data[0]'
       value: 
-      objectReference: {fileID: 7207285722012907993, guid: 6003fa3c4006d7e4190d1ea7aeeed57a, type: 3}
+      objectReference: {fileID: 1532892993074124228, guid: 2d0bc29e4a728bd48b0b51c3480a5453, type: 3}
     - target: {fileID: 1669064132996479789, guid: 0d602448bd1f8d44793a5fc9f674005b, type: 3}
       propertyPath: m_LocalPosition.x
       value: -8.78495
@@ -9855,6 +9859,10 @@ PrefabInstance:
       objectReference: {fileID: 8693886412537445449, guid: 48d5797564f6c444885cd8aecb605365, type: 3}
     - target: {fileID: 3282167894468318723, guid: 0d602448bd1f8d44793a5fc9f674005b, type: 3}
       propertyPath: _isSpreadingMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6821035330413254686, guid: 0d602448bd1f8d44793a5fc9f674005b, type: 3}
+      propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8782770404062343388, guid: 0d602448bd1f8d44793a5fc9f674005b, type: 3}

@@ -4903,6 +4903,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8001922200816911059}
+  - component: {fileID: -3049926611457534511}
   m_Layer: 0
   m_Name: Explosion
   m_TagString: Untagged
@@ -4927,6 +4928,18 @@ Transform:
   - {fileID: 5388687933782664175}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &-3049926611457534511
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4853760703863856483}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 75ea035221676774bab077d65f329389, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: GameplayAssembly::Explosion
 --- !u!1 &6497613801980475824
 GameObject:
   m_ObjectHideFlags: 0
