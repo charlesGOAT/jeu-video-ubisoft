@@ -52,8 +52,6 @@ public class PlayerItemsManager : MonoBehaviour
         {
             case ItemType.PaintBrush:
                 return new PaintBrushItem();
-            case ItemType.TransparentBomb:
-                return new TransparentBombItem();
             case ItemType.ChainBombs:
                 return new ChainBombsItem();
             case ItemType.TargetBomb:

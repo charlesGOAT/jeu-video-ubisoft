@@ -139,8 +139,6 @@ public class ItemSpawner : MonoBehaviour
         {
             case (ItemType.PaintBrush):
                 return GameManager.Instance.RuntimeConfig.PaintBrushItemSpawnerData;
-            case (ItemType.TransparentBomb):
-                return GameManager.Instance.RuntimeConfig.GhostBombItemSpawnerData;
             case (ItemType.ChainBombs):
                 return GameManager.Instance.RuntimeConfig.ChainedBombItemSpawnerData;
             case (ItemType.TargetBomb):

@@ -30,11 +30,6 @@ public class RuntimeConfigData
         MaxItems = 2,
         TimeBetweenSpawns = 10
     };
-    public ItemSpawnerData GhostBombItemSpawnerData = new()
-    {
-        MaxItems = 2,
-        TimeBetweenSpawns = 10
-    };
     public ItemSpawnerData ChainedBombItemSpawnerData = new()
     {
         MaxItems = 2,
