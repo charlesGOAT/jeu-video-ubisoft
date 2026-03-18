@@ -1,8 +1,12 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using System.Linq;
+using UnityEngine;
 
+public delegate void OnTileColorChanged(Color newColor);
+
+[RequireComponent(typeof(TileAnimation))]
 public class Tile : MonoBehaviour
 {
     public Vector2Int TileCoordinates { get; private set; }
@@ -14,6 +18,7 @@ public class Tile : MonoBehaviour
     public static float TileLength { get; private set; }
 
     private Renderer _tileRenderer;
+    private TileAnimation _tileAnimation;
 
     public PlayerEnum CurrentTileOwner { get; private set; } = PlayerEnum.None;
 
@@ -23,18 +28,22 @@ public class Tile : MonoBehaviour
 
     private Material _highlightMat;
 
+    public event OnTileColorChanged OnTileColorChanged;
+
     private readonly Color _colorAdjust = new Color(75f/255f, 75f/255f, 75f/255f);
 
     public bool IsSpawn { get; set; }
 
     protected virtual void Awake()
     {
-        if (TileLength == 0)
+        if (TileLength == 0 && transform.childCount > 0)
         {
             TileLength = transform.GetChild(0).localScale.x;
         }
-
         _tileRenderer = GetComponentInChildren<Renderer>();
+        _tileAnimation = GetComponent<TileAnimation>();
+
+        _tileAnimation.Initialize(_tileRenderer);
         InitializeTileCoordinates();
     }
 
@@ -52,7 +61,8 @@ public class Tile : MonoBehaviour
             GameManager.Instance.ScoreManager.LoseTile(CurrentTileOwner, TileCoordinates);
             GameManager.Instance.ScoreManager.AcquireNewTile(newOwner, TileCoordinates);
 
-            _tileRenderer.material.color = newOwner != PlayerEnum.None ? Player.PlayerColorDict[newOwner] : _neutralColor;
+            Color tileColor = newOwner != PlayerEnum.None ? Player.PlayerColorDict[newOwner] : _neutralColor;
+            _tileAnimation.AnimateTileColorChange(tileColor);
             CurrentTileOwner = newOwner;
         }
     }
