@@ -96,7 +96,7 @@ public class BombManager : MonoBehaviour
         instantiatedBomb.ConfigureValues();
 #endif
         
-        float timeToAdd = bombItems.HasFlag(BombItems.ChainedBombs) ? 0 : instantiatedBomb.Timer;
+        float timeToAdd = bombItems.HasFlag(BombItems.ChainedBombs) ? 0 : instantiatedBomb.GetTimer();
         _nextBombTime[playerEnum] = Time.time + timeToAdd;
 
         return true;

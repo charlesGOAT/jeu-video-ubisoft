@@ -45,7 +45,7 @@ public class TargetBombFusingStrategy : BombFusingStrategy
     {
         try
         {
-            await Awaitable.WaitForSecondsAsync(_bomb.Timer, _cts.Token);
+            await Awaitable.WaitForSecondsAsync(_bomb.GetTimer(), _cts.Token);
         }
         catch (OperationCanceledException) { return; }
         
