@@ -3253,7 +3253,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1002706674
 Transform:
   m_ObjectHideFlags: 0
@@ -3303,6 +3303,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 404903505822333779, guid: 0b43c4aaced3d3d49b3a48928e31c743, type: 3}
+      propertyPath: menuUIManager
+      value: 
+      objectReference: {fileID: 1933444547}
     - target: {fileID: 404903505822333779, guid: 0b43c4aaced3d3d49b3a48928e31c743, type: 3}
       propertyPath: changeMapButton
       value: 
@@ -4754,7 +4758,6 @@ MonoBehaviour:
   mainMenuCanvas: {fileID: 86794520}
   levelsCanvas: {fileID: 513912710}
   levelPreviewImage: {fileID: 294150406}
-  levelLabel: {fileID: 0}
   settingsCanvas: {fileID: 1488063821}
   isNotMainMenu: 0
 --- !u!1001 &1988787804
