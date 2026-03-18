@@ -19,9 +19,4 @@ public abstract class BaseItem
     {
         OnFinishUsingItem?.Invoke(this);
     }
-
-    protected void DisplayPopUp(Player player, ItemType itemType, Sprite iconSprite)
-    {
-        player.DisplayPopUp(itemType, iconSprite);
-    }
 }

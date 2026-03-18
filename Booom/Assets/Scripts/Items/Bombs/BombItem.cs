@@ -24,7 +24,7 @@ public abstract class BombItem : BaseItem
         _associatedPlayer.OnPlaceBombSuccessful += BombSuccessfullyPlaced;
         
         PickupItemSpecific();
-        DisplayPopUp(_associatedPlayer, ItemType, IconSprite);
+        _associatedPlayer.DisplayPopUp(ItemType, IconSprite);
     }
 
     protected virtual void PickupItemSpecific() {}

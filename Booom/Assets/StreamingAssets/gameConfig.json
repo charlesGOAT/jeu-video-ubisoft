@@ -11,6 +11,7 @@
   "ColorDebuff": 0.7,
   "NormalBombTimer": 3.0,
   "FastBombTimer": 1.0,
+  "PopUpDuration": 2.0,
   "ShouldBombCollideWithPlayers": true,
   "PaintBrushItemSpawnerData": {
     "MaxItems": 1,

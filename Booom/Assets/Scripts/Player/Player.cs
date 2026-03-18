@@ -42,10 +42,10 @@ public class Player : MonoBehaviour
     private TextMeshProUGUI killStreakText;
 
     [SerializeField]
-    private Image itemTextPopUp;
+    private Image itemTextPopUpBackground;
     
     [SerializeField]
-    private Image itemIconBackground;
+    private TMP_Text itemTextPopUpText;
 
     [SerializeField]
     private RawImage itemIconPrefab;
@@ -54,6 +54,7 @@ public class Player : MonoBehaviour
     private Transform itemIconsContainer;
     
     private List<RawImage> _activeIcons = new();
+    private float _popUpDuration = GameConstants.POPUP_DURATION;
 
     private BombFusingStrategy[] _bombFusingStrategies = new []
         {
@@ -152,6 +153,7 @@ public class Player : MonoBehaviour
         speed = runtimeConfig.MovementSpeed;
         _rangeBoostPerKill = runtimeConfig.RangeBoostPerKill;
         _speedBoostPerKill = runtimeConfig.SpeedBoostPerKill;
+        _popUpDuration = runtimeConfig.PopUpDuration;
     }
 
     private void CheckStartConditions()
@@ -657,28 +659,27 @@ public class Player : MonoBehaviour
 
     public void DisplayPopUp(ItemType itemType, Sprite iconSprite)
     {
-        itemTextPopUp.color = GameConstants.ItemsColorDict[itemType];
-        // itemIconBackground.color = GameConstants.ItemsColorDict[itemType];
+        itemTextPopUpBackground.color = GameConstants.ItemsColorDict[itemType];
+        itemTextPopUpText.text = itemType.ToString().AddSpacesBeforeCaps().ToUpper();
         AddIcon(itemType, iconSprite);
-        
-        String text = itemType.ToString().AddSpacesBeforeCaps().ToUpper();
-        itemTextPopUp.GetComponentInChildren<TMP_Text>().text = text;
         
         StartCoroutine(DisplayPopUpCoroutine());
     }
 
     public void RemoveItemPopUp()
     {
-        // itemIconBackground.gameObject.SetActive(false);
-        RemoveIcon();
+        if (_activeIcons.Count == 0) return;
+
+        var icon = _activeIcons[0];
+        _activeIcons.RemoveAt(0);
+        Destroy(icon.gameObject);
     }
 
     IEnumerator DisplayPopUpCoroutine()
     {
-        // itemIconBackground.gameObject.SetActive(true);
-        itemTextPopUp.gameObject.SetActive(true);
-        yield return new WaitForSeconds(GameConstants.POPUP_DURATION);
-        itemTextPopUp.gameObject.SetActive(false);
+        itemTextPopUpBackground.gameObject.SetActive(true);
+        yield return new WaitForSeconds(_popUpDuration);
+        itemTextPopUpBackground.gameObject.SetActive(false);
     }
     
     private void AddIcon(ItemType itemType, Sprite sprite)
@@ -688,8 +689,8 @@ public class Player : MonoBehaviour
         icon.GetComponentInChildren<Image>().sprite = sprite;
         _activeIcons.Add(icon);
 
-        if (itemType == ItemType.PaintBrush)
-            StartCoroutine(RemovePaintBrushIcon(icon));
+        // if (itemType == ItemType.PaintBrush)
+        //     StartCoroutine(RemovePaintBrushIcon(icon));
     }
     
     IEnumerator RemovePaintBrushIcon(RawImage icon)
@@ -700,15 +701,6 @@ public class Player : MonoBehaviour
             _activeIcons.Remove(icon);
             Destroy(icon.gameObject);
         }
-    }
-    
-    private void RemoveIcon()
-    {
-        if (_activeIcons.Count == 0) return;
-
-        var icon = _activeIcons[0]; // or last, depending on your logic
-        _activeIcons.RemoveAt(0);
-        Destroy(icon.gameObject);
     }
 }
 
