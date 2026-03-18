@@ -2,11 +2,11 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem.UI;
-using UnityEngine.UI;
 
 public delegate void LobbyPlayerCountChanged(int playerCount);
 
@@ -148,7 +148,13 @@ public class LobbyManager : MonoBehaviour
             uiInput.actionsAsset = playerInput.actions;
         }
         
+        StartCoroutine(SelectButtonNextFrame());
+    }
+    
+    private IEnumerator SelectButtonNextFrame()
+    {
         EventSystem.current.SetSelectedGameObject(null);
+        yield return null; // wait 1 frame
         EventSystem.current.SetSelectedGameObject(changeMapButton);
     }
 }
