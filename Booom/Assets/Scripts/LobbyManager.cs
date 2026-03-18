@@ -145,7 +145,8 @@ public class LobbyManager : MonoBehaviour
 
         foreach (var uiInput in _uiInputs)
         {
-            uiInput.actionsAsset = playerInput.actions;
+            if (uiInput != null)
+                uiInput.actionsAsset = playerInput.actions;
         }
         
         if (firstPlayer)

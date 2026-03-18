@@ -21,12 +21,11 @@ public class RuntimeConfigData
     public float GameDuration = 120f;
     public float MovementSpeed = 15f;
     public int FrozenTileDuration = 30;
+    public float ColorBoost = 1.5f;
+    public float ColorDebuff = 0.7f;
+    public float NormalBombTimer = 3.0f;
+    public float FastBombTimer = 1.0f;
     public ItemSpawnerData PaintBrushItemSpawnerData = new()
-    {
-        MaxItems = 2,
-        TimeBetweenSpawns = 10
-    };
-    public ItemSpawnerData GhostBombItemSpawnerData = new()
     {
         MaxItems = 2,
         TimeBetweenSpawns = 10
