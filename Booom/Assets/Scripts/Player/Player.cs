@@ -341,8 +341,7 @@ public class Player : MonoBehaviour
         {
             SoundManager.Instance.OnEnterPortal();
             _characterController.enabled = false;
-            this.gameObject.transform.position = otherPortalPosition;
-            _jumpVelocity = CalculatePortalForce(playerDirection);
+            gameObject.transform.position = otherPortalPosition;
             _stateMachine.Trigger(GameConstants.PLAYER_JUMP_TRIGGER);
             _characterController.enabled = true;
         }
@@ -398,7 +397,7 @@ public class Player : MonoBehaviour
     {
         Vector2 curMoveInput = _moveInput.normalized;
 
-        float boost = CheckIfOnOwnColor() ? GameConstants.COLOR_BOOST : (CheckIfOnEnemyTerritory() ? GameConstants.COLOR_DEBUFF: 1);
+        float boost = CheckIfOnOwnColor() ? GameManager.Instance.ColorBoost : (CheckIfOnEnemyTerritory() ? GameManager.Instance.ColorDebuff : 1);
 
         boost *= GameManager.Instance.IsBonusSpeed ? _elimsSpeedBoost : 1;
 

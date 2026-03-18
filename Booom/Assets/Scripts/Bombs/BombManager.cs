@@ -92,6 +92,10 @@ public class BombManager : MonoBehaviour
         if(ShouldBombCollideWithPlayers)
             StartCoroutine(ChangeColliderLayer(instantiatedBomb, player.gameObject));
 
+#if !UNITY_EDITOR
+        instantiatedBomb.ConfigureValues();
+#endif
+        
         float timeToAdd = bombItems.HasFlag(BombItems.ChainedBombs) ? 0 : instantiatedBomb.Timer;
         _nextBombTime[playerEnum] = Time.time + timeToAdd;
 
@@ -103,8 +107,8 @@ public class BombManager : MonoBehaviour
         var ogLayerMask = bomb.ColliderComp.excludeLayers.value;
         var newLayer = ogLayerMask | (1 << player.layer);
         bomb.ColliderComp.excludeLayers = newLayer;
-        yield return new WaitForSeconds(1.0f);
-        bomb.ColliderComp.excludeLayers = ogLayerMask;
+        yield return new WaitForSeconds(0.9f);
+        if(bomb != null) bomb.ColliderComp.excludeLayers = ogLayerMask;
     }
 
     public void ActivatePaintBrush(int layer)
