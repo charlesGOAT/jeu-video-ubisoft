@@ -128,7 +128,7 @@ public class LobbyManager : MonoBehaviour
 
         if (JoinedPlayers.Count == 1)
         {
-            GiveUIControl(playerInput);
+            GiveUIControl(playerInput, true);
         }
         else
         {
@@ -138,7 +138,7 @@ public class LobbyManager : MonoBehaviour
         OnLobbyPlayerCountChanged?.Invoke(intPlayerEnum);
     }
 
-    private void GiveUIControl(PlayerInput playerInput)
+    private void GiveUIControl(PlayerInput playerInput, bool firstPlayer = false)
     {
         playerInput.SwitchCurrentActionMap("UI");
         playerInput.ActivateInput();
@@ -148,13 +148,18 @@ public class LobbyManager : MonoBehaviour
             uiInput.actionsAsset = playerInput.actions;
         }
         
-        StartCoroutine(SelectButtonNextFrame());
+        if (firstPlayer)
+            StartCoroutine(SelectButtonNextFrame());
+        else
+        {
+            EventSystem.current.SetSelectedGameObject(changeMapButton);
+        }
     }
     
     private IEnumerator SelectButtonNextFrame()
     {
         EventSystem.current.SetSelectedGameObject(null);
-        yield return null; // wait 1 frame
+        yield return null;
         EventSystem.current.SetSelectedGameObject(changeMapButton);
     }
 }
