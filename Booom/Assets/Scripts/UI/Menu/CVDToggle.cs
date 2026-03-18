@@ -20,9 +20,4 @@ public class CVDToggle : MonoBehaviour
     {
         _toggle = GetComponent<Toggle>();
     }
-
-    private void OnEnable()
-    {
-        _toggle.isOn = false;
-    }
 }

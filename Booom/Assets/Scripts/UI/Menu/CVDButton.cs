@@ -1,5 +1,6 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public delegate void ChangeFilterCalledEventHandler(int index);
 
@@ -7,6 +8,9 @@ public class CVDButton : MonoBehaviour
 {
     [SerializeField] 
     private GameObject toggleGroup;
+    
+    [SerializeField]
+    private Toggle normalFilter;
 
     private bool _isInitialized = false;
 
@@ -42,5 +46,18 @@ public class CVDButton : MonoBehaviour
         }
 
         _isInitialized = true;
+    }
+
+    public void ResetFilter(bool value)
+    {
+        if (value)
+        {
+            var toggles = toggleGroup.GetComponentsInChildren<Toggle>();
+            foreach (var toggle in toggles)
+            {
+                toggle.isOn = false;
+            }
+            normalFilter.isOn = true;
+        }
     }
 }

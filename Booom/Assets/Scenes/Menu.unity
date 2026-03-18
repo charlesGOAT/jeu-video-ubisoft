@@ -795,6 +795,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 1002706674}
     m_Modifications:
     - target: {fileID: 2811684776923067126, guid: 5e6761b47aebff14ea970b9ceaaba58f, type: 3}
+      propertyPath: m_IsOn
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2811684776923067126, guid: 5e6761b47aebff14ea970b9ceaaba58f, type: 3}
       propertyPath: m_Group
       value: 
       objectReference: {fileID: 1002706675}
@@ -2996,7 +3000,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2fafe2cfe61f6974895a912c3755e8f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.ToggleGroup
-  m_AllowSwitchOff: 1
+  m_AllowSwitchOff: 0
 --- !u!224 &1062075795 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 4888586578805340669, guid: c6219db4318fa6d49bd009908fad2060, type: 3}
@@ -3638,11 +3642,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 947336525673030637, guid: 79851e56cad54ff40a61d08d609a6a61, type: 3}
       propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[3].m_Mode
-      value: 1
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 947336525673030637, guid: 79851e56cad54ff40a61d08d609a6a61, type: 3}
       propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[4].m_Mode
-      value: 3
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 947336525673030637, guid: 79851e56cad54ff40a61d08d609a6a61, type: 3}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[5].m_Mode
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 947336525673030637, guid: 79851e56cad54ff40a61d08d609a6a61, type: 3}
       propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -3659,17 +3667,25 @@ PrefabInstance:
     - target: {fileID: 947336525673030637, guid: 79851e56cad54ff40a61d08d609a6a61, type: 3}
       propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[3].m_Target
       value: 
-      objectReference: {fileID: 1620290359}
+      objectReference: {fileID: 469024476}
     - target: {fileID: 947336525673030637, guid: 79851e56cad54ff40a61d08d609a6a61, type: 3}
       propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[4].m_Target
       value: 
-      objectReference: {fileID: 469024476}
+      objectReference: {fileID: 1620290361}
+    - target: {fileID: 947336525673030637, guid: 79851e56cad54ff40a61d08d609a6a61, type: 3}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[5].m_Target
+      value: 
+      objectReference: {fileID: 1620290361}
     - target: {fileID: 947336525673030637, guid: 79851e56cad54ff40a61d08d609a6a61, type: 3}
       propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[3].m_CallState
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 947336525673030637, guid: 79851e56cad54ff40a61d08d609a6a61, type: 3}
       propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[4].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 947336525673030637, guid: 79851e56cad54ff40a61d08d609a6a61, type: 3}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[5].m_CallState
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 947336525673030637, guid: 79851e56cad54ff40a61d08d609a6a61, type: 3}
@@ -3686,11 +3702,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 947336525673030637, guid: 79851e56cad54ff40a61d08d609a6a61, type: 3}
       propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[3].m_MethodName
-      value: ValueChanged
+      value: SetVisionType
       objectReference: {fileID: 0}
     - target: {fileID: 947336525673030637, guid: 79851e56cad54ff40a61d08d609a6a61, type: 3}
       propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[4].m_MethodName
-      value: SetVisionType
+      value: ResetFilter
+      objectReference: {fileID: 0}
+    - target: {fileID: 947336525673030637, guid: 79851e56cad54ff40a61d08d609a6a61, type: 3}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[5].m_MethodName
+      value: ResetFilter
       objectReference: {fileID: 0}
     - target: {fileID: 947336525673030637, guid: 79851e56cad54ff40a61d08d609a6a61, type: 3}
       propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
@@ -3706,11 +3726,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 947336525673030637, guid: 79851e56cad54ff40a61d08d609a6a61, type: 3}
       propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[3].m_TargetAssemblyTypeName
-      value: ToggleButton, GameplayAssembly
+      value: SOG.CVDFilter.CVDFilter, GameplayAssembly
       objectReference: {fileID: 0}
     - target: {fileID: 947336525673030637, guid: 79851e56cad54ff40a61d08d609a6a61, type: 3}
       propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[4].m_TargetAssemblyTypeName
-      value: SOG.CVDFilter.CVDFilter, GameplayAssembly
+      value: CVDButton, GameplayAssembly
+      objectReference: {fileID: 0}
+    - target: {fileID: 947336525673030637, guid: 79851e56cad54ff40a61d08d609a6a61, type: 3}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[5].m_TargetAssemblyTypeName
+      value: CVDButton, GameplayAssembly
       objectReference: {fileID: 0}
     - target: {fileID: 947336525673030637, guid: 79851e56cad54ff40a61d08d609a6a61, type: 3}
       propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[3].m_Arguments.m_ObjectArgumentAssemblyTypeName
@@ -3718,6 +3742,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 947336525673030637, guid: 79851e56cad54ff40a61d08d609a6a61, type: 3}
       propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[4].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 947336525673030637, guid: 79851e56cad54ff40a61d08d609a6a61, type: 3}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[5].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 1038543156248919248, guid: 79851e56cad54ff40a61d08d609a6a61, type: 3}
@@ -3765,17 +3793,6 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 460966547132079572, guid: 79851e56cad54ff40a61d08d609a6a61, type: 3}
   m_PrefabInstance: {fileID: 1620290357}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1620290359 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 3190190132162193060, guid: 79851e56cad54ff40a61d08d609a6a61, type: 3}
-  m_PrefabInstance: {fileID: 1620290357}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 429241345}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c009075789fb56a4985af9775b800955, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: GameplayAssembly::ToggleButton
 --- !u!114 &1620290361
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3789,6 +3806,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: GameplayAssembly::CVDButton
   toggleGroup: {fileID: 1002706673}
+  normalFilter: {fileID: 2853590614851374835}
 --- !u!1 &1707147523
 GameObject:
   m_ObjectHideFlags: 0
@@ -5158,6 +5176,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: GameplayAssembly::CVDToggle
   parent: {fileID: 1620290361}
   Index: 0
+--- !u!114 &2853590614851374835 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2811684776923067126, guid: 5e6761b47aebff14ea970b9ceaaba58f, type: 3}
+  m_PrefabInstance: {fileID: 3601269308584205688}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 56015422772201135}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9085046f02f69544eb97fd06b6048fe2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Toggle
 --- !u!1001 &3601269308584205688
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5166,6 +5195,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1002706674}
     m_Modifications:
+    - target: {fileID: 2811684776923067126, guid: 5e6761b47aebff14ea970b9ceaaba58f, type: 3}
+      propertyPath: m_IsOn
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2811684776923067126, guid: 5e6761b47aebff14ea970b9ceaaba58f, type: 3}
       propertyPath: m_Group
       value: 
@@ -5293,6 +5326,10 @@ PrefabInstance:
     - target: {fileID: 6564889217940798384, guid: 5e6761b47aebff14ea970b9ceaaba58f, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7131592974917942581, guid: 5e6761b47aebff14ea970b9ceaaba58f, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8961986766327804709, guid: 5e6761b47aebff14ea970b9ceaaba58f, type: 3}
       propertyPath: m_Name

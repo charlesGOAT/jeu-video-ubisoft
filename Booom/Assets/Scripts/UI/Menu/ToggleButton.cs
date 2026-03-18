@@ -10,10 +10,12 @@ public class ToggleButton : MonoBehaviour
     private void Start()
     {
         _toggle = GetComponent<Toggle>();
+        _toggle.onValueChanged.AddListener(ValueChanged);
     }
 
-    public void ValueChanged()
+    private void ValueChanged(bool isOn)
     {
-        trueBackground.SetActive(_toggle.isOn);
+        if (_toggle != null)
+            trueBackground.SetActive(_toggle.isOn);
     }
 }
