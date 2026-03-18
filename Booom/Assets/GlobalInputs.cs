@@ -30,7 +30,7 @@ public class GlobalInputs : MonoBehaviour
         InputDevice device = ctx.control.device;
         var player = PlayerInput.all.FirstOrDefault(p => p.devices.Contains(device));
 
-        if (_menuUI.isSelectingLevel)
+        if (_menuUI.isNotMainMenu)
         {
             if (player.inputIsActive)
             {
