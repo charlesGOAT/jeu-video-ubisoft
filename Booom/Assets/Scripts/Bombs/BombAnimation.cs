@@ -166,7 +166,7 @@ public class BombAnimation : MonoBehaviour
         Explosion explosionComponent = explosion.GetComponent<Explosion>();
         if (explosionComponent != null)
         {
-            explosionComponent.initializeExplosion(_changingDiscoSquaresColor);
+            explosionComponent.InitializeExplosion(_changingDiscoSquaresColor);
         }
 
         Destroy(gameObject);

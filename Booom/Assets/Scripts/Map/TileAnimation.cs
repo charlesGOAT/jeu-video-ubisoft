@@ -1,7 +1,6 @@
 using System.Collections;
 using UnityEngine;
 
-//Codex a fait ce code jtait juste trop done pour le faire moi mme. Y'a fait une bonne job tho
 public class TileAnimation : MonoBehaviour
 {
     [SerializeField]
@@ -18,7 +17,7 @@ public class TileAnimation : MonoBehaviour
         _tileRenderer = tileRenderer;
     }
 
-    public void AnimateTileColorChange(Color newColor)
+    public void AnimateTileColorChange(in Color newColor)
     {
         if (_tileRenderer == null)
         {
@@ -33,7 +32,7 @@ public class TileAnimation : MonoBehaviour
         _activeColorLerp = StartCoroutine(AnimateColorTransition(_tileRenderer.material.color, newColor));
     }
 
-    public void SetColorImmediate(Color color)
+    public void SetColorImmediate(in Color color)
     {
         if (_activeColorLerp != null)
         {

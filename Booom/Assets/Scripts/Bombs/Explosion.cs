@@ -6,7 +6,7 @@ public class Explosion : MonoBehaviour
     private static readonly int ColorId = Shader.PropertyToID("_Color");
     private static readonly int EmissionColorId = Shader.PropertyToID("_EmissionColor");
 
-    public void initializeExplosion(Color explosionColor)
+    public void InitializeExplosion(in Color explosionColor)
     {
         Destroy(gameObject, 1f);
 
@@ -23,7 +23,7 @@ public class Explosion : MonoBehaviour
         }
     }
 
-    private void ApplyExplosionColor(Color explosionColor)
+    private void ApplyExplosionColor(in Color explosionColor)
     {
         Color hdrExplosionColor = explosionColor * 5f;
 

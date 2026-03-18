@@ -6,6 +6,7 @@ using UnityEngine;
 
 public delegate void OnTileColorChanged(Color newColor);
 
+[RequireComponent(typeof(TileAnimation))]
 public class Tile : MonoBehaviour
 {
     public Vector2Int TileCoordinates { get; private set; }
@@ -42,11 +43,6 @@ public class Tile : MonoBehaviour
 
         _tileRenderer = GetComponentInChildren<Renderer>();
         _tileAnimation = GetComponent<TileAnimation>();
-
-        if (_tileAnimation == null)
-        {
-            _tileAnimation = gameObject.AddComponent<TileAnimation>();
-        }
 
         _tileAnimation.Initialize(_tileRenderer);
         InitializeTileCoordinates();
