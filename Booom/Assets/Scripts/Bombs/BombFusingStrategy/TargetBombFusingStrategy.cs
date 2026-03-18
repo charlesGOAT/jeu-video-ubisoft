@@ -27,16 +27,11 @@ public class TargetBombFusingStrategy : BombFusingStrategy
         _associatedPlayer = Player.ActivePlayers.First(player => player.PlayerNb == _bomb.AssociatedPlayer);
         _cts = new CancellationTokenSource();
 
-<<<<<<< 151-target-bomb
         Vector2Int bombGridPos = GridManagerStrategy.WorldToGridCoordinates(_bomb.transform.position);
         Tile bombTile = GameManager.Instance.GridManager.GetTileAtCoordinates(bombGridPos);
         if (bombTile == null) return;
         _bombTileOwner = bombTile.CurrentTileOwner;
-
-        _bomb.StartPulseCoroutine();
-
-=======
->>>>>>> main
+        
         Awaitable timerTask = ManageActiveTime(); // bomb explodes after the Timer is over even if it hasn't reached any player
         Awaitable movementTask = MoveBombLoop();
         
