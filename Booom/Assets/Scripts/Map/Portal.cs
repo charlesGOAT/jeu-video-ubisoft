@@ -1,14 +1,12 @@
 using UnityEngine;
 
-public class Portal : Tile
+public class Portal : SpecialTile
 {
     [SerializeField]
     private Portal otherPortal;
 
     public override bool IsObstacle => true;
     
-    protected override void Start(){}
-
     public override void StepOnTile(Player player)
     {
         TeleportToOtherPortal(player);

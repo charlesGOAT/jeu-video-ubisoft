@@ -1,5 +1,5 @@
 
-public class Obstacle : Tile
+public class Obstacle : SpecialTile
 {
     public override bool IsObstacle => true;
 
@@ -13,5 +13,4 @@ public class Obstacle : Tile
             ObstacleHeight = transform.GetChild(0).localScale.y;
         }
     }
-    protected override void Start(){}
 }
