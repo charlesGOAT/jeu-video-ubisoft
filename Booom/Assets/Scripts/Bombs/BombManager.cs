@@ -83,9 +83,9 @@ public class BombManager : MonoBehaviour
         int intBombType = (int)bombType - 1;
         
         Vector3 worldPosition = GridManagerStrategy.GridToWorldPosition(gridCoordinates, tile.transform.position.y);
-        bombPrefabs[intBombType].AssociatedPlayer = playerEnum;
 
         Bomb instantiatedBomb = Instantiate(bombPrefabs[intBombType], worldPosition + bombHeight, Quaternion.identity);
+        instantiatedBomb.AssociatedPlayer = playerEnum;
         instantiatedBomb.BombFusingStrategy = bombStrat;
         instantiatedBomb.IsFreezeBomb = bombItems.HasFlag(BombItems.FreezeBombs);
 
