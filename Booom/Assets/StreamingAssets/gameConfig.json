@@ -46,12 +46,12 @@
     {
       "minutes": 0,
       "seconds": 0,
-      "value": 0
+      "value": 1
     },
     {
       "minutes": 0,
       "seconds": 30,
-      "value": 1
+      "value": 2
     }
   ],
   "TextEvents": [
