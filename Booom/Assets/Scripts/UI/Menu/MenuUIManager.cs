@@ -12,7 +12,6 @@ public class MenuUIManager : MonoBehaviour
     
     [SerializeField] private Canvas levelsCanvas;
     [SerializeField] private Image levelPreviewImage;
-    [SerializeField] private TMP_Text levelLabel;
     
     [SerializeField] private Canvas settingsCanvas;
 
