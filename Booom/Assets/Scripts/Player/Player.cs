@@ -108,6 +108,10 @@ public class Player : MonoBehaviour
     public event PlaceBomb OnPlaceBomb;
     public event PlaceBombSuccessFul OnPlaceBombSuccessful;
 
+    public const float JUMP_HEIGHT_OFFSET = 2.5f;
+    public const float JUMP_NUMBER_OF_TILES = 2.7f;
+    public const float PLAYER_GRAVITY = -36.0f;
+
     private void Awake()
     {
         if (playerItemsManager == null)
@@ -339,28 +343,14 @@ public class Player : MonoBehaviour
     {
         //Formule pour trouver la vitesse initiale quand le sommet du saut est a (Obstacle.ObstacleHeight / 2) + 1 et au demi du trajet
         //position pour gravity 0.5*a*t^2
-        float posForGravity = -(Physics.gravity.y / 2) * Mathf.Pow(GameConstants.AIR_STATE_DURATION / 2, 2);
+        float posForGravity = -(PLAYER_GRAVITY / 2) * Mathf.Pow(GameConstants.AIR_STATE_DURATION / 2, 2);
 
         //position pour apogee du saut
-        float jumpHeight = (Obstacle.ObstacleHeight) + GameConstants.JUMP_HEIGHT_OFFSET;
+        float jumpHeight = (Obstacle.ObstacleHeight) + JUMP_HEIGHT_OFFSET;
 
-        float velocityY = posForGravity + jumpHeight / (GameConstants.AIR_STATE_DURATION / 2);
+        float velocityY = (posForGravity + jumpHeight) / (GameConstants.AIR_STATE_DURATION / 2);
 
-        float velocityX = (Tile.TileLength * GameConstants.JUMP_NUMBER_OF_TILES) /(GameConstants.AIR_STATE_DURATION);
-        Vector3 jumpInitialVelocity = new(velocityX * jumpDirection.x, velocityY, jumpDirection.y * velocityX);
-
-        return jumpInitialVelocity;
-    }
-
-    private Vector3 CalculatePortalForce(Vector2Int jumpDirection)
-    {
-        //Formule pour trouver la vitesse initiale quand le sommet du saut est a (Obstacle.ObstacleHeight / 2) + 1 et au demi du trajet
-        //position pour gravity 0.5*a*t^2
-        float posForGravity = -(Physics.gravity.y / 2) * Mathf.Pow(GameConstants.PORTAL_AIR_DURATION / 2, 2);
-
-        float velocityY = (posForGravity + GameConstants.PORTAL_JUMP_HEIGHT) / (GameConstants.PORTAL_AIR_DURATION / 2);
-
-        float velocityX = Tile.TileLength / GameConstants.PORTAL_AIR_DURATION;
+        float velocityX = (Tile.TileLength * JUMP_NUMBER_OF_TILES) /(GameConstants.AIR_STATE_DURATION);
         Vector3 jumpInitialVelocity = new(velocityX * jumpDirection.x, velocityY, jumpDirection.y * velocityX);
 
         return jumpInitialVelocity;
@@ -413,8 +403,8 @@ public class Player : MonoBehaviour
         else
         {
             //calcul de la gravité par rapport a la position = 0.5*at^2 + vt
-            tempMove = (0.5f * Physics.gravity.y * Time.deltaTime * Time.deltaTime) + (currentVerticalVelocity * Time.deltaTime);
-            currentVerticalVelocity += Physics.gravity.y * Time.deltaTime;
+            tempMove = (0.5f * PLAYER_GRAVITY * Time.deltaTime * Time.deltaTime) + (currentVerticalVelocity * Time.deltaTime);
+            currentVerticalVelocity += PLAYER_GRAVITY * Time.deltaTime;
         }
 
         return tempMove;
