@@ -12,6 +12,7 @@ public class MenuUIManager : MonoBehaviour
     
     [SerializeField] private Canvas levelsCanvas;
     [SerializeField] private Image levelPreviewImage;
+    [SerializeField] private TMP_Text levelLabel;
     
     [SerializeField] private Canvas settingsCanvas;
 
@@ -90,6 +91,7 @@ public class MenuUIManager : MonoBehaviour
     public void LevelSelected(Sprite sprite)
     {
         levelPreviewImage.sprite = sprite;
+        levelLabel.text = sprite.name.AddSpacesBeforeCaps().ToUpper();
     }
 
     public void ToggleItems()

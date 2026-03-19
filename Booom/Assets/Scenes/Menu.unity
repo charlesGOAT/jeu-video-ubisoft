@@ -176,7 +176,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: CURRENT MAP
+  m_text: THE RING
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 86cbb3ff4b00ff4458a05cb4f4de1d5e, type: 2}
   m_sharedMaterial: {fileID: -4104601832917331535, guid: 86cbb3ff4b00ff4458a05cb4f4de1d5e, type: 2}
@@ -4754,7 +4754,7 @@ MonoBehaviour:
   mainMenuCanvas: {fileID: 86794520}
   levelsCanvas: {fileID: 513912710}
   levelPreviewImage: {fileID: 294150406}
-  levelLabel: {fileID: 0}
+  levelLabel: {fileID: 21825030}
   settingsCanvas: {fileID: 1488063821}
   isNotMainMenu: 0
 --- !u!1001 &1988787804
