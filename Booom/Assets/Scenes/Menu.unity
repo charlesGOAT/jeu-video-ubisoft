@@ -146,7 +146,7 @@ RectTransform:
   m_GameObject: {fileID: 21825028}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 6.666666, z: 1.184148}
+  m_LocalScale: {x: 1, y: 1, z: 0.5}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 508739602}
@@ -176,9 +176,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'THE RING
-
-'
+  m_text: THE RING
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 86cbb3ff4b00ff4458a05cb4f4de1d5e, type: 2}
   m_sharedMaterial: {fileID: -4104601832917331535, guid: 86cbb3ff4b00ff4458a05cb4f4de1d5e, type: 2}
@@ -1826,7 +1824,7 @@ RectTransform:
   m_GameObject: {fileID: 508739601}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 2, y: 0.3, z: 0.84448904}
+  m_LocalScale: {x: 2, y: 2, z: 2}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 21825029}
@@ -1835,7 +1833,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 455}
-  m_SizeDelta: {x: 0, y: -750}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &508739603
 MonoBehaviour:
@@ -1850,7 +1848,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.ContentSizeFitter
   m_HorizontalFit: 2
-  m_VerticalFit: 0
+  m_VerticalFit: 1
 --- !u!114 &508739604
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1906,7 +1904,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 0.5
+  m_PixelsPerUnitMultiplier: 1.5
 --- !u!222 &508739606
 CanvasRenderer:
   m_ObjectHideFlags: 0
