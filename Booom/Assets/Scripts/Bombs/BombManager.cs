@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -89,7 +90,7 @@ public class BombManager : MonoBehaviour
         instantiatedBomb.IsFreezeBomb = bombItems.HasFlag(BombItems.FreezeBombs);
 
         if(ShouldBombCollideWithPlayers)
-            instantiatedBomb.RemoveColliderLayer(player.gameObject);
+            StartCoroutine(ChangeColliderLayer(instantiatedBomb, player.gameObject));
 
 #if !UNITY_EDITOR
         instantiatedBomb.ConfigureValues();
@@ -99,6 +100,15 @@ public class BombManager : MonoBehaviour
         _nextBombTime[playerEnum] = Time.time + timeToAdd;
 
         return true;
+    }
+
+    private IEnumerator ChangeColliderLayer(Bomb bomb, GameObject player)
+    {
+        var ogLayerMask = bomb.ColliderComp.excludeLayers.value;
+        var newLayer = ogLayerMask | (1 << player.layer);
+        bomb.ColliderComp.excludeLayers = newLayer;
+        yield return new WaitForSeconds(0.9f);
+        if(bomb != null) bomb.ColliderComp.excludeLayers = ogLayerMask;
     }
 
     public void ActivatePaintBrush(int layer)
