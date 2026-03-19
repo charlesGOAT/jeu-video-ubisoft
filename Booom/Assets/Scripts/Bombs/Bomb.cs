@@ -8,7 +8,7 @@ public class Bomb : MonoBehaviour
 {
     public static readonly HashSet<Vector2Int> ActiveBombs = new HashSet<Vector2Int>();
 
-    public virtual float Timer { get; protected set; } = 3.0f;
+    private float _timer = 3f;
 
     [SerializeField]
     protected int explosionRange = 3;
@@ -35,7 +35,6 @@ public class Bomb : MonoBehaviour
         Vector2Int.right
     };
 
-
     protected Vector2Int _bombCoordinates;
 
     public PlayerEnum AssociatedPlayer = PlayerEnum.None;
@@ -53,7 +52,7 @@ public class Bomb : MonoBehaviour
         }
 
         _bombAnimation = GetComponent<BombAnimation>();
-        _bombAnimation.InitializeAnimation(Timer);
+        _bombAnimation.InitializeAnimation(GetTimer());
 
         ColliderComp = GetComponent<Collider>();
 
@@ -72,9 +71,14 @@ public class Bomb : MonoBehaviour
         BombFusingStrategy.Fuse(this);
     }
 
+    public virtual float GetTimer()
+    {
+        return _timer;
+    }
+
     public virtual void ConfigureValues()
     {
-        Timer = GameManager.Instance.RuntimeConfig.NormalBombTimer;
+        _timer = GameManager.Instance.RuntimeConfig.NormalBombTimer;
     }
 
     public static bool IsBombAt(Vector2Int gridCoordinates)
@@ -89,7 +93,7 @@ public class Bomb : MonoBehaviour
 
     private IEnumerator CountdownAndExplode()
     {
-        yield return new WaitForSeconds(Timer);
+        yield return new WaitForSeconds(GetTimer());
         Explode();
     }
 

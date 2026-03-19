@@ -261,9 +261,13 @@ public class Player : MonoBehaviour
     private void Update()
     {
         UpdateImmune();
-        if (GetPlayerTile() != null) 
+
+        Tile tile = GetPlayerTile();
+        if (tile != null) 
         {
-            GetPlayerTile().StepOnTile(this);
+            tile.StepOnTile(this);
+            if(_currentTile != tile) _currentTile.RemoveHighlight(PlayerNb);
+            _currentTile = tile;
         }
         
         _stateMachine.UpdateStateMachine(Time.deltaTime);
@@ -298,7 +302,6 @@ public class Player : MonoBehaviour
             SoundManager.Instance.OnEnterSpikes();
         else
             SoundManager.Instance.OnPlayerHitByBomb();
-
 
         Animator.SetTrigger("HitPlayer");
         Vector3 forceDirection = new Vector3(hitDirection.x,1,hitDirection.y);
@@ -392,21 +395,8 @@ public class Player : MonoBehaviour
         UpdatePlayerYRotation(curMoveInput);
         _characterController.Move(move * Time.deltaTime);
         _characterController.Move(Vector3.down * Math.Abs(tempMove));
-
-        HighlightCurrentTile();
         
         OnMoveFunctionCalled?.Invoke();
-    }
-
-    private void HighlightCurrentTile()
-    {
-        Tile newTile = GetPlayerTile();
-
-        if (newTile != null && newTile != _currentTile)
-        {
-            _currentTile.RemoveHighlight(PlayerNb);
-            _currentTile = newTile;
-        }
     }
 
     public void UpdatePlayerYRotation(Vector2 moveInput) => transform.rotation = IsMoving() ? Quaternion.Euler(0, Mathf.Atan2(moveInput.y, -moveInput.x) * Mathf.Rad2Deg, 0) : transform.rotation;

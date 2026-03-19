@@ -98,7 +98,6 @@ public class Tile : MonoBehaviour
         _tileRenderer.materials = materials;
     }
 
-
     private void AddSnowflakeMaterial()
     {
         ChangeTileMaterial(2, GameManager.Instance.snowflakeMaterial);
