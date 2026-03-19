@@ -79,7 +79,7 @@ public class Player : MonoBehaviour
     
     public BombFusingType BombFusingType { get; set; }
     public BombItems NextBombBombItems = 0;
-    
+
     //nom de caca
     private float _actualImmuneTimer;
 
@@ -118,7 +118,6 @@ public class Player : MonoBehaviour
         InitializeStateMachine();
         GetComponents();
         ActivePlayers.Add(this);
-
     }
 
     private void Start()
@@ -453,6 +452,12 @@ public class Player : MonoBehaviour
         Destroy(other.gameObject);
         
         SoundManager.Instance.OnPickupItem();
+    }
+    
+    private void OnTriggerExit(Collider other)
+    {
+        if (!other.tag.Equals("Bomb") || !other.transform.parent.TryGetComponent(out Bomb bomb)  || bomb.HasColliderBeenRestored) return;
+        bomb.RestoreColliderLayer();
     }
 
     private bool CheckIfOnOwnColor()
