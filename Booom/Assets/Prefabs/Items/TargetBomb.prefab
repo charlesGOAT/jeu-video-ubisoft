@@ -127,4 +127,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Item
   itemType: 2
+  iconSprite: {fileID: 21300000, guid: d458502e25f347f4f935e30e98f11ee2, type: 3}
   posOnMap: {x: 0, y: 0}
