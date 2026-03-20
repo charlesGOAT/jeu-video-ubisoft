@@ -55,6 +55,7 @@ public class Player : MonoBehaviour
     
     private Dictionary<ItemType, RawImage> _activeIcons = new();
     private float _popUpDuration = GameConstants.POPUP_DURATION;
+    private Coroutine _popUpCoroutine;
 
     private BombFusingStrategy[] _bombFusingStrategies = new []
         {
@@ -663,7 +664,9 @@ public class Player : MonoBehaviour
         itemTextPopUpText.text = itemType.ToString().AddSpacesBeforeCaps().ToUpper();
         AddIcon(itemType, iconSprite);
         
-        StartCoroutine(DisplayPopUpCoroutine());
+        if (_popUpCoroutine != null)
+            StopCoroutine(_popUpCoroutine);
+        _popUpCoroutine = StartCoroutine(DisplayPopUpCoroutine());
     }
     
     IEnumerator DisplayPopUpCoroutine()
