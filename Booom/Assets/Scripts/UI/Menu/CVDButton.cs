@@ -30,7 +30,7 @@ public class CVDButton : MonoBehaviour
 
     public void ChangeFilter(int index)
     {
-        OnChangeFilterCalled?.Invoke(index);
+        OnChangeFilterCalled?.Invoke(index + 1);
     }
 
     public void DisplayColorBlindToggles()
