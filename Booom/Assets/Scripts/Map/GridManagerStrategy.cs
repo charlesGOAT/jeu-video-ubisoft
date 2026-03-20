@@ -81,19 +81,29 @@ public abstract class GridManagerStrategy : MonoBehaviour
         }
     }
 
-    //A besoin d'un peu de peaufinage mais marche pour l'instant
-    //Je peut le faire dans un autre task
-    //Manque encore du peaufinage lol
-    //Manque de peaufinage en tbnk
     protected void PositionCamera()
     {
         if (mainCamera == null) return;
-
-        float centerX = (MapUpperLimit.x - ((MapUpperLimit.x - MapLowerLimit.x) / 2f)) * GameConstants.UNITY_GRID_SIZE;
-        float centerZ = (MapUpperLimit.y - ((MapUpperLimit.y - MapLowerLimit.y) / 2f)) * GameConstants.UNITY_GRID_SIZE;
-
-        mainCamera.transform.position = new Vector3(centerX - (Height * GameConstants.UNITY_GRID_SIZE) / 2f, ((Width + Height) * GameConstants.UNITY_GRID_SIZE) / 2f, centerZ);
-        mainCamera.transform.rotation = Quaternion.Euler(60f, 90f, 0f);
+        
+        // < 1.0f = zoomed in 
+        // > 1.0f = zoomed out.
+        float zoomMultiplier = 0.9f; 
+    
+        float centerX = ((MapUpperLimit.x + MapLowerLimit.x) / 2f) * GameConstants.UNITY_GRID_SIZE;
+        float centerZ = ((MapUpperLimit.y + MapLowerLimit.y) / 2f) * GameConstants.UNITY_GRID_SIZE;
+        
+        Vector3 mapCenter = new Vector3(centerX, 0f, centerZ); 
+    
+        float baseHeight = ((Width + Height) * GameConstants.UNITY_GRID_SIZE) / 2f;
+        float camHeight = baseHeight * zoomMultiplier;
+    
+        Quaternion camRotation = Quaternion.Euler(75f, 90f, 0f);
+        mainCamera.transform.rotation = camRotation;
+    
+        Vector3 forwardDir = camRotation * Vector3.forward;
+        float distance = camHeight / Mathf.Abs(forwardDir.y);
+    
+        mainCamera.transform.position = mapCenter - (forwardDir * distance);
     }
 
     public Vector3 GetRandomPosOnGridWithNoItem()
