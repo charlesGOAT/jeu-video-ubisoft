@@ -58,7 +58,7 @@ public class PaintBrushItem : BaseItem
 
     public override void FinishUsingItem(bool hasDied = false)
     {
-        _player.RemoveItemPopUp();
+        _player.RemoveItemPopUp(ItemType);
         _cts.Cancel();
         UseTimeOver();
     }
@@ -80,6 +80,6 @@ public class PaintBrushItem : BaseItem
             return;
         }
         
-        UseTimeOver();
+        FinishUsingItem();
     }
 }

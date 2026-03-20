@@ -53,7 +53,7 @@ public class Player : MonoBehaviour
     [SerializeField]
     private Transform itemIconsContainer;
     
-    private List<RawImage> _activeIcons = new();
+    private Dictionary<ItemType, RawImage> _activeIcons = new();
     private float _popUpDuration = GameConstants.POPUP_DURATION;
 
     private BombFusingStrategy[] _bombFusingStrategies = new []
@@ -665,16 +665,7 @@ public class Player : MonoBehaviour
         
         StartCoroutine(DisplayPopUpCoroutine());
     }
-
-    public void RemoveItemPopUp()
-    {
-        if (_activeIcons.Count == 0) return;
-
-        var icon = _activeIcons[0];
-        _activeIcons.RemoveAt(0);
-        Destroy(icon.gameObject);
-    }
-
+    
     IEnumerator DisplayPopUpCoroutine()
     {
         itemTextPopUpBackground.gameObject.SetActive(true);
@@ -684,23 +675,23 @@ public class Player : MonoBehaviour
     
     private void AddIcon(ItemType itemType, Sprite sprite)
     {
+        if (_activeIcons.ContainsKey(itemType))
+            return;
+
         var icon = Instantiate(itemIconPrefab, itemIconsContainer);
         icon.color = GameConstants.ItemsColorDict[itemType];
         icon.GetComponentInChildren<Image>().sprite = sprite;
-        _activeIcons.Add(icon);
 
-        // if (itemType == ItemType.PaintBrush)
-        //     StartCoroutine(RemovePaintBrushIcon(icon));
+        _activeIcons[itemType] = icon;
     }
     
-    IEnumerator RemovePaintBrushIcon(RawImage icon)
+    public void RemoveItemPopUp(ItemType itemType)
     {
-        yield return new WaitForSeconds(GameConstants.POPUP_DURATION);
-        if (icon != null) // Paintbrush canceled by bomb
-        {
-            _activeIcons.Remove(icon);
-            Destroy(icon.gameObject);
-        }
+        if (!_activeIcons.TryGetValue(itemType, out var icon))
+            return;
+
+        _activeIcons.Remove(itemType);
+        Destroy(icon.gameObject);
     }
 }
 

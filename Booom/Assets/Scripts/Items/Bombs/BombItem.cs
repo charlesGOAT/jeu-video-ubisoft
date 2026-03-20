@@ -33,7 +33,7 @@ public abstract class BombItem : BaseItem
     {
         _associatedPlayer.OnPlaceBomb -= UseItem;
         _associatedPlayer.OnPlaceBombSuccessful -= BombSuccessfullyPlaced;
-        _associatedPlayer.RemoveItemPopUp();
+        _associatedPlayer.RemoveItemPopUp(ItemType);
         
         _currentUseCount = 0;
         FinishUsingItemSpecific(hasDied);
