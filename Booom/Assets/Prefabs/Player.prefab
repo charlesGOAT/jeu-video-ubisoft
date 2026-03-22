@@ -103,7 +103,6 @@ MonoBehaviour:
   hitFlickerFrequency: 50
   immuneTimer: 5
   tileDetectionTolerance: 0.35
-  arrow: {fileID: 0}
   playerMaterials:
   - {fileID: 2100000, guid: c66c3dfb21d46c946aabc57402e1915b, type: 2}
   - {fileID: 2100000, guid: 197af8cc7b5a46f4a8ccedf1d6d2fa56, type: 2}
