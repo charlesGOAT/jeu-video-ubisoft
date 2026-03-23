@@ -19,6 +19,8 @@ namespace SOG.CVDFilter
 
         private Volume postProcessVolume;
 
+        private CVDButton _cvdButton;
+
         // -------------------- Unity Callbacks --------------------
         private void Reset()
         {
@@ -40,7 +42,14 @@ namespace SOG.CVDFilter
 
         private void Start()
         {
+            _cvdButton = FindFirstObjectByType<CVDButton>(FindObjectsInactive.Include);
+            _cvdButton.OnChangeFilterCalled += SetVisionType;
             ChangeProfile();
+        }
+
+        private void OnDestroy()
+        {
+            _cvdButton.OnChangeFilterCalled -= SetVisionType;
         }
 
         // -------------------- Setup --------------------
