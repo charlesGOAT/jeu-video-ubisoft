@@ -13,12 +13,15 @@ public delegate void LobbyPlayerCountChanged(int playerCount);
 public class LobbyManager : MonoBehaviour
 {
     [SerializeField]
-    private GameObject changeMapButton;
+    private GameObject playButton;
     
     public static LobbyManager Instance { get; private set; }
     public event LobbyPlayerCountChanged OnLobbyPlayerCountChanged;
     
+    public static readonly Dictionary<PlayerInput, float> JoinTimes = new();
     public static readonly Dictionary<PlayerEnum, PlayerInput> JoinedPlayers = new ();
+    public static bool ItemsActivated = true;
+    
     private PlayerInputManager _inputManager;
     
     private InputSystemUIInputModule[] _uiInputs;
@@ -125,6 +128,7 @@ public class LobbyManager : MonoBehaviour
         
         DontDestroyOnLoad(playerInput.gameObject);
         JoinedPlayers[playerEnum] = playerInput;
+        JoinTimes[playerInput] = Time.time;
 
         if (JoinedPlayers.Count == 1)
         {
@@ -150,17 +154,6 @@ public class LobbyManager : MonoBehaviour
         }
         
         if (firstPlayer)
-            StartCoroutine(SelectButtonNextFrame());
-        else
-        {
-            EventSystem.current.SetSelectedGameObject(changeMapButton);
-        }
-    }
-    
-    private IEnumerator SelectButtonNextFrame()
-    {
-        EventSystem.current.SetSelectedGameObject(null);
-        yield return null;
-        EventSystem.current.SetSelectedGameObject(changeMapButton);
+            EventSystem.current.SetSelectedGameObject(playButton);
     }
 }
