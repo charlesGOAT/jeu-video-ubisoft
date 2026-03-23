@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -22,12 +21,13 @@ public class GameManager : MonoBehaviour
     public Material snowflakeMaterial;
     [SerializeField] 
     public Material transparentMat;
+    [SerializeField] 
+    public Material highlightMat;
+    [SerializeField] 
+    public Material blinkMat;
 
     [SerializeField] 
     public Material paintBrushEffect;
-
-    [SerializeField] 
-    public Material highlightMat;
 
     public float  GameDuration => _gameDuration;
     public int CurrentMinutes => Mathf.FloorToInt(_timeRemaining / 60f);
@@ -59,6 +59,7 @@ public class GameManager : MonoBehaviour
     public float ColorDebuff { get; private set; } = GameConstants.COLOR_DEBUFF;
     public float ColorBoost { get; private set; } = GameConstants.COLOR_BOOST;
     public bool HighlightOwnColor { get; private set; }
+    public bool HasRoundEnded { get; private set; }
 
     private bool _hasChangedForFastMusic = false;
 
@@ -218,6 +219,8 @@ public class GameManager : MonoBehaviour
     public void EndGame()
     {
         PlayerEnum winner = ScoreManager.FindPlayerWithMostGround();
+        Bomb.ActiveBombsGO.ForEach(Destroy);
+        HasRoundEnded = true;
         
         if (RoundManager.ShouldEndGame(winner))
         {
@@ -228,39 +231,46 @@ public class GameManager : MonoBehaviour
         {
             StartCoroutine(EndRoundCoroutine(winner));
         }
-        
-        //a fix plus tard quand la fin de la game arrive
+    }
+
+    public IEnumerator MakeWinnerColorBlink(PlayerEnum winner)
+    {
+        var acquiredTiles = ScoreManager.GetAcquiredTilesByPlayer()[(int)winner - 1];
+        foreach (var pos in acquiredTiles)
+        {
+            Tile tile = GridManager.GetTileAtCoordinates(pos);
+            if (tile == null) continue;
+            
+            tile.AddWinnerBlink();
+        }
+
+        yield return new WaitForSeconds(4f); // todo tweak
     }
 
     private IEnumerator EndRoundCoroutine(PlayerEnum winner)
     {
-        Time.timeScale = 0f;
-        // faire glow la couleur du winner
-        // faire jouer la musique de fin de round
+        Player.ActivePlayers.ForEach(x => x.DisableInputActions());
+        SoundManager.Instance.OnColorAlternate();
+        yield return StartCoroutine(MakeWinnerColorBlink(winner));
+        Player.ActivePlayers.ForEach(x => x.EnableInputActions());
         NewRound();
-        yield return new WaitForSecondsRealtime(5f);
-        Time.timeScale = 1f;
         SceneManager.LoadScene(RoundManager.FindNextMap());
     }
 
     private IEnumerator EndGameCoroutine(PlayerEnum winner)
     {
-        Time.timeScale = 0f;
-        
-        // faire glow la couleur du winner
-        // faire jouer la musique de fin de round
+        Player.ActivePlayers.ForEach(x => x.DisableInputActions());
         RoundManager.LoadEndGameData();
+        yield return StartCoroutine(MakeWinnerColorBlink(winner));
+        Player.ActivePlayers.ForEach(x => x.EnableInputActions());
         CleanGame();
-        yield return new WaitForSecondsRealtime(5f);
-        Time.timeScale = 1f;
-        SceneManager.LoadScene("EndGame"); // EndGameMenu
+        SceneManager.LoadScene("EndGame");
     }
 
     private void CleanGame()
     {
         Player.ActivePlayers.Clear();
         Bomb.ActiveBombs.Clear();
-        Bomb.ActiveBombsGO.ForEach(Destroy);
         RoundManager.CleanGame();
     }
 
@@ -268,6 +278,5 @@ public class GameManager : MonoBehaviour
     {
         Bomb.ActiveBombs.Clear();
         Player.ActivePlayers.Clear();
-        Bomb.ActiveBombsGO.ForEach(Destroy);
     }
 }

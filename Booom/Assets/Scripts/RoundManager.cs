@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
-public class RoundManager
+public static class RoundManager
 {
     private static readonly List<int> mapsToPlay = new () {1,2,3,4,5};
     private static readonly List<int> _mapsPlayed = new();
@@ -72,6 +70,7 @@ public class RoundManager
     
     public static void CleanGame()
     {
+        _mapsPlayed.Clear();
         _playerWinsDict.Clear();
         foreach (PlayerEnum player in Enum.GetValues(typeof(PlayerEnum)))
         {
