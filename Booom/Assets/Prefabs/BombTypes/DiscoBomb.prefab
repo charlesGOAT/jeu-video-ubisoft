@@ -9,6 +9,18 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: a23e6e21bc45d2245a5c586c07a0512b, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: a23e6e21bc45d2245a5c586c07a0512b, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: a23e6e21bc45d2245a5c586c07a0512b, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: a23e6e21bc45d2245a5c586c07a0512b, type: 3}
       propertyPath: m_LocalPosition.x
       value: 4.86416
       objectReference: {fileID: 0}
@@ -224,7 +236,6 @@ MonoBehaviour:
     m_RotationOrder: 4
   explosionPrefab: {fileID: 4853760703863856483, guid: 9f335a9c651517847849ba04cbfc36b4, type: 3}
   changeColorInterval: 0.5
-  animationDuration: 2
 --- !u!114 &1532892993074124228
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -237,8 +248,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1fa19237aefe85e43b44c0e0c3ad31c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: GameplayAssembly::Bomb
-  timer: 3
   explosionRange: 3
+  ColliderComp: {fileID: 0}
   AssociatedPlayer: 0
 --- !u!65 &1279853183515015146
 BoxCollider:

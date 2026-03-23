@@ -325,14 +325,10 @@ public class Player : MonoBehaviour
 
     public void OnPortal(Vector2Int playerDirection, Vector3 otherPortalPosition)
     {
-        if (_stateMachine.CurrentState is not JumpState) 
-        {
             SoundManager.Instance.OnEnterPortal();
             _characterController.enabled = false;
-            gameObject.transform.position = otherPortalPosition;
-            _stateMachine.Trigger(GameConstants.PLAYER_JUMP_TRIGGER);
+            gameObject.transform.position = otherPortalPosition + (new Vector3(playerDirection.x, 0, playerDirection.y) * Tile.TileLength);
             _characterController.enabled = true;
-        }
     }
 
     private Vector3 CalculateJumpForce(Vector2Int jumpDirection)
@@ -347,20 +343,6 @@ public class Player : MonoBehaviour
         float velocityY = posForGravity + jumpHeight / (GameConstants.AIR_STATE_DURATION / 2);
 
         float velocityX = (Tile.TileLength * GameConstants.JUMP_NUMBER_OF_TILES) /(GameConstants.AIR_STATE_DURATION);
-        Vector3 jumpInitialVelocity = new(velocityX * jumpDirection.x, velocityY, jumpDirection.y * velocityX);
-
-        return jumpInitialVelocity;
-    }
-
-    private Vector3 CalculatePortalForce(Vector2Int jumpDirection)
-    {
-        //Formule pour trouver la vitesse initiale quand le sommet du saut est a (Obstacle.ObstacleHeight / 2) + 1 et au demi du trajet
-        //position pour gravity 0.5*a*t^2
-        float posForGravity = -(Physics.gravity.y / 2) * Mathf.Pow(GameConstants.PORTAL_AIR_DURATION / 2, 2);
-
-        float velocityY = (posForGravity + GameConstants.PORTAL_JUMP_HEIGHT) / (GameConstants.PORTAL_AIR_DURATION / 2);
-
-        float velocityX = Tile.TileLength / GameConstants.PORTAL_AIR_DURATION;
         Vector3 jumpInitialVelocity = new(velocityX * jumpDirection.x, velocityY, jumpDirection.y * velocityX);
 
         return jumpInitialVelocity;
@@ -504,6 +486,7 @@ public class Player : MonoBehaviour
 
 
         _stateMachine.AddTransition<IdleState>(GameConstants.PLAYER_RUN_TRIGGER, _runState);
+        _stateMachine.AddTransition<IdleState>(GameConstants.PLAYER_JUMP_TRIGGER, _jumpState);
         _stateMachine.AddTransition<RunState>(GameConstants.PLAYER_IDLE_TRIGGER, _idleState);
         _stateMachine.AddTransition<JumpState>(GameConstants.PLAYER_IDLE_TRIGGER, _idleState);
         _stateMachine.AddTransition<JumpState>(GameConstants.PLAYER_RUN_TRIGGER, _runState);
