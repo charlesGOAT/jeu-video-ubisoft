@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -25,8 +26,16 @@ public class GameManager : MonoBehaviour
     [SerializeField] 
     public Material paintBrushEffect;
 
-    [SerializeField]
+    [SerializeField] 
     public Material highlightMat;
+
+    private static Dictionary<PlayerEnum, int> _playerWinsDict = new()
+    {
+        { PlayerEnum.Player1, 0 },
+        { PlayerEnum.Player2, 0 },
+        { PlayerEnum.Player3, 0 },
+        { PlayerEnum.Player4, 0 },
+    };
 
     public float  GameDuration => _gameDuration;
     public int CurrentMinutes => Mathf.FloorToInt(_timeRemaining / 60f);
@@ -220,17 +229,36 @@ public class GameManager : MonoBehaviour
 
     public void EndGame()
     {
+        PlayerEnum winner = ScoreManager.FindPlayerWithMostGround();
+        if (ShouldEndGame(winner))
+        {
+            StartCoroutine(EndGameCoroutine(winner));
+            SoundManager.Instance.OnGameEnded();
+        }
+        else
+        {
+            StartCoroutine(EndRoundCoroutine(winner));
+        }
+        
         //a fix plus tard quand la fin de la game arrive
-        SoundManager.Instance.OnGameEnded();
-        StartCoroutine(EndGameCoroutine());
     }
 
-    private IEnumerator EndGameCoroutine()
+    private IEnumerator EndRoundCoroutine(PlayerEnum winner)
     {
         Time.timeScale = 0f;
-        GameUIManager.EndGame();
+        // display winner scene
+        NewRound();
+        yield return new WaitForSecondsRealtime(5f);
+        Time.timeScale = 1f;
+        // find new scene to load 
+    }
+
+    private IEnumerator EndGameCoroutine(PlayerEnum winner)
+    {
+        Time.timeScale = 0f;
+        GameUIManager.EndGame(winner); // display final winner scene
         CleanGame();
-        yield return new WaitForSecondsRealtime(3f);
+        yield return new WaitForSecondsRealtime(5f);
         Time.timeScale = 1f;
         SceneManager.LoadScene("Menu");
     }
@@ -239,5 +267,22 @@ public class GameManager : MonoBehaviour
     {
         Player.ActivePlayers.Clear();
         Bomb.ActiveBombs.Clear();
+        _playerWinsDict.Clear();
+        foreach (PlayerEnum player in Enum.GetValues(typeof(PlayerEnum)))
+        {
+            _playerWinsDict[player] = 0;
+        }
+    }
+
+    private bool ShouldEndGame(in PlayerEnum winner)
+    {
+        _playerWinsDict[winner]++;
+        return _playerWinsDict.Any(x => x.Value == 2);
+    }
+
+    private void NewRound()
+    {
+        Bomb.ActiveBombs.Clear();
+        
     }
 }
