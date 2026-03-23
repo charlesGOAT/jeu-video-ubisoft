@@ -77,7 +77,7 @@ public class GameManager : MonoBehaviour
 
     private bool _hasChangedForFastMusic = false;
 
-    private readonly List<PlayerEnum> _gameWonPlayer = new();
+    private static readonly List<PlayerEnum> _gameWonPlayer = new();
     
     // add other managers
     
@@ -300,11 +300,10 @@ public class GameManager : MonoBehaviour
         GameUIManager.EndGame(winner); // display final winner scene
         // faire glow la couleur du winner
         // faire jouer la musique de fin de round
-        
+        LoadEndGameData();
         CleanGame();
         yield return new WaitForSecondsRealtime(5f);
         Time.timeScale = 1f;
-        LoadEndGameData();
         SceneManager.LoadScene("EndGame"); // EndGameMenu
     }
 
@@ -317,6 +316,7 @@ public class GameManager : MonoBehaviour
         {
             _playerWinsDict[player] = 0;
         }
+        _gameWonPlayer.Clear();
     }
 
     private void LoadEndGameData()
