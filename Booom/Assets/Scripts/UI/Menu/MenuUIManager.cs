@@ -1,43 +1,27 @@
-using TMPro;
+using System.Collections;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class MenuUIManager : MonoBehaviour
 {
+    
     [SerializeField] private PlayerSlot[] playerSlots;
     [SerializeField] private Button playButton;
     [SerializeField] private Canvas mainMenuCanvas;
-    
-    [SerializeField] private Canvas levelsCanvas;
-    [SerializeField] private Image levelPreviewImage;
-    [SerializeField] private TMP_Text levelLabel;
     
     [SerializeField] private Canvas settingsCanvas;
 
     public bool isNotMainMenu;
     
-    private void Awake()
-    {
-        playButton.interactable = false;
-    }
+    private LobbyManager _lobbyManager;
     
     private void Start()
     {
-        LobbyManager.Instance.OnLobbyPlayerCountChanged += UnlockPlayButton;
+        _lobbyManager = LobbyManager.Instance;
     }
 
-    private void OnDestroy()
-    {
-        LobbyManager.Instance.OnLobbyPlayerCountChanged -= UnlockPlayButton;
-    }
-
-    public void UnlockPlayButton(int playerCount)
-    {
-        playButton.interactable = LobbyManager.JoinedPlayers.Count > 1;
-        TogglePlayerUI(playerCount);
-    }
-
-    private void TogglePlayerUI(int playerCount)
+    public void TogglePlayerUI(int playerCount)
     {
         var slot = playerSlots[playerCount - 1];
 
@@ -62,35 +46,30 @@ public class MenuUIManager : MonoBehaviour
         settingsCanvas.gameObject.SetActive(isNotMainMenu);
     }
 
-    public void ChangeMap()
-    {
-        isNotMainMenu = true;
-        mainMenuCanvas.gameObject.SetActive(!isNotMainMenu);
-        levelsCanvas.gameObject.SetActive(isNotMainMenu);
-    }
-
     public void ReturnToMainMenu()
     {
         isNotMainMenu = false;
-        levelsCanvas.gameObject.SetActive(isNotMainMenu);
         settingsCanvas.gameObject.SetActive(isNotMainMenu);
         mainMenuCanvas.gameObject.SetActive(!isNotMainMenu);
     }
 
     public void PlayGame()
     {
-        LobbyManager.Instance.GameStarted(levelPreviewImage.sprite.name);
-        LobbyManager.Instance.OnLobbyPlayerCountChanged -= UnlockPlayButton;
+        if (LobbyManager.JoinedPlayers.Count > 1)
+            _lobbyManager.GameStarted(RoundManager.FindNextMap());
+        else
+            StartCoroutine(ReselectButton());
     }
-
-    public void LevelSelected(Sprite sprite)
+    
+    private IEnumerator ReselectButton()
     {
-        levelPreviewImage.sprite = sprite;
-        levelLabel.text = sprite.name.AddSpacesBeforeCaps().ToUpper();
+        EventSystem.current.SetSelectedGameObject(null);
+        yield return null; // wait one frame
+        EventSystem.current.SetSelectedGameObject(playButton.gameObject);
     }
 
     public void ToggleItems()
     {
-        //todo activate or deactivate items
+        LobbyManager.ItemsActivated = !LobbyManager.ItemsActivated;
     }
 }

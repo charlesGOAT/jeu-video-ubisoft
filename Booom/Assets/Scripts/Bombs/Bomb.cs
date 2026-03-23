@@ -28,7 +28,11 @@ public class Bomb : MonoBehaviour
     public bool IsTransparentBomb { private get; set; }
     public bool IsFreezeBomb { private get; set; }
 
-    public Collider ColliderComp;
+    private Collider _colliderComp;
+
+    private LayerMask _oldLayerMask;
+    
+    public bool HasColliderBeenRestored { get; private set; }
 
     private readonly Vector2Int[] _directions =
     {
@@ -58,7 +62,7 @@ public class Bomb : MonoBehaviour
         _bombAnimation = GetComponent<BombAnimation>();
         _bombAnimation.InitializeAnimation(GetTimer());
 
-        ColliderComp = GetComponent<Collider>();
+        _colliderComp = GetComponent<Collider>();
 
         GameManager.Instance.BombManager.OnPaintbrushActivated += OnPaintbrushActivated;
         GameManager.Instance.BombManager.OnPaintbrushDeactivated += OnPaintbrushDeactivated;
@@ -120,6 +124,7 @@ public class Bomb : MonoBehaviour
         PlayerEnum newTileOwner = GameManager.Instance.IsSpreadingMode ? currentOwner : AssociatedPlayer;
 
         ChoosePaintTile(bombTile, newTileOwner);
+        HitPlayers(_bombCoordinates, Vector2Int.zero);
 
         foreach (Vector2Int direction in _directions)
         {
@@ -267,14 +272,27 @@ public class Bomb : MonoBehaviour
 
     private void OnPaintbrushActivated(int layer)
     {
-        if(ColliderComp != null)
-            ColliderComp.excludeLayers = ColliderComp.excludeLayers.value | (1 << layer);
+        if(_colliderComp != null)
+            _colliderComp.excludeLayers = _colliderComp.excludeLayers.value | (1 << layer);
     }
     
     private void OnPaintbrushDeactivated(int layer)
     {
-        if(ColliderComp != null)
-            ColliderComp.excludeLayers = ColliderComp.excludeLayers.value & ~(1 << layer);
+        if(_colliderComp != null)
+            _colliderComp.excludeLayers = _colliderComp.excludeLayers.value & ~(1 << layer);
+    }
+    
+    public void RemoveColliderLayer(GameObject player)
+    {
+        var ogLayerMask = _colliderComp.excludeLayers.value;
+        var newLayer = ogLayerMask | (1 << player.layer);
+        _colliderComp.excludeLayers = newLayer;
+    }
+    
+    public void RestoreColliderLayer()
+    {
+        _colliderComp.excludeLayers = _oldLayerMask;
+        HasColliderBeenRestored = true;
     }
 }
 

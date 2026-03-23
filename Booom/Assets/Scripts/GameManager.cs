@@ -28,21 +28,6 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] 
     public Material highlightMat;
-    
-    [SerializeField]
-    private List<int> mapsToPlay = new ();
-    private readonly List<int> _mapsPlayed = new();
-
-    private bool _isRandomMap = true;
-    private int _lastMapIndex = 0;
-
-    private static Dictionary<PlayerEnum, int> _playerWinsDict = new()
-    {
-        { PlayerEnum.Player1, 0 },
-        { PlayerEnum.Player2, 0 },
-        { PlayerEnum.Player3, 0 },
-        { PlayerEnum.Player4, 0 },
-    };
 
     public float  GameDuration => _gameDuration;
     public int CurrentMinutes => Mathf.FloorToInt(_timeRemaining / 60f);
@@ -77,8 +62,6 @@ public class GameManager : MonoBehaviour
 
     private bool _hasChangedForFastMusic = false;
 
-    private static readonly List<PlayerEnum> _gameWonPlayer = new();
-    
     // add other managers
     
     public static GameManager Instance
@@ -161,7 +144,6 @@ public class GameManager : MonoBehaviour
         ColorBoost = RuntimeConfig.ColorBoost;
         ColorDebuff = RuntimeConfig.ColorDebuff;
         HighlightOwnColor = RuntimeConfig.HighlightOwnColor;
-        _isRandomMap = RuntimeConfig.IsRandomMap;
     }
 
     public void RemoveItemFromGrid(Item item)
@@ -237,7 +219,7 @@ public class GameManager : MonoBehaviour
     {
         PlayerEnum winner = ScoreManager.FindPlayerWithMostGround();
         
-        if (ShouldEndGame(winner))
+        if (RoundManager.ShouldEndGame(winner))
         {
             StartCoroutine(EndGameCoroutine(winner));
             SoundManager.Instance.OnGameEnded();
@@ -258,37 +240,7 @@ public class GameManager : MonoBehaviour
         NewRound();
         yield return new WaitForSecondsRealtime(5f);
         Time.timeScale = 1f;
-        SceneManager.LoadScene(FindNextMap());
-    }
-
-    private int FindNextMap()
-    {
-        int newMapIndex = -1;
-
-        if (_isRandomMap)
-        {
-            System.Random rand = new();
-            int count = 0;
-            do
-            {
-                newMapIndex = rand.Next(0, mapsToPlay.Count);
-
-                if (count++ >= mapsToPlay.Count)
-                {
-                    Debug.LogError("There's not enough maps, playing already played random map");
-                    break;
-                }
-            } 
-            while (_mapsPlayed.Contains(mapsToPlay[newMapIndex]));
-        }
-        else
-        {
-            newMapIndex = ++_lastMapIndex;
-        }
-
-        int nextMap = mapsToPlay[newMapIndex];
-        _mapsPlayed.Add(nextMap);
-        return nextMap;
+        SceneManager.LoadScene(RoundManager.FindNextMap());
     }
 
     private IEnumerator EndGameCoroutine(PlayerEnum winner)
@@ -297,7 +249,7 @@ public class GameManager : MonoBehaviour
         
         // faire glow la couleur du winner
         // faire jouer la musique de fin de round
-        LoadEndGameData();
+        RoundManager.LoadEndGameData();
         CleanGame();
         yield return new WaitForSecondsRealtime(5f);
         Time.timeScale = 1f;
@@ -309,40 +261,13 @@ public class GameManager : MonoBehaviour
         Player.ActivePlayers.Clear();
         Bomb.ActiveBombs.Clear();
         Bomb.ActiveBombsGO.ForEach(Destroy);
-        _playerWinsDict.Clear();
-        foreach (PlayerEnum player in Enum.GetValues(typeof(PlayerEnum)))
-        {
-            _playerWinsDict[player] = 0;
-        }
-        _gameWonPlayer.Clear();
-    }
-
-    private void LoadEndGameData()
-    {
-        var playerRanks = _playerWinsDict
-            .OrderByDescending(x => x.Value)
-            .Select((x, index) => (Player: x.Key, Rank: index))
-            .ToDictionary(item => item.Player, item => item.Rank);
-        
-        foreach (Player player in Player.ActivePlayers)
-        {
-            if (player.PlayerNb == PlayerEnum.None) continue;
-            EndGameUIManager.PlayerRank[player.PlayerNb] = playerRanks[player.PlayerNb];
-        }
-
-        EndGameUIManager.PlayerWonGame = new(_gameWonPlayer);
-    }
-
-    private bool ShouldEndGame(in PlayerEnum winner)
-    {
-        _playerWinsDict[winner]++;
-        _gameWonPlayer.Add(winner);
-        return _playerWinsDict[winner] == 2;
+        RoundManager.CleanGame();
     }
 
     private void NewRound()
     {
         Bomb.ActiveBombs.Clear();
         Player.ActivePlayers.Clear();
+        Bomb.ActiveBombsGO.ForEach(Destroy);
     }
 }
