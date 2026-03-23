@@ -9,10 +9,13 @@ public class JumpState : State
     public override void Enter()
     {
         _player.Animator.SetBool("IsJumping", true);
+
+        _airDuration = GameConstants.AIR_STATE_DURATION;
+
 #if !UNITY_EDITOR
         _airDuration = GameManager.Instance.RuntimeConfig.AirStateDuration;
 #endif
-        _airDuration = GameConstants.AIR_STATE_DURATION;
+
     }
 
     public override void Exit()
