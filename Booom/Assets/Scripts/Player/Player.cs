@@ -187,8 +187,8 @@ public class Player : MonoBehaviour
 
     private IEnumerator DisplayKillStreak()
     {
-        killStreakText.text = "New kill streak!";
-        yield return new WaitForSeconds(1.7f);
+        killStreakText.text = "NEW KILL BONUS";
+        yield return new WaitForSeconds(3f);
         killStreakText.text = "";
     }
 
