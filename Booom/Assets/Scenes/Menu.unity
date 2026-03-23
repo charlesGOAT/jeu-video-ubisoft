@@ -3597,6 +3597,10 @@ PrefabInstance:
       value: SoundManager
       objectReference: {fileID: 0}
     - target: {fileID: 4795752124082758741, guid: d00abcfd2ff9b8840a604215b1cd7124, type: 3}
+      propertyPath: mainTheme.audioClip
+      value: 
+      objectReference: {fileID: 8300000, guid: 039bdb3c3b7671b4abeed34130bdcd22, type: 3}
+    - target: {fileID: 4795752124082758741, guid: d00abcfd2ff9b8840a604215b1cd7124, type: 3}
       propertyPath: defenseBombSound.audioClip
       value: 
       objectReference: {fileID: 8300000, guid: d9dab23ab6af6cb4491d9fd26d0369c7, type: 3}
@@ -3604,6 +3608,14 @@ PrefabInstance:
       propertyPath: bombHitPlayerSound.audioClip
       value: 
       objectReference: {fileID: 8300000, guid: 70c83bf160c01784d854f60e0a3ddb7e, type: 3}
+    - target: {fileID: 4795752124082758741, guid: d00abcfd2ff9b8840a604215b1cd7124, type: 3}
+      propertyPath: backgroundMenuMusic.audioClip
+      value: 
+      objectReference: {fileID: 8300000, guid: 33e913cebd8265347aee4e806982e5c8, type: 3}
+    - target: {fileID: 4795752124082758741, guid: d00abcfd2ff9b8840a604215b1cd7124, type: 3}
+      propertyPath: acceleratedGameMusic.audioClip
+      value: 
+      objectReference: {fileID: 8300000, guid: 039bdb3c3b7671b4abeed34130bdcd22, type: 3}
     - target: {fileID: 8383112355637515104, guid: d00abcfd2ff9b8840a604215b1cd7124, type: 3}
       propertyPath: m_LocalPosition.x
       value: 425.6472
