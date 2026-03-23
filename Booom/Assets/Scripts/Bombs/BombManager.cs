@@ -64,7 +64,7 @@ public class BombManager : MonoBehaviour
     public virtual bool CreateBomb(in Vector3 position, in Player player,in BombFusingStrategy bombStrat, in BombItems bombItems)
     {
         PlayerEnum playerEnum = player.PlayerNb;
-        Vector3 bombHeightOffet = Vector3.up * 1.5f;
+        Vector3 bombHeightOffet = Vector3.up * 0.5f;
 
         if (Time.time < _nextBombTime[playerEnum])
         {
