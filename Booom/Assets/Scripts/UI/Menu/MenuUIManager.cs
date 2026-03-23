@@ -1,11 +1,9 @@
-using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.UI;
 using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
 
 public class MenuUIManager : MonoBehaviour
 {
-    
     [SerializeField] private PlayerSlot[] playerSlots;
     [SerializeField] private Button playButton;
     [SerializeField] private Canvas mainMenuCanvas;
@@ -18,8 +16,6 @@ public class MenuUIManager : MonoBehaviour
 
     public bool isNotMainMenu;
     
-    private LobbyManager _lobbyManager;
-
     private void Awake()
     {
         playButton.interactable = false;
@@ -27,16 +23,15 @@ public class MenuUIManager : MonoBehaviour
     
     private void Start()
     {
-        _lobbyManager = LobbyManager.Instance;
-        _lobbyManager.OnLobbyPlayerCountChanged += UnlockPlayButton;
+        LobbyManager.Instance.OnLobbyPlayerCountChanged += UnlockPlayButton;
     }
 
     private void OnDestroy()
     {
-        _lobbyManager.OnLobbyPlayerCountChanged -= UnlockPlayButton;
+        LobbyManager.Instance.OnLobbyPlayerCountChanged -= UnlockPlayButton;
     }
 
-    private void UnlockPlayButton(int playerCount)
+    public void UnlockPlayButton(int playerCount)
     {
         playButton.interactable = LobbyManager.JoinedPlayers.Count > 1;
         TogglePlayerUI(playerCount);
@@ -84,8 +79,8 @@ public class MenuUIManager : MonoBehaviour
 
     public void PlayGame()
     {
-        _lobbyManager.GameStarted(levelPreviewImage.sprite.name);
-        _lobbyManager.OnLobbyPlayerCountChanged -= UnlockPlayButton;
+        LobbyManager.Instance.GameStarted(levelPreviewImage.sprite.name);
+        LobbyManager.Instance.OnLobbyPlayerCountChanged -= UnlockPlayButton;
     }
 
     public void LevelSelected(Sprite sprite)

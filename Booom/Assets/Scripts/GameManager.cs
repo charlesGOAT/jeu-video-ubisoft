@@ -225,21 +225,18 @@ public class GameManager : MonoBehaviour
         foreach (var playerInput in playersToSpawn)
         {
             Vector2Int spawnPoint = GridManager.playerSpawnPoints[playerInput.playerIndex];
-            spawnPoint *= GameConstants.UNITY_GRID_SIZE;
+            Vector3 worldPos = GridManagerStrategy.GridToWorldPosition(spawnPoint);
 
             playerPrefab.layer = CollisionLayers[playerInput.playerIndex];
             PlayerInput newInput = PlayerInput.Instantiate(playerPrefab, playerIndex:playerInput.playerIndex, pairWithDevices:playerInput.devices.ToArray());
-            newInput.transform.position = new Vector3(spawnPoint.x, 0.0f, spawnPoint.y);
-            
-            Destroy(playerInput.gameObject); //Destroying dummy prefabs
+            newInput.transform.position = new Vector3(worldPos.x, 0.0f, worldPos.z);
         }
-        
-        LobbyManager.JoinedPlayers.Clear();
     }
 
     public void EndGame()
     {
         PlayerEnum winner = ScoreManager.FindPlayerWithMostGround();
+        
         if (ShouldEndGame(winner))
         {
             StartCoroutine(EndGameCoroutine(winner));
@@ -297,7 +294,7 @@ public class GameManager : MonoBehaviour
     private IEnumerator EndGameCoroutine(PlayerEnum winner)
     {
         Time.timeScale = 0f;
-        GameUIManager.EndGame(winner); // display final winner scene
+        
         // faire glow la couleur du winner
         // faire jouer la musique de fin de round
         LoadEndGameData();
@@ -311,6 +308,7 @@ public class GameManager : MonoBehaviour
     {
         Player.ActivePlayers.Clear();
         Bomb.ActiveBombs.Clear();
+        Bomb.ActiveBombsGO.ForEach(Destroy);
         _playerWinsDict.Clear();
         foreach (PlayerEnum player in Enum.GetValues(typeof(PlayerEnum)))
         {
@@ -323,20 +321,16 @@ public class GameManager : MonoBehaviour
     {
         var playerRanks = _playerWinsDict
             .OrderByDescending(x => x.Value)
-            .Select((x, index) => (Player: x.Key, Rank: index + 1))
+            .Select((x, index) => (Player: x.Key, Rank: index))
             .ToDictionary(item => item.Player, item => item.Rank);
         
-        foreach (PlayerEnum player in Enum.GetValues(typeof(PlayerEnum)))
+        foreach (Player player in Player.ActivePlayers)
         {
-            EndGameUIManager.PlayerDatas[player] = new EndGamePlayerData()
-            {
-                NbGamesWon = _playerWinsDict[player],
-                PlayerColor = Player.PlayerColorDict[player],
-                Pos = playerRanks[player]
-            };
+            if (player.PlayerNb == PlayerEnum.None) continue;
+            EndGameUIManager.PlayerRank[player.PlayerNb] = playerRanks[player.PlayerNb];
         }
 
-        EndGameUIManager.PlayerWonGame = _gameWonPlayer;
+        EndGameUIManager.PlayerWonGame = new(_gameWonPlayer);
     }
 
     private bool ShouldEndGame(in PlayerEnum winner)
@@ -349,5 +343,6 @@ public class GameManager : MonoBehaviour
     private void NewRound()
     {
         Bomb.ActiveBombs.Clear();
+        Player.ActivePlayers.Clear();
     }
 }

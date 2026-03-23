@@ -7,6 +7,7 @@ public delegate void OnExplode();
 public class Bomb : MonoBehaviour
 {
     public static readonly HashSet<Vector2Int> ActiveBombs = new HashSet<Vector2Int>();
+    public static readonly List<GameObject> ActiveBombsGO = new();
 
     private float _timer = 3f;
 
@@ -19,6 +20,8 @@ public class Bomb : MonoBehaviour
 
     private BombAnimation _bombAnimation;
     private Tile _subscribedTile;
+
+    private BombManager _bombManager;
 
     public event OnExplode OnExplode;
 
@@ -45,6 +48,7 @@ public class Bomb : MonoBehaviour
 
         _bombCoordinates = GridManagerStrategy.WorldToGridCoordinates(trans.position);
         ActiveBombs.Add(_bombCoordinates);
+        ActiveBombsGO.Add(gameObject);
 
         if (!GameManager.Instance.IsBonusSpeed && AssociatedPlayer != PlayerEnum.None)
         {
@@ -67,6 +71,7 @@ public class Bomb : MonoBehaviour
 
     protected virtual void Start()
     {
+        _bombManager = GameManager.Instance.BombManager;
         SubscribeToCurrentTileColor();
         BombFusingStrategy.Fuse(this);
     }
@@ -203,8 +208,12 @@ public class Bomb : MonoBehaviour
     {
         UnsubscribeFromCurrentTileColor();
         ActiveBombs.Remove(_bombCoordinates);
-        GameManager.Instance.BombManager.OnPaintbrushActivated -= OnPaintbrushActivated;
-        GameManager.Instance.BombManager.OnPaintbrushDeactivated -= OnPaintbrushDeactivated;
+        ActiveBombsGO.Remove(gameObject);
+        if (_bombManager != null)
+        {
+            _bombManager.OnPaintbrushActivated -= OnPaintbrushActivated;
+            _bombManager.OnPaintbrushDeactivated -= OnPaintbrushDeactivated;
+        }
     }
 
     private void SubscribeToCurrentTileColor()

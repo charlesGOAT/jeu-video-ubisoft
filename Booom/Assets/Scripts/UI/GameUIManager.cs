@@ -113,15 +113,6 @@ public class GameUIManager : MonoBehaviour
         StartCoroutine(EventPanelCoroutine());
     }
 
-    public void EndGame(in PlayerEnum winner)
-    {
-        endGameImage.gameObject.SetActive(true);
-        winnerText.gameObject.SetActive(true);
-
-        winnerText.text = $"Player {(int)winner} won!";
-        winnerText.color = Player.PlayerColorDict[winner];
-    }
-
     private IEnumerator EventPanelCoroutine()
     {
         bombEventPanel.SetActive(true);

@@ -50,7 +50,7 @@ MonoBehaviour:
   transparentMat: {fileID: 2100000, guid: 83362e70b2d66854f90bb73ac663e2d0, type: 2}
   paintBrushEffect: {fileID: -876546973899608171, guid: 71e5d836fb0ecbc4cbb7811d38f6e37e, type: 3}
   highlightMat: {fileID: -876546973899608171, guid: 09382425bfd23854ebc0da323bff48b4, type: 3}
-  mapsToPlay: 0100000002000000030000000400000005000000
+  mapsToPlay: 0100000002000000030000000100000005000000
   _isSpreadingMode: 1
   _isBonusSpeed: 0
   FrozenTileDuration: 5

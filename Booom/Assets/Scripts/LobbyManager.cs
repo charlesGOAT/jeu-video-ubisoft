@@ -14,12 +14,14 @@ public class LobbyManager : MonoBehaviour
 {
     [SerializeField]
     private GameObject changeMapButton;
-    
+
+    [SerializeField] 
+    private MenuUIManager menuUIManager;
     public static LobbyManager Instance { get; private set; }
     public event LobbyPlayerCountChanged OnLobbyPlayerCountChanged;
     
     public static readonly Dictionary<PlayerEnum, PlayerInput> JoinedPlayers = new ();
-    private PlayerInputManager _inputManager;
+    private static PlayerInputManager _inputManager;
     
     private InputSystemUIInputModule[] _uiInputs;
 
@@ -52,6 +54,13 @@ public class LobbyManager : MonoBehaviour
     private void Start()
     {
        _uiInputs = FindObjectsByType<InputSystemUIInputModule>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+       if (SceneManager.GetActiveScene().name == "Menu")
+       {
+           foreach (var player in JoinedPlayers)
+           {
+               ReAddPlayer(player.Value);
+           }
+       }
     }
 
     public void GameStarted(string levelName)
@@ -68,7 +77,7 @@ public class LobbyManager : MonoBehaviour
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        if (scene.name != "Menu")
+        if (scene.name != "Menu"  && scene.name != "EndGame")
         {
             GameManager.Instance.SpawnPlayers();
         }
@@ -93,6 +102,20 @@ public class LobbyManager : MonoBehaviour
         }
         
         OnLobbyPlayerCountChanged?.Invoke(leavingIndex + 1);
+    }
+
+    private void ReAddPlayer(PlayerInput playerInput)
+    {
+        if (playerInput.playerIndex == 0)
+        {
+            GiveUIControl(playerInput, true);
+        }
+        else
+        {
+            playerInput.DeactivateInput();
+        }
+        
+        menuUIManager.UnlockPlayButton(playerInput.playerIndex + 1);
     }
 
     private void OnPlayerJoined(PlayerInput playerInput)

@@ -118,7 +118,6 @@ public class Player : MonoBehaviour
         InitializeStateMachine();
         GetComponents();
         ActivePlayers.Add(this);
-
     }
 
     private void Start()
