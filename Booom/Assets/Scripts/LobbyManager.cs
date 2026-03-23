@@ -2,23 +2,26 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem.UI;
-using UnityEngine.UI;
 
 public delegate void LobbyPlayerCountChanged(int playerCount);
 
 public class LobbyManager : MonoBehaviour
 {
-    [SerializeField] 
-    private GameObject _menuPlayerPrefab;
+    [SerializeField]
+    private GameObject playButton;
     
     public static LobbyManager Instance { get; private set; }
     public event LobbyPlayerCountChanged OnLobbyPlayerCountChanged;
     
+    public static readonly Dictionary<PlayerInput, float> JoinTimes = new();
     public static readonly Dictionary<PlayerEnum, PlayerInput> JoinedPlayers = new ();
+    public static bool ItemsActivated = true;
+    
     private PlayerInputManager _inputManager;
     
     private InputSystemUIInputModule[] _uiInputs;
@@ -51,7 +54,7 @@ public class LobbyManager : MonoBehaviour
 
     private void Start()
     {
-       _uiInputs = FindObjectsByType<InputSystemUIInputModule>(FindObjectsSortMode.None);
+       _uiInputs = FindObjectsByType<InputSystemUIInputModule>(FindObjectsInactive.Include, FindObjectsSortMode.None);
     }
 
     public void GameStarted(string levelName)
@@ -125,10 +128,11 @@ public class LobbyManager : MonoBehaviour
         
         DontDestroyOnLoad(playerInput.gameObject);
         JoinedPlayers[playerEnum] = playerInput;
+        JoinTimes[playerInput] = Time.time;
 
         if (JoinedPlayers.Count == 1)
         {
-            GiveUIControl(playerInput);
+            GiveUIControl(playerInput, true);
         }
         else
         {
@@ -138,7 +142,7 @@ public class LobbyManager : MonoBehaviour
         OnLobbyPlayerCountChanged?.Invoke(intPlayerEnum);
     }
 
-    private void GiveUIControl(PlayerInput playerInput)
+    private void GiveUIControl(PlayerInput playerInput, bool firstPlayer = false)
     {
         playerInput.SwitchCurrentActionMap("UI");
         playerInput.ActivateInput();
@@ -149,9 +153,7 @@ public class LobbyManager : MonoBehaviour
             uiInput.actionsAsset = playerInput.actions;
         }
         
-        EventSystem.current.SetSelectedGameObject(null);
-        
-        Selectable first = Selectable.allSelectablesArray.First();
-        EventSystem.current.SetSelectedGameObject(first.gameObject);
+        if (firstPlayer)
+            EventSystem.current.SetSelectedGameObject(playButton);
     }
 }
