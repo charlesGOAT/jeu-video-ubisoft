@@ -56,12 +56,24 @@ public class Tile : MonoBehaviour
 
     public virtual void ChangeTileColor(PlayerEnum newOwner)
     {
-        if (CurrentTileOwner != newOwner && (!IsSpawn || _tileRenderer.material.color == _neutralColor) && !IsFrozen)
+        if (IsFrozen)
+        {
+            return;
+        }
+
+        Color tileColor = newOwner != PlayerEnum.None ? Player.PlayerColorDict[newOwner] : _neutralColor;
+
+        if (CurrentTileOwner == newOwner)
+        {
+            _tileAnimation.AnimateExplosionFeedback(tileColor);
+            return;
+        }
+
+        if (!IsSpawn || _tileRenderer.material.color == _neutralColor)
         {
             GameManager.Instance.ScoreManager.LoseTile(CurrentTileOwner, TileCoordinates);
             GameManager.Instance.ScoreManager.AcquireNewTile(newOwner, TileCoordinates);
 
-            Color tileColor = newOwner != PlayerEnum.None ? Player.PlayerColorDict[newOwner] : _neutralColor;
             _tileAnimation.AnimateTileColorChange(tileColor);
             CurrentTileOwner = newOwner;
         }
