@@ -9,11 +9,13 @@ public class MenuUIManager : MonoBehaviour
     [SerializeField] private PlayerSlot[] playerSlots;
     [SerializeField] private Button playButton;
     [SerializeField] private Canvas mainMenuCanvas;
+    
     [SerializeField] private Canvas levelsCanvas;
     [SerializeField] private Image levelPreviewImage;
-    [SerializeField] private TMP_Dropdown colorblindDropdown;
+    
+    [SerializeField] private Canvas settingsCanvas;
 
-    public bool isSelectingLevel;
+    public bool isNotMainMenu;
     
     private LobbyManager _lobbyManager;
 
@@ -59,22 +61,24 @@ public class MenuUIManager : MonoBehaviour
 
     public void Settings()
     {
-        var temp = colorblindDropdown.gameObject.activeSelf;
-        colorblindDropdown.gameObject.SetActive(!temp);
+        isNotMainMenu = true;
+        mainMenuCanvas.gameObject.SetActive(!isNotMainMenu);
+        settingsCanvas.gameObject.SetActive(isNotMainMenu);
     }
 
     public void ChangeMap()
     {
-        isSelectingLevel = !isSelectingLevel;
-        mainMenuCanvas.gameObject.SetActive(false);
-        levelsCanvas.gameObject.SetActive(true);
+        isNotMainMenu = true;
+        mainMenuCanvas.gameObject.SetActive(!isNotMainMenu);
+        levelsCanvas.gameObject.SetActive(isNotMainMenu);
     }
 
     public void ReturnToMainMenu()
     {
-        isSelectingLevel = !isSelectingLevel;
-        levelsCanvas.gameObject.SetActive(false);
-        mainMenuCanvas.gameObject.SetActive(true);
+        isNotMainMenu = false;
+        levelsCanvas.gameObject.SetActive(isNotMainMenu);
+        settingsCanvas.gameObject.SetActive(isNotMainMenu);
+        mainMenuCanvas.gameObject.SetActive(!isNotMainMenu);
     }
 
     public void PlayGame()
@@ -86,5 +90,10 @@ public class MenuUIManager : MonoBehaviour
     public void LevelSelected(Sprite sprite)
     {
         levelPreviewImage.sprite = sprite;
+    }
+
+    public void ToggleItems()
+    {
+        //todo activate or deactivate items
     }
 }

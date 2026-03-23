@@ -2,18 +2,18 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem.UI;
-using UnityEngine.UI;
 
 public delegate void LobbyPlayerCountChanged(int playerCount);
 
 public class LobbyManager : MonoBehaviour
 {
-    [SerializeField] 
-    private GameObject _menuPlayerPrefab;
+    [SerializeField]
+    private GameObject changeMapButton;
     
     public static LobbyManager Instance { get; private set; }
     public event LobbyPlayerCountChanged OnLobbyPlayerCountChanged;
@@ -51,7 +51,7 @@ public class LobbyManager : MonoBehaviour
 
     private void Start()
     {
-       _uiInputs = FindObjectsByType<InputSystemUIInputModule>(FindObjectsSortMode.None);
+       _uiInputs = FindObjectsByType<InputSystemUIInputModule>(FindObjectsInactive.Include, FindObjectsSortMode.None);
     }
 
     public void GameStarted(string levelName)
@@ -128,7 +128,7 @@ public class LobbyManager : MonoBehaviour
 
         if (JoinedPlayers.Count == 1)
         {
-            GiveUIControl(playerInput);
+            GiveUIControl(playerInput, true);
         }
         else
         {
@@ -138,7 +138,7 @@ public class LobbyManager : MonoBehaviour
         OnLobbyPlayerCountChanged?.Invoke(intPlayerEnum);
     }
 
-    private void GiveUIControl(PlayerInput playerInput)
+    private void GiveUIControl(PlayerInput playerInput, bool firstPlayer = false)
     {
         playerInput.SwitchCurrentActionMap("UI");
         playerInput.ActivateInput();
@@ -149,9 +149,18 @@ public class LobbyManager : MonoBehaviour
             uiInput.actionsAsset = playerInput.actions;
         }
         
+        if (firstPlayer)
+            StartCoroutine(SelectButtonNextFrame());
+        else
+        {
+            EventSystem.current.SetSelectedGameObject(changeMapButton);
+        }
+    }
+    
+    private IEnumerator SelectButtonNextFrame()
+    {
         EventSystem.current.SetSelectedGameObject(null);
-        
-        Selectable first = Selectable.allSelectablesArray.First();
-        EventSystem.current.SetSelectedGameObject(first.gameObject);
+        yield return null;
+        EventSystem.current.SetSelectedGameObject(changeMapButton);
     }
 }
