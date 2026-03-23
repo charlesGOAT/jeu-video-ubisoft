@@ -52,6 +52,7 @@ public class Player : MonoBehaviour
     private List<Material> playerMaterials;
     private Dictionary<int, float> _speedBoostPerKill = GameConstants.SpeedBoostPerKill;
     private Dictionary<int, int> _rangeBoostPerKill = GameConstants.RangeBoostPerKill;
+    private float _airStateDuration = GameConstants.AIR_STATE_DURATION;
 
     private PlayerInput _playerInput;
     private Renderer[] _renderers;
@@ -112,6 +113,7 @@ public class Player : MonoBehaviour
     public const float JUMP_NUMBER_OF_TILES = 2.7f;
     public const float PLAYER_GRAVITY = -36.0f;
 
+
     private void Awake()
     {
         if (playerItemsManager == null)
@@ -141,6 +143,7 @@ public class Player : MonoBehaviour
         speed = runtimeConfig.MovementSpeed;
         _rangeBoostPerKill = runtimeConfig.RangeBoostPerKill;
         _speedBoostPerKill = runtimeConfig.SpeedBoostPerKill;
+        _airStateDuration = runtimeConfig.AirStateDuration;
     }
 
     private void CheckStartConditions()
@@ -343,14 +346,14 @@ public class Player : MonoBehaviour
     {
         //Formule pour trouver la vitesse initiale quand le sommet du saut est a (Obstacle.ObstacleHeight / 2) + 1 et au demi du trajet
         //position pour gravity 0.5*a*t^2
-        float posForGravity = -(PLAYER_GRAVITY / 2) * Mathf.Pow(GameConstants.AIR_STATE_DURATION / 2, 2);
+        float posForGravity = -(PLAYER_GRAVITY / 2) * Mathf.Pow(_airStateDuration / 2, 2);
 
         //position pour apogee du saut
         float jumpHeight = (Obstacle.ObstacleHeight) + JUMP_HEIGHT_OFFSET;
 
-        float velocityY = (posForGravity + jumpHeight) / (GameConstants.AIR_STATE_DURATION / 2);
+        float velocityY = (posForGravity + jumpHeight) / (_airStateDuration / 2);
 
-        float velocityX = (Tile.TileLength * JUMP_NUMBER_OF_TILES) /(GameConstants.AIR_STATE_DURATION);
+        float velocityX = (Tile.TileLength * JUMP_NUMBER_OF_TILES) /(_airStateDuration);
         Vector3 jumpInitialVelocity = new(velocityX * jumpDirection.x, velocityY, jumpDirection.y * velocityX);
 
         return jumpInitialVelocity;

@@ -12,6 +12,7 @@
   "NormalBombTimer": 3.0,
   "FastBombTimer": 1.0,
   "ShouldBombCollideWithPlayers": true,
+  "AirStateDuration": 1.0,
   "PaintBrushItemSpawnerData": {
     "MaxItems": 1,
     "TimeBetweenSpawns": 12.0
