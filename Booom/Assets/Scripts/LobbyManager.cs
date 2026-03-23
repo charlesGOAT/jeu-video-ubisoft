@@ -148,6 +148,8 @@ public class LobbyManager : MonoBehaviour
     
     private void OnInputUserChange(InputUser user, InputUserChange change, InputDevice device)
     {
+        if (SceneManager.GetActiveScene().name != "Menu") return;
+        
         if (change == InputUserChange.DeviceLost)
         {
             PlayerInput pi = PlayerInput.all.FirstOrDefault(p => p.user == user);
