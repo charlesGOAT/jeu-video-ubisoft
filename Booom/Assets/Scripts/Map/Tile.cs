@@ -56,7 +56,7 @@ public class Tile : MonoBehaviour
 
     public virtual void ChangeTileColor(PlayerEnum newOwner)
     {
-        if (IsFrozen)
+        if (IsFrozen || IsSpawn)
         {
             return;
         }
@@ -69,7 +69,7 @@ public class Tile : MonoBehaviour
             return;
         }
 
-        if (!IsSpawn || _tileRenderer.material.color == _neutralColor)
+        if (_tileRenderer.material.color == _neutralColor)
         {
             GameManager.Instance.ScoreManager.LoseTile(CurrentTileOwner, TileCoordinates);
             GameManager.Instance.ScoreManager.AcquireNewTile(newOwner, TileCoordinates);

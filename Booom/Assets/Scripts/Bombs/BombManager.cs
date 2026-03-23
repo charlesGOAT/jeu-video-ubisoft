@@ -64,14 +64,14 @@ public class BombManager : MonoBehaviour
     public virtual bool CreateBomb(in Vector3 position, in Player player,in BombFusingStrategy bombStrat, in BombItems bombItems)
     {
         PlayerEnum playerEnum = player.PlayerNb;
-        const float bombHeightOffsetultiplier = 1.2f;
+        Vector3 bombHeightOffet = Vector3.up * 1.5f;
 
         if (Time.time < _nextBombTime[playerEnum])
         {
             return false;
         }
 
-        Vector3 bombHeight = Vector3.up * position.y * bombHeightOffsetultiplier;
+        Vector3 bombHeight = Vector3.up * position.y + bombHeightOffet;
         Vector2Int gridCoordinates = GridManagerStrategy.WorldToGridCoordinates(position);
         Tile tile = GameManager.Instance.GridManager.GetTileAtCoordinates(gridCoordinates);
 
