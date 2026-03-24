@@ -266,7 +266,12 @@ public class Player : MonoBehaviour
         if (tile != null) 
         {
             tile.StepOnTile(this);
-            if(_currentTile != tile) _currentTile.RemoveHighlight(PlayerNb);
+
+            if (_currentTile != tile) 
+            {
+                _currentTile.StepOffTile(this);
+                _currentTile.RemoveHighlight(PlayerNb);
+            } 
             _currentTile = tile;
         }
         
@@ -323,11 +328,11 @@ public class Player : MonoBehaviour
         }
     }
 
-    public void OnPortal(Vector2Int playerDirection, Vector3 otherPortalPosition)
+    public void OnPortal(Vector3 otherPortalPosition)
     {
             SoundManager.Instance.OnEnterPortal();
             _characterController.enabled = false;
-            gameObject.transform.position = otherPortalPosition + (new Vector3(playerDirection.x, 0, playerDirection.y) * Tile.TileLength);
+            gameObject.transform.position = otherPortalPosition;
             _characterController.enabled = true;
     }
 
