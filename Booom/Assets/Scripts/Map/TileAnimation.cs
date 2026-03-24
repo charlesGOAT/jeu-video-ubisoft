@@ -32,6 +32,21 @@ public class TileAnimation : MonoBehaviour
         _activeColorLerp = StartCoroutine(AnimateColorTransition(_tileRenderer.material.color, newColor));
     }
 
+    public void AnimateExplosionFeedback(in Color targetColor)
+    {
+        if (_tileRenderer == null)
+        {
+            return;
+        }
+
+        if (_activeColorLerp != null)
+        {
+            StopCoroutine(_activeColorLerp);
+        }
+
+        _activeColorLerp = StartCoroutine(AnimateColorTransition(Color.white, targetColor, true));
+    }
+
     public void SetColorImmediate(in Color color)
     {
         if (_activeColorLerp != null)
@@ -46,7 +61,7 @@ public class TileAnimation : MonoBehaviour
         }
     }
 
-    private IEnumerator AnimateColorTransition(Color previousColor, Color newColor)
+    private IEnumerator AnimateColorTransition(Color previousColor, Color newColor, bool setInitialColor = false)
     {
         if (animationDuration <= 0f)
         {
@@ -57,6 +72,11 @@ public class TileAnimation : MonoBehaviour
 
         float elapsed = 0f;
         Material material = _tileRenderer.material;
+
+        if (setInitialColor)
+        {
+            material.color = previousColor;
+        }
 
         while (elapsed < animationDuration)
         {

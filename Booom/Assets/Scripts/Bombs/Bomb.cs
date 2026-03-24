@@ -139,6 +139,7 @@ public class Bomb : MonoBehaviour
             {
                 int tilesRemaining = range - rangeCounter;
                 PaintTilesForDirection(portalTile.GetOtherPortalPosition() + direction, direction, tilesRemaining, newTileOwner);
+                HitPlayers(explosionCoords, direction);
                 return;
             }
             
