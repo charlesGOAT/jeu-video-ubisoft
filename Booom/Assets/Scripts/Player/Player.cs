@@ -52,6 +52,7 @@ public class Player : MonoBehaviour
     private List<Material> playerMaterials;
     private Dictionary<int, float> _speedBoostPerKill = GameConstants.SpeedBoostPerKill;
     private Dictionary<int, int> _rangeBoostPerKill = GameConstants.RangeBoostPerKill;
+    private float _airStateDuration = GameConstants.AIR_STATE_DURATION;
 
     private PlayerInput _playerInput;
     private Renderer[] _renderers;
@@ -79,7 +80,7 @@ public class Player : MonoBehaviour
     
     public BombFusingType BombFusingType { get; set; }
     public BombItems NextBombBombItems = 0;
-    
+
     //nom de caca
     private float _actualImmuneTimer;
 
@@ -108,6 +109,11 @@ public class Player : MonoBehaviour
     public event PlaceBomb OnPlaceBomb;
     public event PlaceBombSuccessFul OnPlaceBombSuccessful;
 
+    public const float JUMP_HEIGHT_OFFSET = 2.5f;
+    public const float JUMP_NUMBER_OF_TILES = 2.7f;
+    public const float PLAYER_GRAVITY = -36.0f;
+
+
     private void Awake()
     {
         if (playerItemsManager == null)
@@ -118,7 +124,6 @@ public class Player : MonoBehaviour
         InitializeStateMachine();
         GetComponents();
         ActivePlayers.Add(this);
-
     }
 
     private void Start()
@@ -137,6 +142,7 @@ public class Player : MonoBehaviour
         speed = runtimeConfig.MovementSpeed;
         _rangeBoostPerKill = runtimeConfig.RangeBoostPerKill;
         _speedBoostPerKill = runtimeConfig.SpeedBoostPerKill;
+        _airStateDuration = runtimeConfig.AirStateDuration;
     }
 
     private void CheckStartConditions()
@@ -340,14 +346,14 @@ public class Player : MonoBehaviour
     {
         //Formule pour trouver la vitesse initiale quand le sommet du saut est a (Obstacle.ObstacleHeight / 2) + 1 et au demi du trajet
         //position pour gravity 0.5*a*t^2
-        float posForGravity = -(Physics.gravity.y / 2) * Mathf.Pow(GameConstants.AIR_STATE_DURATION / 2, 2);
+        float posForGravity = -(PLAYER_GRAVITY / 2) * Mathf.Pow(_airStateDuration / 2, 2);
 
         //position pour apogee du saut
-        float jumpHeight = (Obstacle.ObstacleHeight) + GameConstants.JUMP_HEIGHT_OFFSET;
+        float jumpHeight = (Obstacle.ObstacleHeight) + JUMP_HEIGHT_OFFSET;
 
-        float velocityY = posForGravity + jumpHeight / (GameConstants.AIR_STATE_DURATION / 2);
+        float velocityY = (posForGravity + jumpHeight) / (_airStateDuration / 2);
 
-        float velocityX = (Tile.TileLength * GameConstants.JUMP_NUMBER_OF_TILES) /(GameConstants.AIR_STATE_DURATION);
+        float velocityX = (Tile.TileLength * JUMP_NUMBER_OF_TILES) /(_airStateDuration);
         Vector3 jumpInitialVelocity = new(velocityX * jumpDirection.x, velocityY, jumpDirection.y * velocityX);
 
         return jumpInitialVelocity;
@@ -380,6 +386,9 @@ public class Player : MonoBehaviour
         float tempMove = ApplyGravity(ref _verticalVelocity);
 
         UpdatePlayerYRotation(curMoveInput);
+        _characterController.enabled = false;
+        _characterController.transform.position = transform.position;
+        _characterController.enabled = true;
         _characterController.Move(move * Time.deltaTime);
         _characterController.Move(Vector3.down * Math.Abs(tempMove));
         
@@ -400,8 +409,8 @@ public class Player : MonoBehaviour
         else
         {
             //calcul de la gravité par rapport a la position = 0.5*at^2 + vt
-            tempMove = (0.5f * Physics.gravity.y * Time.deltaTime * Time.deltaTime) + (currentVerticalVelocity * Time.deltaTime);
-            currentVerticalVelocity += Physics.gravity.y * Time.deltaTime;
+            tempMove = (0.5f * PLAYER_GRAVITY * Time.deltaTime * Time.deltaTime) + (currentVerticalVelocity * Time.deltaTime);
+            currentVerticalVelocity += PLAYER_GRAVITY * Time.deltaTime;
         }
 
         return tempMove;
@@ -440,6 +449,12 @@ public class Player : MonoBehaviour
         Destroy(other.gameObject);
         
         SoundManager.Instance.OnPickupItem();
+    }
+    
+    private void OnTriggerExit(Collider other)
+    {
+        if (!other.tag.Equals("Bomb") || !other.transform.parent.TryGetComponent(out Bomb bomb)  || bomb.HasColliderBeenRestored) return;
+        bomb.RestoreColliderLayer();
     }
 
     private bool CheckIfOnOwnColor()

@@ -9846,6 +9846,14 @@ PrefabInstance:
       propertyPath: _isSpreadingMode
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4113202097553523575, guid: 0d602448bd1f8d44793a5fc9f674005b, type: 3}
+      propertyPath: m_Camera
+      value: 
+      objectReference: {fileID: 722509299}
+    - target: {fileID: 4113202097553523575, guid: 0d602448bd1f8d44793a5fc9f674005b, type: 3}
+      propertyPath: m_RenderMode
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6821035330413254686, guid: 0d602448bd1f8d44793a5fc9f674005b, type: 3}
       propertyPath: m_IsActive
       value: 1

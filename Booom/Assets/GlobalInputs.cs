@@ -30,7 +30,13 @@ public class GlobalInputs : MonoBehaviour
         InputDevice device = ctx.control.device;
         var player = PlayerInput.all.FirstOrDefault(p => p.devices.Contains(device));
 
-        if (_menuUI.isSelectingLevel)
+        if (player == null) return;
+        
+        float joinTime = LobbyManager.JoinTimes[player];
+        if (Time.time - joinTime < 0.1f)
+            return;
+
+        if (_menuUI.isNotMainMenu)
         {
             if (player.inputIsActive)
             {

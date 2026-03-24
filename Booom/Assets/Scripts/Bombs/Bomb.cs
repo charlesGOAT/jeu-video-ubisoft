@@ -25,7 +25,11 @@ public class Bomb : MonoBehaviour
     public bool IsTransparentBomb { private get; set; }
     public bool IsFreezeBomb { private get; set; }
 
-    public Collider ColliderComp;
+    private Collider _colliderComp;
+
+    private LayerMask _oldLayerMask;
+    
+    public bool HasColliderBeenRestored { get; private set; }
 
     private readonly Vector2Int[] _directions =
     {
@@ -54,7 +58,7 @@ public class Bomb : MonoBehaviour
         _bombAnimation = GetComponent<BombAnimation>();
         _bombAnimation.InitializeAnimation(GetTimer());
 
-        ColliderComp = GetComponent<Collider>();
+        _colliderComp = GetComponent<Collider>();
 
         GameManager.Instance.BombManager.OnPaintbrushActivated += OnPaintbrushActivated;
         GameManager.Instance.BombManager.OnPaintbrushDeactivated += OnPaintbrushDeactivated;
@@ -67,7 +71,6 @@ public class Bomb : MonoBehaviour
 
     protected virtual void Start()
     {
-        SubscribeToCurrentTileColor();
         BombFusingStrategy.Fuse(this);
     }
 
@@ -115,6 +118,7 @@ public class Bomb : MonoBehaviour
         PlayerEnum newTileOwner = GameManager.Instance.IsSpreadingMode ? currentOwner : AssociatedPlayer;
 
         ChoosePaintTile(bombTile, newTileOwner);
+        HitPlayers(_bombCoordinates, Vector2Int.zero);
 
         foreach (Vector2Int direction in _directions)
         {
@@ -188,11 +192,10 @@ public class Bomb : MonoBehaviour
 
     public void SetBombCoordinates(Vector2Int newBombCoordinates)
     {
-        UnsubscribeFromCurrentTileColor();
         ActiveBombs.Remove(_bombCoordinates);
         _bombCoordinates = newBombCoordinates;
         ActiveBombs.Add(_bombCoordinates);
-        SubscribeToCurrentTileColor();
+        OnTileColorChanged();
     }
 
     public void NotifyExplosionSubscribers() 
@@ -202,39 +205,20 @@ public class Bomb : MonoBehaviour
 
     protected virtual void OnDestroy()
     {
-        UnsubscribeFromCurrentTileColor();
         ActiveBombs.Remove(_bombCoordinates);
         GameManager.Instance.BombManager.OnPaintbrushActivated -= OnPaintbrushActivated;
         GameManager.Instance.BombManager.OnPaintbrushDeactivated -= OnPaintbrushDeactivated;
     }
 
-    private void SubscribeToCurrentTileColor()
+    private void OnTileColorChanged()
     {
         Tile tile = GameManager.Instance.GridManager.GetTileAtCoordinates(_bombCoordinates);
         if (tile == null || _bombAnimation == null)
         {
             return;
         }
-
-        _subscribedTile = tile;
-        _subscribedTile.OnTileColorChanged += OnTileColorChanged;
-        OnTileColorChanged(GetCurrentTileColor(tile));
-    }
-
-    private void UnsubscribeFromCurrentTileColor()
-    {
-        if (_subscribedTile == null)
-        {
-            return;
-        }
-
-        _subscribedTile.OnTileColorChanged -= OnTileColorChanged;
-        _subscribedTile = null;
-    }
-
-    private void OnTileColorChanged(Color tileColor)
-    {
-        _bombAnimation.SetBombColor(tileColor);
+        
+        _bombAnimation.SetBombColor(GetCurrentTileColor(tile));
     }
 
     private Color GetCurrentTileColor(Tile tile)
@@ -259,14 +243,27 @@ public class Bomb : MonoBehaviour
 
     private void OnPaintbrushActivated(int layer)
     {
-        if(ColliderComp != null)
-            ColliderComp.excludeLayers = ColliderComp.excludeLayers.value | (1 << layer);
+        if(_colliderComp != null)
+            _colliderComp.excludeLayers = _colliderComp.excludeLayers.value | (1 << layer);
     }
     
     private void OnPaintbrushDeactivated(int layer)
     {
-        if(ColliderComp != null)
-            ColliderComp.excludeLayers = ColliderComp.excludeLayers.value & ~(1 << layer);
+        if(_colliderComp != null)
+            _colliderComp.excludeLayers = _colliderComp.excludeLayers.value & ~(1 << layer);
+    }
+    
+    public void RemoveColliderLayer(GameObject player)
+    {
+        var ogLayerMask = _colliderComp.excludeLayers.value;
+        var newLayer = ogLayerMask | (1 << player.layer);
+        _colliderComp.excludeLayers = newLayer;
+    }
+    
+    public void RestoreColliderLayer()
+    {
+        _colliderComp.excludeLayers = _oldLayerMask;
+        HasColliderBeenRestored = true;
     }
 }
 

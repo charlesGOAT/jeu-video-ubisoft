@@ -4,8 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public delegate void OnTileColorChanged(Color newColor);
-
 [RequireComponent(typeof(TileAnimation))]
 public class Tile : MonoBehaviour
 {
@@ -28,9 +26,7 @@ public class Tile : MonoBehaviour
 
     private Material _highlightMat;
 
-    public event OnTileColorChanged OnTileColorChanged;
-
-    private readonly Color _colorAdjust = new Color(75f / 255f, 75f / 255f, 75f / 255f);
+    private readonly Color _colorAdjust = new Color(75f/255f, 75f/255f, 75f/255f);
 
     public bool IsSpawn { get; set; }
 
