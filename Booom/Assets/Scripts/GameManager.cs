@@ -216,11 +216,31 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private void DestroyAllItems()
+    {
+        var items = GameObject.FindGameObjectsWithTag("Item");
+        foreach (var item in items)
+        {
+            Destroy(item);
+        }
+    }
+
+    private void RemoveAllItemsInPlayerInv()
+    {
+        foreach (Player player in Player.ActivePlayers)
+        {
+            player.ResetInventory();
+        }
+    }
+    
     public void EndGame()
     {
         PlayerEnum winner = ScoreManager.FindPlayerWithMostGround();
         Bomb.ActiveBombsGO.ForEach(Destroy);
         HasRoundEnded = true;
+        
+        DestroyAllItems();
+        RemoveAllItemsInPlayerInv();
         
         if (RoundManager.ShouldEndGame(winner))
         {

@@ -1,6 +1,6 @@
 public class JumpState : State
 {
-    private float _airDuration = GameConstants.AIR_STATE_DURATION;
+    private float _airDuration;
 
     public JumpState(StateMachine stateMachine, Player player) : base(stateMachine, player)
     {
@@ -9,7 +9,13 @@ public class JumpState : State
     public override void Enter()
     {
         _player.Animator.SetBool("IsJumping", true);
+
         _airDuration = GameConstants.AIR_STATE_DURATION;
+
+#if !UNITY_EDITOR
+        _airDuration = GameManager.Instance.RuntimeConfig.AirStateDuration;
+#endif
+
     }
 
     public override void Exit()

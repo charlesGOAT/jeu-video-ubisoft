@@ -57,7 +57,6 @@ public class EndGameUIManager : MonoBehaviour
                 images[j].sprite = wonGame;
             }
         }
-        
         CenterActivePlayers();
     }
 
@@ -66,7 +65,7 @@ public class EndGameUIManager : MonoBehaviour
         var activePlayers = _displays.Where(p => p.gameObject.activeSelf).ToList();
         if (activePlayers.Count == 0) return;
 
-        float playerSpacing = 500f;
+        float playerSpacing = 450f;
         float totalPlayerWidth = (activePlayers.Count - 1) * playerSpacing;
         float playerStartX = -totalPlayerWidth / 2f;
 
@@ -79,6 +78,27 @@ public class EndGameUIManager : MonoBehaviour
             playerRT.pivot = new Vector2(0.5f, 0.5f);
         
             playerRT.anchoredPosition = new Vector2(playerStartX + (i * playerSpacing), playerRT.anchoredPosition.y);
+        }
+    }
+
+    private void CenterIcons(PlayerDisplay display)
+    {
+        var activeIcons = display.images.Where(img => img.gameObject.activeSelf).ToList();
+        if (activeIcons.Count == 0) return;
+
+        float iconSpacing = 80f;
+        float totalIconWidth = (activeIcons.Count - 1) * iconSpacing;
+        float iconStartX = -totalIconWidth / 2f;
+
+        for (int i = 1; i < activeIcons.Count; i++)
+        {
+            RectTransform iconRT = activeIcons[i].GetComponent<RectTransform>();
+
+            iconRT.anchorMin = new Vector2(0.5f, 0.5f);
+            iconRT.anchorMax = new Vector2(0.5f, 0.5f);
+            iconRT.pivot = new Vector2(0.5f, 0.5f);
+
+            iconRT.anchoredPosition = new Vector2(iconStartX + (i * iconSpacing), iconRT.anchoredPosition.y);
         }
     }
 
