@@ -118,9 +118,30 @@ public class GameUIManager : MonoBehaviour
         endGameImage.gameObject.SetActive(true);
         winnerText.gameObject.SetActive(true);
 
-        PlayerEnum winner = GameManager.Instance.ScoreManager.FindPlayerWithMostGround();
-        winnerText.text = $"Player {(int)winner} won!";
-        winnerText.color = Player.PlayerColorDict[winner];
+        EndGameResult result = GameManager.Instance.ScoreManager.GetEndGameResultByTilesThenKills();
+
+        if (result.IsDraw)
+        {
+            winnerText.text = result.TiedPlayers.Count > 0
+                ? $"Draw! Players {FormatPlayersList(result.TiedPlayers)}"
+                : "Draw!";
+            winnerText.color = Color.white;
+            return;
+        }
+
+        winnerText.text = $"Player {(int)result.Winner} won!";
+        winnerText.color = Player.PlayerColorDict[result.Winner];
+    }
+
+    private static string FormatPlayersList(IReadOnlyList<PlayerEnum> players)
+    {
+        List<string> ids = new(players.Count);
+        foreach (PlayerEnum player in players)
+        {
+            ids.Add(((int)player).ToString());
+        }
+
+        return string.Join(", ", ids);
     }
 
     private IEnumerator EventPanelCoroutine()
