@@ -9,7 +9,7 @@ public class Bomb : MonoBehaviour
     public static readonly HashSet<Vector2Int> ActiveBombs = new HashSet<Vector2Int>();
     public static readonly List<GameObject> ActiveBombsGO = new();
 
-    private float _timer = 3f;
+    private float _timer = 2f;
 
     [SerializeField]
     protected int explosionRange = 3;

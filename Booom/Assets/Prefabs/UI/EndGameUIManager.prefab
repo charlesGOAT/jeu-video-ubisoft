@@ -370,10 +370,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: GameplayAssembly::EndGameUIManager
   playerImages:
-  - {fileID: 21300000, guid: 007b1280190196f46b8edf36325e907e, type: 3}
-  - {fileID: 21300000, guid: 8c15f4f61e4d5a4498c809ff27e9ca4b, type: 3}
-  - {fileID: 21300000, guid: fd479de5be2a5a145ba60ec5f17d0925, type: 3}
-  - {fileID: 21300000, guid: 21eb83677bdd4ca44b1007647d579d2e, type: 3}
+  - {fileID: 21300000, guid: e5966a4d68a30cf46b7d99a359912009, type: 3}
+  - {fileID: 21300000, guid: 4575f924c8c2e0b4a895034bd728405a, type: 3}
+  - {fileID: 21300000, guid: fc0c7007ba3cf3f47a4478480e467f8e, type: 3}
+  - {fileID: 21300000, guid: 8dc55180c0d964948868f10a45fe786e, type: 3}
   playerDisplaysWithRank:
   - {fileID: 9150687391766598424}
   - {fileID: 4634610121292774227}
@@ -2092,6 +2092,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: -322
       objectReference: {fileID: 0}
+    - target: {fileID: 8172698618233505069, guid: 4d195cfdaecdc0b4c87c9efd3422cd4d, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: e5966a4d68a30cf46b7d99a359912009, type: 3}
     - target: {fileID: 8732183990166516563, guid: 4d195cfdaecdc0b4c87c9efd3422cd4d, type: 3}
       propertyPath: m_Name
       value: PlayerDisplay (1)

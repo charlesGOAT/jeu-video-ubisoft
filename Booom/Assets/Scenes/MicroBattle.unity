@@ -9797,7 +9797,7 @@ PrefabInstance:
     - target: {fileID: 1165453328561432431, guid: 0d602448bd1f8d44793a5fc9f674005b, type: 3}
       propertyPath: 'bombPrefabs.Array.data[1]'
       value: 
-      objectReference: {fileID: 3814066917829263046, guid: 3fc31f33bc9fd654c8688166b2999db9, type: 3}
+      objectReference: {fileID: 2147100444599465451, guid: 804bb791fb2d74248a2f505bde2f8fe4, type: 3}
     - target: {fileID: 1669064132996479789, guid: 0d602448bd1f8d44793a5fc9f674005b, type: 3}
       propertyPath: m_LocalPosition.x
       value: -8.78495
@@ -11688,7 +11688,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ccf427dc7e39e7c4a92ea4b407453d68, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GridManagerLevel
-  capturableTilesCount: 0
+  CapturableTilesCount: 0
   mainCamera: {fileID: 722509299}
   playerSpawnPoints:
   - {x: -5, y: 5}

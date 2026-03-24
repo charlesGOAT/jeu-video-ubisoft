@@ -38,6 +38,8 @@ public class PaintBrushItem : BaseItem
         
         GameManager.Instance.BombManager.ActivatePaintBrush(_player.gameObject.layer);
         _player.ActivatePaintbrushEffect();
+        
+        player.DisplayPopUp(ItemType, IconSprite);
 
         SoundManager.Instance.OnUsePaintBrush(true);
         await StartDelayTask();
@@ -56,6 +58,7 @@ public class PaintBrushItem : BaseItem
 
     public override void FinishUsingItem(bool hasDied = false)
     {
+        _player.RemoveItemPopUp(ItemType);
         _cts.Cancel();
         UseTimeOver();
     }
@@ -77,6 +80,6 @@ public class PaintBrushItem : BaseItem
             return;
         }
         
-        UseTimeOver();
+        FinishUsingItem();
     }
 }
