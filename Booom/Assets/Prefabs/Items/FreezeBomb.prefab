@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 484057500649795882}
   - component: {fileID: 9097049114423687419}
   - component: {fileID: 4617351842077654283}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: FreezeBomb
   m_TagString: Item
   m_Icon: {fileID: 0}
@@ -103,7 +103,7 @@ BoxCollider:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 3840
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -126,5 +126,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a6bd8c3a30c467cb6d049ade1c8e26f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Item
-  itemType: 4
+  itemType: 3
   posOnMap: {x: 0, y: 0}

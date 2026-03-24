@@ -3,16 +3,19 @@
   "IsBonusSpeed": true,
   "SpawnMode": 1,
   "IsDropFromSky": false,
+  "HighlightOwnColor": false,
   "GameDuration": 120,
   "MovementSpeed": 8,
   "FrozenTileDuration": 20,
+  "ColorBoost": 1.5,
+  "ColorDebuff": 0.7,
+  "NormalBombTimer": 3.0,
+  "FastBombTimer": 1.0,
+  "ShouldBombCollideWithPlayers": true,
+  "AirStateDuration": 1.0,
   "PaintBrushItemSpawnerData": {
     "MaxItems": 1,
     "TimeBetweenSpawns": 12.0
-  },
-  "GhostBombItemSpawnerData": {
-    "MaxItems": 0,
-    "TimeBetweenSpawns": 0
   },
   "ChainedBombItemSpawnerData": {
     "MaxItems": 2,
@@ -40,19 +43,19 @@
     "4": 2,
     "6": 3
   },
-  "bombEvents": [
+  "BombEvents": [
     {
       "minutes": 0,
       "seconds": 0,
-      "value": 0
+      "value": 1
     },
     {
       "minutes": 0,
       "seconds": 30,
-      "value": 1
+      "value": 2
     }
   ],
-  "textEvents": [
+  "TextEvents": [
     {
       "minutes": 2,
       "seconds": 0,

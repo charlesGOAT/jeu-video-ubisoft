@@ -1,9 +1,14 @@
 
 public class FastBomb : Bomb
 {
-    protected override void Start()
+    private float _timer2 = 1f;
+    public override void ConfigureValues()
     {
-        timer = 1.0f;
-        base.Start();
+        _timer2 = GameManager.Instance.RuntimeConfig.FastBombTimer;
+    }
+
+    public override float GetTimer()
+    {
+        return _timer2;
     }
 }

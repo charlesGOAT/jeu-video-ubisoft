@@ -96,6 +96,7 @@ public class EventManager : MonoBehaviour
         if (_textEventsDict.TryGetValue(timeTuple, out Tuple<string, bool> value) && !value.Item2)
         {
             GameManager.Instance.GameUIManager.DisplayEventPanel(value.Item1.AddSpacesBeforeCaps());
+            _textEventsDict[timeTuple] = new Tuple<string, bool>(value.Item1, true);
             return true;
         } 
         

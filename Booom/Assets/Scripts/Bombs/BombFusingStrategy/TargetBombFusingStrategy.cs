@@ -17,6 +17,8 @@ public class TargetBombFusingStrategy : BombFusingStrategy
 
     private readonly System.Object _lock = new ();
 
+    private PlayerEnum _bombTileOwner;
+
     public override async void Fuse(Bomb bomb)
     {
         SoundManager.Instance.OnBombFused();
@@ -25,8 +27,11 @@ public class TargetBombFusingStrategy : BombFusingStrategy
         _associatedPlayer = Player.ActivePlayers.First(player => player.PlayerNb == _bomb.AssociatedPlayer);
         _cts = new CancellationTokenSource();
 
-        _bomb.StartPulseCoroutine();
-
+        Vector2Int bombGridPos = GridManagerStrategy.WorldToGridCoordinates(_bomb.transform.position);
+        Tile bombTile = GameManager.Instance.GridManager.GetTileAtCoordinates(bombGridPos);
+        if (bombTile == null) return;
+        _bombTileOwner = bombTile.CurrentTileOwner;
+        
         Awaitable timerTask = ManageActiveTime(); // bomb explodes after the Timer is over even if it hasn't reached any player
         Awaitable movementTask = MoveBombLoop();
         
@@ -40,7 +45,7 @@ public class TargetBombFusingStrategy : BombFusingStrategy
     {
         try
         {
-            await Awaitable.WaitForSecondsAsync(_bomb.Timer, _cts.Token);
+            await Awaitable.WaitForSecondsAsync(_bomb.GetTimer(), _cts.Token);
         }
         catch (OperationCanceledException) { return; }
         
@@ -86,6 +91,12 @@ public class TargetBombFusingStrategy : BombFusingStrategy
                 {
                     if (_bomb == null) break;
                     _bomb.SetBombCoordinates(nextGridStep);
+                }
+                
+                Tile nextStepTile = GameManager.Instance.GridManager.GetTileAtCoordinates(nextGridStep);
+                if (nextStepTile != null)
+                {
+                    nextStepTile.ChangeTileColor(_bombTileOwner);
                 }
                 
                 ExplodeIfPlayerInSurroundings(nextGridStep);

@@ -2,23 +2,26 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem.UI;
-using UnityEngine.UI;
 
 public delegate void LobbyPlayerCountChanged(int playerCount);
 
 public class LobbyManager : MonoBehaviour
 {
-    [SerializeField] 
-    private GameObject _menuPlayerPrefab;
+    [SerializeField]
+    private GameObject playButton;
     
     public static LobbyManager Instance { get; private set; }
     public event LobbyPlayerCountChanged OnLobbyPlayerCountChanged;
     
+    public static readonly Dictionary<PlayerInput, float> JoinTimes = new();
     public static readonly Dictionary<PlayerEnum, PlayerInput> JoinedPlayers = new ();
+    public static bool ItemsActivated = true;
+    
     private PlayerInputManager _inputManager;
     
     private InputSystemUIInputModule[] _uiInputs;
@@ -51,7 +54,7 @@ public class LobbyManager : MonoBehaviour
 
     private void Start()
     {
-       _uiInputs = FindObjectsByType<InputSystemUIInputModule>(FindObjectsSortMode.None);
+       _uiInputs = FindObjectsByType<InputSystemUIInputModule>(FindObjectsInactive.Include, FindObjectsSortMode.None);
     }
 
     public void GameStarted(string levelName)
@@ -107,16 +110,16 @@ public class LobbyManager : MonoBehaviour
         switch (playerEnum)
         {
             case PlayerEnum.Player1:
-                Player.PlayerColorDict[playerEnum] = Color.red;
+                Player.PlayerColorDict[playerEnum] = new Color(255f/255f, 41f/255f, 117f/255f); 
                 break;
             case PlayerEnum.Player2:
-                Player.PlayerColorDict[playerEnum] = Color.green;
+                Player.PlayerColorDict[playerEnum] = new Color(0f, 245f/255f, 212f/255f);
                 break;
             case PlayerEnum.Player3:
-                Player.PlayerColorDict[playerEnum] = Color.blue;
+                Player.PlayerColorDict[playerEnum] = new Color(107f/255f, 44f/255f, 255f/255f);
                 break;
             case PlayerEnum.Player4:
-                Player.PlayerColorDict[playerEnum] = Color.yellow;
+                Player.PlayerColorDict[playerEnum] = new Color(255f/255f, 255f/255f, 33f/255f);
                 break;
             default:
                 Debug.LogWarning("Maximum of " + GameConstants.NB_PLAYERS + " players reached. Extra device ignored.");
@@ -125,10 +128,11 @@ public class LobbyManager : MonoBehaviour
         
         DontDestroyOnLoad(playerInput.gameObject);
         JoinedPlayers[playerEnum] = playerInput;
+        JoinTimes[playerInput] = Time.time;
 
         if (JoinedPlayers.Count == 1)
         {
-            GiveUIControl(playerInput);
+            GiveUIControl(playerInput, true);
         }
         else
         {
@@ -138,19 +142,18 @@ public class LobbyManager : MonoBehaviour
         OnLobbyPlayerCountChanged?.Invoke(intPlayerEnum);
     }
 
-    private void GiveUIControl(PlayerInput playerInput)
+    private void GiveUIControl(PlayerInput playerInput, bool firstPlayer = false)
     {
         playerInput.SwitchCurrentActionMap("UI");
         playerInput.ActivateInput();
 
         foreach (var uiInput in _uiInputs)
         {
+            if (uiInput == null) return;
             uiInput.actionsAsset = playerInput.actions;
         }
         
-        EventSystem.current.SetSelectedGameObject(null);
-        
-        Selectable first = Selectable.allSelectablesArray.First();
-        EventSystem.current.SetSelectedGameObject(first.gameObject);
+        if (firstPlayer)
+            EventSystem.current.SetSelectedGameObject(playButton);
     }
 }

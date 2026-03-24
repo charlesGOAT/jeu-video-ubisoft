@@ -15,18 +15,20 @@ public class RuntimeConfigData
 {
     public bool IsSpreadingMode = true;
     public bool IsBonusSpeed = true;
-    public bool ShouldBombCollideWithPlayers = true;
+    public bool HighlightOwnColor = false;
     public SpawnMode SpawnMode = SpawnMode.Fixed;
     public bool IsDropFromSky = false;
     public float GameDuration = 120f;
     public float MovementSpeed = 15f;
     public int FrozenTileDuration = 30;
+    public float ColorBoost = 1.5f;
+    public float ColorDebuff = 0.7f;
+    public float NormalBombTimer = 3.0f;
+    public float FastBombTimer = 1.0f;
+    public bool ShouldBombCollideWithPlayers = true;
+    public float AirStateDuration = 1.0f;
+
     public ItemSpawnerData PaintBrushItemSpawnerData = new()
-    {
-        MaxItems = 2,
-        TimeBetweenSpawns = 10
-    };
-    public ItemSpawnerData GhostBombItemSpawnerData = new()
     {
         MaxItems = 2,
         TimeBetweenSpawns = 10
@@ -62,11 +64,8 @@ public class RuntimeConfigData
         {4, 2},
         {6, 3}
     };
-    public List<KeyValuePair> BombEvents = new ()
-    {
-        new (0, 0, BombEnum.NormalBomb),
-        new (0, 30, BombEnum.FastBomb)
-    };
+
+    public List<KeyValuePair> BombEvents = new();
     public List<KeyValuePairText> TextEvents = new ()
     {
         new (2,0, "Start placing bombs to spread your zone!")

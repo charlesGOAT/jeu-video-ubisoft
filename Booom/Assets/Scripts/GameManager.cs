@@ -21,8 +21,14 @@ public class GameManager : MonoBehaviour
     public Material snowflakeMaterial;
     [SerializeField] 
     public Material transparentMat;
-    public float  GameDuration => _gameDuration;
 
+    [SerializeField] 
+    public Material paintBrushEffect;
+
+    [SerializeField]
+    public Material highlightMat;
+
+    public float  GameDuration => _gameDuration;
     public int CurrentMinutes => Mathf.FloorToInt(_timeRemaining / 60f);
     public int CurrentSeconds => Mathf.FloorToInt(_timeRemaining % 60f);
     
@@ -37,7 +43,7 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] 
     public int FrozenTileDuration = 30;
-    
+
     public bool IsBonusSpeed => _isBonusSpeed;
 
     public GridManagerStrategy GridManager { get; private set; }
@@ -49,6 +55,12 @@ public class GameManager : MonoBehaviour
 
     public readonly int[] CollisionLayers = new int[GameConstants.NB_PLAYERS] { 8, 9, 10, 11 };
 
+    public float ColorDebuff { get; private set; } = GameConstants.COLOR_DEBUFF;
+    public float ColorBoost { get; private set; } = GameConstants.COLOR_BOOST;
+    public bool HighlightOwnColor { get; private set; }
+
+    private bool _hasChangedForFastMusic = false;
+    
     // add other managers
     
     public static GameManager Instance
@@ -90,9 +102,10 @@ public class GameManager : MonoBehaviour
 
     private void UpdateMusic()
     {
-        if (_timeRemaining <= 60)
+        if (_timeRemaining <= 60 && _hasChangedForFastMusic)
         {
             SoundManager.Instance.OnPlayAcceleratedGameMusic();
+            _hasChangedForFastMusic = true;
         }
     }
 
@@ -127,6 +140,9 @@ public class GameManager : MonoBehaviour
         _isBonusSpeed = RuntimeConfig.IsBonusSpeed;
         _gameDuration =  RuntimeConfig.GameDuration;
         FrozenTileDuration = RuntimeConfig.FrozenTileDuration;
+        ColorBoost = RuntimeConfig.ColorBoost;
+        ColorDebuff = RuntimeConfig.ColorDebuff;
+        HighlightOwnColor = RuntimeConfig.HighlightOwnColor;
     }
 
     public void RemoveItemFromGrid(Item item)
@@ -176,6 +192,10 @@ public class GameManager : MonoBehaviour
         {
             throw new Exception("Transparent material cannot be null");
         }
+        if (paintBrushEffect == null)
+        {
+            throw new Exception("Paintbrush effect cannot be null");
+        }
         // add other managers
     }
 
@@ -190,7 +210,7 @@ public class GameManager : MonoBehaviour
 
             playerPrefab.layer = CollisionLayers[playerInput.playerIndex];
             PlayerInput newInput = PlayerInput.Instantiate(playerPrefab, playerIndex:playerInput.playerIndex, pairWithDevices:playerInput.devices.ToArray());
-            newInput.transform.position = new Vector3(spawnPoint.x, 2.0f, spawnPoint.y);
+            newInput.transform.position = new Vector3(spawnPoint.x, 0.0f, spawnPoint.y);
             
             Destroy(playerInput.gameObject); //Destroying dummy prefabs
         }
@@ -200,6 +220,7 @@ public class GameManager : MonoBehaviour
 
     public void EndGame()
     {
+        //a fix plus tard quand la fin de la game arrive
         SoundManager.Instance.OnGameEnded();
         StartCoroutine(EndGameCoroutine());
     }

@@ -1,6 +1,9 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
+public delegate void PaintbrushActivated(int layer);
+public delegate void PaintbrushDeactivated(int layer);
+
 
 public class BombManager : MonoBehaviour
 {
@@ -9,11 +12,15 @@ public class BombManager : MonoBehaviour
 
     [SerializeField]
     private bool ShouldBombCollideWithPlayers = true;
-    
+
     // Track each Player's bomb cooldown
     private readonly Dictionary<PlayerEnum, float> _nextBombTime = new (GameConstants.NB_PLAYERS);
-    private readonly Dictionary<PlayerEnum, List<Bomb>> _chainedBombsPerPlayer = new (GameConstants.NB_PLAYERS);
 
+    public List<int> LayersToExclude = new List<int>();
+    
+    public event PaintbrushActivated OnPaintbrushActivated;
+    public event PaintbrushDeactivated OnPaintbrushDeactivated;
+    
     protected virtual void Awake()
     {
         if (bombPrefabs == null)
@@ -25,7 +32,6 @@ public class BombManager : MonoBehaviour
         for (int i = 1; i <= GameConstants.NB_PLAYERS; i++)
         {
             _nextBombTime.Add((PlayerEnum)i, 0f);
-            _chainedBombsPerPlayer.Add((PlayerEnum)i, new());
         }
     }
 
@@ -54,12 +60,11 @@ public class BombManager : MonoBehaviour
         }
     }
     
-    public virtual bool CreateBomb(in Vector3 position, in Player player,in BombFusingStrategy bombStrat, bool isTransparentBomb = false, bool isFreezeBomb = false)
+    public virtual bool CreateBomb(in Vector3 position, in Player player,in BombFusingStrategy bombStrat, in BombItems bombItems)
     {
-        bool isChained = bombStrat is ChainedBombFusingStrategy;
         PlayerEnum playerEnum = player.PlayerNb;
         
-        if (Time.time < _nextBombTime[playerEnum] && !isChained)
+        if (Time.time < _nextBombTime[playerEnum])
         {
             return false;
         }
@@ -77,46 +82,33 @@ public class BombManager : MonoBehaviour
         int intBombType = (int)bombType - 1;
         
         Vector3 worldPosition = GridManagerStrategy.GridToWorldPosition(gridCoordinates, tile.transform.position.y);
-        bombPrefabs[intBombType].AssociatedPlayer = playerEnum;
 
         Bomb instantiatedBomb = Instantiate(bombPrefabs[intBombType], worldPosition + bombHeight, Quaternion.identity);
+        instantiatedBomb.AssociatedPlayer = playerEnum;
         instantiatedBomb.BombFusingStrategy = bombStrat;
-        instantiatedBomb.IsTransparentBomb = isTransparentBomb;
-        instantiatedBomb.IsFreezeBomb = isFreezeBomb;
+        instantiatedBomb.IsFreezeBomb = bombItems.HasFlag(BombItems.FreezeBombs);
 
         if(ShouldBombCollideWithPlayers)
-            StartCoroutine(ChangeColliderLayer(instantiatedBomb, player.gameObject));
+            instantiatedBomb.RemoveColliderLayer(player.gameObject);
 
-        if (isChained)
-            _chainedBombsPerPlayer[playerEnum].Add(instantiatedBomb);
-
-        _nextBombTime[playerEnum] = Time.time + instantiatedBomb.Timer;
+#if !UNITY_EDITOR
+        instantiatedBomb.ConfigureValues();
+#endif
+        
+        float timeToAdd = bombItems.HasFlag(BombItems.ChainedBombs) ? 0 : instantiatedBomb.GetTimer();
+        _nextBombTime[playerEnum] = Time.time + timeToAdd;
 
         return true;
     }
 
-    public void ExplodeChainedBombs(PlayerEnum player)
+    public void ActivatePaintBrush(int layer)
     {
-        foreach (Bomb bomb in _chainedBombsPerPlayer[player])
-        {
-            bomb.Explode();
-        }
-        
-        _chainedBombsPerPlayer[player].Clear();
+        LayersToExclude.Add(layer);
+        OnPaintbrushActivated?.Invoke(layer);
     }
-
-    public bool HasChainedBombs(PlayerEnum player)
+    public void DeactivatePaintBrush(int layer)
     {
-        return _chainedBombsPerPlayer[player].Count != 0;
-    }
-
-    private IEnumerator ChangeColliderLayer(Bomb bomb, GameObject player)
-    {
-        Collider colComponent = bomb.GetComponent<Collider>();
-        var ogLayerMask = colComponent.excludeLayers.value;
-        var newLayer = ogLayerMask | (1 << player.layer);
-        colComponent.excludeLayers = newLayer;
-        yield return new WaitForSeconds(1.0f);
-        colComponent.excludeLayers = ogLayerMask;
+        LayersToExclude.Remove(layer);
+        OnPaintbrushDeactivated?.Invoke(layer);
     }
 }

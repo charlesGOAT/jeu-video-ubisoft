@@ -184,6 +184,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BombManager
   bombPrefabs: []
   ShouldBombCollideWithPlayers: 1
+  LayersToExclude: 
 --- !u!1001 &22799394
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -208,6 +209,10 @@ PrefabInstance:
       propertyPath: trampolineSound.audioClip
       value: 
       objectReference: {fileID: 8300000, guid: 0240a31590f64d6418b1cc9f1d171c61, type: 3}
+    - target: {fileID: 4795752124082758741, guid: d00abcfd2ff9b8840a604215b1cd7124, type: 3}
+      propertyPath: defenseBombSound.audioClip
+      value: 
+      objectReference: {fileID: 8300000, guid: ca46be3ca9ba9064d8b7b47db8ebb20b, type: 3}
     - target: {fileID: 8383112355637515104, guid: d00abcfd2ff9b8840a604215b1cd7124, type: 3}
       propertyPath: m_LocalPosition.x
       value: 8.70812
@@ -525,6 +530,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1246669290624655608, guid: 6b58ef387c9c02a4c81d842cc90a6fa7, type: 3}
+      propertyPath: m_PlayerPrefab
+      value: 
+      objectReference: {fileID: 8693886412537445449, guid: 48d5797564f6c444885cd8aecb605365, type: 3}
     - target: {fileID: 4430174042866800640, guid: 6b58ef387c9c02a4c81d842cc90a6fa7, type: 3}
       propertyPath: m_LocalPosition.x
       value: 367.5
@@ -624,7 +633,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1036601968531846516, guid: 0d602448bd1f8d44793a5fc9f674005b, type: 3}
       propertyPath: bombEvents.Array.size
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1036601968531846516, guid: 0d602448bd1f8d44793a5fc9f674005b, type: 3}
       propertyPath: bombEvents.Array.data[0].value
@@ -632,12 +641,16 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1036601968531846516, guid: 0d602448bd1f8d44793a5fc9f674005b, type: 3}
       propertyPath: bombEvents.Array.data[0].minutes
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1036601968531846516, guid: 0d602448bd1f8d44793a5fc9f674005b, type: 3}
       propertyPath: bombEvents.Array.data[0].seconds
-      value: 50
+      value: 30
       objectReference: {fileID: 0}
+    - target: {fileID: 1165453328561432431, guid: 0d602448bd1f8d44793a5fc9f674005b, type: 3}
+      propertyPath: 'bombPrefabs.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2147100444599465451, guid: 804bb791fb2d74248a2f505bde2f8fe4, type: 3}
     - target: {fileID: 1669064132996479789, guid: 0d602448bd1f8d44793a5fc9f674005b, type: 3}
       propertyPath: m_LocalPosition.x
       value: 13.1913
@@ -686,6 +699,10 @@ PrefabInstance:
       propertyPath: playerPrefab
       value: 
       objectReference: {fileID: 8693886412537445449, guid: 48d5797564f6c444885cd8aecb605365, type: 3}
+    - target: {fileID: 3282167894468318723, guid: 0d602448bd1f8d44793a5fc9f674005b, type: 3}
+      propertyPath: _gameDuration
+      value: 120
+      objectReference: {fileID: 0}
     - target: {fileID: 3282167894468318723, guid: 0d602448bd1f8d44793a5fc9f674005b, type: 3}
       propertyPath: isSpreadingMode
       value: 0

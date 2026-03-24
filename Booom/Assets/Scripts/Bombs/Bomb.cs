@@ -2,19 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public delegate void OnExplode();
+
 public class Bomb : MonoBehaviour
 {
     public static readonly HashSet<Vector2Int> ActiveBombs = new HashSet<Vector2Int>();
 
-    [SerializeField]
-    protected float timer = 3.0f;
-    public float Timer => timer;
-
-    [SerializeField]
-    private float pulseAmplitude = 0.2f;
-
-    [SerializeField]
-    private float pulseSpeed = 8f;
+    private float _timer = 3f;
 
     [SerializeField]
     protected int explosionRange = 3;
@@ -23,8 +17,19 @@ public class Bomb : MonoBehaviour
 
     public BombFusingStrategy BombFusingStrategy = new();
 
+    private BombAnimation _bombAnimation;
+    private Tile _subscribedTile;
+
+    public event OnExplode OnExplode;
+
     public bool IsTransparentBomb { private get; set; }
     public bool IsFreezeBomb { private get; set; }
+
+    private Collider _colliderComp;
+
+    private LayerMask _oldLayerMask;
+    
+    public bool HasColliderBeenRestored { get; private set; }
 
     private readonly Vector2Int[] _directions =
     {
@@ -34,8 +39,6 @@ public class Bomb : MonoBehaviour
         Vector2Int.right
     };
 
-    private Vector3 _initialScale;
-
     protected Vector2Int _bombCoordinates;
 
     public PlayerEnum AssociatedPlayer = PlayerEnum.None;
@@ -44,7 +47,6 @@ public class Bomb : MonoBehaviour
     {
         Transform trans = transform;
 
-        _initialScale = trans.localScale;
         _bombCoordinates = GridManagerStrategy.WorldToGridCoordinates(trans.position);
         ActiveBombs.Add(_bombCoordinates);
 
@@ -52,11 +54,35 @@ public class Bomb : MonoBehaviour
         {
             explosionRange += Player.ActivePlayers[(int)AssociatedPlayer - 1].ElimsRangeBoost;
         }
+
+        _bombAnimation = GetComponent<BombAnimation>();
+        _bombAnimation.InitializeAnimation(GetTimer());
+
+        _colliderComp = GetComponent<Collider>();
+
+        GameManager.Instance.BombManager.OnPaintbrushActivated += OnPaintbrushActivated;
+        GameManager.Instance.BombManager.OnPaintbrushDeactivated += OnPaintbrushDeactivated;
+
+        foreach (int layer in GameManager.Instance.BombManager.LayersToExclude)
+        {
+            OnPaintbrushActivated(layer);
+        }
     }
 
     protected virtual void Start()
     {
+        SubscribeToCurrentTileColor();
         BombFusingStrategy.Fuse(this);
+    }
+
+    public virtual float GetTimer()
+    {
+        return _timer;
+    }
+
+    public virtual void ConfigureValues()
+    {
+        _timer = GameManager.Instance.RuntimeConfig.NormalBombTimer;
     }
 
     public static bool IsBombAt(Vector2Int gridCoordinates)
@@ -71,42 +97,16 @@ public class Bomb : MonoBehaviour
 
     private IEnumerator CountdownAndExplode()
     {
-        float elapsed = 0f;
-        while (elapsed < timer)
-        {
-            DoPulseMath(ref elapsed);
-            yield return null;
-        }
+        yield return new WaitForSeconds(GetTimer());
         Explode();
     }
 
-    private IEnumerator Pulse()
-    {
-        float elapsed = 0f;
-        while (elapsed < timer)
-        {
-            DoPulseMath(ref elapsed);
-            yield return null;
-        }
-    }
-
-    private void DoPulseMath(ref float elapsed)
-    {
-        float pulse = 1f + (Mathf.Abs(Mathf.Sin(elapsed * pulseSpeed)) * pulseAmplitude);
-        transform.localScale = _initialScale * pulse;
-        elapsed += Time.deltaTime;
-    }
-
-    public void StartPulseCoroutine()
-    {
-        StartCoroutine(Pulse());
-    }
-    
     public void Explode()
     {
         if(!IsFreezeBomb) SoundManager.Instance.OnBombExploded();
         else SoundManager.Instance.OnDefenseBombExploded();
         PaintTiles();
+        NotifyExplosionSubscribers();
         Destroy(gameObject);
     }
 
@@ -119,6 +119,7 @@ public class Bomb : MonoBehaviour
         PlayerEnum newTileOwner = GameManager.Instance.IsSpreadingMode ? currentOwner : AssociatedPlayer;
 
         ChoosePaintTile(bombTile, newTileOwner);
+        HitPlayers(_bombCoordinates, Vector2Int.zero);
 
         foreach (Vector2Int direction in _directions)
         {
@@ -144,11 +145,6 @@ public class Bomb : MonoBehaviour
             
             if (!ChoosePaintTile(tile, newTileOwner))
             {
-                if (IsTransparentBomb) 
-                {
-                    continue;
-                }
-                
                 return;
             }
             
@@ -196,14 +192,64 @@ public class Bomb : MonoBehaviour
 
     public void SetBombCoordinates(Vector2Int newBombCoordinates)
     {
+        UnsubscribeFromCurrentTileColor();
         ActiveBombs.Remove(_bombCoordinates);
         _bombCoordinates = newBombCoordinates;
         ActiveBombs.Add(_bombCoordinates);
+        SubscribeToCurrentTileColor();
+    }
+
+    public void NotifyExplosionSubscribers() 
+    {
+        OnExplode?.Invoke();
     }
 
     protected virtual void OnDestroy()
     {
+        UnsubscribeFromCurrentTileColor();
         ActiveBombs.Remove(_bombCoordinates);
+        GameManager.Instance.BombManager.OnPaintbrushActivated -= OnPaintbrushActivated;
+        GameManager.Instance.BombManager.OnPaintbrushDeactivated -= OnPaintbrushDeactivated;
+    }
+
+    private void SubscribeToCurrentTileColor()
+    {
+        Tile tile = GameManager.Instance.GridManager.GetTileAtCoordinates(_bombCoordinates);
+        if (tile == null || _bombAnimation == null)
+        {
+            return;
+        }
+
+        _subscribedTile = tile;
+        _subscribedTile.OnTileColorChanged += OnTileColorChanged;
+        OnTileColorChanged(GetCurrentTileColor(tile));
+    }
+
+    private void UnsubscribeFromCurrentTileColor()
+    {
+        if (_subscribedTile == null)
+        {
+            return;
+        }
+
+        _subscribedTile.OnTileColorChanged -= OnTileColorChanged;
+        _subscribedTile = null;
+    }
+
+    private void OnTileColorChanged(Color tileColor)
+    {
+        _bombAnimation.SetBombColor(tileColor);
+    }
+
+    private Color GetCurrentTileColor(Tile tile)
+    {
+        return tile.CurrentTileOwner != PlayerEnum.None ? Player.PlayerColorDict[tile.CurrentTileOwner] : GetNeutralTileColor(tile);
+    }
+
+    private static Color GetNeutralTileColor(Tile tile)
+    {
+        Renderer tileRenderer = tile.GetComponentInChildren<Renderer>();
+        return tileRenderer != null ? tileRenderer.material.color : Color.white;
     }
     
     private void OnCollisionEnter(Collision collision)
@@ -213,6 +259,31 @@ public class Bomb : MonoBehaviour
             player.PlayerNb == AssociatedPlayer) return;
             
         BombFusingStrategy.OnCollision(this);
+    }
+
+    private void OnPaintbrushActivated(int layer)
+    {
+        if(_colliderComp != null)
+            _colliderComp.excludeLayers = _colliderComp.excludeLayers.value | (1 << layer);
+    }
+    
+    private void OnPaintbrushDeactivated(int layer)
+    {
+        if(_colliderComp != null)
+            _colliderComp.excludeLayers = _colliderComp.excludeLayers.value & ~(1 << layer);
+    }
+    
+    public void RemoveColliderLayer(GameObject player)
+    {
+        var ogLayerMask = _colliderComp.excludeLayers.value;
+        var newLayer = ogLayerMask | (1 << player.layer);
+        _colliderComp.excludeLayers = newLayer;
+    }
+    
+    public void RestoreColliderLayer()
+    {
+        _colliderComp.excludeLayers = _oldLayerMask;
+        HasColliderBeenRestored = true;
     }
 }
 

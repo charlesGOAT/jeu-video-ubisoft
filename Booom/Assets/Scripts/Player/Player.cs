@@ -1,14 +1,12 @@
-using Codice.Client.BaseCommands;
 using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.Interactions;
 
 public delegate void MoveCalledEventHandler();
 public delegate void PlaceBomb();
-public delegate void ExplodeChainedBombs();
 public delegate void PlaceBombSuccessFul();
 
 [RequireComponent(typeof(PlayerItemsManager))]
@@ -39,23 +37,27 @@ public class Player : MonoBehaviour
     [SerializeField]
     private float tileDetectionTolerance = 0.35f;
 
+    [SerializeField] 
+    private TextMeshProUGUI killStreakText;
+
     private BombFusingStrategy[] _bombFusingStrategies = new []
         {
             new BombFusingStrategy(),
-            new ChainedBombFusingStrategy(),
             new TargetBombFusingStrategy()
             
             // todo : add more here
         };
 
     [SerializeField]
-    private Material[] playerMaterials;
+    private List<Material> playerMaterials;
     private Dictionary<int, float> _speedBoostPerKill = GameConstants.SpeedBoostPerKill;
     private Dictionary<int, int> _rangeBoostPerKill = GameConstants.RangeBoostPerKill;
+    private float _airStateDuration = GameConstants.AIR_STATE_DURATION;
 
     private PlayerInput _playerInput;
     private Renderer[] _renderers;
     private bool[] _rendererDefaultStates;
+    private List<Material[]> _initialMats = new();
 
     private Vector2 _moveInput;
     private Vector3 _lastInput;
@@ -73,10 +75,12 @@ public class Player : MonoBehaviour
     private HitState _hitState;
     private RunState _runState;
     private JumpState _jumpState;
-    public BombFusingType BombFusingType { get; set; }
-    public bool ShouldNextBombBeTransparent = false;
-    public bool ShouldNextBombFreezeBomb = false;
+
+    private Tile _currentTile;
     
+    public BombFusingType BombFusingType { get; set; }
+    public BombItems NextBombBombItems = 0;
+
     //nom de caca
     private float _actualImmuneTimer;
 
@@ -103,8 +107,11 @@ public class Player : MonoBehaviour
     
     public event MoveCalledEventHandler OnMoveFunctionCalled;
     public event PlaceBomb OnPlaceBomb;
-    public event ExplodeChainedBombs OnExplodeChainedBombs;
     public event PlaceBombSuccessFul OnPlaceBombSuccessful;
+
+    public const float JUMP_HEIGHT_OFFSET = 2.5f;
+    public const float JUMP_NUMBER_OF_TILES = 2.7f;
+    public const float PLAYER_GRAVITY = -36.0f;
 
 
     private void Awake()
@@ -117,7 +124,6 @@ public class Player : MonoBehaviour
         InitializeStateMachine();
         GetComponents();
         ActivePlayers.Add(this);
-
     }
 
     private void Start()
@@ -136,6 +142,7 @@ public class Player : MonoBehaviour
         speed = runtimeConfig.MovementSpeed;
         _rangeBoostPerKill = runtimeConfig.RangeBoostPerKill;
         _speedBoostPerKill = runtimeConfig.SpeedBoostPerKill;
+        _airStateDuration = runtimeConfig.AirStateDuration;
     }
 
     private void CheckStartConditions()
@@ -148,18 +155,30 @@ public class Player : MonoBehaviour
 
     private void OnNbKillsChanged()
     {
+        bool shouldDisplay = false;
         if (GameConstants.SpeedBoostPerKill.TryGetValue(NbKills, out float newSpeedBoost))
         {
             _elimsSpeedBoost = newSpeedBoost;
             SoundManager.Instance.OnNewKillStreak();
+            shouldDisplay = true;
         }
         if (GameConstants.RangeBoostPerKill.TryGetValue(NbKills, out int newRangeBoost))
         {
             _elimsRangeBoost = newRangeBoost;
             SoundManager.Instance.OnNewKillStreak();
+            shouldDisplay = true;
         }
         
+        if(shouldDisplay) StartCoroutine(DisplayKillStreak());
+        
         // todo : generate little animation or particle effect indicating kill streak
+    }
+
+    private IEnumerator DisplayKillStreak()
+    {
+        killStreakText.text = "New kill streak!";
+        yield return new WaitForSeconds(1.7f);
+        killStreakText.text = "";
     }
 
     private void InitializeSpawner()
@@ -217,33 +236,24 @@ public class Player : MonoBehaviour
         Vector3 worldPos = GridManagerStrategy.GridToWorldPosition(gridPos);
         var trans = transform;
         trans.position = new Vector3(worldPos.x, trans.position.y, worldPos.z);
+        _currentTile = GameManager.Instance.GridManager.GetTileAtCoordinates(gridPos);
     }
 
     public void OnMove(InputAction.CallbackContext ctx)
     {
         _moveInput = ctx.ReadValue<Vector2>();
-        if (_moveInput != Vector2.zero) 
-        {
-            _lastInput = GetBombPlacementDirection(_moveInput);
-        }
     }
     
     public void OnBomb(InputAction.CallbackContext ctx)
     {
         if (_stateMachine.CurrentState is JumpState) return;
-        if (ctx.performed && ctx.interaction is HoldInteraction)
-        {
-            OnExplodeChainedBombs?.Invoke();
-            GameManager.Instance.BombManager.ExplodeChainedBombs(PlayerNb);
-        }
-        else if (ctx.performed && 
-                 (BombFusingType.Equals(BombFusingType.Chained) || !GameManager.Instance.BombManager.HasChainedBombs(playerNb)))
+
+        if (ctx.performed)
         {
             OnPlaceBomb?.Invoke();
-            Vector3 bombDirection = _moveInput.sqrMagnitude > 0.0001f ? GetBombPlacementDirection(_moveInput) : _lastInput;
 
             if (GameManager.Instance.BombManager.CreateBomb(transform.position,
-                    this, _bombFusingStrategies[(int)BombFusingType], ShouldNextBombBeTransparent, ShouldNextBombFreezeBomb))
+                    this, _bombFusingStrategies[(int)BombFusingType], NextBombBombItems))
             {
                 Animator.SetTrigger("DropBomb");
                 OnPlaceBombSuccessful?.Invoke();
@@ -257,9 +267,13 @@ public class Player : MonoBehaviour
     private void Update()
     {
         UpdateImmune();
-        if (GetPlayerTile() != null) 
+
+        Tile tile = GetPlayerTile();
+        if (tile != null) 
         {
-            GetPlayerTile().StepOnTile(this);
+            tile.StepOnTile(this);
+            if(_currentTile != tile) _currentTile.RemoveHighlight(PlayerNb);
+            _currentTile = tile;
         }
         
         _stateMachine.UpdateStateMachine(Time.deltaTime);
@@ -295,7 +309,6 @@ public class Player : MonoBehaviour
         else
             SoundManager.Instance.OnPlayerHitByBomb();
 
-
         Animator.SetTrigger("HitPlayer");
         Vector3 forceDirection = new Vector3(hitDirection.x,1,hitDirection.y);
         ApplyKnockback(forceDirection, knockbackForce);
@@ -322,8 +335,7 @@ public class Player : MonoBehaviour
         {
             SoundManager.Instance.OnEnterPortal();
             _characterController.enabled = false;
-            this.gameObject.transform.position = otherPortalPosition;
-            _jumpVelocity = CalculatePortalForce(playerDirection);
+            gameObject.transform.position = otherPortalPosition;
             _stateMachine.Trigger(GameConstants.PLAYER_JUMP_TRIGGER);
             _characterController.enabled = true;
         }
@@ -333,31 +345,15 @@ public class Player : MonoBehaviour
     {
         //Formule pour trouver la vitesse initiale quand le sommet du saut est a (Obstacle.ObstacleHeight / 2) + 1 et au demi du trajet
         //position pour gravity 0.5*a*t^2
-        float posForGravity = -(Physics.gravity.y / 2) * Mathf.Pow(GameConstants.AIR_STATE_DURATION / 2, 2);
+        float posForGravity = -(PLAYER_GRAVITY / 2) * Mathf.Pow(_airStateDuration / 2, 2);
 
         //position pour apogee du saut
-        float jumpHeight = (Obstacle.ObstacleHeight) + GameConstants.JUMP_HEIGHT_OFFSET;
+        float jumpHeight = (Obstacle.ObstacleHeight) + JUMP_HEIGHT_OFFSET;
 
-        float velocityY = posForGravity + jumpHeight / (GameConstants.AIR_STATE_DURATION / 2);
+        float velocityY = (posForGravity + jumpHeight) / (_airStateDuration / 2);
 
-        float velocityX = (Tile.TileLength * GameConstants.JUMP_NUMBER_OF_TILES) /(GameConstants.AIR_STATE_DURATION);
+        float velocityX = (Tile.TileLength * JUMP_NUMBER_OF_TILES) /(_airStateDuration);
         Vector3 jumpInitialVelocity = new(velocityX * jumpDirection.x, velocityY, jumpDirection.y * velocityX);
-
-
-        return jumpInitialVelocity;
-    }
-
-    private Vector3 CalculatePortalForce(Vector2Int jumpDirection)
-    {
-        //Formule pour trouver la vitesse initiale quand le sommet du saut est a (Obstacle.ObstacleHeight / 2) + 1 et au demi du trajet
-        //position pour gravity 0.5*a*t^2
-        float posForGravity = -(Physics.gravity.y / 2) * Mathf.Pow(GameConstants.PORTAL_AIR_DURATION / 2, 2);
-
-        float velocityY = (posForGravity + GameConstants.PORTAL_JUMP_HEIGHT) / (GameConstants.PORTAL_AIR_DURATION / 2);
-
-        float velocityX = Tile.TileLength / GameConstants.PORTAL_AIR_DURATION;
-        Vector3 jumpInitialVelocity = new(velocityX * jumpDirection.x, velocityY, jumpDirection.y * velocityX);
-
 
         return jumpInitialVelocity;
     }
@@ -370,8 +366,7 @@ public class Player : MonoBehaviour
     }
 
     public void ResetJumpVelocity() => _jumpVelocity = Vector3.zero;
-
-
+    
     public void FlickerPlayerOnHit(float elapsedT) => SetRenderersVisible(Mathf.Sin(elapsedT * hitFlickerFrequency) > 0);
 
     private void SetRendererVisible() => SetRenderersVisible(true);
@@ -382,7 +377,7 @@ public class Player : MonoBehaviour
     {
         Vector2 curMoveInput = _moveInput.normalized;
 
-        float boost = CheckIfOnOwnColor() ? GameConstants.COLOR_BOOST : (CheckIfOnEnemyTerritory() ? GameConstants.COLOR_DEBUFF: 1);
+        float boost = CheckIfOnOwnColor() ? GameManager.Instance.ColorBoost : (CheckIfOnEnemyTerritory() ? GameManager.Instance.ColorDebuff : 1);
 
         boost *= GameManager.Instance.IsBonusSpeed ? _elimsSpeedBoost : 1;
 
@@ -390,8 +385,12 @@ public class Player : MonoBehaviour
         float tempMove = ApplyGravity(ref _verticalVelocity);
 
         UpdatePlayerYRotation(curMoveInput);
+        _characterController.enabled = false;
+        _characterController.transform.position = transform.position;
+        _characterController.enabled = true;
         _characterController.Move(move * Time.deltaTime);
         _characterController.Move(Vector3.down * Math.Abs(tempMove));
+        
         OnMoveFunctionCalled?.Invoke();
     }
 
@@ -409,8 +408,8 @@ public class Player : MonoBehaviour
         else
         {
             //calcul de la gravité par rapport a la position = 0.5*at^2 + vt
-            tempMove = (0.5f * Physics.gravity.y * Time.deltaTime * Time.deltaTime) + (currentVerticalVelocity * Time.deltaTime);
-            currentVerticalVelocity += Physics.gravity.y * Time.deltaTime;
+            tempMove = (0.5f * PLAYER_GRAVITY * Time.deltaTime * Time.deltaTime) + (currentVerticalVelocity * Time.deltaTime);
+            currentVerticalVelocity += PLAYER_GRAVITY * Time.deltaTime;
         }
 
         return tempMove;
@@ -450,6 +449,12 @@ public class Player : MonoBehaviour
         
         SoundManager.Instance.OnPickupItem();
     }
+    
+    private void OnTriggerExit(Collider other)
+    {
+        if (!other.tag.Equals("Bomb") || !other.transform.parent.TryGetComponent(out Bomb bomb)  || bomb.HasColliderBeenRestored) return;
+        bomb.RestoreColliderLayer();
+    }
 
     private bool CheckIfOnOwnColor()
     {
@@ -488,47 +493,6 @@ public class Player : MonoBehaviour
         float tileSurfaceY = tile.transform.position.y;
 
         return Mathf.Abs(playerFeetY - tileSurfaceY) <= tileDetectionTolerance ? tile : null;
-    }
-
-    private Vector3 GetBombPlacementDirection(Vector2 input)
-    {
-        //a cause de la camera les inputs sont weird
-        Vector3 worldDirection = new(input.y, 0f, -input.x);
-        float absX = Mathf.Abs(worldDirection.x);
-        float absZ = Mathf.Abs(worldDirection.z);
-
-        if (absX < 0.001f && absZ < 0.001f)
-        {
-            return _lastInput;
-        }
-
-        if (absX < 0.001f)
-        {
-            return new Vector3(0f, 0f, Mathf.Sign(worldDirection.z));
-        }
-
-        if (absZ < 0.001f)
-        {
-            return new Vector3(Mathf.Sign(worldDirection.x), 0f, 0f);
-        }
-
-        Vector3 xCandidate = new(Mathf.Sign(worldDirection.x), 0f, 0f);
-        Vector3 zCandidate = new(0f, 0f, Mathf.Sign(worldDirection.z));
-
-        var position = transform.position;
-        Vector3 intendedTarget = position + worldDirection.normalized * Tile.TileLength;
-        Vector3 xTarget = position + xCandidate * Tile.TileLength;
-        Vector3 zTarget = position + zCandidate * Tile.TileLength;
-
-        float xDistance = (intendedTarget - xTarget).sqrMagnitude;
-        float zDistance = (intendedTarget - zTarget).sqrMagnitude;
-
-        if (Mathf.Abs(xDistance - zDistance) <= 0.0001f)
-        {
-            return absX >= absZ ? xCandidate : zCandidate;
-        }
-
-        return xDistance < zDistance ? xCandidate : zCandidate;
     }
 
     private void InitializeStateMachine()
@@ -593,7 +557,40 @@ public class Player : MonoBehaviour
         }
     }
 
-    private void SetPlayerTexture() 
+    public void ActivatePaintbrushEffect()
+    {
+        if (_renderers == null)
+        {
+            return;
+        }
+
+        Material playerMaterial = GameManager.Instance.paintBrushEffect;
+
+        for (int i = 0; i < _renderers.Length; ++i)
+        {
+            Material[] mats = _renderers[i].materials;
+            for (int j = 0; j < mats.Length; ++j)
+            {
+                mats[j] = playerMaterial;
+            }
+            
+            _renderers[i].materials = mats;
+        }
+    }
+
+    public void ResetPlayerTexture()
+    {
+        if (_renderers == null)
+        {
+            return;
+        }
+
+        for (int i = 0; i < _renderers.Length && i < _initialMats.Count; ++i)
+        {
+            _renderers[i].materials = _initialMats[i];
+        }
+    }
+    public void SetPlayerTexture()
     {
         if (_renderers == null)
         {
@@ -613,6 +610,7 @@ public class Player : MonoBehaviour
                 }
             }
             
+            if(_initialMats.Count <= i) _initialMats.Add(mats);
             _renderers[i].materials = mats;
         }
     }
@@ -647,8 +645,13 @@ public enum PlayerEnum
 public enum BombFusingType
 {
     None = 0,
-    Chained = 1,
-    Target = 2
+    Target = 1
 }
 
-
+[Flags]
+public enum BombItems
+{
+    None = 0,
+    ChainedBombs = 1,
+    FreezeBombs = 2
+}

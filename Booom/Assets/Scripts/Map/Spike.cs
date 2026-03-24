@@ -1,18 +1,18 @@
 using UnityEngine;
 
-public class Spike : Tile
+public class Spike : SpecialTile
 {
     public override bool IsObstacle => true;
-
-    protected override void Start(){}
 
     public override void StepOnTile(Player player)
     {
         HitPlayer(player);
     }
 
-    public void HitPlayer(Player player)
+    private void HitPlayer(in Player player)
     {
+        if (Vector3.Distance(transform.position, player.transform.position) <= 0.95f) return;
+
         var position = player.transform.position;
         float playerLengthToSpikeX = transform.position.x - position.x;
         float playerLengthToSpikeZ = transform.position.z - position.z;
