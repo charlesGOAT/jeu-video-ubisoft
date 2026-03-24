@@ -49,7 +49,7 @@ public abstract class GridManagerStrategy : MonoBehaviour
     {
         CreateGrid();
         SetOwnableTiles();
-        CapturableTilesCount = _ownableTiles.Count - LobbyManager.JoinedPlayers.Count;
+        CapturableTilesCount = _ownableTiles.Count - (LobbyManager.JoinedPlayers.Count - 1);
         PositionCamera();
     }
 
