@@ -655,7 +655,6 @@ public class Player : MonoBehaviour
 
     public void DisplayPopUp(ItemType itemType, Sprite iconSprite)
     {
-        itemTextPopUpBackground.color = GameConstants.ItemsColorDict[itemType];
         itemTextPopUpText.text = itemType.ToString().AddSpacesBeforeCaps().ToUpper();
         AddIcon(itemType, iconSprite);
         
@@ -677,7 +676,6 @@ public class Player : MonoBehaviour
             return;
 
         var icon = Instantiate(itemIconPrefab, itemIconsContainer);
-        icon.color = GameConstants.ItemsColorDict[itemType];
         icon.GetComponentInChildren<Image>().sprite = sprite;
 
         _activeIcons[itemType] = icon;

@@ -34,11 +34,4 @@ public static class GameConstants
         {4, 2},
         {6, 3}  // todo : add more or tweak
     };
-    public static readonly Dictionary<ItemType, Color> ItemsColorDict = new ()
-    {
-        { ItemType.PaintBrush , Color.white },
-        { ItemType.ChainBombs , Color.white },
-        { ItemType.TargetBomb , Color.white },
-        { ItemType.FreezeBomb , Color.white },
-    };
 }
