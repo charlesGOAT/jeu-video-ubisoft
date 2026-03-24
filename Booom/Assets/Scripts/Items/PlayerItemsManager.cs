@@ -22,6 +22,7 @@ public class PlayerItemsManager : MonoBehaviour
     public void AddNewItem(Item item)
     {
         BaseItem newBaseItem = _allItems[item.ItemType];
+        newBaseItem.IconSprite = item.iconSprite;
         if (!_itemsInventory.TryAdd(item.ItemType, newBaseItem))
         {
             _itemsInventory[item.ItemType].RepickUpItem();

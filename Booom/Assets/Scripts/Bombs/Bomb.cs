@@ -9,7 +9,7 @@ public class Bomb : MonoBehaviour
     public static readonly HashSet<Vector2Int> ActiveBombs = new HashSet<Vector2Int>();
     public static readonly List<GameObject> ActiveBombsGO = new();
 
-    private float _timer = 3f;
+    private float _timer = 2f;
 
     [SerializeField]
     protected int explosionRange = 3;
@@ -76,7 +76,6 @@ public class Bomb : MonoBehaviour
     protected virtual void Start()
     {
         _bombManager = GameManager.Instance.BombManager;
-        SubscribeToCurrentTileColor();
         BombFusingStrategy.Fuse(this);
     }
 
@@ -145,6 +144,7 @@ public class Bomb : MonoBehaviour
             {
                 int tilesRemaining = range - rangeCounter;
                 PaintTilesForDirection(portalTile.GetOtherPortalPosition() + direction, direction, tilesRemaining, newTileOwner);
+                HitPlayers(explosionCoords, direction);
                 return;
             }
             
@@ -197,11 +197,10 @@ public class Bomb : MonoBehaviour
 
     public void SetBombCoordinates(Vector2Int newBombCoordinates)
     {
-        UnsubscribeFromCurrentTileColor();
         ActiveBombs.Remove(_bombCoordinates);
         _bombCoordinates = newBombCoordinates;
         ActiveBombs.Add(_bombCoordinates);
-        SubscribeToCurrentTileColor();
+        OnTileColorChanged();
     }
 
     public void NotifyExplosionSubscribers() 
@@ -211,7 +210,6 @@ public class Bomb : MonoBehaviour
 
     protected virtual void OnDestroy()
     {
-        UnsubscribeFromCurrentTileColor();
         ActiveBombs.Remove(_bombCoordinates);
         ActiveBombsGO.Remove(gameObject);
         if (_bombManager != null)
@@ -221,33 +219,15 @@ public class Bomb : MonoBehaviour
         }
     }
 
-    private void SubscribeToCurrentTileColor()
+    private void OnTileColorChanged()
     {
         Tile tile = GameManager.Instance.GridManager.GetTileAtCoordinates(_bombCoordinates);
         if (tile == null || _bombAnimation == null)
         {
             return;
         }
-
-        _subscribedTile = tile;
-        _subscribedTile.OnTileColorChanged += OnTileColorChanged;
-        OnTileColorChanged(GetCurrentTileColor(tile));
-    }
-
-    private void UnsubscribeFromCurrentTileColor()
-    {
-        if (_subscribedTile == null)
-        {
-            return;
-        }
-
-        _subscribedTile.OnTileColorChanged -= OnTileColorChanged;
-        _subscribedTile = null;
-    }
-
-    private void OnTileColorChanged(Color tileColor)
-    {
-        _bombAnimation.SetBombColor(tileColor);
+        
+        _bombAnimation.SetBombColor(GetCurrentTileColor(tile));
     }
 
     private Color GetCurrentTileColor(Tile tile)
