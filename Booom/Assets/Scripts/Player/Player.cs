@@ -272,7 +272,12 @@ public class Player : MonoBehaviour
         if (tile != null) 
         {
             tile.StepOnTile(this);
-            if(_currentTile != tile) _currentTile.RemoveHighlight(PlayerNb);
+
+            if (_currentTile != tile) 
+            {
+                _currentTile.StepOffTile(this);
+                _currentTile.RemoveHighlight(PlayerNb);
+            } 
             _currentTile = tile;
         }
         
@@ -329,16 +334,12 @@ public class Player : MonoBehaviour
         }
     }
 
-    public void OnPortal(Vector2Int playerDirection, Vector3 otherPortalPosition)
+    public void OnPortal(Vector3 otherPortalPosition)
     {
-        if (_stateMachine.CurrentState is not JumpState) 
-        {
             SoundManager.Instance.OnEnterPortal();
             _characterController.enabled = false;
             gameObject.transform.position = otherPortalPosition;
-            _stateMachine.Trigger(GameConstants.PLAYER_JUMP_TRIGGER);
             _characterController.enabled = true;
-        }
     }
 
     private Vector3 CalculateJumpForce(Vector2Int jumpDirection)
@@ -505,6 +506,7 @@ public class Player : MonoBehaviour
 
 
         _stateMachine.AddTransition<IdleState>(GameConstants.PLAYER_RUN_TRIGGER, _runState);
+        _stateMachine.AddTransition<IdleState>(GameConstants.PLAYER_JUMP_TRIGGER, _jumpState);
         _stateMachine.AddTransition<RunState>(GameConstants.PLAYER_IDLE_TRIGGER, _idleState);
         _stateMachine.AddTransition<JumpState>(GameConstants.PLAYER_IDLE_TRIGGER, _idleState);
         _stateMachine.AddTransition<JumpState>(GameConstants.PLAYER_RUN_TRIGGER, _runState);
