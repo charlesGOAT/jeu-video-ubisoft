@@ -162,11 +162,6 @@ public class SoundManager : MonoBehaviour
         bombHitPlayerSound.Play();
     }
 
-    public void OnGameEnded()
-    {
-        PlayAudioSourceMusic(victoryThemeMusic);
-    }
-
     public void OnTargetBombMoving(bool isMoving)
     {
         if(isMoving) targetBombMovingSound.Play();

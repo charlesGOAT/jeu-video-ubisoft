@@ -93,6 +93,19 @@ public static class RoundManager
             EndGameUIManager.PlayerRank[player.PlayerNb] = playerRanks[player.PlayerNb];
         }
 
+        EndGameUIManager.ShouldEndGame = true;
+        EndGameUIManager.PlayerWonGame = new(_gameWonPlayer);
+    }
+
+    public static void LoadEndRoundData()
+    {
+        foreach (Player player in Player.ActivePlayers)
+        {
+            if (player.PlayerNb == PlayerEnum.None) continue;
+            EndGameUIManager.PlayerRank[player.PlayerNb] = (int)player.PlayerNb - 1;
+        }
+
+        EndGameUIManager.NextSceneIndex = FindNextMap();
         EndGameUIManager.PlayerWonGame = new(_gameWonPlayer);
     }
 

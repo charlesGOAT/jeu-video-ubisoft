@@ -11,17 +11,24 @@ public class EndGameUIManager : MonoBehaviour
     private List<Sprite> playerImages = new();
 
     [SerializeField] 
-    private PlayerDisplay[] playerDisplays;
+    private PlayerDisplay[] playerDisplaysWithRank;
+    
+    [SerializeField] 
+    private PlayerDisplay[] playerDisplaysNoRank;
 
     [SerializeField] 
     private Sprite wonGame;
 
     public static Dictionary<PlayerEnum, int> PlayerRank = new();
     public static List<PlayerEnum> PlayerWonGame = new();
+    public static int NextSceneIndex = 0;
+    public static bool ShouldEndGame = false;
+
+    private PlayerDisplay[] _displays;
 
     private void Awake()
     {
-        playerDisplays = GetComponentsInChildren<PlayerDisplay>();
+        _displays = ShouldEndGame ? playerDisplaysWithRank : playerDisplaysNoRank;
         SetUpUI();
     }
 
@@ -35,27 +42,19 @@ public class EndGameUIManager : MonoBehaviour
         for(int i = 0; i < playerImages.Count; ++i)
         {
             PlayerEnum playerEnum = (PlayerEnum)(i + 1);
-            if (!PlayerRank.TryGetValue(playerEnum, out int rank))
-            {
-                playerDisplays[i].gameObject.SetActive(false);
-                continue;
-            }
+            if (!PlayerRank.TryGetValue(playerEnum, out int rank)) continue;
             
-            var playerDisplay = playerDisplays[rank];
+            _displays[i].gameObject.SetActive(true);
+
+            var playerDisplay = _displays[rank];
             List<Image> images = playerDisplay.images;
             images[0].sprite = playerImages[i];
 
-            for (int j = images.Count - 1; j > PlayerWonGame.Count; j--)
-            {
-                images[j].gameObject.SetActive(false);
-            }
-
-            List<int> gamesWon = PlayerWonGame.Select((x, index) => (Player: x, Index: index + 1)).Where(x => x.Player == playerEnum)
-                .Select(x => x.Index).ToList();
+            int gamesWon = PlayerWonGame.Count(x => x == playerEnum);
             
-            foreach(int gameWon in gamesWon)
+            for (int j = 1; j < gamesWon + 1; j++)
             {
-                images[gameWon].sprite = wonGame;
+                images[j].sprite = wonGame;
             }
             
             CenterIcons(playerDisplay);
@@ -66,7 +65,7 @@ public class EndGameUIManager : MonoBehaviour
 
     private void CenterActivePlayers()
     {
-        var activePlayers = playerDisplays.Where(p => p.gameObject.activeSelf).ToList();
+        var activePlayers = _displays.Where(p => p.gameObject.activeSelf).ToList();
         if (activePlayers.Count == 0) return;
 
         float playerSpacing = 500f;
@@ -85,7 +84,7 @@ public class EndGameUIManager : MonoBehaviour
         }
     }
 
-    private void CenterIcons(PlayerDisplay display)
+    private void CenterIcons(in PlayerDisplay display)
     {
         var activeIcons = display.images.Where(img => img.gameObject.activeSelf).ToList();
         if (activeIcons.Count == 0) return;
@@ -109,12 +108,14 @@ public class EndGameUIManager : MonoBehaviour
     private IEnumerator EndGame()
     {
         yield return new WaitForSeconds(6f);
-        SceneManager.LoadScene("Menu");
+        if (ShouldEndGame) SceneManager.LoadScene("Menu");
+        else SceneManager.LoadScene(NextSceneIndex);
     }
     
     private void OnDestroy()
     {
         PlayerRank.Clear();
         PlayerWonGame.Clear();
+        ShouldEndGame = false;
     }
 }

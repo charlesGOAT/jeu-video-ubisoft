@@ -225,7 +225,6 @@ public class GameManager : MonoBehaviour
         if (RoundManager.ShouldEndGame(winner))
         {
             StartCoroutine(EndGameCoroutine(winner));
-            SoundManager.Instance.OnGameEnded();
         }
         else
         {
@@ -250,17 +249,19 @@ public class GameManager : MonoBehaviour
     private IEnumerator EndRoundCoroutine(PlayerEnum winner)
     {
         Player.ActivePlayers.ForEach(x => x.DisableInputActions());
+        RoundManager.LoadEndRoundData();
         SoundManager.Instance.OnColorAlternate();
         yield return StartCoroutine(MakeWinnerColorBlink(winner));
         Player.ActivePlayers.ForEach(x => x.EnableInputActions());
         NewRound();
-        SceneManager.LoadScene(RoundManager.FindNextMap());
+        SceneManager.LoadScene("EndGame");
     }
 
     private IEnumerator EndGameCoroutine(PlayerEnum winner)
     {
         Player.ActivePlayers.ForEach(x => x.DisableInputActions());
         RoundManager.LoadEndGameData();
+        SoundManager.Instance.OnColorAlternate();
         yield return StartCoroutine(MakeWinnerColorBlink(winner));
         Player.ActivePlayers.ForEach(x => x.EnableInputActions());
         CleanGame();
