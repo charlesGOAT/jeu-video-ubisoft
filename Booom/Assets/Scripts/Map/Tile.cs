@@ -52,14 +52,18 @@ public class Tile : MonoBehaviour
 
     public virtual void ChangeTileColor(PlayerEnum newOwner)
     {
+        Color tileColor = newOwner != PlayerEnum.None ? Player.PlayerColorDict[newOwner] : _neutralColor;
+
         if (CurrentTileOwner != newOwner && (!IsSpawn || _tileRenderer.material.color == _neutralColor) && !IsFrozen)
         {
             GameManager.Instance.ScoreManager.LoseTile(CurrentTileOwner, TileCoordinates);
             GameManager.Instance.ScoreManager.AcquireNewTile(newOwner, TileCoordinates);
-
-            Color tileColor = newOwner != PlayerEnum.None ? Player.PlayerColorDict[newOwner] : _neutralColor;
             _tileAnimation.AnimateTileColorChange(tileColor);
             CurrentTileOwner = newOwner;
+        }
+        else if (CurrentTileOwner == newOwner  && !IsFrozen && !IsSpawn)
+        {
+            _tileAnimation.AnimateExplosionFeedback(tileColor);
         }
     }
 
@@ -98,7 +102,7 @@ public class Tile : MonoBehaviour
     {
         ChangeTileMaterial(2, GameManager.Instance.snowflakeMaterial);
     }
-    
+
     private void RemoveSnowflakeMaterial()
     {
         ChangeTileMaterial(2, GameManager.Instance.transparentMat);
@@ -116,22 +120,26 @@ public class Tile : MonoBehaviour
                     : Player.PlayerColorDict[player];
             }
             else newColor += _colorAdjust;
-                
+
             _highlightMat.SetColor("_BorderColor", newColor);
             ChangeTileMaterial(3, _highlightMat);
         }
-        
+
         if (_currentPlayersOnTile.Contains(player)) return;
         _currentPlayersOnTile.Add(player);
     }
-    
+
     public void RemoveHighlight(PlayerEnum player)
     {
         _currentPlayersOnTile.Remove(player);
 
-        if(_currentPlayersOnTile.Count == 0)
+        if (_currentPlayersOnTile.Count == 0)
             ChangeTileMaterial(3, GameManager.Instance.transparentMat);
         else
             HighlightTile(_currentPlayersOnTile[0], true);
+    }
+
+    public virtual void StepOffTile(Player player)
+    {
     }
 }

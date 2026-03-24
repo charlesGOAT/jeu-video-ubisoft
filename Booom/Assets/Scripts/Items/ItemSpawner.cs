@@ -117,7 +117,7 @@ public class ItemSpawner : MonoBehaviour
 
     protected IEnumerator ManageShadow(Vector3 pos)
     { 
-        GameObject shadowTemp = Instantiate(shadow, pos, Quaternion.identity);
+        GameObject shadowTemp = Instantiate(shadow, pos + Vector3.up, Quaternion.identity);
         yield return new WaitForSeconds(2f);  // todo tweak
         Destroy(shadowTemp);
     }
@@ -126,7 +126,7 @@ public class ItemSpawner : MonoBehaviour
     {
         Vector2Int posOnMap = GridManagerStrategy.WorldToGridCoordinates(pos);
         
-        Item item = Instantiate(itemPrefab, pos, Quaternion.identity);
+        Item item = Instantiate(itemPrefab, pos + Vector3.up, Quaternion.identity);
         item.posOnMap = posOnMap;
         
         GameManager.Instance.GridManager.AddItemOnGrid(item);
