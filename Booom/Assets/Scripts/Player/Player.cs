@@ -176,13 +176,13 @@ public class Player : MonoBehaviour
     private void OnNbKillsChanged()
     {
         bool shouldDisplay = false;
-        if (GameConstants.SpeedBoostPerKill.TryGetValue(NbKills, out float newSpeedBoost) && GameManager.Instance.IsBonusKills)
+        if (GameConstants.SpeedBoostPerKill.TryGetValue(NbKills, out float newSpeedBoost) && GameManager.Instance.IsBonusSpeed)
         {
             _elimsSpeedBoost = newSpeedBoost;
             SoundManager.Instance.OnNewKillStreak();
             shouldDisplay = true;
         }
-        if (GameConstants.RangeBoostPerKill.TryGetValue(NbKills, out int newRangeBoost) && GameManager.Instance.IsBonusKills)
+        if (GameConstants.RangeBoostPerKill.TryGetValue(NbKills, out int newRangeBoost) && !GameManager.Instance.IsBonusSpeed)
         {
             _elimsRangeBoost = newRangeBoost;
             SoundManager.Instance.OnNewKillStreak();
@@ -399,11 +399,11 @@ public class Player : MonoBehaviour
     {
         Vector2 curMoveInput = _moveInput.normalized;
 
-        float speedBoost = CheckIfOnOwnColor() ? GameManager.Instance.ColorBoost : (CheckIfOnEnemyTerritory() ? GameManager.Instance.ColorDebuff : 1);
+        float boost = CheckIfOnOwnColor() ? GameManager.Instance.ColorBoost : (CheckIfOnEnemyTerritory() ? GameManager.Instance.ColorDebuff : 1);
 
-        speedBoost *= GameManager.Instance.IsBonusKills ? _elimsSpeedBoost : 1;
+        boost *= GameManager.Instance.IsBonusSpeed ? _elimsSpeedBoost : 1;
 
-        Vector3 move = new Vector3(curMoveInput.y, 0, -curMoveInput.x) * (speed * speedBoost);
+        Vector3 move = new Vector3(curMoveInput.y, 0, -curMoveInput.x) * (speed * boost);
         float tempMove = ApplyGravity(ref _verticalVelocity);
 
         UpdatePlayerYRotation(curMoveInput);

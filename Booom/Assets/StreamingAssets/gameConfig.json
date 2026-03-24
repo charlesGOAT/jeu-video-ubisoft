@@ -1,6 +1,6 @@
 {
   "IsSpreadingMode": true,
-  "IsBonusKills": true,
+  "IsBonusSpeed": true,
   "SpawnMode": 1,
   "IsDropFromSky": false,
   "HighlightOwnColor": false,
