@@ -385,6 +385,9 @@ public class Player : MonoBehaviour
         float tempMove = ApplyGravity(ref _verticalVelocity);
 
         UpdatePlayerYRotation(curMoveInput);
+        _characterController.enabled = false;
+        _characterController.transform.position = transform.position;
+        _characterController.enabled = true;
         _characterController.Move(move * Time.deltaTime);
         _characterController.Move(Vector3.down * Math.Abs(tempMove));
         
