@@ -9,6 +9,7 @@ using UnityEngine.UI;
 public delegate void MoveCalledEventHandler();
 public delegate void PlaceBomb();
 public delegate void PlaceBombSuccessFul();
+public delegate void PlaceBombSuccessFulChained(ItemType itemType);
 
 [RequireComponent(typeof(PlayerItemsManager))]
 [RequireComponent(typeof(PlayerInput))]
@@ -124,6 +125,7 @@ public class Player : MonoBehaviour
     public event MoveCalledEventHandler OnMoveFunctionCalled;
     public event PlaceBomb OnPlaceBomb;
     public event PlaceBombSuccessFul OnPlaceBombSuccessful;
+    public event PlaceBombSuccessFulChained OnPlaceBombSuccessfulChained;
 
     private void Awake()
     {
@@ -267,6 +269,8 @@ public class Player : MonoBehaviour
                     this, _bombFusingStrategies[(int)BombFusingType], NextBombBombItems))
             {
                 Animator.SetTrigger("DropBomb");
+                OnPlaceBombSuccessfulChained?.Invoke(ItemType.ChainBombs);
+                OnPlaceBombSuccessfulChained -= RemoveItemPopUp;
                 OnPlaceBombSuccessful?.Invoke();
             }
         }
