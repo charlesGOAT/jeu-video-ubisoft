@@ -39,12 +39,12 @@ public class GameManager : MonoBehaviour
     public RuntimeConfigData RuntimeConfig { get; private set; }
     
     [SerializeField]
-    private bool _isBonusSpeed = false;
+    private bool _isBonusKills;
 
     [SerializeField] 
     public int FrozenTileDuration = 30;
 
-    public bool IsBonusSpeed => _isBonusSpeed;
+    public bool IsBonusKills => _isBonusKills;
 
     public GridManagerStrategy GridManager { get; private set; }
     public BombManager BombManager { get; private set; }
@@ -137,7 +137,7 @@ public class GameManager : MonoBehaviour
     {
         RuntimeConfig = RuntimeConfigLoader.GetConfig();
         _isSpreadingMode = RuntimeConfig.IsSpreadingMode;
-        _isBonusSpeed = RuntimeConfig.IsBonusSpeed;
+        _isBonusKills = RuntimeConfig.IsBonusKills;
         _gameDuration =  RuntimeConfig.GameDuration;
         FrozenTileDuration = RuntimeConfig.FrozenTileDuration;
         ColorBoost = RuntimeConfig.ColorBoost;

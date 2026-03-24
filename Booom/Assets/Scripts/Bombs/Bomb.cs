@@ -50,7 +50,7 @@ public class Bomb : MonoBehaviour
         _bombCoordinates = GridManagerStrategy.WorldToGridCoordinates(trans.position);
         ActiveBombs.Add(_bombCoordinates);
 
-        if (!GameManager.Instance.IsBonusSpeed && AssociatedPlayer != PlayerEnum.None)
+        if (!GameManager.Instance.IsBonusKills && AssociatedPlayer != PlayerEnum.None)
         {
             explosionRange += Player.ActivePlayers[(int)AssociatedPlayer - 1].ElimsRangeBoost;
         }
