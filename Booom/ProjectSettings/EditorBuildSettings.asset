@@ -15,6 +15,9 @@ EditorBuildSettings:
     path: Assets/Scenes/Menu.unity
     guid: 3e976447de8f6db4dbaffd82fa71ad1d
   - enabled: 1
+    path: Assets/Scenes/Tuto.unity
+    guid: ef70d3f7edd508d42b4e7cb075b012f6
+  - enabled: 1
     path: Assets/Scenes/MicroBattle.unity
     guid: fe1cb8adde85059448cec4b481671f6a
   - enabled: 1
