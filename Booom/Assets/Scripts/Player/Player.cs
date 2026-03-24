@@ -9,6 +9,7 @@ using UnityEngine.UI;
 public delegate void MoveCalledEventHandler();
 public delegate void PlaceBomb();
 public delegate void PlaceBombSuccessFul();
+public delegate void PlaceBombSuccessFulChained(ItemType itemType);
 
 [RequireComponent(typeof(PlayerItemsManager))]
 [RequireComponent(typeof(PlayerInput))]
@@ -69,6 +70,7 @@ public class Player : MonoBehaviour
     private List<Material> playerMaterials;
     private Dictionary<int, float> _speedBoostPerKill = GameConstants.SpeedBoostPerKill;
     private Dictionary<int, int> _rangeBoostPerKill = GameConstants.RangeBoostPerKill;
+    private float _airStateDuration = GameConstants.AIR_STATE_DURATION;
 
     private PlayerInput _playerInput;
     private Renderer[] _renderers;
@@ -124,6 +126,12 @@ public class Player : MonoBehaviour
     public event MoveCalledEventHandler OnMoveFunctionCalled;
     public event PlaceBomb OnPlaceBomb;
     public event PlaceBombSuccessFul OnPlaceBombSuccessful;
+    public event PlaceBombSuccessFulChained OnPlaceBombSuccessfulChained;
+
+    public const float JUMP_HEIGHT_OFFSET = 2.5f;
+    public const float JUMP_NUMBER_OF_TILES = 2.7f;
+    public const float PLAYER_GRAVITY = -36.0f;
+
 
     private void Awake()
     {
@@ -154,6 +162,7 @@ public class Player : MonoBehaviour
         _rangeBoostPerKill = runtimeConfig.RangeBoostPerKill;
         _speedBoostPerKill = runtimeConfig.SpeedBoostPerKill;
         _popUpDuration = runtimeConfig.PopUpDuration;
+        _airStateDuration = runtimeConfig.AirStateDuration;
     }
 
     private void CheckStartConditions()
@@ -167,13 +176,13 @@ public class Player : MonoBehaviour
     private void OnNbKillsChanged()
     {
         bool shouldDisplay = false;
-        if (GameConstants.SpeedBoostPerKill.TryGetValue(NbKills, out float newSpeedBoost))
+        if (GameConstants.SpeedBoostPerKill.TryGetValue(NbKills, out float newSpeedBoost) && GameManager.Instance.IsBonusSpeed)
         {
             _elimsSpeedBoost = newSpeedBoost;
             SoundManager.Instance.OnNewKillStreak();
             shouldDisplay = true;
         }
-        if (GameConstants.RangeBoostPerKill.TryGetValue(NbKills, out int newRangeBoost))
+        if (GameConstants.RangeBoostPerKill.TryGetValue(NbKills, out int newRangeBoost) && !GameManager.Instance.IsBonusSpeed)
         {
             _elimsRangeBoost = newRangeBoost;
             SoundManager.Instance.OnNewKillStreak();
@@ -267,6 +276,8 @@ public class Player : MonoBehaviour
                     this, _bombFusingStrategies[(int)BombFusingType], NextBombBombItems))
             {
                 Animator.SetTrigger("DropBomb");
+                OnPlaceBombSuccessfulChained?.Invoke(ItemType.ChainBombs);
+                OnPlaceBombSuccessfulChained -= RemoveItemPopUp;
                 OnPlaceBombSuccessful?.Invoke();
             }
         }
@@ -283,7 +294,12 @@ public class Player : MonoBehaviour
         if (tile != null) 
         {
             tile.StepOnTile(this);
-            if(_currentTile != tile) _currentTile.RemoveHighlight(PlayerNb);
+
+            if (_currentTile != tile) 
+            {
+                _currentTile.StepOffTile(this);
+                _currentTile.RemoveHighlight(PlayerNb);
+            } 
             _currentTile = tile;
         }
         
@@ -340,44 +356,26 @@ public class Player : MonoBehaviour
         }
     }
 
-    public void OnPortal(Vector2Int playerDirection, Vector3 otherPortalPosition)
+    public void OnPortal(Vector3 otherPortalPosition)
     {
-        if (_stateMachine.CurrentState is not JumpState) 
-        {
             SoundManager.Instance.OnEnterPortal();
             _characterController.enabled = false;
             gameObject.transform.position = otherPortalPosition;
-            _stateMachine.Trigger(GameConstants.PLAYER_JUMP_TRIGGER);
             _characterController.enabled = true;
-        }
     }
 
     private Vector3 CalculateJumpForce(Vector2Int jumpDirection)
     {
         //Formule pour trouver la vitesse initiale quand le sommet du saut est a (Obstacle.ObstacleHeight / 2) + 1 et au demi du trajet
         //position pour gravity 0.5*a*t^2
-        float posForGravity = -(Physics.gravity.y / 2) * Mathf.Pow(GameConstants.AIR_STATE_DURATION / 2, 2);
+        float posForGravity = -(PLAYER_GRAVITY / 2) * Mathf.Pow(_airStateDuration / 2, 2);
 
         //position pour apogee du saut
-        float jumpHeight = (Obstacle.ObstacleHeight) + GameConstants.JUMP_HEIGHT_OFFSET;
+        float jumpHeight = (Obstacle.ObstacleHeight) + JUMP_HEIGHT_OFFSET;
 
-        float velocityY = posForGravity + jumpHeight / (GameConstants.AIR_STATE_DURATION / 2);
+        float velocityY = (posForGravity + jumpHeight) / (_airStateDuration / 2);
 
-        float velocityX = (Tile.TileLength * GameConstants.JUMP_NUMBER_OF_TILES) /(GameConstants.AIR_STATE_DURATION);
-        Vector3 jumpInitialVelocity = new(velocityX * jumpDirection.x, velocityY, jumpDirection.y * velocityX);
-
-        return jumpInitialVelocity;
-    }
-
-    private Vector3 CalculatePortalForce(Vector2Int jumpDirection)
-    {
-        //Formule pour trouver la vitesse initiale quand le sommet du saut est a (Obstacle.ObstacleHeight / 2) + 1 et au demi du trajet
-        //position pour gravity 0.5*a*t^2
-        float posForGravity = -(Physics.gravity.y / 2) * Mathf.Pow(GameConstants.PORTAL_AIR_DURATION / 2, 2);
-
-        float velocityY = (posForGravity + GameConstants.PORTAL_JUMP_HEIGHT) / (GameConstants.PORTAL_AIR_DURATION / 2);
-
-        float velocityX = Tile.TileLength / GameConstants.PORTAL_AIR_DURATION;
+        float velocityX = (Tile.TileLength * JUMP_NUMBER_OF_TILES) /(_airStateDuration);
         Vector3 jumpInitialVelocity = new(velocityX * jumpDirection.x, velocityY, jumpDirection.y * velocityX);
 
         return jumpInitialVelocity;
@@ -410,6 +408,9 @@ public class Player : MonoBehaviour
         float tempMove = ApplyGravity(ref _verticalVelocity);
 
         UpdatePlayerYRotation(curMoveInput);
+        _characterController.enabled = false;
+        _characterController.transform.position = transform.position;
+        _characterController.enabled = true;
         _characterController.Move(move * Time.deltaTime);
         _characterController.Move(Vector3.down * Math.Abs(tempMove));
         
@@ -430,8 +431,8 @@ public class Player : MonoBehaviour
         else
         {
             //calcul de la gravité par rapport a la position = 0.5*at^2 + vt
-            tempMove = (0.5f * Physics.gravity.y * Time.deltaTime * Time.deltaTime) + (currentVerticalVelocity * Time.deltaTime);
-            currentVerticalVelocity += Physics.gravity.y * Time.deltaTime;
+            tempMove = (0.5f * PLAYER_GRAVITY * Time.deltaTime * Time.deltaTime) + (currentVerticalVelocity * Time.deltaTime);
+            currentVerticalVelocity += PLAYER_GRAVITY * Time.deltaTime;
         }
 
         return tempMove;
@@ -527,6 +528,7 @@ public class Player : MonoBehaviour
 
 
         _stateMachine.AddTransition<IdleState>(GameConstants.PLAYER_RUN_TRIGGER, _runState);
+        _stateMachine.AddTransition<IdleState>(GameConstants.PLAYER_JUMP_TRIGGER, _jumpState);
         _stateMachine.AddTransition<RunState>(GameConstants.PLAYER_IDLE_TRIGGER, _idleState);
         _stateMachine.AddTransition<JumpState>(GameConstants.PLAYER_IDLE_TRIGGER, _idleState);
         _stateMachine.AddTransition<JumpState>(GameConstants.PLAYER_RUN_TRIGGER, _runState);
@@ -655,7 +657,6 @@ public class Player : MonoBehaviour
 
     public void DisplayPopUp(ItemType itemType, Sprite iconSprite)
     {
-        itemTextPopUpBackground.color = GameConstants.ItemsColorDict[itemType];
         itemTextPopUpText.text = itemType.ToString().AddSpacesBeforeCaps().ToUpper();
         AddIcon(itemType, iconSprite);
         
@@ -677,7 +678,6 @@ public class Player : MonoBehaviour
             return;
 
         var icon = Instantiate(itemIconPrefab, itemIconsContainer);
-        icon.color = GameConstants.ItemsColorDict[itemType];
         icon.GetComponentInChildren<Image>().sprite = sprite;
 
         _activeIcons[itemType] = icon;

@@ -2,11 +2,11 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem.UI;
+using UnityEngine.InputSystem.Users;
 
 public delegate void LobbyPlayerCountChanged(int playerCount);
 
@@ -43,6 +43,8 @@ public class LobbyManager : MonoBehaviour
         _inputManager.onPlayerJoined += OnPlayerJoined;
         _inputManager.onPlayerLeft += OnPlayerLeft;
         SceneManager.sceneLoaded += OnSceneLoaded;
+
+        InputUser.onChange += OnInputUserChange;
     }
 
     private void OnDisable()
@@ -50,6 +52,8 @@ public class LobbyManager : MonoBehaviour
         _inputManager.onPlayerJoined -= OnPlayerJoined;
         _inputManager.onPlayerLeft -= OnPlayerLeft;
         SceneManager.sceneLoaded -= OnSceneLoaded;
+        
+        InputUser.onChange -= OnInputUserChange;
     }
 
     private void Start()
@@ -140,6 +144,20 @@ public class LobbyManager : MonoBehaviour
         }
         
         OnLobbyPlayerCountChanged?.Invoke(intPlayerEnum);
+    }
+    
+    private void OnInputUserChange(InputUser user, InputUserChange change, InputDevice device)
+    {
+        if (SceneManager.GetActiveScene().name != "Menu") return;
+        
+        if (change == InputUserChange.DeviceLost)
+        {
+            PlayerInput pi = PlayerInput.all.FirstOrDefault(p => p.user == user);
+            if (pi != null)
+            {
+                Destroy(pi.gameObject, 0.1f);
+            }
+        }
     }
 
     private void GiveUIControl(PlayerInput playerInput, bool firstPlayer = false)

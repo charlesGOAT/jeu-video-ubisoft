@@ -12,5 +12,6 @@ public class ChainBombsItem : BombItem
     protected override void FinishUsingItemSpecific(bool hasDied = false)
     {
         _associatedPlayer.NextBombBombItems &= ~BombItems.ChainedBombs;
+        if(!hasDied) _associatedPlayer.OnPlaceBombSuccessfulChained += _associatedPlayer.RemoveItemPopUp;
     }
 }

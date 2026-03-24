@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Portal : SpecialTile
@@ -5,10 +6,23 @@ public class Portal : SpecialTile
     [SerializeField]
     private Portal otherPortal;
 
+    private Dictionary<PlayerEnum, bool> _hasTeleported = new Dictionary<PlayerEnum, bool>()
+    {
+        { PlayerEnum.Player1, false },
+        { PlayerEnum.Player2, false },
+        { PlayerEnum.Player3, false },
+        { PlayerEnum.Player4, false }
+    };
+
     public override bool IsObstacle => true;
-    
+
     public override void StepOnTile(Player player)
     {
+        if (_hasTeleported[player.PlayerNb])
+        {
+            return;
+        }
+
         TeleportToOtherPortal(player);
     }
 
@@ -19,18 +33,21 @@ public class Portal : SpecialTile
             return;
         }
 
-        float playerLengthToPortalX = transform.position.x - player.transform.position.x;
-        float playerLengthToPortalZ = transform.position.z - player.transform.position.z;
-        
-        Vector2Int portalDir = Vector2Int.zero;
+        otherPortal.OnTeleport(player.PlayerNb);
 
-        if (Mathf.Abs(playerLengthToPortalX) > Mathf.Abs(playerLengthToPortalZ))
-            portalDir = playerLengthToPortalX >= 0 ? Vector2Int.right : Vector2Int.left;
-        else
-            portalDir = playerLengthToPortalZ >= 0 ? Vector2Int.up : Vector2Int.down;
-        
-        player.OnPortal(portalDir, otherPortal.transform.position);
+        player.OnPortal(otherPortal.transform.position);
     }
+
+    public void OnTeleport(PlayerEnum playerEnum) 
+    {
+        _hasTeleported[playerEnum] = true;
+    }
+
+    public override void StepOffTile(Player player) 
+    {
+        _hasTeleported[player.PlayerNb] = false;
+    }
+
 
     public Vector2Int GetOtherPortalPosition() => otherPortal.TileCoordinates;
     public Vector2 GetOtherPortalWorldPosition() => new Vector2(otherPortal.transform.position.x,otherPortal.transform.position.z);
