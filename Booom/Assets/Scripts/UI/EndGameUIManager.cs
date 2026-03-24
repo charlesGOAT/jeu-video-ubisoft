@@ -27,9 +27,6 @@ public class EndGameUIManager : MonoBehaviour
 
     private void Start()
     {
-        //todo : S'assurer que ça joue le endGameMusic
-        //SetUpUI();
-
         StartCoroutine(EndGame());
     }
 
