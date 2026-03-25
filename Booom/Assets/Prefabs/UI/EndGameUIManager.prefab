@@ -2011,9 +2011,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5994645701077667133, guid: 4d195cfdaecdc0b4c87c9efd3422cd4d, type: 3}
       propertyPath: m_text
-      value: '4th
-
-'
+      value: '4th'
       objectReference: {fileID: 0}
     - target: {fileID: 5994645701077667133, guid: 4d195cfdaecdc0b4c87c9efd3422cd4d, type: 3}
       propertyPath: m_fontSize

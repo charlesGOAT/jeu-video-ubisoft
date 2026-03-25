@@ -477,7 +477,7 @@ public class Player : MonoBehaviour
     
     private void OnTriggerExit(Collider other)
     {
-        if (!other.tag.Equals("Bomb") || !other.transform.parent.TryGetComponent(out Bomb bomb)  || bomb.HasColliderBeenRestored) return;
+        if (!other.tag.Equals("Bomb") || !other.transform.parent.TryGetComponent(out Bomb bomb) || bomb.HasColliderBeenRestored) return;
         bomb.RestoreColliderLayer();
     }
 
