@@ -39,6 +39,8 @@ public class GameUIManager : MonoBehaviour
     private readonly Dictionary<PlayerEnum, ScorePlayer> _scorePerPlayer = new ();
     private readonly List<KeyValuePair<PlayerEnum, ScorePlayer>> _sortedPlayerScores = new();
 
+    private bool _tutoEnded;
+
     private void OnDestroy()
     {
         if (SceneManager.GetActiveScene().name != "Tuto")
@@ -83,8 +85,9 @@ public class GameUIManager : MonoBehaviour
         
         _playersTutoDone.Add(player);
 
-        if (_playersTutoDone.Count == LobbyManager.JoinedPlayers.Count)
+        if (_playersTutoDone.Count == LobbyManager.JoinedPlayers.Count && !_tutoEnded)
         {
+            _tutoEnded = true;
             StartCoroutine(EndTutoCoroutine());
         }
     }
@@ -102,6 +105,8 @@ public class GameUIManager : MonoBehaviour
 
         tutoText.text = "FIGHT!";
         yield return new WaitForSeconds(1f);
+
+        GameManager.Instance.NewRound();
 
         SceneManager.LoadScene(RoundManager.FindNextMap());
     }

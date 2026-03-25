@@ -295,7 +295,7 @@ public class GameManager : MonoBehaviour
         RoundManager.CleanGame();
     }
 
-    private void NewRound()
+    public void NewRound()
     {
         Bomb.ActiveBombs.Clear();
         Player.ActivePlayers.Clear();

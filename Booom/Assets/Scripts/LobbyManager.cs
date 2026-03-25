@@ -22,6 +22,7 @@ public class LobbyManager : MonoBehaviour
     public static readonly Dictionary<PlayerEnum, PlayerInput> JoinedPlayers = new ();
 
     public static bool ItemsActivated = true;
+    public static bool TutorialActivated = true;
 
     private PlayerInputManager _inputManager;
 

@@ -15,7 +15,6 @@ public class MenuUIManager : MonoBehaviour
     public bool isNotMainMenu;
     
     private LobbyManager _lobbyManager;
-    private bool _tutorialActivated = true;
     
     private void Start()
     {
@@ -58,7 +57,7 @@ public class MenuUIManager : MonoBehaviour
     {
         if (LobbyManager.JoinedPlayers.Count > 1)
         {
-            int mapIndex = _tutorialActivated ? 1 : RoundManager.FindNextMap();
+            int mapIndex = LobbyManager.TutorialActivated ? 1 : RoundManager.FindNextMap();
             _lobbyManager.GameStarted(mapIndex);
         }
         else
@@ -79,6 +78,6 @@ public class MenuUIManager : MonoBehaviour
     
     public void ToggleTuto()
     {
-        _tutorialActivated = !_tutorialActivated;
+        LobbyManager.TutorialActivated = !LobbyManager.TutorialActivated;
     }
 }
