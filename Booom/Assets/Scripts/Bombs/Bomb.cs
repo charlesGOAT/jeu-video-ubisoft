@@ -25,7 +25,6 @@ public class Bomb : MonoBehaviour
 
     public event OnExplode OnExplode;
 
-    public bool IsTransparentBomb { private get; set; }
     public bool IsFreezeBomb { private get; set; }
 
     private Collider _colliderComp;
@@ -76,6 +75,7 @@ public class Bomb : MonoBehaviour
     protected virtual void Start()
     {
         _bombManager = GameManager.Instance.BombManager;
+        SubscribeToCurrentTileColor();
         BombFusingStrategy.Fuse(this);
     }
 
@@ -197,10 +197,11 @@ public class Bomb : MonoBehaviour
 
     public void SetBombCoordinates(Vector2Int newBombCoordinates)
     {
+        UnsubscribeFromCurrentTileColor();
         ActiveBombs.Remove(_bombCoordinates);
         _bombCoordinates = newBombCoordinates;
         ActiveBombs.Add(_bombCoordinates);
-        OnTileColorChanged();
+        SubscribeToCurrentTileColor();
     }
 
     public void NotifyExplosionSubscribers() 
@@ -210,6 +211,7 @@ public class Bomb : MonoBehaviour
 
     protected virtual void OnDestroy()
     {
+        UnsubscribeFromCurrentTileColor();
         ActiveBombs.Remove(_bombCoordinates);
         ActiveBombsGO.Remove(gameObject);
         if (_bombManager != null)
@@ -219,28 +221,40 @@ public class Bomb : MonoBehaviour
         }
     }
 
-    private void OnTileColorChanged()
+    private void SubscribeToCurrentTileColor()
     {
         Tile tile = GameManager.Instance.GridManager.GetTileAtCoordinates(_bombCoordinates);
         if (tile == null || _bombAnimation == null)
         {
             return;
         }
-        
-        _bombAnimation.SetBombColor(GetCurrentTileColor(tile));
+
+        _subscribedTile = tile;
+        _subscribedTile.OnTileColorChanged += OnTileColorChanged;
+        OnTileColorChanged(GetCurrentTileColor(tile));
+    }
+
+    private void UnsubscribeFromCurrentTileColor()
+    {
+        if (_subscribedTile == null)
+        {
+            return;
+        }
+
+        _subscribedTile.OnTileColorChanged -= OnTileColorChanged;
+        _subscribedTile = null;
+    }
+
+    private void OnTileColorChanged(Color tileColor)
+    {
+        _bombAnimation.SetBombColor(tileColor);
     }
 
     private Color GetCurrentTileColor(Tile tile)
     {
-        return tile.CurrentTileOwner != PlayerEnum.None ? Player.PlayerColorDict[tile.CurrentTileOwner] : GetNeutralTileColor(tile);
+        return tile.CurrentTileOwner != PlayerEnum.None ? Player.PlayerColorDict[tile.CurrentTileOwner] : tile.NeutralColor;
     }
 
-    private static Color GetNeutralTileColor(Tile tile)
-    {
-        Renderer tileRenderer = tile.GetComponentInChildren<Renderer>();
-        return tileRenderer != null ? tileRenderer.material.color : Color.white;
-    }
-    
     private void OnCollisionEnter(Collision collision)
     {
         if (!collision.collider.tag.Equals("Player") ||
