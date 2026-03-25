@@ -9598,7 +9598,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5771082657779212411, guid: 0d602448bd1f8d44793a5fc9f674005b, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6345911827153402127, guid: 0d602448bd1f8d44793a5fc9f674005b, type: 3}
       propertyPath: tutoText
