@@ -15,6 +15,7 @@ public class MenuUIManager : MonoBehaviour
     public bool isNotMainMenu;
     
     private LobbyManager _lobbyManager;
+    private bool _tutorialActivated = true;
     
     private void Start()
     {
@@ -56,7 +57,10 @@ public class MenuUIManager : MonoBehaviour
     public void PlayGame()
     {
         if (LobbyManager.JoinedPlayers.Count > 1)
-            _lobbyManager.GameStarted(RoundManager.FindNextMap());
+        {
+            int mapIndex = _tutorialActivated ? 1 : RoundManager.FindNextMap();
+            _lobbyManager.GameStarted(mapIndex);
+        }
         else
             StartCoroutine(ReselectButton());
     }
@@ -71,5 +75,10 @@ public class MenuUIManager : MonoBehaviour
     public void ToggleItems()
     {
         LobbyManager.ItemsActivated = !LobbyManager.ItemsActivated;
+    }
+    
+    public void ToggleTuto()
+    {
+        _tutorialActivated = !_tutorialActivated;
     }
 }

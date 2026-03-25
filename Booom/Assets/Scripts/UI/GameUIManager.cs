@@ -1,9 +1,8 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class GameUIManager : MonoBehaviour
@@ -31,14 +30,21 @@ public class GameUIManager : MonoBehaviour
     
     [SerializeField]
     private TMP_Text winnerText;
-
-    private readonly Dictionary<PlayerEnum, ScorePlayer> _scorePerPlayer = new ();
     
+    [SerializeField]
+    private TMP_Text tutoText;
+
+    private readonly HashSet<PlayerEnum> _playersTutoDone = new();
+    
+    private readonly Dictionary<PlayerEnum, ScorePlayer> _scorePerPlayer = new ();
     private readonly List<KeyValuePair<PlayerEnum, ScorePlayer>> _sortedPlayerScores = new();
 
     private void OnDestroy()
     {
-        GameManager.Instance.ScoreManager.OnScoreChanged -= RefreshScore;
+        if (SceneManager.GetActiveScene().name != "Tuto")
+            GameManager.Instance.ScoreManager.OnScoreChanged -= RefreshScore;
+        else
+            GameManager.Instance.ScoreManager.OnScoreChanged -= CheckEndTuto;
     }
 
     private void Start()
@@ -48,8 +54,15 @@ public class GameUIManager : MonoBehaviour
         bombType.text = GameManager.Instance.EventManager.CurrentBombType.ToString().AddSpacesBeforeCaps();
         leaderboard.text = "Number of tiles owned";
 
-        GameManager.Instance.ScoreManager.OnScoreChanged += RefreshScore;
-        GameManager.Instance.StartTimer();
+        if (SceneManager.GetActiveScene().name != "Tuto")
+        {
+            GameManager.Instance.ScoreManager.OnScoreChanged += RefreshScore;
+            GameManager.Instance.StartTimer();
+        }
+        else
+        {
+            GameManager.Instance.ScoreManager.OnScoreChanged += CheckEndTuto;
+        }
     }
 
     public void CreateScorePlayer(PlayerEnum playerEnum)
@@ -62,6 +75,35 @@ public class GameUIManager : MonoBehaviour
         _scorePerPlayer[playerEnum] = scorePlayer;
     
         SortLeaderboard();
+    }
+
+    private void CheckEndTuto(PlayerEnum player, int score)
+    {
+        if (player == PlayerEnum.None || score <= 1) return;
+        
+        _playersTutoDone.Add(player);
+
+        if (_playersTutoDone.Count == LobbyManager.JoinedPlayers.Count)
+        {
+            StartCoroutine(EndTutoCoroutine());
+        }
+    }
+    
+    private IEnumerator EndTutoCoroutine()
+    {
+        int countdown = 5;
+
+        while (countdown > 0)
+        {
+            tutoText.text = $"GET READY TO FIGHT IN {countdown}...";
+            yield return new WaitForSeconds(1f);
+            countdown--;
+        }
+
+        tutoText.text = "FIGHT!";
+        yield return new WaitForSeconds(1f);
+
+        SceneManager.LoadScene(RoundManager.FindNextMap());
     }
 
     private void RefreshScore(PlayerEnum player, int score)
