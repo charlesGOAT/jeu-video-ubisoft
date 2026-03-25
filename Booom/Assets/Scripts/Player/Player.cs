@@ -343,8 +343,10 @@ public class Player : MonoBehaviour
         IsImmune = true;
         _actualImmuneTimer = immuneTimer;
 
-        playerItemsManager.ResetInventory();
+        ResetInventory();
     }
+
+    public void ResetInventory() => playerItemsManager.ResetInventory();
 
     public void OnJump(Vector2Int jumpDirection) 
     {

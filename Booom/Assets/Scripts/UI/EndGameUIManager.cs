@@ -56,7 +56,10 @@ public class EndGameUIManager : MonoBehaviour
             {
                 images[j].sprite = wonGame;
             }
+            
+            CenterIcons(playerDisplay);
         }
+        
         CenterActivePlayers();
     }
 
@@ -65,7 +68,7 @@ public class EndGameUIManager : MonoBehaviour
         var activePlayers = _displays.Where(p => p.gameObject.activeSelf).ToList();
         if (activePlayers.Count == 0) return;
 
-        float playerSpacing = 450f;
+        float playerSpacing = 500f;
         float totalPlayerWidth = (activePlayers.Count - 1) * playerSpacing;
         float playerStartX = -totalPlayerWidth / 2f;
 
@@ -81,7 +84,7 @@ public class EndGameUIManager : MonoBehaviour
         }
     }
 
-    private void CenterIcons(PlayerDisplay display)
+    private void CenterIcons(in PlayerDisplay display)
     {
         var activeIcons = display.images.Where(img => img.gameObject.activeSelf).ToList();
         if (activeIcons.Count == 0) return;
