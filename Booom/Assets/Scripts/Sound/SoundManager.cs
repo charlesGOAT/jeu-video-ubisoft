@@ -72,6 +72,7 @@ public class SoundManager : MonoBehaviour
     private static bool? _isInMenu = null;
 
     private bool IsSceneMenu(in Scene scene) => scene.name.Contains("menu", StringComparison.OrdinalIgnoreCase);
+    private bool IsSceneEndGame(in Scene scene) => scene.name.Contains("EndGame", StringComparison.OrdinalIgnoreCase);
 
     public static SoundManager Instance { get; private set; }
     
@@ -161,11 +162,6 @@ public class SoundManager : MonoBehaviour
         bombHitPlayerSound.Play();
     }
 
-    public void OnGameEnded()
-    {
-        PlayAudioSourceMusic(victoryThemeMusic);
-    }
-
     public void OnTargetBombMoving(bool isMoving)
     {
         if(isMoving) targetBombMovingSound.Play();
@@ -213,6 +209,11 @@ public class SoundManager : MonoBehaviour
 
             _isInMenu = true;
             PlayAudioSourceMusic(backgroundMenuMusic);
+        }
+        else if (IsSceneEndGame(scene))
+        {
+            _isInMenu = false;
+            PlayAudioSourceMusic(victoryThemeMusic);
         }
         else
         {

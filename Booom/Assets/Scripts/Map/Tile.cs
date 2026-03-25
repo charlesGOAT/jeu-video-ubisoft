@@ -25,6 +25,7 @@ public class Tile : MonoBehaviour
     private Color _neutralColor;
 
     private Material _highlightMat;
+    private Material _blinkMat;
 
     private readonly Color _colorAdjust = new Color(75f/255f, 75f/255f, 75f/255f);
 
@@ -48,6 +49,7 @@ public class Tile : MonoBehaviour
         _neutralColor = _tileRenderer.material.color;
         IsSpawn = GameManager.Instance.GridManager.playerSpawnPoints.Contains(TileCoordinates);
         _highlightMat = new Material(GameManager.Instance.highlightMat);
+        _blinkMat = GameManager.Instance.blinkMat;
     }
 
     public virtual void ChangeTileColor(PlayerEnum newOwner)
@@ -141,5 +143,11 @@ public class Tile : MonoBehaviour
 
     public virtual void StepOffTile(Player player)
     {
+    }
+
+    public void AddWinnerBlink()
+    {
+        _blinkMat.SetColor("_TileColor", Player.PlayerColorDict[CurrentTileOwner]);
+        ChangeTileMaterial(4, _blinkMat);
     }
 }

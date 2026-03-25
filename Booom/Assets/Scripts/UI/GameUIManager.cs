@@ -113,16 +113,6 @@ public class GameUIManager : MonoBehaviour
         StartCoroutine(EventPanelCoroutine());
     }
 
-    public void EndGame()
-    {
-        endGameImage.gameObject.SetActive(true);
-        winnerText.gameObject.SetActive(true);
-
-        PlayerEnum winner = GameManager.Instance.ScoreManager.FindPlayerWithMostGround();
-        winnerText.text = $"Player {(int)winner} won!";
-        winnerText.color = Player.PlayerColorDict[winner];
-    }
-
     private IEnumerator EventPanelCoroutine()
     {
         bombEventPanel.SetActive(true);

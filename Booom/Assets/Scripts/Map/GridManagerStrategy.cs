@@ -8,7 +8,7 @@ public abstract class GridManagerStrategy : MonoBehaviour
     protected Dictionary<Vector2Int, Tile> _ownableTiles = new Dictionary<Vector2Int, Tile>();
     protected Dictionary<Vector2Int, Item> _itemTiles = new Dictionary<Vector2Int, Item>();
     
-    public int capturableTilesCount;
+    public int CapturableTilesCount;
 
     public Vector2Int MapUpperLimit { get; protected set; } = Vector2Int.zero;
     public Vector2Int MapLowerLimit { get; protected set; } = Vector2Int.zero;
@@ -49,7 +49,7 @@ public abstract class GridManagerStrategy : MonoBehaviour
     {
         CreateGrid();
         SetOwnableTiles();
-        capturableTilesCount = _ownableTiles.Count;
+        CapturableTilesCount = _ownableTiles.Count - (LobbyManager.JoinedPlayers.Count - 1);
         PositionCamera();
     }
 

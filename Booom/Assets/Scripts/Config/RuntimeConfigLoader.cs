@@ -14,6 +14,7 @@ public class ItemSpawnerData
 public class RuntimeConfigData
 {
     public bool IsSpreadingMode = true;
+    public bool IsRandomMap = true;
     public bool IsBonusSpeed = true;
     public bool HighlightOwnColor = false;
     public SpawnMode SpawnMode = SpawnMode.Fixed;
