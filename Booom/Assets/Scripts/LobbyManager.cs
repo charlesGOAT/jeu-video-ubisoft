@@ -2,25 +2,29 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem.UI;
-
-public delegate void LobbyPlayerCountChanged(int playerCount);
+using UnityEngine.InputSystem.Users;
 
 public class LobbyManager : MonoBehaviour
 {
     [SerializeField]
-    private GameObject changeMapButton;
-    
+    private GameObject playButton;
+
+    [SerializeField] 
+    private MenuUIManager menuUIManager;
+
     public static LobbyManager Instance { get; private set; }
-    public event LobbyPlayerCountChanged OnLobbyPlayerCountChanged;
-    
+
+    public static readonly Dictionary<PlayerInput, float> JoinTimes = new();
     public static readonly Dictionary<PlayerEnum, PlayerInput> JoinedPlayers = new ();
+
+    public static bool ItemsActivated = true;
+
     private PlayerInputManager _inputManager;
-    
+
     private InputSystemUIInputModule[] _uiInputs;
 
     private void Awake()
@@ -40,6 +44,8 @@ public class LobbyManager : MonoBehaviour
         _inputManager.onPlayerJoined += OnPlayerJoined;
         _inputManager.onPlayerLeft += OnPlayerLeft;
         SceneManager.sceneLoaded += OnSceneLoaded;
+
+        InputUser.onChange += OnInputUserChange;
     }
 
     private void OnDisable()
@@ -47,14 +53,23 @@ public class LobbyManager : MonoBehaviour
         _inputManager.onPlayerJoined -= OnPlayerJoined;
         _inputManager.onPlayerLeft -= OnPlayerLeft;
         SceneManager.sceneLoaded -= OnSceneLoaded;
+        
+        InputUser.onChange -= OnInputUserChange;
     }
 
     private void Start()
     {
        _uiInputs = FindObjectsByType<InputSystemUIInputModule>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+       if (SceneManager.GetActiveScene().name == "Menu")
+       {
+           foreach (var player in JoinedPlayers)
+           {
+               ReAddPlayer(player.Value);
+           }
+       }
     }
 
-    public void GameStarted(string levelName)
+    public void GameStarted(int levelIndex)
     {
         _inputManager.onPlayerJoined -= OnPlayerJoined; //Cannot join mid game
         foreach (PlayerInput playerInput in JoinedPlayers.Values)
@@ -63,12 +78,12 @@ public class LobbyManager : MonoBehaviour
             playerInput.ActivateInput();
         }
         
-        SceneManager.LoadScene(levelName);
+        SceneManager.LoadScene(levelIndex);
     }
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        if (scene.name != "Menu")
+        if (scene.name != "Menu"  && scene.name != "EndGame")
         {
             GameManager.Instance.SpawnPlayers();
         }
@@ -92,7 +107,19 @@ public class LobbyManager : MonoBehaviour
             GiveUIControl(newUI);
         }
         
-        OnLobbyPlayerCountChanged?.Invoke(leavingIndex + 1);
+        menuUIManager.TogglePlayerUI(leavingIndex + 1);
+    }
+
+    private void ReAddPlayer(PlayerInput playerInput)
+    {
+        if (playerInput.playerIndex == 0)
+        {
+            GiveUIControl(playerInput, true);
+        }
+        else
+        {
+            playerInput.DeactivateInput();
+        }
     }
 
     private void OnPlayerJoined(PlayerInput playerInput)
@@ -125,6 +152,7 @@ public class LobbyManager : MonoBehaviour
         
         DontDestroyOnLoad(playerInput.gameObject);
         JoinedPlayers[playerEnum] = playerInput;
+        JoinTimes[playerInput] = Time.time;
 
         if (JoinedPlayers.Count == 1)
         {
@@ -134,8 +162,22 @@ public class LobbyManager : MonoBehaviour
         {
             playerInput.DeactivateInput();
         }
+
+        menuUIManager.TogglePlayerUI(intPlayerEnum);
+    }
+    
+    private void OnInputUserChange(InputUser user, InputUserChange change, InputDevice device)
+    {
+        if (SceneManager.GetActiveScene().name != "Menu") return;
         
-        OnLobbyPlayerCountChanged?.Invoke(intPlayerEnum);
+        if (change == InputUserChange.DeviceLost)
+        {
+            PlayerInput pi = PlayerInput.all.FirstOrDefault(p => p.user == user);
+            if (pi != null)
+            {
+                Destroy(pi.gameObject, 0.1f);
+            }
+        }
     }
 
     private void GiveUIControl(PlayerInput playerInput, bool firstPlayer = false)
@@ -150,17 +192,6 @@ public class LobbyManager : MonoBehaviour
         }
         
         if (firstPlayer)
-            StartCoroutine(SelectButtonNextFrame());
-        else
-        {
-            EventSystem.current.SetSelectedGameObject(changeMapButton);
-        }
-    }
-    
-    private IEnumerator SelectButtonNextFrame()
-    {
-        EventSystem.current.SetSelectedGameObject(null);
-        yield return null;
-        EventSystem.current.SetSelectedGameObject(changeMapButton);
+            EventSystem.current.SetSelectedGameObject(playButton);
     }
 }

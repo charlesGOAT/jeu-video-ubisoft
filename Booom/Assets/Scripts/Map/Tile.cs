@@ -24,15 +24,16 @@ public class Tile : MonoBehaviour
 
     private List<PlayerEnum> _currentPlayersOnTile = new List<PlayerEnum>(GameConstants.NB_PLAYERS);
 
-    private Color _neutralColor;
+    public Color NeutralColor { get; private set; }
 
     private Material _highlightMat;
-
-    public event OnTileColorChanged OnTileColorChanged;
+    private Material _blinkMat;
 
     private readonly Color _colorAdjust = new Color(75f/255f, 75f/255f, 75f/255f);
 
     public bool IsSpawn { get; set; }
+    
+    public event OnTileColorChanged OnTileColorChanged;
 
     protected virtual void Awake()
     {
@@ -49,21 +50,28 @@ public class Tile : MonoBehaviour
 
     protected virtual void Start()
     {
-        _neutralColor = _tileRenderer.material.color;
+        NeutralColor = _tileRenderer.material.color;
         IsSpawn = GameManager.Instance.GridManager.playerSpawnPoints.Contains(TileCoordinates);
         _highlightMat = new Material(GameManager.Instance.highlightMat);
+        _blinkMat = GameManager.Instance.blinkMat;
     }
 
     public virtual void ChangeTileColor(PlayerEnum newOwner)
     {
-        if (CurrentTileOwner != newOwner && (!IsSpawn || _tileRenderer.material.color == _neutralColor) && !IsFrozen)
+        Color tileColor = newOwner != PlayerEnum.None ? Player.PlayerColorDict[newOwner] : NeutralColor;
+
+        OnTileColorChanged?.Invoke(tileColor);
+
+        if (CurrentTileOwner != newOwner && (!IsSpawn || _tileRenderer.material.color == NeutralColor) && !IsFrozen)
         {
             GameManager.Instance.ScoreManager.LoseTile(CurrentTileOwner, TileCoordinates);
             GameManager.Instance.ScoreManager.AcquireNewTile(newOwner, TileCoordinates);
-
-            Color tileColor = newOwner != PlayerEnum.None ? Player.PlayerColorDict[newOwner] : _neutralColor;
             _tileAnimation.AnimateTileColorChange(tileColor);
             CurrentTileOwner = newOwner;
+        }
+        else if (CurrentTileOwner == newOwner  && !IsFrozen && !IsSpawn)
+        {
+            _tileAnimation.AnimateExplosionFeedback(tileColor);
         }
     }
 
@@ -98,12 +106,11 @@ public class Tile : MonoBehaviour
         _tileRenderer.materials = materials;
     }
 
-
     private void AddSnowflakeMaterial()
     {
         ChangeTileMaterial(2, GameManager.Instance.snowflakeMaterial);
     }
-    
+
     private void RemoveSnowflakeMaterial()
     {
         ChangeTileMaterial(2, GameManager.Instance.transparentMat);
@@ -121,22 +128,32 @@ public class Tile : MonoBehaviour
                     : Player.PlayerColorDict[player];
             }
             else newColor += _colorAdjust;
-                
+
             _highlightMat.SetColor("_BorderColor", newColor);
             ChangeTileMaterial(3, _highlightMat);
         }
-        
+
         if (_currentPlayersOnTile.Contains(player)) return;
         _currentPlayersOnTile.Add(player);
     }
-    
+
     public void RemoveHighlight(PlayerEnum player)
     {
         _currentPlayersOnTile.Remove(player);
 
-        if(_currentPlayersOnTile.Count == 0)
+        if (_currentPlayersOnTile.Count == 0)
             ChangeTileMaterial(3, GameManager.Instance.transparentMat);
         else
             HighlightTile(_currentPlayersOnTile[0], true);
+    }
+
+    public virtual void StepOffTile(Player player)
+    {
+    }
+
+    public void AddWinnerBlink()
+    {
+        _blinkMat.SetColor("_TileColor", Player.PlayerColorDict[CurrentTileOwner]);
+        ChangeTileMaterial(4, _blinkMat);
     }
 }

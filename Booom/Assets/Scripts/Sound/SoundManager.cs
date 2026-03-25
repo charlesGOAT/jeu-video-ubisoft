@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -10,6 +11,13 @@ struct Audio
     public float volume;
 }
 
+[Serializable]
+struct Music
+{
+    public Audio audio1;
+    public Audio audio2;
+}
+
 [RequireComponent(typeof(AudioSource))]
 public class SoundManager : MonoBehaviour
 {
@@ -17,7 +25,7 @@ public class SoundManager : MonoBehaviour
     [SerializeField] 
     private Audio buttonClickedAudio;
     [SerializeField] 
-    private Audio backgroundMenuMusic;
+    private Music mainTheme;
     [Space(3)]
     
     [Header("--- Bomb sounds ---")]
@@ -57,7 +65,7 @@ public class SoundManager : MonoBehaviour
     [SerializeField] 
     private Audio gameStartsSound;
     [SerializeField] 
-    private Audio mainTheme;
+    private Audio battleMusic;
     [SerializeField] 
     private Audio acceleratedGameMusic;
     [SerializeField] 
@@ -68,10 +76,12 @@ public class SoundManager : MonoBehaviour
 
     private AudioSource _audioSourceSFX;
     private AudioSource _audioSourceMusic;
+    private AudioSource _audioSourceMusic2;
 
     private static bool? _isInMenu = null;
 
     private bool IsSceneMenu(in Scene scene) => scene.name.Contains("menu", StringComparison.OrdinalIgnoreCase);
+    private bool IsSceneEndGame(in Scene scene) => scene.name.Contains("EndGame", StringComparison.OrdinalIgnoreCase);
 
     public static SoundManager Instance { get; private set; }
     
@@ -106,13 +116,34 @@ public class SoundManager : MonoBehaviour
         if (audioSources.Length < 2) throw new Exception("There should be at least two audio sources");
         _audioSourceSFX = audioSources[0];
         _audioSourceMusic = audioSources[1];
-        _audioSourceMusic.loop = true;
+        _audioSourceMusic2 = audioSources[2];
+        _audioSourceMusic2.loop = true;
     }
 
-    private void PlayAudioSourceMusic(in Audio clip)
+    private void PlayAudioSourceMusic(in Music music)
     {
-        _audioSourceMusic.clip = clip.audioClip;
-        _audioSourceMusic.volume = clip.volume;
+        _audioSourceMusic2.Stop();
+        
+        _audioSourceMusic.clip = music.audio1.audioClip;
+        _audioSourceMusic.volume = music.audio1.volume;
+
+        _audioSourceMusic2.clip = music.audio2.audioClip;
+        _audioSourceMusic2.volume = music.audio2.volume;
+
+        double startTime = AudioSettings.dspTime + 0.1;
+        double duration = (double)music.audio1.audioClip.samples / music.audio1.audioClip.frequency;
+        double nextStartTime = startTime + duration;
+
+        _audioSourceMusic.PlayScheduled(startTime);
+        _audioSourceMusic2.PlayScheduled(nextStartTime);
+    }
+
+    private void PlayAudioSourceMusic(in Audio audio)
+    {
+        _audioSourceMusic2.Stop();
+
+        _audioSourceMusic.clip = audio.audioClip;
+        _audioSourceMusic.volume = audio.volume;
         _audioSourceMusic.Play();
     }
 
@@ -161,11 +192,6 @@ public class SoundManager : MonoBehaviour
         bombHitPlayerSound.Play();
     }
 
-    public void OnGameEnded()
-    {
-        PlayAudioSourceMusic(victoryThemeMusic);
-    }
-
     public void OnTargetBombMoving(bool isMoving)
     {
         if(isMoving) targetBombMovingSound.Play();
@@ -212,12 +238,17 @@ public class SoundManager : MonoBehaviour
             if (_isInMenu.HasValue && _isInMenu.Value) return;  // assumant qu'il n'y a qu'une toune pour tous les menus
 
             _isInMenu = true;
-            PlayAudioSourceMusic(backgroundMenuMusic);
+            PlayAudioSourceMusic(mainTheme);
+        }
+        else if (IsSceneEndGame(scene))
+        {
+            _isInMenu = false;
+            PlayAudioSourceMusic(victoryThemeMusic);
         }
         else
         {
             _isInMenu = false;
-            PlayAudioSourceMusic(mainTheme);  // todo : voir s'il y a plus qu'une toune de jeu
+            PlayAudioSourceMusic(battleMusic);  // todo : voir s'il y a plus qu'une toune de jeu
         }
     }
     
@@ -235,13 +266,13 @@ public class SoundManager : MonoBehaviour
         {
             throw new Exception($"Audio clip {nameof(buttonClickedAudio)} cannot be null");
         }
-        if (backgroundMenuMusic.audioClip == null)
-        {
-            throw new Exception($"Audio clip {nameof(backgroundMenuMusic)} cannot be null");
-        }
-        if (mainTheme.audioClip == null)
+        if (mainTheme.audio1.audioClip == null || mainTheme.audio2.audioClip == null)
         {
             throw new Exception($"Audio clip {nameof(mainTheme)} cannot be null");
+        }
+        if (battleMusic.audioClip == null)
+        {
+            throw new Exception($"Audio clip {nameof(battleMusic)} cannot be null");
         }
         if (victoryThemeMusic.audioClip == null)
         {

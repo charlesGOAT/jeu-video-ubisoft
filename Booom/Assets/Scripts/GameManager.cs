@@ -21,12 +21,13 @@ public class GameManager : MonoBehaviour
     public Material snowflakeMaterial;
     [SerializeField] 
     public Material transparentMat;
+    [SerializeField] 
+    public Material highlightMat;
+    [SerializeField] 
+    public Material blinkMat;
 
     [SerializeField] 
     public Material paintBrushEffect;
-
-    [SerializeField]
-    public Material highlightMat;
 
     public float  GameDuration => _gameDuration;
     public int CurrentMinutes => Mathf.FloorToInt(_timeRemaining / 60f);
@@ -58,9 +59,10 @@ public class GameManager : MonoBehaviour
     public float ColorDebuff { get; private set; } = GameConstants.COLOR_DEBUFF;
     public float ColorBoost { get; private set; } = GameConstants.COLOR_BOOST;
     public bool HighlightOwnColor { get; private set; }
+    public bool HasRoundEnded { get; private set; }
 
     private bool _hasChangedForFastMusic = false;
-    
+
     // add other managers
     
     public static GameManager Instance
@@ -102,7 +104,7 @@ public class GameManager : MonoBehaviour
 
     private void UpdateMusic()
     {
-        if (_timeRemaining <= 60 && _hasChangedForFastMusic)
+        if (_timeRemaining <= 30 && !_hasChangedForFastMusic)
         {
             SoundManager.Instance.OnPlayAcceleratedGameMusic();
             _hasChangedForFastMusic = true;
@@ -206,38 +208,96 @@ public class GameManager : MonoBehaviour
         foreach (var playerInput in playersToSpawn)
         {
             Vector2Int spawnPoint = GridManager.playerSpawnPoints[playerInput.playerIndex];
-            spawnPoint *= GameConstants.UNITY_GRID_SIZE;
+            Vector3 worldPos = GridManagerStrategy.GridToWorldPosition(spawnPoint);
 
             playerPrefab.layer = CollisionLayers[playerInput.playerIndex];
             PlayerInput newInput = PlayerInput.Instantiate(playerPrefab, playerIndex:playerInput.playerIndex, pairWithDevices:playerInput.devices.ToArray());
-            newInput.transform.position = new Vector3(spawnPoint.x, 0.0f, spawnPoint.y);
-            
-            Destroy(playerInput.gameObject); //Destroying dummy prefabs
+            newInput.transform.position = new Vector3(worldPos.x, 0.0f, worldPos.z);
         }
-        
-        LobbyManager.JoinedPlayers.Clear();
     }
 
+    private void DestroyAllItems()
+    {
+        var items = GameObject.FindGameObjectsWithTag("Item");
+        foreach (var item in items)
+        {
+            Destroy(item);
+        }
+    }
+
+    private void RemoveAllItemsInPlayerInv()
+    {
+        foreach (Player player in Player.ActivePlayers)
+        {
+            player.ResetInventory();
+        }
+    }
+    
     public void EndGame()
     {
-        //a fix plus tard quand la fin de la game arrive
-        SoundManager.Instance.OnGameEnded();
-        StartCoroutine(EndGameCoroutine());
+        PlayerEnum winner = ScoreManager.FindPlayerWithMostGround();
+        Bomb.ActiveBombsGO.ForEach(Destroy);
+        HasRoundEnded = true;
+        
+        DestroyAllItems();
+        RemoveAllItemsInPlayerInv();
+        
+        if (RoundManager.ShouldEndGame(winner))
+        {
+            StartCoroutine(EndGameCoroutine(winner));
+        }
+        else
+        {
+            StartCoroutine(EndRoundCoroutine(winner));
+        }
     }
 
-    private IEnumerator EndGameCoroutine()
+    public IEnumerator MakeWinnerColorBlink(PlayerEnum winner)
     {
-        Time.timeScale = 0f;
-        GameUIManager.EndGame();
+        var acquiredTiles = ScoreManager.GetAcquiredTilesByPlayer()[(int)winner - 1];
+        foreach (var pos in acquiredTiles)
+        {
+            Tile tile = GridManager.GetTileAtCoordinates(pos);
+            if (tile == null) continue;
+            
+            tile.AddWinnerBlink();
+        }
+
+        yield return new WaitForSeconds(4f); // todo tweak
+    }
+
+    private IEnumerator EndRoundCoroutine(PlayerEnum winner)
+    {
+        Player.ActivePlayers.ForEach(x => x.DisableInputActions());
+        RoundManager.LoadEndRoundData();
+        SoundManager.Instance.OnColorAlternate();
+        yield return StartCoroutine(MakeWinnerColorBlink(winner));
+        Player.ActivePlayers.ForEach(x => x.EnableInputActions());
+        NewRound();
+        SceneManager.LoadScene("EndGame");
+    }
+
+    private IEnumerator EndGameCoroutine(PlayerEnum winner)
+    {
+        Player.ActivePlayers.ForEach(x => x.DisableInputActions());
+        RoundManager.LoadEndGameData();
+        SoundManager.Instance.OnColorAlternate();
+        yield return StartCoroutine(MakeWinnerColorBlink(winner));
+        Player.ActivePlayers.ForEach(x => x.EnableInputActions());
         CleanGame();
-        yield return new WaitForSecondsRealtime(3f);
-        Time.timeScale = 1f;
-        SceneManager.LoadScene("Menu");
+        SceneManager.LoadScene("EndGame");
     }
 
     private void CleanGame()
     {
         Player.ActivePlayers.Clear();
         Bomb.ActiveBombs.Clear();
+        RoundManager.CleanGame();
+    }
+
+    private void NewRound()
+    {
+        Bomb.ActiveBombs.Clear();
+        Player.ActivePlayers.Clear();
     }
 }

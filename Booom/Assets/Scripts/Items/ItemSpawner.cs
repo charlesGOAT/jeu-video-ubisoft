@@ -54,14 +54,15 @@ public class ItemSpawner : MonoBehaviour
     {
         float lastTimeSpawned = Time.time;
         var gen = new System.Random();
-        while (true)
+        while (!GameManager.Instance.HasRoundEnded)
         {
            yield return StartCoroutine(WaitForSpawnCond(lastTimeSpawned));
            var pos = GetRandomTilePos(fixedPosList.Where(pos => !GameManager.Instance.GridManager.IsItemAtPos(pos)), gen);
     
-           if (isDropFromSky) yield return StartCoroutine(ManageShadow(pos));
-    
-           InstantiateItem(pos);
+           if (isDropFromSky && !GameManager.Instance.HasRoundEnded) 
+               yield return StartCoroutine(ManageShadow(pos));
+            
+           if(!GameManager.Instance.HasRoundEnded) InstantiateItem(pos);
            lastTimeSpawned = Time.time;
         }
     }
@@ -69,14 +70,15 @@ public class ItemSpawner : MonoBehaviour
     protected virtual IEnumerator SpawnRandom(bool isDropFromSky)
     {
         float lastTimeSpawned = Time.time;
-        while (true)
+        while (!GameManager.Instance.HasRoundEnded)
         { 
             yield return StartCoroutine(WaitForSpawnCond(lastTimeSpawned));
             Vector3 pos = GameManager.Instance.GridManager.GetRandomPosOnGridWithNoItem();
             
-            if (isDropFromSky) yield return StartCoroutine(ManageShadow(pos));
+            if (isDropFromSky && !GameManager.Instance.HasRoundEnded) 
+                yield return StartCoroutine(ManageShadow(pos));
 
-            InstantiateItem(pos);
+            if(!GameManager.Instance.HasRoundEnded) InstantiateItem(pos);
             lastTimeSpawned = Time.time;
         }
     }
@@ -85,16 +87,17 @@ public class ItemSpawner : MonoBehaviour
     {
         float lastTimeSpawned = Time.time;
         var gen = new System.Random();
-        while (true)
+        while (!GameManager.Instance.HasRoundEnded)
         {
             yield return StartCoroutine(WaitForSpawnCond(lastTimeSpawned));
             PlayerEnum player = GameManager.Instance.ScoreManager.FindPlayerWithMostGround();
             var playerTiles = GameManager.Instance.GridManager.GetPlayerTilesWithNoItem(player);
             Vector3 pos = GetRandomTilePos(playerTiles, gen);
             
-            if (isDropFromSky) yield return StartCoroutine(ManageShadow(pos));
-
-            InstantiateItem(pos);
+            if (isDropFromSky && !GameManager.Instance.HasRoundEnded) 
+                yield return StartCoroutine(ManageShadow(pos));
+            
+            if(!GameManager.Instance.HasRoundEnded) InstantiateItem(pos);
             lastTimeSpawned = Time.time;
         }
     }
@@ -117,7 +120,7 @@ public class ItemSpawner : MonoBehaviour
 
     protected IEnumerator ManageShadow(Vector3 pos)
     { 
-        GameObject shadowTemp = Instantiate(shadow, pos, Quaternion.identity);
+        GameObject shadowTemp = Instantiate(shadow, pos + Vector3.up, Quaternion.identity);
         yield return new WaitForSeconds(2f);  // todo tweak
         Destroy(shadowTemp);
     }
@@ -126,7 +129,7 @@ public class ItemSpawner : MonoBehaviour
     {
         Vector2Int posOnMap = GridManagerStrategy.WorldToGridCoordinates(pos);
         
-        Item item = Instantiate(itemPrefab, pos, Quaternion.identity);
+        Item item = Instantiate(itemPrefab, pos + Vector3.up, Quaternion.identity);
         item.posOnMap = posOnMap;
         
         GameManager.Instance.GridManager.AddItemOnGrid(item);

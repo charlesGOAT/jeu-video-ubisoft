@@ -61,6 +61,8 @@ public class ItemsManager : MonoBehaviour
 
     private void StartSpawning()
     {
+        if (!LobbyManager.ItemsActivated) return;
+        
         foreach (var itemSpawner in _itemSpawnerPerItemType)
         {
             itemSpawner.Spawn(spawnMode, isDropFromSky);

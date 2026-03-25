@@ -7,8 +7,9 @@ public delegate void OnExplode();
 public class Bomb : MonoBehaviour
 {
     public static readonly HashSet<Vector2Int> ActiveBombs = new HashSet<Vector2Int>();
+    public static readonly List<GameObject> ActiveBombsGO = new();
 
-    public virtual float Timer { get; protected set; } = 3.0f;
+    private float _timer = 2f;
 
     [SerializeField]
     protected int explosionRange = 3;
@@ -20,12 +21,17 @@ public class Bomb : MonoBehaviour
     private BombAnimation _bombAnimation;
     private Tile _subscribedTile;
 
+    private BombManager _bombManager;
+
     public event OnExplode OnExplode;
 
-    public bool IsTransparentBomb { private get; set; }
     public bool IsFreezeBomb { private get; set; }
 
-    public Collider ColliderComp;
+    private Collider _colliderComp;
+
+    private LayerMask _oldLayerMask;
+    
+    public bool HasColliderBeenRestored { get; private set; }
 
     private readonly Vector2Int[] _directions =
     {
@@ -34,7 +40,6 @@ public class Bomb : MonoBehaviour
         Vector2Int.left,
         Vector2Int.right
     };
-
 
     protected Vector2Int _bombCoordinates;
 
@@ -46,6 +51,7 @@ public class Bomb : MonoBehaviour
 
         _bombCoordinates = GridManagerStrategy.WorldToGridCoordinates(trans.position);
         ActiveBombs.Add(_bombCoordinates);
+        ActiveBombsGO.Add(gameObject);
 
         if (!GameManager.Instance.IsBonusSpeed && AssociatedPlayer != PlayerEnum.None)
         {
@@ -53,9 +59,9 @@ public class Bomb : MonoBehaviour
         }
 
         _bombAnimation = GetComponent<BombAnimation>();
-        _bombAnimation.InitializeAnimation(Timer);
+        _bombAnimation.InitializeAnimation(GetTimer());
 
-        ColliderComp = GetComponent<Collider>();
+        _colliderComp = GetComponent<Collider>();
 
         GameManager.Instance.BombManager.OnPaintbrushActivated += OnPaintbrushActivated;
         GameManager.Instance.BombManager.OnPaintbrushDeactivated += OnPaintbrushDeactivated;
@@ -68,13 +74,19 @@ public class Bomb : MonoBehaviour
 
     protected virtual void Start()
     {
+        _bombManager = GameManager.Instance.BombManager;
         SubscribeToCurrentTileColor();
         BombFusingStrategy.Fuse(this);
     }
 
+    public virtual float GetTimer()
+    {
+        return _timer;
+    }
+
     public virtual void ConfigureValues()
     {
-        Timer = GameManager.Instance.RuntimeConfig.NormalBombTimer;
+        _timer = GameManager.Instance.RuntimeConfig.NormalBombTimer;
     }
 
     public static bool IsBombAt(Vector2Int gridCoordinates)
@@ -89,7 +101,7 @@ public class Bomb : MonoBehaviour
 
     private IEnumerator CountdownAndExplode()
     {
-        yield return new WaitForSeconds(Timer);
+        yield return new WaitForSeconds(GetTimer());
         Explode();
     }
 
@@ -111,6 +123,7 @@ public class Bomb : MonoBehaviour
         PlayerEnum newTileOwner = GameManager.Instance.IsSpreadingMode ? currentOwner : AssociatedPlayer;
 
         ChoosePaintTile(bombTile, newTileOwner);
+        HitPlayers(_bombCoordinates, Vector2Int.zero);
 
         foreach (Vector2Int direction in _directions)
         {
@@ -131,6 +144,7 @@ public class Bomb : MonoBehaviour
             {
                 int tilesRemaining = range - rangeCounter;
                 PaintTilesForDirection(portalTile.GetOtherPortalPosition() + direction, direction, tilesRemaining, newTileOwner);
+                HitPlayers(explosionCoords, direction);
                 return;
             }
             
@@ -199,8 +213,12 @@ public class Bomb : MonoBehaviour
     {
         UnsubscribeFromCurrentTileColor();
         ActiveBombs.Remove(_bombCoordinates);
-        GameManager.Instance.BombManager.OnPaintbrushActivated -= OnPaintbrushActivated;
-        GameManager.Instance.BombManager.OnPaintbrushDeactivated -= OnPaintbrushDeactivated;
+        ActiveBombsGO.Remove(gameObject);
+        if (_bombManager != null)
+        {
+            _bombManager.OnPaintbrushActivated -= OnPaintbrushActivated;
+            _bombManager.OnPaintbrushDeactivated -= OnPaintbrushDeactivated;
+        }
     }
 
     private void SubscribeToCurrentTileColor()
@@ -234,15 +252,9 @@ public class Bomb : MonoBehaviour
 
     private Color GetCurrentTileColor(Tile tile)
     {
-        return tile.CurrentTileOwner != PlayerEnum.None ? Player.PlayerColorDict[tile.CurrentTileOwner] : GetNeutralTileColor(tile);
+        return tile.CurrentTileOwner != PlayerEnum.None ? Player.PlayerColorDict[tile.CurrentTileOwner] : tile.NeutralColor;
     }
 
-    private static Color GetNeutralTileColor(Tile tile)
-    {
-        Renderer tileRenderer = tile.GetComponentInChildren<Renderer>();
-        return tileRenderer != null ? tileRenderer.material.color : Color.white;
-    }
-    
     private void OnCollisionEnter(Collision collision)
     {
         if (!collision.collider.tag.Equals("Player") ||
@@ -254,14 +266,27 @@ public class Bomb : MonoBehaviour
 
     private void OnPaintbrushActivated(int layer)
     {
-        if(ColliderComp != null)
-            ColliderComp.excludeLayers = ColliderComp.excludeLayers.value | (1 << layer);
+        if(_colliderComp != null)
+            _colliderComp.excludeLayers = _colliderComp.excludeLayers.value | (1 << layer);
     }
     
     private void OnPaintbrushDeactivated(int layer)
     {
-        if(ColliderComp != null)
-            ColliderComp.excludeLayers = ColliderComp.excludeLayers.value & ~(1 << layer);
+        if(_colliderComp != null)
+            _colliderComp.excludeLayers = _colliderComp.excludeLayers.value & ~(1 << layer);
+    }
+    
+    public void RemoveColliderLayer(GameObject player)
+    {
+        var ogLayerMask = _colliderComp.excludeLayers.value;
+        var newLayer = ogLayerMask | (1 << player.layer);
+        _colliderComp.excludeLayers = newLayer;
+    }
+    
+    public void RestoreColliderLayer()
+    {
+        _colliderComp.excludeLayers = _oldLayerMask;
+        HasColliderBeenRestored = true;
     }
 }
 

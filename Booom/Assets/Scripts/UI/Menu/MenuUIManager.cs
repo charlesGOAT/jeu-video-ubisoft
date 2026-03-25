@@ -1,7 +1,7 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using TMPro;
 
 public class MenuUIManager : MonoBehaviour
 {
@@ -10,38 +10,18 @@ public class MenuUIManager : MonoBehaviour
     [SerializeField] private Button playButton;
     [SerializeField] private Canvas mainMenuCanvas;
     
-    [SerializeField] private Canvas levelsCanvas;
-    [SerializeField] private Image levelPreviewImage;
-    
     [SerializeField] private Canvas settingsCanvas;
 
     public bool isNotMainMenu;
     
     private LobbyManager _lobbyManager;
-
-    private void Awake()
-    {
-        playButton.interactable = false;
-    }
     
     private void Start()
     {
         _lobbyManager = LobbyManager.Instance;
-        _lobbyManager.OnLobbyPlayerCountChanged += UnlockPlayButton;
     }
 
-    private void OnDestroy()
-    {
-        _lobbyManager.OnLobbyPlayerCountChanged -= UnlockPlayButton;
-    }
-
-    private void UnlockPlayButton(int playerCount)
-    {
-        playButton.interactable = LobbyManager.JoinedPlayers.Count > 1;
-        TogglePlayerUI(playerCount);
-    }
-
-    private void TogglePlayerUI(int playerCount)
+    public void TogglePlayerUI(int playerCount)
     {
         var slot = playerSlots[playerCount - 1];
 
@@ -66,34 +46,30 @@ public class MenuUIManager : MonoBehaviour
         settingsCanvas.gameObject.SetActive(isNotMainMenu);
     }
 
-    public void ChangeMap()
-    {
-        isNotMainMenu = true;
-        mainMenuCanvas.gameObject.SetActive(!isNotMainMenu);
-        levelsCanvas.gameObject.SetActive(isNotMainMenu);
-    }
-
     public void ReturnToMainMenu()
     {
         isNotMainMenu = false;
-        levelsCanvas.gameObject.SetActive(isNotMainMenu);
         settingsCanvas.gameObject.SetActive(isNotMainMenu);
         mainMenuCanvas.gameObject.SetActive(!isNotMainMenu);
     }
 
     public void PlayGame()
     {
-        _lobbyManager.GameStarted(levelPreviewImage.sprite.name);
-        _lobbyManager.OnLobbyPlayerCountChanged -= UnlockPlayButton;
+        if (LobbyManager.JoinedPlayers.Count > 1)
+            _lobbyManager.GameStarted(RoundManager.FindNextMap());
+        else
+            StartCoroutine(ReselectButton());
     }
-
-    public void LevelSelected(Sprite sprite)
+    
+    private IEnumerator ReselectButton()
     {
-        levelPreviewImage.sprite = sprite;
+        EventSystem.current.SetSelectedGameObject(null);
+        yield return null; // wait one frame
+        EventSystem.current.SetSelectedGameObject(playButton.gameObject);
     }
 
     public void ToggleItems()
     {
-        //todo activate or deactivate items
+        LobbyManager.ItemsActivated = !LobbyManager.ItemsActivated;
     }
 }

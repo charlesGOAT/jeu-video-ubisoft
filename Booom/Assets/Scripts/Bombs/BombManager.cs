@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -64,13 +63,14 @@ public class BombManager : MonoBehaviour
     public virtual bool CreateBomb(in Vector3 position, in Player player,in BombFusingStrategy bombStrat, in BombItems bombItems)
     {
         PlayerEnum playerEnum = player.PlayerNb;
-        
+        Vector3 bombHeightOffset = Vector3.up * 0.5f;
+
         if (Time.time < _nextBombTime[playerEnum])
         {
             return false;
         }
 
-        Vector3 bombHeight = Vector3.up * position.y;
+        Vector3 bombHeight = Vector3.up * position.y + bombHeightOffset;
         Vector2Int gridCoordinates = GridManagerStrategy.WorldToGridCoordinates(position);
         Tile tile = GameManager.Instance.GridManager.GetTileAtCoordinates(gridCoordinates);
 
@@ -90,25 +90,16 @@ public class BombManager : MonoBehaviour
         instantiatedBomb.IsFreezeBomb = bombItems.HasFlag(BombItems.FreezeBombs);
 
         if(ShouldBombCollideWithPlayers)
-            StartCoroutine(ChangeColliderLayer(instantiatedBomb, player.gameObject));
+            instantiatedBomb.RemoveColliderLayer(player.gameObject);
 
 #if !UNITY_EDITOR
         instantiatedBomb.ConfigureValues();
 #endif
         
-        float timeToAdd = bombItems.HasFlag(BombItems.ChainedBombs) ? 0 : instantiatedBomb.Timer;
+        float timeToAdd = bombItems.HasFlag(BombItems.ChainedBombs) ? 0 : instantiatedBomb.GetTimer();
         _nextBombTime[playerEnum] = Time.time + timeToAdd;
 
         return true;
-    }
-
-    private IEnumerator ChangeColliderLayer(Bomb bomb, GameObject player)
-    {
-        var ogLayerMask = bomb.ColliderComp.excludeLayers.value;
-        var newLayer = ogLayerMask | (1 << player.layer);
-        bomb.ColliderComp.excludeLayers = newLayer;
-        yield return new WaitForSeconds(0.9f);
-        if(bomb != null) bomb.ColliderComp.excludeLayers = ogLayerMask;
     }
 
     public void ActivatePaintBrush(int layer)
