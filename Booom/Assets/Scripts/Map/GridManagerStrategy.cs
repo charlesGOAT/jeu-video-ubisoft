@@ -110,7 +110,7 @@ public abstract class GridManagerStrategy : MonoBehaviour
         float minRequiredDistance = Mathf.Max(requiredDistVertical, requiredDistHorizontal);
         float safeMultiplier = (minRequiredDistance * Mathf.Abs(forwardDir.y)) / baseHeight;
 
-        float zoomMultiplier = safeMultiplier + 0.06f;
+        float zoomMultiplier = safeMultiplier - 0.01f;
         float camHeight = baseHeight * zoomMultiplier;
         float distance = camHeight / Mathf.Abs(forwardDir.y);
 
