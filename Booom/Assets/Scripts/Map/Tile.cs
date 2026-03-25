@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+public delegate void OnTileColorChanged(Color newColor);
+
 [RequireComponent(typeof(TileAnimation))]
 public class Tile : MonoBehaviour
 {
@@ -22,7 +24,7 @@ public class Tile : MonoBehaviour
 
     private List<PlayerEnum> _currentPlayersOnTile = new List<PlayerEnum>(GameConstants.NB_PLAYERS);
 
-    private Color _neutralColor;
+    public Color NeutralColor { get; private set; }
 
     private Material _highlightMat;
     private Material _blinkMat;
@@ -30,6 +32,8 @@ public class Tile : MonoBehaviour
     private readonly Color _colorAdjust = new Color(75f/255f, 75f/255f, 75f/255f);
 
     public bool IsSpawn { get; set; }
+    
+    public event OnTileColorChanged OnTileColorChanged;
 
     protected virtual void Awake()
     {
@@ -46,7 +50,7 @@ public class Tile : MonoBehaviour
 
     protected virtual void Start()
     {
-        _neutralColor = _tileRenderer.material.color;
+        NeutralColor = _tileRenderer.material.color;
         IsSpawn = GameManager.Instance.GridManager.playerSpawnPoints.Contains(TileCoordinates);
         _highlightMat = new Material(GameManager.Instance.highlightMat);
         _blinkMat = GameManager.Instance.blinkMat;
@@ -54,9 +58,11 @@ public class Tile : MonoBehaviour
 
     public virtual void ChangeTileColor(PlayerEnum newOwner)
     {
-        Color tileColor = newOwner != PlayerEnum.None ? Player.PlayerColorDict[newOwner] : _neutralColor;
+        Color tileColor = newOwner != PlayerEnum.None ? Player.PlayerColorDict[newOwner] : NeutralColor;
 
-        if (CurrentTileOwner != newOwner && (!IsSpawn || _tileRenderer.material.color == _neutralColor) && !IsFrozen)
+        OnTileColorChanged?.Invoke(tileColor);
+
+        if (CurrentTileOwner != newOwner && (!IsSpawn || _tileRenderer.material.color == NeutralColor) && !IsFrozen)
         {
             GameManager.Instance.ScoreManager.LoseTile(CurrentTileOwner, TileCoordinates);
             GameManager.Instance.ScoreManager.AcquireNewTile(newOwner, TileCoordinates);
