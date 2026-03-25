@@ -5,7 +5,7 @@ using UnityEngine;
 
 public static class RoundManager
 {
-    private static readonly List<int> mapsToPlay = new () {1,2,3,4,5};
+    private static readonly List<int> mapsToPlay = new () {3};
     private static readonly List<int> _mapsPlayed = new();
     private static readonly List<PlayerEnum> _gameWonPlayer = new();
 

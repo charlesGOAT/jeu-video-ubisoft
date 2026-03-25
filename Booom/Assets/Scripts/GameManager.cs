@@ -239,8 +239,8 @@ public class GameManager : MonoBehaviour
         Bomb.ActiveBombsGO.ForEach(Destroy);
         HasRoundEnded = true;
         
-        DestroyAllItems();
-        RemoveAllItemsInPlayerInv();
+        //DestroyAllItems();
+        //RemoveAllItemsInPlayerInv();
         
         if (RoundManager.ShouldEndGame(winner))
         {
