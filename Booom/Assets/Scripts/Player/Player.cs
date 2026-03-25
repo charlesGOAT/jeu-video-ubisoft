@@ -4,10 +4,12 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public delegate void MoveCalledEventHandler();
 public delegate void PlaceBomb();
 public delegate void PlaceBombSuccessFul();
+public delegate void PlaceBombSuccessFulChained(ItemType itemType);
 
 [RequireComponent(typeof(PlayerItemsManager))]
 [RequireComponent(typeof(PlayerInput))]
@@ -39,6 +41,22 @@ public class Player : MonoBehaviour
 
     [SerializeField] 
     private TextMeshProUGUI killStreakText;
+
+    [SerializeField]
+    private Image itemTextPopUpBackground;
+    
+    [SerializeField]
+    private TMP_Text itemTextPopUpText;
+
+    [SerializeField]
+    private RawImage itemIconPrefab;
+    
+    [SerializeField]
+    private Transform itemIconsContainer;
+    
+    private Dictionary<ItemType, RawImage> _activeIcons = new();
+    private float _popUpDuration = GameConstants.POPUP_DURATION;
+    private Coroutine _popUpCoroutine;
 
     private BombFusingStrategy[] _bombFusingStrategies = new []
         {
@@ -108,6 +126,7 @@ public class Player : MonoBehaviour
     public event MoveCalledEventHandler OnMoveFunctionCalled;
     public event PlaceBomb OnPlaceBomb;
     public event PlaceBombSuccessFul OnPlaceBombSuccessful;
+    public event PlaceBombSuccessFulChained OnPlaceBombSuccessfulChained;
 
     public const float JUMP_HEIGHT_OFFSET = 2.5f;
     public const float JUMP_NUMBER_OF_TILES = 2.7f;
@@ -142,6 +161,7 @@ public class Player : MonoBehaviour
         speed = runtimeConfig.MovementSpeed;
         _rangeBoostPerKill = runtimeConfig.RangeBoostPerKill;
         _speedBoostPerKill = runtimeConfig.SpeedBoostPerKill;
+        _popUpDuration = runtimeConfig.PopUpDuration;
         _airStateDuration = runtimeConfig.AirStateDuration;
     }
 
@@ -156,13 +176,13 @@ public class Player : MonoBehaviour
     private void OnNbKillsChanged()
     {
         bool shouldDisplay = false;
-        if (GameConstants.SpeedBoostPerKill.TryGetValue(NbKills, out float newSpeedBoost))
+        if (GameConstants.SpeedBoostPerKill.TryGetValue(NbKills, out float newSpeedBoost) && GameManager.Instance.IsBonusSpeed)
         {
             _elimsSpeedBoost = newSpeedBoost;
             SoundManager.Instance.OnNewKillStreak();
             shouldDisplay = true;
         }
-        if (GameConstants.RangeBoostPerKill.TryGetValue(NbKills, out int newRangeBoost))
+        if (GameConstants.RangeBoostPerKill.TryGetValue(NbKills, out int newRangeBoost) && !GameManager.Instance.IsBonusSpeed)
         {
             _elimsRangeBoost = newRangeBoost;
             SoundManager.Instance.OnNewKillStreak();
@@ -176,8 +196,8 @@ public class Player : MonoBehaviour
 
     private IEnumerator DisplayKillStreak()
     {
-        killStreakText.text = "New kill streak!";
-        yield return new WaitForSeconds(1.7f);
+        killStreakText.text = "NEW KILL BONUS";
+        yield return new WaitForSeconds(3f);
         killStreakText.text = "";
     }
 
@@ -256,6 +276,8 @@ public class Player : MonoBehaviour
                     this, _bombFusingStrategies[(int)BombFusingType], NextBombBombItems))
             {
                 Animator.SetTrigger("DropBomb");
+                OnPlaceBombSuccessfulChained?.Invoke(ItemType.ChainBombs);
+                OnPlaceBombSuccessfulChained -= RemoveItemPopUp;
                 OnPlaceBombSuccessful?.Invoke();
             }
         }
@@ -321,8 +343,10 @@ public class Player : MonoBehaviour
         IsImmune = true;
         _actualImmuneTimer = immuneTimer;
 
-        playerItemsManager.ResetInventory();
+        ResetInventory();
     }
+
+    public void ResetInventory() => playerItemsManager.ResetInventory();
 
     public void OnJump(Vector2Int jumpDirection) 
     {
@@ -453,7 +477,7 @@ public class Player : MonoBehaviour
     
     private void OnTriggerExit(Collider other)
     {
-        if (!other.tag.Equals("Bomb") || !other.transform.parent.TryGetComponent(out Bomb bomb)  || bomb.HasColliderBeenRestored) return;
+        if (!other.tag.Equals("Bomb") || !other.transform.parent.TryGetComponent(out Bomb bomb) || bomb.HasColliderBeenRestored) return;
         bomb.RestoreColliderLayer();
     }
 
@@ -631,6 +655,43 @@ public class Player : MonoBehaviour
         
         playerColor = PlayerColorDict[playerNb];
         SetPlayerTexture();
+    }
+
+    public void DisplayPopUp(ItemType itemType, Sprite iconSprite)
+    {
+        itemTextPopUpText.text = itemType.ToString().AddSpacesBeforeCaps().ToUpper();
+        AddIcon(itemType, iconSprite);
+        
+        if (_popUpCoroutine != null)
+            StopCoroutine(_popUpCoroutine);
+        _popUpCoroutine = StartCoroutine(DisplayPopUpCoroutine());
+    }
+    
+    IEnumerator DisplayPopUpCoroutine()
+    {
+        itemTextPopUpBackground.gameObject.SetActive(true);
+        yield return new WaitForSeconds(_popUpDuration);
+        itemTextPopUpBackground.gameObject.SetActive(false);
+    }
+    
+    private void AddIcon(ItemType itemType, Sprite sprite)
+    {
+        if (_activeIcons.ContainsKey(itemType))
+            return;
+
+        var icon = Instantiate(itemIconPrefab, itemIconsContainer);
+        icon.GetComponentInChildren<Image>().sprite = sprite;
+
+        _activeIcons[itemType] = icon;
+    }
+    
+    public void RemoveItemPopUp(ItemType itemType)
+    {
+        if (!_activeIcons.TryGetValue(itemType, out var icon))
+            return;
+
+        _activeIcons.Remove(itemType);
+        Destroy(icon.gameObject);
     }
 }
 

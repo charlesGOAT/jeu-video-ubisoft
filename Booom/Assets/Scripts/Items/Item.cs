@@ -4,6 +4,8 @@ public class Item : MonoBehaviour
 {
     [SerializeField]
     private ItemType itemType = ItemType.PaintBrush;
+    [SerializeField]
+    public Sprite iconSprite;
 
     public ItemType ItemType => itemType;
 

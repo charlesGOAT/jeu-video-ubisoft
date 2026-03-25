@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -16,25 +15,13 @@ public class MenuUIManager : MonoBehaviour
     public bool isNotMainMenu;
     
     private LobbyManager _lobbyManager;
-    private String _defaultLevel = "Biggg";
     
     private void Start()
     {
         _lobbyManager = LobbyManager.Instance;
-        _lobbyManager.OnLobbyPlayerCountChanged += UpdateActivePlayers;
     }
 
-    private void OnDestroy()
-    {
-        _lobbyManager.OnLobbyPlayerCountChanged -= UpdateActivePlayers;
-    }
-
-    private void UpdateActivePlayers(int playerCount)
-    {
-        TogglePlayerUI(playerCount);
-    }
-
-    private void TogglePlayerUI(int playerCount)
+    public void TogglePlayerUI(int playerCount)
     {
         var slot = playerSlots[playerCount - 1];
 
@@ -69,7 +56,7 @@ public class MenuUIManager : MonoBehaviour
     public void PlayGame()
     {
         if (LobbyManager.JoinedPlayers.Count > 1)
-            _lobbyManager.GameStarted(_defaultLevel);
+            _lobbyManager.GameStarted(RoundManager.FindNextMap());
         else
             StartCoroutine(ReselectButton());
     }
