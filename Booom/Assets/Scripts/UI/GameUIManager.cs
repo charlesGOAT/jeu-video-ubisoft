@@ -1,10 +1,7 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.InputSystem;
-using UnityEngine.UI;
 
 public class GameUIManager : MonoBehaviour
 {
@@ -25,12 +22,6 @@ public class GameUIManager : MonoBehaviour
     
     [SerializeField]
     private GameObject bombEventPanel;
-    
-    [SerializeField]
-    private Image endGameImage;
-    
-    [SerializeField]
-    private TMP_Text winnerText;
 
     private readonly Dictionary<PlayerEnum, ScorePlayer> _scorePerPlayer = new ();
     

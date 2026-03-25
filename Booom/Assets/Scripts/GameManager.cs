@@ -104,7 +104,7 @@ public class GameManager : MonoBehaviour
 
     private void UpdateMusic()
     {
-        if (_timeRemaining <= 60 && _hasChangedForFastMusic)
+        if (_timeRemaining <= 30 && !_hasChangedForFastMusic)
         {
             SoundManager.Instance.OnPlayAcceleratedGameMusic();
             _hasChangedForFastMusic = true;
