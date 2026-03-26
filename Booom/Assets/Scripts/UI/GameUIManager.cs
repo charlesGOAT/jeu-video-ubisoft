@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameUIManager : MonoBehaviour
 {
@@ -10,23 +11,26 @@ public class GameUIManager : MonoBehaviour
 
     [SerializeField]
     private TMP_Text leaderboard;
-    
-    [SerializeField]
-    private TMP_Text timer;
 
-    [SerializeField]
-    private TMP_Text bombType;
-    
     [SerializeField]
     private TMP_Text eventPanelText;
     
     [SerializeField]
     private GameObject bombEventPanel;
+    
+    [SerializeField] 
+    private Image vinylImage;
 
     private readonly Dictionary<PlayerEnum, ScorePlayer> _scorePerPlayer = new ();
     
     private readonly List<KeyValuePair<PlayerEnum, ScorePlayer>> _sortedPlayerScores = new();
 
+    private string _bombType = "";
+
+    private Material _vinylMaterial;
+    private Animator _vinylAnimator;
+    private bool _hasVinylAnimationStarted = false;
+    
     private void OnDestroy()
     {
         GameManager.Instance.ScoreManager.OnScoreChanged -= RefreshScore;
@@ -36,8 +40,12 @@ public class GameUIManager : MonoBehaviour
     {
         bombEventPanel.SetActive(false);
 
-        bombType.text = GameManager.Instance.EventManager.CurrentBombType.ToString().AddSpacesBeforeCaps();
+        _bombType = GameManager.Instance.EventManager.CurrentBombType.ToString().AddSpacesBeforeCaps();
         leaderboard.text = "Number of tiles owned";
+
+        _vinylMaterial = vinylImage.material;
+        _vinylAnimator = vinylImage.GetComponentInParent<Animator>();
+        _vinylMaterial.SetFloat("_Speed", GameManager.Instance.GameDuration + 5);
 
         GameManager.Instance.ScoreManager.OnScoreChanged += RefreshScore;
         GameManager.Instance.StartTimer();
@@ -68,7 +76,7 @@ public class GameUIManager : MonoBehaviour
 
     public void RefreshBombType(string newBombType)
     {
-        bombType.text = newBombType;
+        _bombType = newBombType;
     }
     
     private void SortLeaderboard()
@@ -89,12 +97,19 @@ public class GameUIManager : MonoBehaviour
 
     public void UpdateTimerDisplay()
     {
-        timer.text = $"{GameManager.Instance.CurrentMinutes}:{GameManager.Instance.CurrentSeconds:D2}";
+        var gameManager = GameManager.Instance;
+        _vinylMaterial.SetFloat("_Timey", gameManager.GameDuration - gameManager.TimeRemaining);
+
+        if (!_hasVinylAnimationStarted && gameManager.TimeRemaining <= 30)
+        {
+            _vinylAnimator.SetBool("lastStretch", true);
+            _hasVinylAnimationStarted = true;
+        }
     }
 
     public void DisplayEventPanel()
     {
-        eventPanelText.text = $"Bomb type is now {bombType.text}!";
+        eventPanelText.text = $"Bomb type is now {_bombType}!";
         StartCoroutine(EventPanelCoroutine());
     }
     

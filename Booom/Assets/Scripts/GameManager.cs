@@ -11,7 +11,7 @@ public class GameManager : MonoBehaviour
 
     [SerializeField]
     private GameObject playerPrefab;
-    private float _timeRemaining;
+    public float TimeRemaining { get; private set; }
     private bool _timerRunning;
     
     [SerializeField]
@@ -30,8 +30,8 @@ public class GameManager : MonoBehaviour
     public Material paintBrushEffect;
 
     public float  GameDuration => _gameDuration;
-    public int CurrentMinutes => Mathf.FloorToInt(_timeRemaining / 60f);
-    public int CurrentSeconds => Mathf.FloorToInt(_timeRemaining % 60f);
+    public int CurrentMinutes => Mathf.FloorToInt(TimeRemaining / 60f);
+    public int CurrentSeconds => Mathf.FloorToInt(TimeRemaining % 60f);
     
     [SerializeField] 
     private bool _isSpreadingMode = true;
@@ -87,11 +87,11 @@ public class GameManager : MonoBehaviour
     {
         if (!_timerRunning) return;
 
-        _timeRemaining -= Time.deltaTime;
+        TimeRemaining -= Time.deltaTime;
 
-        if (_timeRemaining <= 0f)
+        if (TimeRemaining <= 0f)
         {
-            _timeRemaining = 0f;
+            TimeRemaining = 0f;
             _timerRunning = false;
             GameUIManager.UpdateTimerDisplay();
             EndGame();
@@ -104,7 +104,7 @@ public class GameManager : MonoBehaviour
 
     private void UpdateMusic()
     {
-        if (_timeRemaining <= 30 && !_hasChangedForFastMusic)
+        if (TimeRemaining <= 30 && !_hasChangedForFastMusic)
         {
             SoundManager.Instance.OnPlayAcceleratedGameMusic();
             _hasChangedForFastMusic = true;
@@ -114,7 +114,7 @@ public class GameManager : MonoBehaviour
     public void StartTimer()
     {
         SoundManager.Instance.OnGameStarted();
-        _timeRemaining = _gameDuration;
+        TimeRemaining = _gameDuration;
         _timerRunning = true;
     }
     
