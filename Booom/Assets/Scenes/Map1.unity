@@ -14400,7 +14400,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ccf427dc7e39e7c4a92ea4b407453d68, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GridManagerLevel
-  CapturableTilesCount: 0
+  capturableTilesCount: 0
   mainCamera: {fileID: 722509299}
   playerSpawnPoints:
   - {x: -5, y: 10}
