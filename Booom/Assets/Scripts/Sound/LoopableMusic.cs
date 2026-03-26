@@ -6,19 +6,20 @@ public class LoopableMusic : MonoBehaviour
     private int _loopEndSamples;
     private int _loopLengthSamples;
     
-    private AudioSource _audioSource;
+    [SerializeField]
+    private AudioSource audioSource;
 
     private bool _isMusicPlaying = false;
 
     private void Start()
     {
-        _audioSource = GetComponents<AudioSource>()[1];
+        audioSource = GetComponents<AudioSource>()[1];
     }
 
     public void PlayMusic(in Music music)
     {
-        _audioSource.clip = music.audio.audioClip;
-        _audioSource.volume = music.audio.volume;
+        audioSource.clip = music.audio.audioClip;
+        audioSource.volume = music.audio.volume;
         
         var frequency = music.audio.audioClip.frequency;
         _loopStartSamples = (int)(music.loopStartTime * frequency);
@@ -26,7 +27,7 @@ public class LoopableMusic : MonoBehaviour
         _loopLengthSamples = _loopEndSamples - _loopStartSamples;
 
         _isMusicPlaying = true;
-        _audioSource.Play();
+        audioSource.Play();
     }
 
     public void StopMusic()
@@ -36,9 +37,9 @@ public class LoopableMusic : MonoBehaviour
 
     private void Update()
     {
-        if (_isMusicPlaying && _audioSource.timeSamples >= _loopEndSamples)
+        if (_isMusicPlaying && audioSource.timeSamples >= _loopEndSamples)
         {
-            _audioSource.timeSamples -= _loopLengthSamples;
+            audioSource.timeSamples -= _loopLengthSamples;
         }
     }
 }

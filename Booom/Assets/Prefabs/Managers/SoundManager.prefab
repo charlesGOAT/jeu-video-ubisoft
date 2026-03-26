@@ -881,3 +881,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bbcedae72f4646ab8c4ed7ed1f68b2ad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: GameplayAssembly::LoopableMusic
+  audioSource: {fileID: 805517881618141660}
