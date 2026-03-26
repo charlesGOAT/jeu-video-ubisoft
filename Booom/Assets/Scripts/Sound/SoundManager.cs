@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 [Serializable]
-struct Audio
+public struct Audio
 {
     public AudioClip audioClip;
     [Range(0,1)]
@@ -12,13 +11,15 @@ struct Audio
 }
 
 [Serializable]
-struct Music
+public struct Music
 {
-    public Audio audio1;
-    public Audio audio2;
+    public Audio audio;
+    public double loopStartTime;
+    public double loopEndTime;
 }
 
 [RequireComponent(typeof(AudioSource))]
+[RequireComponent(typeof(LoopableMusic))]
 public class SoundManager : MonoBehaviour
 {
     [Header("--- Menu sounds ---")]
@@ -76,9 +77,10 @@ public class SoundManager : MonoBehaviour
 
     private AudioSource _audioSourceSFX;
     private AudioSource _audioSourceMusic;
-    private AudioSource _audioSourceMusic2;
 
     private static bool? _isInMenu = null;
+
+    private LoopableMusic _loopableMusic;
 
     private bool IsSceneMenu(in Scene scene) => scene.name.Contains("menu", StringComparison.OrdinalIgnoreCase);
     private bool IsSceneEndGame(in Scene scene) => scene.name.Contains("EndGame", StringComparison.OrdinalIgnoreCase);
@@ -95,7 +97,9 @@ public class SoundManager : MonoBehaviour
 
         Instance = this;
         DontDestroyOnLoad(gameObject);
-        
+
+        _loopableMusic = GetComponent<LoopableMusic>();
+
         InitializeAudioSources();
         VerifyAudioClipsPresent();
         
@@ -116,32 +120,18 @@ public class SoundManager : MonoBehaviour
         if (audioSources.Length < 2) throw new Exception("There should be at least two audio sources");
         _audioSourceSFX = audioSources[0];
         _audioSourceMusic = audioSources[1];
-        _audioSourceMusic2 = audioSources[2];
-        _audioSourceMusic2.loop = true;
+        _audioSourceMusic.loop = true;
     }
 
     private void PlayAudioSourceMusic(in Music music)
     {
-        _audioSourceMusic2.Stop();
-        
-        _audioSourceMusic.clip = music.audio1.audioClip;
-        _audioSourceMusic.volume = music.audio1.volume;
-
-        _audioSourceMusic2.clip = music.audio2.audioClip;
-        _audioSourceMusic2.volume = music.audio2.volume;
-
-        double startTime = AudioSettings.dspTime + 0.1;
-        double duration = (double)music.audio1.audioClip.samples / music.audio1.audioClip.frequency;
-        double nextStartTime = startTime + duration;
-
-        _audioSourceMusic.PlayScheduled(startTime);
-        _audioSourceMusic2.PlayScheduled(nextStartTime);
+        _loopableMusic.StopMusic();
+        _loopableMusic.PlayMusic(music);
     }
 
     private void PlayAudioSourceMusic(in Audio audio)
     {
-        _audioSourceMusic2.Stop();
-
+        _loopableMusic.StopMusic();
         _audioSourceMusic.clip = audio.audioClip;
         _audioSourceMusic.volume = audio.volume;
         _audioSourceMusic.Play();
@@ -266,7 +256,7 @@ public class SoundManager : MonoBehaviour
         {
             throw new Exception($"Audio clip {nameof(buttonClickedAudio)} cannot be null");
         }
-        if (mainTheme.audio1.audioClip == null || mainTheme.audio2.audioClip == null)
+        if (mainTheme.audio.audioClip == null)
         {
             throw new Exception($"Audio clip {nameof(mainTheme)} cannot be null");
         }
