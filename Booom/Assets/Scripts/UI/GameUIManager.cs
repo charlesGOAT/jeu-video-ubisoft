@@ -26,12 +26,6 @@ public class GameUIManager : MonoBehaviour
     private GameObject bombEventPanel;
     
     [SerializeField]
-    private Image endGameImage;
-    
-    [SerializeField]
-    private TMP_Text winnerText;
-    
-    [SerializeField]
     private TMP_Text tutoText;
 
     private readonly HashSet<PlayerEnum> _playersTutoDone = new();
