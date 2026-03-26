@@ -27,7 +27,7 @@ EditorBuildSettings:
     path: Assets/Scenes/TheRooms.unity
     guid: 493557a4a61724548aca063b71c3b794
   - enabled: 1
-    path: Assets/Scenes/Biggg.unity
+    path: Assets/Scenes/Map1.unity
     guid: e501d71de05db3c41af970a6e73b050b
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
