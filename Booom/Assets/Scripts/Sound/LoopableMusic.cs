@@ -26,6 +26,7 @@ public class LoopableMusic : MonoBehaviour
         _loopLengthSamples = _loopEndSamples - _loopStartSamples;
 
         _isMusicPlaying = true;
+        _audioSource.Play();
     }
 
     public void StopMusic()
