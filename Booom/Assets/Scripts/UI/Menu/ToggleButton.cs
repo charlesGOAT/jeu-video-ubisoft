@@ -34,7 +34,7 @@ public class ToggleButton : MonoBehaviour
                 _toggle.isOn = LobbyManager.TutorialActivated;
                 break;
             case "ToggleCVD":
-                _toggle.isOn = LobbyManager.TutorialActivated;
+                _toggle.isOn = LobbyManager.CVDActivated;
                 break;
         }
     }

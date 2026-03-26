@@ -14,8 +14,8 @@ public class GameManager : MonoBehaviour
     private float _timeRemaining;
     private bool _timerRunning;
     
-    [SerializeField]
-    private float _gameDuration = GameConstants.GAME_DURATION;
+    // [SerializeField]
+    private float _gameDuration = 5f;
 
     [SerializeField] 
     public Material snowflakeMaterial;

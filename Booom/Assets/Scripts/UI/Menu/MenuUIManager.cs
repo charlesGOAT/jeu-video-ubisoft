@@ -80,4 +80,9 @@ public class MenuUIManager : MonoBehaviour
     {
         LobbyManager.TutorialActivated = !LobbyManager.TutorialActivated;
     }
+    
+    public void ToggleCVD()
+    {
+        LobbyManager.CVDActivated = !LobbyManager.CVDActivated;
+    }
 }
