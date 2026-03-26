@@ -42,7 +42,7 @@ BoxCollider:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 3840
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -144,6 +144,14 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: a23e6e21bc45d2245a5c586c07a0512b, type: 3}
       propertyPath: m_Name
       value: DiscoBomb
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: a23e6e21bc45d2245a5c586c07a0512b, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: a23e6e21bc45d2245a5c586c07a0512b, type: 3}
+      propertyPath: m_TagString
+      value: Bomb
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -305,7 +313,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: GameplayAssembly::Bomb
   explosionRange: 3
-  ColliderComp: {fileID: 0}
   AssociatedPlayer: 0
 --- !u!65 &1279853183515015146
 BoxCollider:

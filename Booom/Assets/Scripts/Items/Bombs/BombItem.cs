@@ -24,14 +24,17 @@ public abstract class BombItem : BaseItem
         _associatedPlayer.OnPlaceBombSuccessful += BombSuccessfullyPlaced;
         
         PickupItemSpecific();
+        _associatedPlayer.DisplayPopUp(ItemType, IconSprite);
     }
-    
+
     protected virtual void PickupItemSpecific() {}
 
     public override void FinishUsingItem(bool hasDied = false)
     {
         _associatedPlayer.OnPlaceBomb -= UseItem;
         _associatedPlayer.OnPlaceBombSuccessful -= BombSuccessfullyPlaced;
+        if(ItemType != ItemType.ChainBombs || hasDied) _associatedPlayer.RemoveItemPopUp(ItemType);
+        
         _currentUseCount = 0;
         FinishUsingItemSpecific(hasDied);
         CallFinishUsingItemCallback();

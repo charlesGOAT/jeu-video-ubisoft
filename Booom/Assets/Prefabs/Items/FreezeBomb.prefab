@@ -69,6 +69,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Item
   itemType: 3
+  iconSprite: {fileID: 21300000, guid: 645711f175d6a244dbc280b5832b9b22, type: 3}
   posOnMap: {x: 0, y: 0}
 --- !u!33 &-1187777714943413512
 MeshFilter:

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using UnityEngine;
 
 public static class GameConstants
 {
@@ -14,6 +15,7 @@ public static class GameConstants
     public const int HIT_STATE_DURATION = 3;
     public const float GAME_DURATION = 120f;
     public const float AIR_STATE_DURATION = 1.0f;
+    public const float POPUP_DURATION = 2.0f;
 
     public static readonly Dictionary<int, float> SpeedBoostPerKill =new ()
     {

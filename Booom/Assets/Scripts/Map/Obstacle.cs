@@ -13,4 +13,6 @@ public class Obstacle : SpecialTile
             ObstacleHeight = transform.GetChild(0).localScale.y;
         }
     }
+
+    public override void StepOnTile(Player player) {}
 }
