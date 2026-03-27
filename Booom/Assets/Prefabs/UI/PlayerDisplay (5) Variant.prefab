@@ -34,7 +34,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: 1, y: 63}
+  m_AnchoredPosition: {x: -959, y: 610}
   m_SizeDelta: {x: 331.186, y: 421.0569}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1525144782416049415
@@ -109,7 +109,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: 1.0008, y: -216}
+  m_AnchoredPosition: {x: -958.99927, y: 331}
   m_SizeDelta: {x: 331.19, y: 118.2245}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2118819465692162029
@@ -528,11 +528,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3940478465968702305, guid: 4d195cfdaecdc0b4c87c9efd3422cd4d, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: -960
       objectReference: {fileID: 0}
     - target: {fileID: 3940478465968702305, guid: 4d195cfdaecdc0b4c87c9efd3422cd4d, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: 547
       objectReference: {fileID: 0}
     - target: {fileID: 4495618641266493052, guid: 4d195cfdaecdc0b4c87c9efd3422cd4d, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -604,15 +604,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5985792126034790686, guid: 4d195cfdaecdc0b4c87c9efd3422cd4d, type: 3}
       propertyPath: m_LocalScale.x
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5985792126034790686, guid: 4d195cfdaecdc0b4c87c9efd3422cd4d, type: 3}
       propertyPath: m_LocalScale.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5985792126034790686, guid: 4d195cfdaecdc0b4c87c9efd3422cd4d, type: 3}
       propertyPath: m_LocalScale.z
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5994645701077667133, guid: 4d195cfdaecdc0b4c87c9efd3422cd4d, type: 3}
       propertyPath: m_text
