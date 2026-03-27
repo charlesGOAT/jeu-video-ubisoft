@@ -81,19 +81,40 @@ public abstract class GridManagerStrategy : MonoBehaviour
         }
     }
 
-    //A besoin d'un peu de peaufinage mais marche pour l'instant
-    //Je peut le faire dans un autre task
-    //Manque encore du peaufinage lol
-    //Manque de peaufinage en tbnk
-    protected void PositionCamera()
+    private void PositionCamera()
     {
         if (mainCamera == null) return;
 
-        float centerX = (MapUpperLimit.x - ((MapUpperLimit.x - MapLowerLimit.x) / 2f)) * GameConstants.UNITY_GRID_SIZE;
-        float centerZ = (MapUpperLimit.y - ((MapUpperLimit.y - MapLowerLimit.y) / 2f)) * GameConstants.UNITY_GRID_SIZE;
+        float centerX = ((MapUpperLimit.x + MapLowerLimit.x) / 2f) * GameConstants.UNITY_GRID_SIZE;
+        float centerZ = ((MapUpperLimit.y + MapLowerLimit.y) / 2f) * GameConstants.UNITY_GRID_SIZE;
+        Vector3 mapCenter = new Vector3(centerX, 0f, centerZ); 
 
-        mainCamera.transform.position = new Vector3(centerX - (Height * GameConstants.UNITY_GRID_SIZE) / 2f, ((Width + Height) * GameConstants.UNITY_GRID_SIZE) / 2f, centerZ);
-        mainCamera.transform.rotation = Quaternion.Euler(60f, 90f, 0f);
+        float mapActualWidth = Width * GameConstants.UNITY_GRID_SIZE;
+        float mapActualHeight = Height * GameConstants.UNITY_GRID_SIZE;
+
+        float baseHeight = Mathf.Max(mapActualWidth, mapActualHeight);
+
+        Quaternion camRotation = Quaternion.Euler(75f, 90f, 0f);
+        mainCamera.transform.rotation = camRotation;
+        Vector3 forwardDir = camRotation * Vector3.forward;
+
+        float fovRad = mainCamera.fieldOfView * 0.5f * Mathf.Deg2Rad;
+
+        float requiredDistVertical = (mapActualWidth / 2f) / Mathf.Tan(fovRad);
+        float requiredDistHorizontal = (mapActualHeight / 2f) / (Mathf.Tan(fovRad) * mainCamera.aspect);
+
+        float perspectivePadding = 1.15f; // Gives a 15% buffer for the tilted perspective
+        requiredDistVertical *= perspectivePadding;
+        requiredDistHorizontal *= perspectivePadding;
+
+        float minRequiredDistance = Mathf.Max(requiredDistVertical, requiredDistHorizontal);
+        float safeMultiplier = (minRequiredDistance * Mathf.Abs(forwardDir.y)) / baseHeight;
+
+        float zoomMultiplier = safeMultiplier - 0.01f;
+        float camHeight = baseHeight * zoomMultiplier;
+        float distance = camHeight / Mathf.Abs(forwardDir.y);
+
+        mainCamera.transform.position = mapCenter - (forwardDir * distance);
     }
 
     public Vector3 GetRandomPosOnGridWithNoItem()
