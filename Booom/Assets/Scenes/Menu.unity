@@ -941,7 +941,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2443516477206234823, guid: c9fd1a39a14cbf643911bf47e03937f9, type: 3}
       propertyPath: battleMusic.volume
-      value: 1
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 2443516477206234823, guid: c9fd1a39a14cbf643911bf47e03937f9, type: 3}
       propertyPath: mainTheme.audioClip
@@ -953,7 +953,7 @@ PrefabInstance:
       objectReference: {fileID: 8300000, guid: a49d8d15a66d9fd4986af0d47e515f35, type: 3}
     - target: {fileID: 2443516477206234823, guid: c9fd1a39a14cbf643911bf47e03937f9, type: 3}
       propertyPath: mainTheme.loopEndTime
-      value: 1.36
+      value: 180.3
       objectReference: {fileID: 0}
     - target: {fileID: 2443516477206234823, guid: c9fd1a39a14cbf643911bf47e03937f9, type: 3}
       propertyPath: mainTheme.audio.volume
@@ -977,12 +977,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2443516477206234823, guid: c9fd1a39a14cbf643911bf47e03937f9, type: 3}
       propertyPath: mainTheme.loopStartTime
-      value: 0.08
+      value: 96
       objectReference: {fileID: 0}
     - target: {fileID: 2443516477206234823, guid: c9fd1a39a14cbf643911bf47e03937f9, type: 3}
       propertyPath: mainTheme.audio.audioClip
       value: 
-      objectReference: {fileID: 8300000, guid: 6c4751582a4f0df43a19ffae8395fa69, type: 3}
+      objectReference: {fileID: 8300000, guid: 8f9dbe1e7de17e84b90cd62c724d14a8, type: 3}
     - target: {fileID: 2443516477206234823, guid: c9fd1a39a14cbf643911bf47e03937f9, type: 3}
       propertyPath: backgroundMenuMusic.volume
       value: 1
