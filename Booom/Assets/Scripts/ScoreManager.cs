@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using System.Linq;
 
 public delegate void ScoreChangedEventHandler(PlayerEnum player, int score);
 
@@ -31,7 +30,7 @@ public class ScoreManager : MonoBehaviour
         
         _acquiredTilesByPlayer[(int)player - 1].Add(tile);
 
-        int newScore = _acquiredTilesByPlayer[(int)player - 1].Count;
+        int newScore = (int)(((float)_acquiredTilesByPlayer[(int)player - 1].Count / (float)GameManager.Instance.GridManager.CapturableTilesCount) * 100);
         OnScoreChanged?.Invoke(player, newScore);
         
         if (newScore >= GameManager.Instance.GridManager.CapturableTilesCount)

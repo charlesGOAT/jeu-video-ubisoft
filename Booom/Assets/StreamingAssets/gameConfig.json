@@ -2,10 +2,10 @@
   "IsSpreadingMode": true,
   "IsRandomMap": true,
   "IsBonusSpeed": false,
-  "SpawnMode": 1,
+  "SpawnMode": 0,
   "IsDropFromSky": false,
   "HighlightOwnColor": false,
-  "GameDuration": 120,
+  "GameDuration": 60,
   "MovementSpeed": 8,
   "FrozenTileDuration": 20,
   "ColorBoost": 1.5,
@@ -48,7 +48,7 @@
   "BombEvents": [
     {
       "minutes": 0,
-      "seconds": 30,
+      "seconds": 10,
       "value": 2
     }
   ],
