@@ -206,11 +206,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 460966547132079572, guid: 79851e56cad54ff40a61d08d609a6a61, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 6
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 460966547132079572, guid: 79851e56cad54ff40a61d08d609a6a61, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 447
+      value: 100.936264
       objectReference: {fileID: 0}
     - target: {fileID: 460966547132079572, guid: 79851e56cad54ff40a61d08d609a6a61, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -303,7 +303,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3190190132162193060, guid: 79851e56cad54ff40a61d08d609a6a61, type: 3}
   m_PrefabInstance: {fileID: 55682560}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 1925878728}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c009075789fb56a4985af9775b800955, type: 3}
@@ -1490,11 +1490,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 92a7aff4970f5de41b2f6bda13e320f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: GameplayAssembly::PlayerSlot
---- !u!1 &318272896 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 800278665285267194, guid: 79851e56cad54ff40a61d08d609a6a61, type: 3}
-  m_PrefabInstance: {fileID: 722317294705832659}
-  m_PrefabAsset: {fileID: 0}
 --- !u!224 &318272897 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 460966547132079572, guid: 79851e56cad54ff40a61d08d609a6a61, type: 3}
@@ -2101,8 +2096,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 352.5}
-  m_SizeDelta: {x: -1250, y: -745}
+  m_AnchoredPosition: {x: 0, y: 46.765366}
+  m_SizeDelta: {x: -1250, y: -750}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &683272165
 MonoBehaviour:
@@ -2841,8 +2836,8 @@ RectTransform:
   m_Children:
   - {fileID: 1988787805}
   - {fileID: 683272164}
-  - {fileID: 318272897}
   - {fileID: 55682561}
+  - {fileID: 318272897}
   - {fileID: 1620290358}
   - {fileID: 1002706674}
   - {fileID: 1062075795}
@@ -3363,6 +3358,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: ToggleCVD
       objectReference: {fileID: 0}
+    - target: {fileID: 800278665285267194, guid: 79851e56cad54ff40a61d08d609a6a61, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 947336525673030637, guid: 79851e56cad54ff40a61d08d609a6a61, type: 3}
       propertyPath: m_IsOn
       value: 0
@@ -3857,7 +3856,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76c392e42b5098c458856cdf6ecaaaa1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.EventSystems.EventSystem
-  m_FirstSelected: {fileID: 318272896}
+  m_FirstSelected: {fileID: 1925878728}
   m_sendNavigationEvents: 1
   m_DragThreshold: 10
 --- !u!1001 &1887552155
@@ -4101,6 +4100,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1919421441}
   m_CullTransparentMesh: 1
+--- !u!1 &1925878728 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 800278665285267194, guid: 79851e56cad54ff40a61d08d609a6a61, type: 3}
+  m_PrefabInstance: {fileID: 55682560}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1933444545
 GameObject:
   m_ObjectHideFlags: 0
@@ -4645,11 +4649,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 460966547132079572, guid: 79851e56cad54ff40a61d08d609a6a61, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 6
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 460966547132079572, guid: 79851e56cad54ff40a61d08d609a6a61, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 355
+      value: 8.936264
       objectReference: {fileID: 0}
     - target: {fileID: 460966547132079572, guid: 79851e56cad54ff40a61d08d609a6a61, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -4733,7 +4737,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3190190132162193060, guid: 79851e56cad54ff40a61d08d609a6a61, type: 3}
   m_PrefabInstance: {fileID: 722317294705832659}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 318272896}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c009075789fb56a4985af9775b800955, type: 3}
