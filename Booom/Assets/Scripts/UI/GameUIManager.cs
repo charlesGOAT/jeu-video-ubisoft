@@ -37,7 +37,7 @@ public class GameUIManager : MonoBehaviour
 
         _vinylMaterial = vinylImage.material;
         _vinylAnimator = vinylImage.GetComponentInParent<Animator>();
-        _vinylMaterial.SetFloat("_Speed", GameManager.Instance.GameDuration + 5);
+        _vinylMaterial.SetFloat("_Speed", GameManager.Instance.GameDuration);
 
         GameManager.Instance.ScoreManager.OnScoreChanged += RefreshScore;
         GameManager.Instance.StartTimer();
