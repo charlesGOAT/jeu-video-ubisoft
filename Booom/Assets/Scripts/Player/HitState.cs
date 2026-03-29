@@ -1,20 +1,25 @@
 public class HitState : State
 {
-    private float _hitDuration = GameConstants.HIT_STATE_DURATION;
+    private float _hitDuration;
     public HitState(StateMachine stateMachine, Player player) : base(stateMachine, player)
     { 
     }
 
     public override void Enter()
     {
+        _player.Animator.ResetTrigger("DropBomb");
         _player.Animator.SetBool("IsHit", true);
         _player.DisableInputActions();
+        _hitDuration =  GameConstants.HIT_STATE_DURATION;
+
+#if !UNITY_EDITOR
+                _hitDuration = GameManager.Instance.RuntimeConfig.HitTimeDuration;
+#endif
     }
 
     public override void Exit()
     {
         _player.Animator.SetBool("IsHit", false);
-        _hitDuration = GameConstants.HIT_STATE_DURATION;
         _player.EnableInputActions();
     }
 
