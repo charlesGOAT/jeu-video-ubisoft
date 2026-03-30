@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,6 +12,14 @@ public class TutoUIManager : MonoBehaviour
     [SerializeField] private TMP_Text[] tutoText;
     
     private bool _tutoEnded;
+
+    private void Start()
+    {
+        foreach (var player in LobbyManager.JoinedPlayers.Keys)
+        {
+            tutoText[(int)player - 1].transform.parent.gameObject.SetActive(true);
+        }
+    }
 
     public void UpdatePlayerText(PlayerEnum player)
     {
