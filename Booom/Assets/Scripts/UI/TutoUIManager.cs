@@ -23,7 +23,7 @@ public class TutoUIManager : MonoBehaviour
 
     public void UpdatePlayerText(PlayerEnum player)
     {
-        tutoText[(int)player - 1].text = "SPREAD YOUR COLOR TO FILL ALL THE TILES";
+        tutoText[(int)player - 1].text = $"<sprite name=\"downButton2\"> MOVE";
     }
 
     public void PlayerEndTuto(PlayerEnum player)
