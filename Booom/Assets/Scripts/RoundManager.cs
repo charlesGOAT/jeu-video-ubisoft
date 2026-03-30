@@ -60,7 +60,7 @@ public static class RoundManager
         }
         else
         {
-            newMapIndex = ++_lastMapIndex;
+            newMapIndex = _lastMapIndex++;
         }
 
         int nextMap = mapsToPlay[newMapIndex];
@@ -87,7 +87,7 @@ public static class RoundManager
             .Select((x, index) => (Player: x.Key, Rank: index))
             .ToDictionary(item => item.Player, item => item.Rank);
         
-        foreach (Player player in Player.ActivePlayers)
+        foreach (Player player in Player.ActivePlayers.Values)
         {
             if (player.PlayerNb == PlayerEnum.None) continue;
             EndGameUIManager.PlayerRank[player.PlayerNb] = playerRanks[player.PlayerNb];
@@ -99,10 +99,11 @@ public static class RoundManager
 
     public static void LoadEndRoundData()
     {
-        foreach (Player player in Player.ActivePlayers)
+        int i = 0;
+        foreach (Player player in Player.ActivePlayers.Values)
         {
             if (player.PlayerNb == PlayerEnum.None) continue;
-            EndGameUIManager.PlayerRank[player.PlayerNb] = (int)player.PlayerNb - 1;
+            EndGameUIManager.PlayerRank[player.PlayerNb] = i++;
         }
 
         EndGameUIManager.NextSceneIndex = FindNextMap();

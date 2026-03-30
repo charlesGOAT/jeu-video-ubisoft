@@ -7,7 +7,7 @@
   "HighlightOwnColor": false,
   "GameDuration": 120,
   "MovementSpeed": 8,
-  "FrozenTileDuration": 20,
+  "FrozenTileDuration": 15,
   "ColorBoost": 1.5,
   "ColorDebuff": 0.7,
   "NormalBombTimer": 2.0,

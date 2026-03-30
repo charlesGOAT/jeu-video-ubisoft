@@ -39,16 +39,15 @@ public class EndGameUIManager : MonoBehaviour
 
     private void SetUpUI()
     {
-        for(int i = 0; i < playerImages.Count; ++i)
+        foreach(PlayerEnum playerEnum in PlayerRank.Keys)
         {
-            PlayerEnum playerEnum = (PlayerEnum)(i + 1);
             if (!PlayerRank.TryGetValue(playerEnum, out int rank)) continue;
             
-            _displays[i].gameObject.SetActive(true);
-
             var playerDisplay = _displays[rank];
+            playerDisplay.gameObject.SetActive(true);
+            
             List<Image> images = playerDisplay.images;
-            images[0].sprite = playerImages[i];
+            images[0].sprite = playerImages[(int)playerEnum - 1];
 
             int gamesWon = PlayerWonGame.Count(x => x == playerEnum);
             
@@ -95,7 +94,10 @@ public class EndGameUIManager : MonoBehaviour
 
         for (int i = 1; i < activeIcons.Count; i++)
         {
+            var test = activeIcons[i].transform.parent.GetComponent<RectTransform>();
+            test.sizeDelta = new(200, 100);
             RectTransform iconRT = activeIcons[i].GetComponent<RectTransform>();
+            iconRT.sizeDelta = new(100, 100);
 
             iconRT.anchorMin = new Vector2(0.5f, 0.5f);
             iconRT.anchorMax = new Vector2(0.5f, 0.5f);

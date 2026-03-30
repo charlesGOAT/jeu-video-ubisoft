@@ -40,10 +40,10 @@ public class GameManager : MonoBehaviour
     public RuntimeConfigData RuntimeConfig { get; private set; }
     
     [SerializeField]
-    private bool _isBonusSpeed = false;
+    private bool _isBonusSpeed = true;
 
     [SerializeField] 
-    public int FrozenTileDuration = 30;
+    public int FrozenTileDuration = 15;
 
     public bool IsBonusSpeed => _isBonusSpeed;
 
@@ -227,7 +227,7 @@ public class GameManager : MonoBehaviour
 
     private void RemoveAllItemsInPlayerInv()
     {
-        foreach (Player player in Player.ActivePlayers)
+        foreach (Player player in Player.ActivePlayers.Values)
         {
             player.ResetInventory();
         }
@@ -254,7 +254,7 @@ public class GameManager : MonoBehaviour
 
     public IEnumerator MakeWinnerColorBlink(PlayerEnum winner)
     {
-        var acquiredTiles = ScoreManager.GetAcquiredTilesByPlayer()[(int)winner - 1];
+        var acquiredTiles = ScoreManager.AcquiredTilesByPlayer[winner];
         foreach (var pos in acquiredTiles)
         {
             Tile tile = GridManager.GetTileAtCoordinates(pos);
@@ -268,22 +268,22 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator EndRoundCoroutine(PlayerEnum winner)
     {
-        Player.ActivePlayers.ForEach(x => x.DisableInputActions());
+        Player.ActivePlayers.Values.ToList().ForEach(x => x.DisableInputActions());
         RoundManager.LoadEndRoundData();
         SoundManager.Instance.OnColorAlternate();
         yield return StartCoroutine(MakeWinnerColorBlink(winner));
-        Player.ActivePlayers.ForEach(x => x.EnableInputActions());
+        Player.ActivePlayers.Values.ToList().ForEach(x => x.EnableInputActions());
         NewRound();
         SceneManager.LoadScene("EndGame");
     }
 
     private IEnumerator EndGameCoroutine(PlayerEnum winner)
     {
-        Player.ActivePlayers.ForEach(x => x.DisableInputActions());
+        Player.ActivePlayers.Values.ToList().ForEach(x => x.DisableInputActions());
         RoundManager.LoadEndGameData();
         SoundManager.Instance.OnColorAlternate();
         yield return StartCoroutine(MakeWinnerColorBlink(winner));
-        Player.ActivePlayers.ForEach(x => x.EnableInputActions());
+        Player.ActivePlayers.Values.ToList().ForEach(x => x.EnableInputActions());
         CleanGame();
         SceneManager.LoadScene("EndGame");
     }

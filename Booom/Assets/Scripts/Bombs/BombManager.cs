@@ -10,9 +10,6 @@ public class BombManager : MonoBehaviour
     [SerializeField]
     private Bomb[] bombPrefabs;
 
-    [SerializeField]
-    private bool ShouldBombCollideWithPlayers = true;
-
     // Track each Player's bomb cooldown
     private readonly Dictionary<PlayerEnum, float> _nextBombTime = new (GameConstants.NB_PLAYERS);
 
@@ -40,29 +37,10 @@ public class BombManager : MonoBehaviour
 #if !UNITY_EDITOR
         ShouldBombCollideWithPlayers = GameManager.Instance.RuntimeConfig.ShouldBombCollideWithPlayers;
 #endif
-
-        if (!ShouldBombCollideWithPlayers)
-        {
-            InitializeBombCollisionLayers();
-        }
     }
 
-    private void InitializeBombCollisionLayers()
+    public virtual bool CreateBomb(in Vector3 position, in PlayerEnum playerEnum,in BombFusingStrategy bombStrat, in BombItems bombItems)
     {
-        foreach (Bomb bomb in bombPrefabs)
-        {
-            Collider bombCol = bomb.GetComponent<Collider>();
-
-            foreach (var layer in GameManager.Instance.CollisionLayers)
-            {
-                bombCol.excludeLayers |= layer;
-            }
-        }
-    }
-    
-    public virtual bool CreateBomb(in Vector3 position, in Player player,in BombFusingStrategy bombStrat, in BombItems bombItems)
-    {
-        PlayerEnum playerEnum = player.PlayerNb;
         Vector3 bombHeightOffset = Vector3.up * 0.5f;
 
         if (Time.time < _nextBombTime[playerEnum])
@@ -84,14 +62,19 @@ public class BombManager : MonoBehaviour
         
         Vector3 worldPosition = GridManagerStrategy.GridToWorldPosition(gridCoordinates, tile.transform.position.y);
 
+        bombPrefabs[intBombType].AssociatedPlayer = playerEnum;
         Bomb instantiatedBomb = Instantiate(bombPrefabs[intBombType], worldPosition + bombHeight, Quaternion.identity);
-        instantiatedBomb.AssociatedPlayer = playerEnum;
         instantiatedBomb.BombFusingStrategy = bombStrat;
         instantiatedBomb.IsFreezeBomb = bombItems.HasFlag(BombItems.FreezeBombs);
 
-        if(ShouldBombCollideWithPlayers)
-            instantiatedBomb.RemoveColliderLayer(player.gameObject);
-
+        foreach (Player p in Player.ActivePlayers.Values)
+        {
+            if (p.GetPlayerTile() == tile)
+            {
+                instantiatedBomb.RemoveColliderLayer(p.gameObject.layer);
+            }
+        }
+    
 #if !UNITY_EDITOR
         instantiatedBomb.ConfigureValues();
 #endif

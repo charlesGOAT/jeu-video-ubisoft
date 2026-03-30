@@ -47,9 +47,9 @@ public class GameUIManager : MonoBehaviour
 
     private void InitializeScorePlayers()
     {
-        foreach (var player in Player.ActivePlayers)
+        for (int i = 0; i < Player.ActivePlayers.Count; ++i)
         {
-            playerPercents[(int)player.PlayerNb - 1].transform.parent.gameObject.SetActive(true);
+            playerPercents[i].transform.parent.gameObject.SetActive(true);
         }
     }
     
