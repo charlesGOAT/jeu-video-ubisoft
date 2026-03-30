@@ -181,10 +181,13 @@ public class Bomb : MonoBehaviour
         foreach (Player player in Player.ActivePlayers.Values)
         {
             Tile playerTile = player.GetPlayerTile();
-            if (playerTile != null && playerTile.TileCoordinates == tileCoordinates 
-                && player.PlayerNb != AssociatedPlayer && !player.IsImmune)
+            if (playerTile != null && playerTile.TileCoordinates == tileCoordinates)
             {
-                GameManager.Instance.ScoreManager.NewElimination(player.PlayerNb);
+                if (player.PlayerNb != AssociatedPlayer && !player.IsImmune)
+                {
+                    GameManager.Instance.ScoreManager.NewElimination(AssociatedPlayer);
+                }
+                
                 player.OnHit(hitDirection);
             }
         }
