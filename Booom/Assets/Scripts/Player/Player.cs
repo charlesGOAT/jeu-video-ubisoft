@@ -129,7 +129,7 @@ public class Player : MonoBehaviour
     public event PlaceBombSuccessFulChained OnPlaceBombSuccessfulChained;
 
     public const float JUMP_HEIGHT_OFFSET = 2.5f;
-    public const float JUMP_NUMBER_OF_TILES = 2.7f;
+    public const float JUMP_NUMBER_OF_TILES = 3.5f;
     public const float PLAYER_GRAVITY = -36.0f;
 
 
@@ -142,6 +142,7 @@ public class Player : MonoBehaviour
         Animator = GetComponentInChildren<Animator>();
         InitializeStateMachine();
         GetComponents();
+        ConfigurePlayers();
         ActivePlayers.Add(this);
     }
 
@@ -150,7 +151,6 @@ public class Player : MonoBehaviour
 #if !UNITY_EDITOR
         GetConfigValues();
 #endif
-        ConfigurePlayers();
         CheckStartConditions();
         InitializeSpawner();
     }

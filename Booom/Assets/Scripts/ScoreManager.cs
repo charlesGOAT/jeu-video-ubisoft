@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using System.Linq;
 
 public delegate void ScoreChangedEventHandler(PlayerEnum player, int score);
 
@@ -29,9 +28,10 @@ public class ScoreManager : MonoBehaviour
     {
         if (player == PlayerEnum.None) return;
         
-        _acquiredTilesByPlayer[(int)player - 1].Add(tile);
+        int playerNb = (int)player - 1;
+        _acquiredTilesByPlayer[playerNb].Add(tile);
 
-        int newScore = _acquiredTilesByPlayer[(int)player - 1].Count;
+        int newScore = CalculateScore(playerNb);
         OnScoreChanged?.Invoke(player, newScore);
         
         if (newScore >= GameManager.Instance.GridManager.CapturableTilesCount)
@@ -43,11 +43,14 @@ public class ScoreManager : MonoBehaviour
     public void LoseTile(PlayerEnum player, Vector2Int tile)
     {
         if (player == PlayerEnum.None) return;
-            
-        _acquiredTilesByPlayer[(int)player - 1].Remove(tile);
         
-        OnScoreChanged?.Invoke(player, _acquiredTilesByPlayer[(int)player - 1].Count);
+        int playerNb = (int)player - 1;
+        _acquiredTilesByPlayer[playerNb].Remove(tile);
+        
+        OnScoreChanged?.Invoke(player, CalculateScore(playerNb));
     }
+
+    private int CalculateScore(int player) => (int)(((float)_acquiredTilesByPlayer[player].Count / GameManager.Instance.GridManager.CapturableTilesCount) * 100);
     
     public PlayerEnum FindPlayerWithMostGround()
     {
