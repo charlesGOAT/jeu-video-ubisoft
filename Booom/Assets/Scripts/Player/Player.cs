@@ -248,14 +248,13 @@ public class Player : MonoBehaviour
     {
         if (_stateMachine.CurrentState is JumpState) return;
 
-        if (ctx.performed)
+        if (ctx.ReadValueAsButton())
         {
             OnPlaceBomb?.Invoke();
 
             if (GameManager.Instance.BombManager.CreateBomb(transform.position,
-                    playerNb, _bombFusingStrategies[(int)BombFusingType], NextBombBombItems))
+                    this, _bombFusingStrategies[(int)BombFusingType], NextBombBombItems))
             {
-                Animator.SetTrigger("DropBomb");
                 OnPlaceBombSuccessfulChained?.Invoke(ItemType.ChainBombs);
                 OnPlaceBombSuccessfulChained -= RemoveItemPopUp;
                 OnPlaceBombSuccessful?.Invoke();
