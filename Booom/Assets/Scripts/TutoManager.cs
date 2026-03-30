@@ -16,6 +16,7 @@ public class TutoManager : MonoBehaviour
         foreach (var player in LobbyManager.JoinedPlayers)
         {
             _playersBombed[player.Key] = false;
+            _playersFinished[player.Key] = false;
             
             var moveAction = player.Value.actions["Move"];
             moveAction.Disable();
