@@ -44,7 +44,7 @@ public class MenuUIManager : MonoBehaviour
     {
         if (LobbyManager.JoinedPlayers.Count > 0 && EventSystem.current.currentSelectedGameObject == null)
         {
-            EventSystem.current.SetSelectedGameObject(playButton.gameObject);
+            StartCoroutine(ReselectButton());
         }
     }
 
@@ -75,9 +75,13 @@ public class MenuUIManager : MonoBehaviour
     
     private IEnumerator ReselectButton()
     {
-        EventSystem.current.SetSelectedGameObject(null);
         yield return null; // wait one frame
-        EventSystem.current.SetSelectedGameObject(playButton.gameObject);
+        if (EventSystem.current.currentSelectedGameObject == null)
+        {
+            EventSystem.current.SetSelectedGameObject(null);
+            yield return null; // wait one frame
+            EventSystem.current.SetSelectedGameObject(playButton.gameObject);
+        }
     }
 
     public void ToggleItems()

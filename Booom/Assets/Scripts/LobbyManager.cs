@@ -67,7 +67,11 @@ public class LobbyManager : MonoBehaviour
        {
            foreach (var player in JoinedPlayers)
            {
-               ReAddPlayer(player.Value);
+               player.Value.DeactivateInput();
+           }
+           if (JoinedPlayers.Count != 0)
+           {
+               GiveUIControl(JoinedPlayers.First().Value);
            }
        }
     }
@@ -111,18 +115,6 @@ public class LobbyManager : MonoBehaviour
         }
         
         menuUIManager.TogglePlayerUI(leavingIndex + 1);
-    }
-
-    private void ReAddPlayer(PlayerInput playerInput)
-    {
-        if (playerInput.playerIndex == 0)
-        {
-            GiveUIControl(playerInput, true);
-        }
-        else
-        {
-            playerInput.DeactivateInput();
-        }
     }
 
     private void OnPlayerJoined(PlayerInput playerInput)
