@@ -15,16 +15,11 @@ public class GameUIManager : MonoBehaviour
     
     [SerializeField] 
     private Image vinylImage;
-    
-    [SerializeField]
-    private TMP_Text tutoText;
 
     [SerializeField] 
     private List<TMP_Text> playerPercents;
     
     private string _bombType = "";
-    private readonly HashSet<PlayerEnum> _playersTutoDone = new();
-    private bool _tutoEnded;
   
     private Material _vinylMaterial;
     private Animator _vinylAnimator;
@@ -34,8 +29,6 @@ public class GameUIManager : MonoBehaviour
     {
         if (SceneManager.GetActiveScene().name != "Tuto")
             GameManager.Instance.ScoreManager.OnScoreChanged -= RefreshScore;
-        else
-            GameManager.Instance.ScoreManager.OnScoreChanged -= CheckEndTuto;
     }
 
     private void Start()
@@ -54,10 +47,6 @@ public class GameUIManager : MonoBehaviour
             GameManager.Instance.StartTimer();
             InitializeScorePlayers();
         }
-        else
-        {
-            GameManager.Instance.ScoreManager.OnScoreChanged += CheckEndTuto;
-        }
     }
 
     private void InitializeScorePlayers()
@@ -66,38 +55,6 @@ public class GameUIManager : MonoBehaviour
         {
             playerPercents[(int)player.PlayerNb - 1].transform.parent.gameObject.SetActive(true);
         }
-    }
-
-    private void CheckEndTuto(PlayerEnum player, int score)
-    {
-        if (player == PlayerEnum.None || score <= 1) return;
-        
-        _playersTutoDone.Add(player);
-
-        if (_playersTutoDone.Count == LobbyManager.JoinedPlayers.Count && !_tutoEnded)
-        {
-            _tutoEnded = true;
-            StartCoroutine(EndTutoCoroutine());
-        }
-    }
-    
-    private IEnumerator EndTutoCoroutine()
-    {
-        int countdown = 5;
-
-        while (countdown > 0)
-        {
-            tutoText.text = $"GET READY TO FIGHT IN {countdown}...";
-            yield return new WaitForSeconds(1f);
-            countdown--;
-        }
-
-        tutoText.text = "FIGHT!";
-        yield return new WaitForSeconds(1f);
-
-        GameManager.Instance.NewRound();
-
-        SceneManager.LoadScene(RoundManager.FindNextMap());
     }
 
     private void RefreshScore(PlayerEnum player, int score)
