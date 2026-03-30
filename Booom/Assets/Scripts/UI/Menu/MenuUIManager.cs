@@ -40,6 +40,14 @@ public class MenuUIManager : MonoBehaviour
         }
     }
 
+    private void Update()
+    {
+        if (LobbyManager.JoinedPlayers.Count > 0 && EventSystem.current.currentSelectedGameObject == null)
+        {
+            EventSystem.current.SetSelectedGameObject(playButton.gameObject);
+        }
+    }
+
     public void Settings()
     {
         isNotMainMenu = true;
