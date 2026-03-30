@@ -39,10 +39,8 @@ public class EndGameUIManager : MonoBehaviour
 
     private void SetUpUI()
     {
-        foreach(PlayerEnum playerEnum in PlayerRank.Keys)
+        foreach(var (playerEnum, rank) in PlayerRank)
         {
-            if (!PlayerRank.TryGetValue(playerEnum, out int rank)) continue;
-            
             var playerDisplay = _displays[rank];
             playerDisplay.gameObject.SetActive(true);
             

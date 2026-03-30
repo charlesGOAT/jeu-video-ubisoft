@@ -83,6 +83,7 @@ public static class RoundManager
     public static void LoadEndGameData()
     {
         var playerRanks = _playerWinsDict
+            .Where(x => Player.ActivePlayers.Keys.Contains(x.Key))
             .OrderByDescending(x => x.Value)
             .Select((x, index) => (Player: x.Key, Rank: index))
             .ToDictionary(item => item.Player, item => item.Rank);
