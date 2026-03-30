@@ -2900,7 +2900,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -700, y: -300}
+  m_AnchoredPosition: {x: -699.99994, y: -300}
   m_SizeDelta: {x: -1400, y: -800}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &757723181
@@ -5406,7 +5406,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -700, y: 300}
+  m_AnchoredPosition: {x: -699.99994, y: 300}
   m_SizeDelta: {x: -1400, y: -800}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1522483990
@@ -7191,10 +7191,10 @@ MonoBehaviour:
   CapturableTilesCount: 0
   mainCamera: {fileID: 722509299}
   playerSpawnPoints:
-  - {x: -1, y: -3}
   - {x: -1, y: 3}
   - {x: 5, y: 3}
   - {x: 5, y: -3}
+  - {x: -1, y: -3}
 --- !u!1001 &1925721188
 PrefabInstance:
   m_ObjectHideFlags: 0
