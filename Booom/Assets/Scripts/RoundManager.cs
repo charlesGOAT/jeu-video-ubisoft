@@ -10,7 +10,9 @@ public static class RoundManager
     private static readonly List<PlayerEnum> _gameWonPlayer = new();
 
     private static RuntimeConfigData _runtimeConfig;
+#if !UNITY_EDITOR
     private static bool _isRuntimeConfigSet = false;
+#endif
     private static int _lastMapIndex = 0;
     
     private static Dictionary<PlayerEnum, int> _playerWinsDict = new()
