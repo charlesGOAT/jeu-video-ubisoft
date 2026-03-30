@@ -142,6 +142,7 @@ public class Player : MonoBehaviour
         Animator = GetComponentInChildren<Animator>();
         InitializeStateMachine();
         GetComponents();
+        ConfigurePlayers();
         ActivePlayers.Add(this);
     }
 
@@ -150,7 +151,6 @@ public class Player : MonoBehaviour
 #if !UNITY_EDITOR
         GetConfigValues();
 #endif
-        ConfigurePlayers();
         CheckStartConditions();
         InitializeSpawner();
     }
