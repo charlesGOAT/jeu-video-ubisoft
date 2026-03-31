@@ -292,10 +292,10 @@ MonoBehaviour:
     volume: 1
   tutorialMusic:
     audio:
-      audioClip: {fileID: 8300000, guid: 8f9dbe1e7de17e84b90cd62c724d14a8, type: 3}
+      audioClip: {fileID: 8300000, guid: 3f4c5c17b1cb7384cae607be4a9bfd78, type: 3}
       volume: 1
-    loopStartTime: 0
-    loopEndTime: 0
+    loopStartTime: 89.6
+    loopEndTime: 179.2
   acceleratedGameMusic:
     audioClip: {fileID: 8300000, guid: a49d8d15a66d9fd4986af0d47e515f35, type: 3}
     volume: 1
