@@ -30,10 +30,9 @@ public class ScoreManager : MonoBehaviour
         
         AcquiredTilesByPlayer[player].Add(tile);
 
-        int newScore = CalculateScore(player);
-        OnScoreChanged?.Invoke(player, newScore);
+        OnScoreChanged?.Invoke(player, AcquiredTilesByPlayer[player].Count);
         
-        if (newScore >= GameManager.Instance.GridManager.CapturableTilesCount)
+        if (AcquiredTilesByPlayer[player].Count >= GameManager.Instance.GridManager.CapturableTilesCount)
         {
             GameManager.Instance.EndGame();
         }
@@ -44,11 +43,9 @@ public class ScoreManager : MonoBehaviour
         if (player == PlayerEnum.None) return;
         
         AcquiredTilesByPlayer[player].Remove(tile);
-        OnScoreChanged?.Invoke(player, CalculateScore(player));
+        OnScoreChanged?.Invoke(player, AcquiredTilesByPlayer[player].Count);
     }
 
-    private int CalculateScore(in PlayerEnum player) => (int)(((float)AcquiredTilesByPlayer[player].Count / GameManager.Instance.GridManager.CapturableTilesCount) * 100);
-    
     public PlayerEnum FindPlayerWithMostGround()
     {
         PlayerEnum playerMax = PlayerEnum.None;

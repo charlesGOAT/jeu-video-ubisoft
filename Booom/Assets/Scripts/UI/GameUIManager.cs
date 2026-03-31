@@ -55,7 +55,9 @@ public class GameUIManager : MonoBehaviour
     
     private void RefreshScore(PlayerEnum player, int score)
     {
-        playerPercents[(int)player - 1].text = $"{score}%";
+        int percent = (int)(((float)score / GameManager.Instance.GridManager.CapturableTilesCount) * 100);
+
+        playerPercents[(int)player - 1].text = $"{percent}%";
     }
 
     public void RefreshBombType(string newBombType)
