@@ -1,0 +1,91 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: UI_Text_fr
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.StringTable
+  m_LocaleId:
+    m_Code: fr
+  m_SharedData: {fileID: 11400000, guid: 974626344acb48e4a9f0490d46618b79, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 77574868992
+    m_Localized: JOUER
+    m_Metadata:
+      m_Items: []
+  - m_Id: 165357457408
+    m_Localized: Joueur
+    m_Metadata:
+      m_Items: []
+  - m_Id: 329799340032
+    m_Localized: Appuyez sur un bouton pour rejoindre
+    m_Metadata:
+      m_Items: []
+  - m_Id: 513514049536
+    m_Localized: TUTORIEL
+    m_Metadata:
+      m_Items: []
+  - m_Id: 582384521216
+    m_Localized: ITEMS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 648998457344
+    m_Localized: LANGUAGE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 714568011776
+    m_Localized: RETOUR
+    m_Metadata:
+      m_Items: []
+  - m_Id: 851096801280
+    m_Localized: ' <sprite name="downButton2"> PLACER BOMBE'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1179397558272
+    m_Localized: <sprite name=\"dpad\"> BOUGE ET REMPLIS LE RESTE DE TA ZONE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1571065860096
+    m_Localized: "TU ES PR\xCAT !"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2051502411776
+    m_Localized: LE COMBAT COMMENCE DANS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2335003807744
+    m_Localized: PLACE AU COMBAT !
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2601899954176
+    m_Localized: PINCEAU
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3017438040064
+    m_Localized: MULTI BOMBES
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3123193221120
+    m_Localized: BOMBE SUIVEUSE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3201358270464
+    m_Localized: BOMBE DE GLACE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3307142811648
+    m_Localized: "BONUS D'\xC9L\xC9MINATIONS"
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds: []
