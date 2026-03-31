@@ -66,7 +66,17 @@ public class SoundManager : MonoBehaviour
     [SerializeField] 
     private Audio gameStartsSound;
     [SerializeField] 
-    private Audio battleMusic;
+    private Audio battleMusic1;
+    [SerializeField] 
+    private Audio battleMusic2;
+    [SerializeField] 
+    private Audio battleMusic3;
+    [SerializeField] 
+    private Audio battleMusic4;
+    [SerializeField] 
+    private Audio battleMusic5;
+    [SerializeField] 
+    private Music tutorialMusic;
     [SerializeField] 
     private Audio acceleratedGameMusic;
     [SerializeField] 
@@ -206,10 +216,10 @@ public class SoundManager : MonoBehaviour
 
     public void OnNewKillStreak()
     {
-        newKillStreakSound.PlayOneShot(newKillStreakSound.clip); // so they can overlap
+        newKillStreakSound.PlayOneShot(newKillStreakSound.clip);
     }
 
-    public void OnColorAlternate() // todo :  call when needed
+    public void OnColorAlternate()
     {
         PlayAudioSourceMusic(colorAlternationMusic);
     }
@@ -223,9 +233,7 @@ public class SoundManager : MonoBehaviour
     {
         if (IsSceneMenu(scene))
         {
-            // todo : voir s'il va y avoir plus qu'une menu scene / plus qu'une toune pour ces menus
-            
-            if (_isInMenu.HasValue && _isInMenu.Value) return;  // assumant qu'il n'y a qu'une toune pour tous les menus
+            if (_isInMenu.HasValue && _isInMenu.Value) return;
 
             _isInMenu = true;
             PlayAudioSourceMusic(mainTheme);
@@ -237,8 +245,18 @@ public class SoundManager : MonoBehaviour
         }
         else
         {
+            int i = scene.buildIndex;
+            Audio? music = null;
+            if(RoundManager.MapsToPlay[0] == i) music = battleMusic1;
+            else if(RoundManager.MapsToPlay[1] == i) music = battleMusic2;
+            else if(RoundManager.MapsToPlay[2] == i) music = battleMusic3;
+            else if(RoundManager.MapsToPlay[3] == i) music = battleMusic4;
+            else if(RoundManager.MapsToPlay[4] == i) music = battleMusic5;
+            
+            if(!music.HasValue) PlayAudioSourceMusic(tutorialMusic);
+            else PlayAudioSourceMusic(music.Value);
+
             _isInMenu = false;
-            PlayAudioSourceMusic(battleMusic);  // todo : voir s'il y a plus qu'une toune de jeu
         }
     }
     
@@ -260,9 +278,29 @@ public class SoundManager : MonoBehaviour
         {
             throw new Exception($"Audio clip {nameof(mainTheme)} cannot be null");
         }
-        if (battleMusic.audioClip == null)
+        if (battleMusic1.audioClip == null)
         {
-            throw new Exception($"Audio clip {nameof(battleMusic)} cannot be null");
+            throw new Exception($"Audio clip {nameof(battleMusic1)} cannot be null");
+        }
+        if (battleMusic2.audioClip == null)
+        {
+            throw new Exception($"Audio clip {nameof(battleMusic1)} cannot be null");
+        }
+        if (battleMusic3.audioClip == null)
+        {
+            throw new Exception($"Audio clip {nameof(battleMusic1)} cannot be null");
+        }
+        if (battleMusic4.audioClip == null)
+        {
+            throw new Exception($"Audio clip {nameof(battleMusic1)} cannot be null");
+        }
+        if (battleMusic5.audioClip == null)
+        {
+            throw new Exception($"Audio clip {nameof(battleMusic1)} cannot be null");
+        }
+        if (tutorialMusic.audio.audioClip == null)
+        {
+            throw new Exception($"Audio clip {nameof(tutorialMusic)} cannot be null");
         }
         if (victoryThemeMusic.audioClip == null)
         {

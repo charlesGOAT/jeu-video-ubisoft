@@ -252,20 +252,20 @@ MonoBehaviour:
     volume: 1
   mainTheme:
     audio:
-      audioClip: {fileID: 0}
-      volume: 0
-    loopStartTime: 0
-    loopEndTime: 0
+      audioClip: {fileID: 8300000, guid: 8f9dbe1e7de17e84b90cd62c724d14a8, type: 3}
+      volume: 1
+    loopStartTime: 96
+    loopEndTime: 180.3
   bombFusedAudio: {fileID: 5237117000133333895}
   bombExplodedAudio: {fileID: 3540998469405793209}
   genericBombEventSound: {fileID: 3390605035422505770}
   targetBombMovingSound: {fileID: 2949932126209092860}
   defenseBombSound:
     audioClip: {fileID: 8300000, guid: 856e0bf487cc12349b54bd41bbdfacbd, type: 3}
-    volume: 0
+    volume: 1
   pickUpItemSound:
     audioClip: {fileID: 8300000, guid: 10c6bb3a3f780244a864daddcedfa24d, type: 3}
-    volume: 0.8
+    volume: 0.468
   usePaintBrushSound: {fileID: 2949932126209092860}
   trampolineSound: {fileID: 1505143836689639150}
   spikeSound: {fileID: 5268592045543523727}
@@ -275,12 +275,30 @@ MonoBehaviour:
   gameStartsSound:
     audioClip: {fileID: 8300000, guid: b15a7c80887c268469f106e4a098bae5, type: 3}
     volume: 1
-  battleMusic:
-    audioClip: {fileID: 8300000, guid: 439194145bd393f4d8c2accd8204060e, type: 3}
-    volume: 0
+  battleMusic1:
+    audioClip: {fileID: 8300000, guid: a49d8d15a66d9fd4986af0d47e515f35, type: 3}
+    volume: 1
+  battleMusic2:
+    audioClip: {fileID: 8300000, guid: a49d8d15a66d9fd4986af0d47e515f35, type: 3}
+    volume: 1
+  battleMusic3:
+    audioClip: {fileID: 8300000, guid: a49d8d15a66d9fd4986af0d47e515f35, type: 3}
+    volume: 1
+  battleMusic4:
+    audioClip: {fileID: 8300000, guid: a49d8d15a66d9fd4986af0d47e515f35, type: 3}
+    volume: 1
+  battleMusic5:
+    audioClip: {fileID: 8300000, guid: a49d8d15a66d9fd4986af0d47e515f35, type: 3}
+    volume: 1
+  tutorialMusic:
+    audio:
+      audioClip: {fileID: 8300000, guid: 8f9dbe1e7de17e84b90cd62c724d14a8, type: 3}
+      volume: 1
+    loopStartTime: 0
+    loopEndTime: 0
   acceleratedGameMusic:
-    audioClip: {fileID: 8300000, guid: 439194145bd393f4d8c2accd8204060e, type: 3}
-    volume: 0
+    audioClip: {fileID: 8300000, guid: a49d8d15a66d9fd4986af0d47e515f35, type: 3}
+    volume: 1
   colorAlternationMusic:
     audioClip: {fileID: 8300000, guid: 7b364347fd6613b46ac301e8266dc9a9, type: 3}
     volume: 1

@@ -5,7 +5,7 @@ using UnityEngine;
 
 public static class RoundManager
 {
-    private static readonly List<int> mapsToPlay = new () {1,2,3,4,5};
+    public static readonly List<int> MapsToPlay = new () {1,2,3,4,5};
     private static readonly List<int> _mapsPlayed = new();
     private static readonly List<PlayerEnum> _gameWonPlayer = new();
 
@@ -48,22 +48,22 @@ public static class RoundManager
             int count = 0;
             do
             {
-                newMapIndex = rand.Next(0, mapsToPlay.Count);
+                newMapIndex = rand.Next(0, MapsToPlay.Count);
 
-                if (count++ >= mapsToPlay.Count)
+                if (count++ >= MapsToPlay.Count)
                 {
                     Debug.LogError("There's not enough maps, playing already played random map");
                     break;
                 }
             } 
-            while (_mapsPlayed.Contains(mapsToPlay[newMapIndex]));
+            while (_mapsPlayed.Contains(MapsToPlay[newMapIndex]));
         }
         else
         {
             newMapIndex = ++_lastMapIndex;
         }
 
-        int nextMap = mapsToPlay[newMapIndex];
+        int nextMap = MapsToPlay[newMapIndex];
         _mapsPlayed.Add(nextMap);
         return nextMap;
     }
