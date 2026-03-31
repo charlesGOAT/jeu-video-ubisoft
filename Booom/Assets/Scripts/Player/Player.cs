@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -95,7 +96,7 @@ public class Player : MonoBehaviour
     private RunState _runState;
     private JumpState _jumpState;
 
-    private Tile _currentTile;
+    public Tile CurrentTile { get; private set; }
     
     public BombFusingType BombFusingType { get; set; }
     public BombItems NextBombBombItems = 0;
@@ -103,7 +104,7 @@ public class Player : MonoBehaviour
     //nom de caca
     private float _actualImmuneTimer;
 
-    public static List<Player> ActivePlayers = new List<Player>();
+    public static readonly Dictionary<PlayerEnum, Player> ActivePlayers = new();
 
     private int _elimsRangeBoost = 0;
     public int ElimsRangeBoost => _elimsRangeBoost;
@@ -123,8 +124,9 @@ public class Player : MonoBehaviour
     public Animator Animator { get; private set; }
 
     public static readonly Dictionary<PlayerEnum, Color> PlayerColorDict = new Dictionary<PlayerEnum, Color>();
+
+    public bool IsUsingPaintbrush;
     
-    public event MoveCalledEventHandler OnMoveFunctionCalled;
     public event PlaceBomb OnPlaceBomb;
     public event PlaceBombSuccessFul OnPlaceBombSuccessful;
     public event PlaceBombSuccessFulChained OnPlaceBombSuccessfulChained;
@@ -144,7 +146,8 @@ public class Player : MonoBehaviour
         InitializeStateMachine();
         GetComponents();
         ConfigurePlayers();
-        ActivePlayers.Add(this);
+        ActivePlayers[playerNb] = this;
+        SetPlayerTexture();
     }
 
     private void Start()
@@ -216,7 +219,7 @@ public class Player : MonoBehaviour
 
     private void InitializeSpawnerWithDynamicSpawnPos()
     {
-        int intPlayerNb = (int)PlayerNb - 1;
+        int intPlayerNb = ActivePlayers.Keys.ToList().IndexOf(playerNb);;
         bool isMod2Zero = intPlayerNb % 2 == 0;
         
         int posY = isMod2Zero
@@ -238,7 +241,7 @@ public class Player : MonoBehaviour
 
     private void InitializeSpawnerWithFixedSpawnPos()
     {
-        Vector2Int spawnPointGrid = GameManager.Instance.GridManager.playerSpawnPoints[(int)playerNb - 1];
+        Vector2Int spawnPointGrid = GameManager.Instance.GridManager.playerSpawnPoints[ActivePlayers.Keys.ToList().IndexOf(playerNb)];
         Tile tile = GameManager.Instance.GridManager.GetTileAtCoordinates(spawnPointGrid);
         
         if (tile == null)
@@ -257,7 +260,7 @@ public class Player : MonoBehaviour
         Vector3 worldPos = GridManagerStrategy.GridToWorldPosition(gridPos);
         var trans = transform;
         trans.position = new Vector3(worldPos.x, trans.position.y, worldPos.z);
-        _currentTile = GameManager.Instance.GridManager.GetTileAtCoordinates(gridPos);
+        CurrentTile = GameManager.Instance.GridManager.GetTileAtCoordinates(gridPos);
     }
 
     public void OnMove(InputAction.CallbackContext ctx)
@@ -275,7 +278,7 @@ public class Player : MonoBehaviour
             OnPlaceBomb?.Invoke();
 
             if (GameManager.Instance.BombManager.CreateBomb(transform.position,
-                    this, _bombFusingStrategies[(int)BombFusingType], NextBombBombItems))
+                    playerNb, _bombFusingStrategies[(int)BombFusingType], NextBombBombItems))
             {
                 Animator.SetTrigger("DropBomb");
                 OnPlaceBombSuccessfulChained?.Invoke(ItemType.ChainBombs);
@@ -293,16 +296,12 @@ public class Player : MonoBehaviour
         UpdateImmune();
 
         Tile tile = GetPlayerTile();
-        if (tile != null) 
+        if (tile != null && CurrentTile != tile) 
         {
             tile.StepOnTile(this);
 
-            if (_currentTile != tile) 
-            {
-                _currentTile.StepOffTile(this);
-                _currentTile.RemoveHighlight(PlayerNb);
-            } 
-            _currentTile = tile;
+            CurrentTile.StepOffTile(this);
+            CurrentTile = tile;
         }
         
         _stateMachine.UpdateStateMachine(Time.deltaTime);
@@ -417,8 +416,6 @@ public class Player : MonoBehaviour
         _characterController.enabled = true;
         _characterController.Move(move * Time.deltaTime);
         _characterController.Move(Vector3.down * Math.Abs(tempMove));
-        
-        OnMoveFunctionCalled?.Invoke();
     }
 
     public void UpdatePlayerYRotation(Vector2 moveInput) => transform.rotation = IsMoving() ? Quaternion.Euler(0, Mathf.Atan2(moveInput.y, -moveInput.x) * Mathf.Rad2Deg, 0) : transform.rotation;
@@ -479,8 +476,8 @@ public class Player : MonoBehaviour
     
     private void OnTriggerExit(Collider other)
     {
-        if (!other.tag.Equals("Bomb") || !other.transform.parent.TryGetComponent(out Bomb bomb) || bomb.HasColliderBeenRestored) return;
-        bomb.RestoreColliderLayer();
+        if (!other.tag.Equals("Bomb") || !other.transform.parent.TryGetComponent(out Bomb bomb)) return;
+        bomb.AddColliderLayer(gameObject.layer);
     }
 
     private bool CheckIfOnOwnColor()
@@ -656,7 +653,6 @@ public class Player : MonoBehaviour
         }
         
         playerColor = PlayerColorDict[playerNb];
-        SetPlayerTexture();
     }
 
     public void DisplayPopUp(ItemType itemType, Sprite iconSprite)

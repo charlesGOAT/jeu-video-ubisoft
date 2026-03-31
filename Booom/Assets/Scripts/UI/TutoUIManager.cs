@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
@@ -18,8 +19,9 @@ public class TutoUIManager : MonoBehaviour
     {
         foreach (var player in LobbyManager.JoinedPlayers.Keys)
         {
-            tutoText[(int)player - 1].transform.parent.gameObject.SetActive(true);
-            tutoText[(int)player - 1].spriteAsset.fallbackSpriteAssets.Add(secondSpriteAsset);
+            int index = Player.ActivePlayers.Keys.ToList().IndexOf(player);
+            tutoText[index].transform.parent.gameObject.SetActive(true);
+            tutoText[index].spriteAsset.fallbackSpriteAssets.Add(secondSpriteAsset);
         }
     }
 
@@ -30,12 +32,14 @@ public class TutoUIManager : MonoBehaviour
 
     public void PlayerEndTuto(PlayerEnum player)
     {
-        RectTransform rt = tutoText[(int)player - 1].GetComponent<RectTransform>();
+        int index = Player.ActivePlayers.Keys.ToList().IndexOf(player);
+
+        RectTransform rt = tutoText[index].GetComponent<RectTransform>();
         Vector3 localPos = rt.localPosition;
         localPos.x = 0;
         rt.localPosition = localPos;
         
-        tutoText[(int)player - 1].text = "YOU'RE READY !";
+        tutoText[index].text = "YOU'RE READY !";
     }
 
     public void EndTuto()

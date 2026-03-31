@@ -28,11 +28,7 @@ public class Bomb : MonoBehaviour
     public bool IsFreezeBomb { private get; set; }
 
     private Collider _colliderComp;
-
-    private LayerMask _oldLayerMask;
     
-    public bool HasColliderBeenRestored { get; private set; }
-
     private readonly Vector2Int[] _directions =
     {
         Vector2Int.up,
@@ -53,27 +49,27 @@ public class Bomb : MonoBehaviour
         ActiveBombs.Add(_bombCoordinates);
         ActiveBombsGO.Add(gameObject);
 
-        if (!GameManager.Instance.IsBonusSpeed && AssociatedPlayer != PlayerEnum.None)
-        {
-            explosionRange += Player.ActivePlayers[(int)AssociatedPlayer - 1].ElimsRangeBoost;
-        }
-
         _bombAnimation = GetComponent<BombAnimation>();
         _bombAnimation.InitializeAnimation(GetTimer());
 
         _colliderComp = GetComponent<Collider>();
 
-        GameManager.Instance.BombManager.OnPaintbrushActivated += OnPaintbrushActivated;
-        GameManager.Instance.BombManager.OnPaintbrushDeactivated += OnPaintbrushDeactivated;
+        GameManager.Instance.BombManager.OnPaintbrushActivated += RemoveColliderLayer;
+        GameManager.Instance.BombManager.OnPaintbrushDeactivated += AddColliderLayer;
 
         foreach (int layer in GameManager.Instance.BombManager.LayersToExclude)
         {
-            OnPaintbrushActivated(layer);
+            RemoveColliderLayer(layer);
         }
     }
 
-    protected virtual void Start()
+    private void Start()
     {
+        if (!GameManager.Instance.IsBonusSpeed && AssociatedPlayer != PlayerEnum.None)
+        {
+            explosionRange += Player.ActivePlayers[AssociatedPlayer].ElimsRangeBoost;
+        }
+        
         _bombManager = GameManager.Instance.BombManager;
         SubscribeToCurrentTileColor();
         BombFusingStrategy.Fuse(this);
@@ -180,16 +176,16 @@ public class Bomb : MonoBehaviour
 
     protected void HitPlayers(Vector2Int tileCoordinates, Vector2Int hitDirection)
     {
-        foreach (Player player in Player.ActivePlayers)
+        foreach (Player player in Player.ActivePlayers.Values)
         {
             Tile playerTile = player.GetPlayerTile();
             if (playerTile != null && playerTile.TileCoordinates == tileCoordinates)
             {
-                if (player.PlayerNb != AssociatedPlayer)
+                if (player.PlayerNb != AssociatedPlayer && !player.IsImmune)
                 {
                     GameManager.Instance.ScoreManager.NewElimination(AssociatedPlayer);
                 }
-
+                
                 player.OnHit(hitDirection);
             }
         }
@@ -216,8 +212,8 @@ public class Bomb : MonoBehaviour
         ActiveBombsGO.Remove(gameObject);
         if (_bombManager != null)
         {
-            _bombManager.OnPaintbrushActivated -= OnPaintbrushActivated;
-            _bombManager.OnPaintbrushDeactivated -= OnPaintbrushDeactivated;
+            _bombManager.OnPaintbrushActivated -= RemoveColliderLayer;
+            _bombManager.OnPaintbrushDeactivated -= AddColliderLayer;
         }
     }
 
@@ -264,29 +260,16 @@ public class Bomb : MonoBehaviour
         BombFusingStrategy.OnCollision(this);
     }
 
-    private void OnPaintbrushActivated(int layer)
+    public void RemoveColliderLayer(int layer)
     {
         if(_colliderComp != null)
             _colliderComp.excludeLayers = _colliderComp.excludeLayers.value | (1 << layer);
     }
     
-    private void OnPaintbrushDeactivated(int layer)
+    public void AddColliderLayer(int layer)
     {
         if(_colliderComp != null)
             _colliderComp.excludeLayers = _colliderComp.excludeLayers.value & ~(1 << layer);
-    }
-    
-    public void RemoveColliderLayer(GameObject player)
-    {
-        var ogLayerMask = _colliderComp.excludeLayers.value;
-        var newLayer = ogLayerMask | (1 << player.layer);
-        _colliderComp.excludeLayers = newLayer;
-    }
-    
-    public void RestoreColliderLayer()
-    {
-        _colliderComp.excludeLayers = _oldLayerMask;
-        HasColliderBeenRestored = true;
     }
 }
 
