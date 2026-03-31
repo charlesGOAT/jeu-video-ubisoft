@@ -92,8 +92,8 @@ public class EndGameUIManager : MonoBehaviour
 
         for (int i = 1; i < activeIcons.Count; i++)
         {
-            var test = activeIcons[i].transform.parent.GetComponent<RectTransform>();
-            test.sizeDelta = new(200, 100);
+            var parent = activeIcons[i].transform.parent.GetComponent<RectTransform>();
+            parent.sizeDelta = new(200, 100);
             RectTransform iconRT = activeIcons[i].GetComponent<RectTransform>();
             iconRT.sizeDelta = new(100, 100);
 

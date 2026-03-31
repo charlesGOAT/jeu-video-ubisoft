@@ -32,13 +32,6 @@ public class BombManager : MonoBehaviour
         }
     }
 
-    private void Start()
-    {
-#if !UNITY_EDITOR
-        ShouldBombCollideWithPlayers = GameManager.Instance.RuntimeConfig.ShouldBombCollideWithPlayers;
-#endif
-    }
-
     public virtual bool CreateBomb(in Vector3 position, in PlayerEnum playerEnum,in BombFusingStrategy bombStrat, in BombItems bombItems)
     {
         Vector3 bombHeightOffset = Vector3.up * 0.5f;
@@ -62,8 +55,8 @@ public class BombManager : MonoBehaviour
         
         Vector3 worldPosition = GridManagerStrategy.GridToWorldPosition(gridCoordinates, tile.transform.position.y);
 
-        bombPrefabs[intBombType].AssociatedPlayer = playerEnum;
         Bomb instantiatedBomb = Instantiate(bombPrefabs[intBombType], worldPosition + bombHeight, Quaternion.identity);
+        instantiatedBomb.AssociatedPlayer = playerEnum;
         instantiatedBomb.BombFusingStrategy = bombStrat;
         instantiatedBomb.IsFreezeBomb = bombItems.HasFlag(BombItems.FreezeBombs);
 

@@ -40,10 +40,9 @@ public class GameManager : MonoBehaviour
     public RuntimeConfigData RuntimeConfig { get; private set; }
     
     [SerializeField]
-    private bool _isBonusSpeed = true;
+    private bool _isBonusSpeed = false;
 
-    [SerializeField] 
-    public int FrozenTileDuration = 15;
+    public int FrozenTileDuration = 10;
 
     public bool IsBonusSpeed => _isBonusSpeed;
 

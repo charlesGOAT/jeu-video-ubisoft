@@ -29,8 +29,6 @@ public class Bomb : MonoBehaviour
 
     private Collider _colliderComp;
     
-    public bool HasColliderBeenRestored { get; private set; }
-
     private readonly Vector2Int[] _directions =
     {
         Vector2Int.up,
@@ -51,11 +49,6 @@ public class Bomb : MonoBehaviour
         ActiveBombs.Add(_bombCoordinates);
         ActiveBombsGO.Add(gameObject);
 
-        if (!GameManager.Instance.IsBonusSpeed && AssociatedPlayer != PlayerEnum.None)
-        {
-            explosionRange += Player.ActivePlayers[AssociatedPlayer].ElimsRangeBoost;
-        }
-
         _bombAnimation = GetComponent<BombAnimation>();
         _bombAnimation.InitializeAnimation(GetTimer());
 
@@ -72,6 +65,11 @@ public class Bomb : MonoBehaviour
 
     private void Start()
     {
+        if (!GameManager.Instance.IsBonusSpeed && AssociatedPlayer != PlayerEnum.None)
+        {
+            explosionRange += Player.ActivePlayers[AssociatedPlayer].ElimsRangeBoost;
+        }
+        
         _bombManager = GameManager.Instance.BombManager;
         SubscribeToCurrentTileColor();
         BombFusingStrategy.Fuse(this);
