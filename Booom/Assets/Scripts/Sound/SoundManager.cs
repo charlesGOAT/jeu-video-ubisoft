@@ -76,6 +76,16 @@ public class SoundManager : MonoBehaviour
     [SerializeField] 
     private Audio battleMusic5;
     [SerializeField] 
+    private Audio acceleratedBattleMusic1;
+    [SerializeField] 
+    private Audio acceleratedBattleMusic2;
+    [SerializeField] 
+    private Audio acceleratedBattleMusic3;
+    [SerializeField] 
+    private Audio acceleratedBattleMusic4;
+    [SerializeField] 
+    private Audio acceleratedBattleMusic5;
+    [SerializeField] 
     private Music tutorialMusic;
     [SerializeField] 
     private Audio acceleratedGameMusic;
@@ -205,7 +215,13 @@ public class SoundManager : MonoBehaviour
 
     public void OnPlayAcceleratedGameMusic()
     {
-        PlayAudioSourceMusic(acceleratedGameMusic);
+        Audio music = acceleratedBattleMusic5;
+        if(RoundManager.MapsToPlay[0] == RoundManager.LastMapIndex) music = acceleratedBattleMusic1;
+        else if(RoundManager.MapsToPlay[1] == RoundManager.LastMapIndex) music = acceleratedBattleMusic2;
+        else if(RoundManager.MapsToPlay[2] == RoundManager.LastMapIndex) music = acceleratedBattleMusic3;
+        else if(RoundManager.MapsToPlay[3] == RoundManager.LastMapIndex) music = acceleratedBattleMusic4;
+            
+        PlayAudioSourceMusic(music);
     }
 
     public void OnUsePaintBrush(bool isUsing)

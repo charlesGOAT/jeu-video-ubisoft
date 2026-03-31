@@ -11,7 +11,7 @@ public static class RoundManager
 
     private static RuntimeConfigData _runtimeConfig;
     private static bool _isRuntimeConfigSet = false;
-    private static int _lastMapIndex = 0;
+    public static int LastMapIndex = 0;
     
     private static Dictionary<PlayerEnum, int> _playerWinsDict = new()
     {
@@ -60,7 +60,7 @@ public static class RoundManager
         }
         else
         {
-            newMapIndex = _lastMapIndex++;
+            newMapIndex = LastMapIndex++;
         }
 
         int nextMap = MapsToPlay[newMapIndex];
@@ -77,7 +77,7 @@ public static class RoundManager
             _playerWinsDict[player] = 0;
         }
         _gameWonPlayer.Clear();
-        _lastMapIndex = 0;
+        LastMapIndex = 0;
     }
 
     public static void LoadEndGameData()
