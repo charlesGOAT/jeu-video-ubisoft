@@ -68,6 +68,7 @@ public class Tile : MonoBehaviour
             GameManager.Instance.ScoreManager.AcquireNewTile(newOwner, TileCoordinates);
             _tileAnimation.AnimateTileColorChange(tileColor);
             CurrentTileOwner = newOwner;
+            _highlightMat.SetColor("_BorderColor", tileColor + _colorAdjust);
         }
         else if (CurrentTileOwner == newOwner  && !IsFrozen && !IsSpawn)
         {
@@ -77,6 +78,8 @@ public class Tile : MonoBehaviour
 
     public virtual void StepOnTile(Player player)
     {
+        if(player.IsUsingPaintbrush && CurrentTileOwner != player.PlayerNb) 
+            ChangeTileColor(player.PlayerNb);
         HighlightTile(player.PlayerNb);
     }
 
@@ -149,6 +152,7 @@ public class Tile : MonoBehaviour
 
     public virtual void StepOffTile(Player player)
     {
+        RemoveHighlight(player.PlayerNb);
     }
 
     public void AddWinnerBlink()

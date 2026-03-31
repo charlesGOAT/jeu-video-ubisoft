@@ -1,7 +1,4 @@
-﻿using System;
-using TMPro;
-using UnityEngine;
-using UnityEngine.UI;
+﻿using UnityEngine;
 
 public delegate void FinishUsingItem(BaseItem baseItem);
 public abstract class BaseItem

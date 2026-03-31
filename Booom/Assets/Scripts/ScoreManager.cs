@@ -1,40 +1,38 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Linq;
 
 public delegate void ScoreChangedEventHandler(PlayerEnum player, int score);
 
 public class ScoreManager : MonoBehaviour
 {
-    private readonly HashSet<Vector2Int>[] _acquiredTilesByPlayer = new HashSet<Vector2Int>[GameConstants.NB_PLAYERS];
+    public readonly Dictionary<PlayerEnum, HashSet<Vector2Int>> AcquiredTilesByPlayer = new();
     
     public event ScoreChangedEventHandler OnScoreChanged;
 
     private void Start()
     {
-        for (int i = 0; i < _acquiredTilesByPlayer.Length; i++)
+        foreach(PlayerEnum player in Enum.GetValues(typeof(PlayerEnum)))
         {
-            _acquiredTilesByPlayer[i] = new HashSet<Vector2Int>();
+            AcquiredTilesByPlayer[player] = new HashSet<Vector2Int>();
         }
     }
 
-    public void NewElimination(PlayerEnum player)
+    public void NewElimination(in PlayerEnum player)
     {
         if (player == PlayerEnum.None) return;
-        
-        Player.ActivePlayers[(int)player - 1].NbKills++;
+        Player.ActivePlayers[player].NbKills++;
     }
     
     public void AcquireNewTile(PlayerEnum player, Vector2Int tile)
     {
         if (player == PlayerEnum.None) return;
         
-        _acquiredTilesByPlayer[(int)player - 1].Add(tile);
+        AcquiredTilesByPlayer[player].Add(tile);
 
-        int newScore = _acquiredTilesByPlayer[(int)player - 1].Count;
-        OnScoreChanged?.Invoke(player, newScore);
+        OnScoreChanged?.Invoke(player, AcquiredTilesByPlayer[player].Count);
         
-        if (newScore >= GameManager.Instance.GridManager.CapturableTilesCount)
+        if (AcquiredTilesByPlayer[player].Count >= GameManager.Instance.GridManager.CapturableTilesCount)
         {
             GameManager.Instance.EndGame();
         }
@@ -43,30 +41,30 @@ public class ScoreManager : MonoBehaviour
     public void LoseTile(PlayerEnum player, Vector2Int tile)
     {
         if (player == PlayerEnum.None) return;
-            
-        _acquiredTilesByPlayer[(int)player - 1].Remove(tile);
         
-        OnScoreChanged?.Invoke(player, _acquiredTilesByPlayer[(int)player - 1].Count);
+        AcquiredTilesByPlayer[player].Remove(tile);
+        OnScoreChanged?.Invoke(player, AcquiredTilesByPlayer[player].Count);
     }
-    
+
     public PlayerEnum FindPlayerWithMostGround()
     {
-        int indexMax = -1;
+        PlayerEnum playerMax = PlayerEnum.None;
         int currentMax = 0;
-        List<int> equalMax = new();
+        List<PlayerEnum> equalMax = new();
 
-        for (int i = 0; i < _acquiredTilesByPlayer.Length; ++i)
+        foreach(PlayerEnum playerNb in Player.ActivePlayers.Keys)
         {
-            if (_acquiredTilesByPlayer[i].Count > currentMax)
+            if (playerNb == PlayerEnum.None) continue;
+            if (AcquiredTilesByPlayer[playerNb].Count > currentMax)
             {
-                indexMax = i;
-                currentMax = _acquiredTilesByPlayer[i].Count;
+                playerMax = playerNb;
+                currentMax = AcquiredTilesByPlayer[playerNb].Count;
                 equalMax.Clear();
-                equalMax.Add(indexMax);
+                equalMax.Add(playerMax);
             }
-            else if (_acquiredTilesByPlayer[i].Count == currentMax && currentMax != 0)
+            else if (AcquiredTilesByPlayer[playerNb].Count == currentMax && currentMax != 0)
             {
-                equalMax.Add(i);
+                equalMax.Add(playerNb);
             }
         }
 
@@ -74,14 +72,9 @@ public class ScoreManager : MonoBehaviour
         {
             var random = new System.Random();
             int ind = random.Next(0, equalMax.Count);
-            indexMax = equalMax[ind];
+            playerMax = equalMax[ind];
         }
 
-        return (PlayerEnum)(indexMax + 1);
-    }
-
-    public HashSet<Vector2Int>[] GetAcquiredTilesByPlayer()
-    {
-        return _acquiredTilesByPlayer;
+        return playerMax;
     }
 }
