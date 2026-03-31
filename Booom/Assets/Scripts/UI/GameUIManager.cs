@@ -47,15 +47,17 @@ public class GameUIManager : MonoBehaviour
 
     private void InitializeScorePlayers()
     {
-        foreach (var player in Player.ActivePlayers)
+        for (int i = 0; i < Player.ActivePlayers.Count; ++i)
         {
-            playerPercents[(int)player.PlayerNb - 1].transform.parent.gameObject.SetActive(true);
+            playerPercents[i].transform.parent.gameObject.SetActive(true);
         }
     }
     
     private void RefreshScore(PlayerEnum player, int score)
     {
-        playerPercents[(int)player - 1].text = $"{score}%";
+        int percent = (int)(((float)score / GameManager.Instance.GridManager.CapturableTilesCount) * 100);
+
+        playerPercents[(int)player - 1].text = $"{percent}%";
     }
 
     public void RefreshBombType(string newBombType)

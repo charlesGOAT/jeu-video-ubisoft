@@ -121,7 +121,7 @@ public abstract class GridManagerStrategy : MonoBehaviour
     public Vector3 GetRandomPosOnGridWithNoItem()
     {
         var rand = new System.Random();
-        var noItemGrid = _ownableTiles.Where(tile => !IsItemAtPos(tile.Key)).Select(tile => tile.Key).ToArray();
+        var noItemGrid = _ownableTiles.Where(tile => !IsItemAtPos(tile.Key) && !Bomb.IsBombAt(tile.Key)).Select(tile => tile.Key).ToArray();
         int ind = rand.Next(0, noItemGrid.Length);
         return GridToWorldPosition(noItemGrid[ind]);
     }
@@ -131,31 +131,12 @@ public abstract class GridManagerStrategy : MonoBehaviour
         if (player == PlayerEnum.None)
             return new []{WorldToGridCoordinates(GetRandomPosOnGridWithNoItem())};
 
-        var acquiredTiles = GameManager.Instance.ScoreManager.GetAcquiredTilesByPlayer();
-        var tilesWithNoItem = acquiredTiles[(int)player - 1].Where(pos => !IsItemAtPos(pos));
+        var acquiredTiles = GameManager.Instance.ScoreManager.AcquiredTilesByPlayer;
+        var tilesWithNoItem = acquiredTiles[player].Where(pos => !IsItemAtPos(pos) && !Bomb.IsBombAt(pos));
 
         var playerTilesWithNoItem = tilesWithNoItem as Vector2Int[] ?? tilesWithNoItem.ToArray();
         if (playerTilesWithNoItem.Length > 0) return playerTilesWithNoItem;
         
         return new []{WorldToGridCoordinates(GetRandomPosOnGridWithNoItem())};
-    }
-
-    private HashSet<Vector2Int> GetAllTilesOwned()
-    {
-        HashSet<Vector2Int> allTilesOwned = new();
-        var acquiredTiles = GameManager.Instance.ScoreManager.GetAcquiredTilesByPlayer();
-
-        foreach (var list in acquiredTiles)
-        {
-            allTilesOwned.UnionWith(list);
-        }
-
-        return allTilesOwned;
-    }
-
-    private IEnumerable<Vector2Int> GetAllTilesNotOwned()
-    {
-        HashSet<Vector2Int> allTilesOwned = GetAllTilesOwned();
-        return _tiles.Keys.Except(allTilesOwned);
     }
 }

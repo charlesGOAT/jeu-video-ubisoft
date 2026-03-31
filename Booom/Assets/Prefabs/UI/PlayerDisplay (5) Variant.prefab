@@ -481,15 +481,15 @@ PrefabInstance:
     - target: {fileID: 820680716652396522, guid: 4d195cfdaecdc0b4c87c9efd3422cd4d, type: 3}
       propertyPath: 'images.Array.data[0]'
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1079200189991118277}
     - target: {fileID: 820680716652396522, guid: 4d195cfdaecdc0b4c87c9efd3422cd4d, type: 3}
       propertyPath: 'images.Array.data[1]'
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 9012216616715308995}
     - target: {fileID: 820680716652396522, guid: 4d195cfdaecdc0b4c87c9efd3422cd4d, type: 3}
       propertyPath: 'images.Array.data[2]'
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 8340861102058073313}
     - target: {fileID: 2024588081758552500, guid: 4d195cfdaecdc0b4c87c9efd3422cd4d, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 57
@@ -603,16 +603,24 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5985792126034790686, guid: 4d195cfdaecdc0b4c87c9efd3422cd4d, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 1920
+      objectReference: {fileID: 0}
+    - target: {fileID: 5985792126034790686, guid: 4d195cfdaecdc0b4c87c9efd3422cd4d, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 1080
+      objectReference: {fileID: 0}
+    - target: {fileID: 5985792126034790686, guid: 4d195cfdaecdc0b4c87c9efd3422cd4d, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5985792126034790686, guid: 4d195cfdaecdc0b4c87c9efd3422cd4d, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5985792126034790686, guid: 4d195cfdaecdc0b4c87c9efd3422cd4d, type: 3}
       propertyPath: m_LocalScale.z
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5994645701077667133, guid: 4d195cfdaecdc0b4c87c9efd3422cd4d, type: 3}
       propertyPath: m_text
