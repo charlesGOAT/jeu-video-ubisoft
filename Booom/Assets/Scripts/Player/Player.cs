@@ -82,6 +82,7 @@ public class Player : MonoBehaviour
     private Vector3 _lastInput;
     
     public PlayerEnum PlayerNb => playerNb;
+    public bool CanMove = true;
 
     private CharacterController _characterController;
     private Vector3 _knockbackVelocity;
@@ -264,6 +265,7 @@ public class Player : MonoBehaviour
 
     public void OnMove(InputAction.CallbackContext ctx)
     {
+        if (!CanMove) return;
         _moveInput = ctx.ReadValue<Vector2>();
     }
     

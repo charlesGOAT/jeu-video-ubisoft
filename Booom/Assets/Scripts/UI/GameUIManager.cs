@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class GameUIManager : MonoBehaviour
@@ -26,7 +27,8 @@ public class GameUIManager : MonoBehaviour
     
     private void OnDestroy()
     {
-        GameManager.Instance.ScoreManager.OnScoreChanged -= RefreshScore;
+        if (SceneManager.GetActiveScene().name != "Tuto")
+            GameManager.Instance.ScoreManager.OnScoreChanged -= RefreshScore;
     }
 
     private void Start()
@@ -39,10 +41,12 @@ public class GameUIManager : MonoBehaviour
         _vinylAnimator = vinylImage.GetComponentInParent<Animator>();
         _vinylMaterial.SetFloat("_Speed", GameManager.Instance.GameDuration);
 
-        GameManager.Instance.ScoreManager.OnScoreChanged += RefreshScore;
-        GameManager.Instance.StartTimer();
-
-        InitializeScorePlayers();
+        if (SceneManager.GetActiveScene().name != "Tuto")
+        {
+            GameManager.Instance.ScoreManager.OnScoreChanged += RefreshScore;
+            GameManager.Instance.StartTimer();
+            InitializeScorePlayers();
+        }
     }
 
     private void InitializeScorePlayers()
@@ -52,7 +56,7 @@ public class GameUIManager : MonoBehaviour
             playerPercents[i].transform.parent.gameObject.SetActive(true);
         }
     }
-    
+
     private void RefreshScore(PlayerEnum player, int score)
     {
         int percent = (int)(((float)score / GameManager.Instance.GridManager.CapturableTilesCount) * 100);
