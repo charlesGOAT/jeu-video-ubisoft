@@ -212,6 +212,7 @@ public class GameManager : MonoBehaviour
             playerPrefab.layer = CollisionLayers[Player.ActivePlayers.Count];
             PlayerInput newInput = PlayerInput.Instantiate(playerPrefab, playerIndex:playerInput.playerIndex, pairWithDevices:playerInput.devices.ToArray());
             newInput.transform.position = new Vector3(worldPos.x, 0.0f, worldPos.z);
+            newInput.transform.rotation =  Quaternion.Euler(0f, -90f, 0f);
         }
     }
 
