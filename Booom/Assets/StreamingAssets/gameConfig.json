@@ -48,7 +48,7 @@
   "BombEvents": [
     {
       "minutes": 0,
-      "seconds": 30,
+      "seconds": 15,
       "value": 2
     }
   ],

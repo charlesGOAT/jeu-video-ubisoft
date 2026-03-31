@@ -70,7 +70,7 @@ public class GameUIManager : MonoBehaviour
         var gameManager = GameManager.Instance;
         _vinylMaterial.SetFloat("_Timey", gameManager.GameDuration - gameManager.TimeRemaining);
 
-        if (!_hasVinylAnimationStarted && gameManager.TimeRemaining <= 30)
+        if (!_hasVinylAnimationStarted && gameManager.TimeRemaining <= 15)
         {
             _vinylAnimator.SetBool("lastStretch", true);
             _hasVinylAnimationStarted = true;
