@@ -20,7 +20,7 @@ public class GameUIManager : MonoBehaviour
     private List<TMP_Text> playerPercents;
     
     private string _bombType = "";
-  
+
     private Material _vinylMaterial;
     private Animator _vinylAnimator;
     private bool _hasVinylAnimationStarted = false;
