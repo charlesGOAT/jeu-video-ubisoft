@@ -10,6 +10,7 @@ public class TutoUIManager : MonoBehaviour
     [SerializeField] private GameObject tutoPanel;
     [SerializeField] private TMP_Text countdownText;
     [SerializeField] private TMP_Text[] tutoText;
+    [SerializeField] private TMP_SpriteAsset secondSpriteAsset;
     
     private bool _tutoEnded;
 
@@ -18,16 +19,22 @@ public class TutoUIManager : MonoBehaviour
         foreach (var player in LobbyManager.JoinedPlayers.Keys)
         {
             tutoText[(int)player - 1].transform.parent.gameObject.SetActive(true);
+            tutoText[(int)player - 1].spriteAsset.fallbackSpriteAssets.Add(secondSpriteAsset);
         }
     }
 
     public void UpdatePlayerText(PlayerEnum player)
     {
-        tutoText[(int)player - 1].text = $"<sprite name=\"downButton2\"> MOVE";
+        tutoText[(int)player - 1].text = $"<sprite name=\"dpad\"> MOVE AND FILL THE REST OF YOUR ZONE";
     }
 
     public void PlayerEndTuto(PlayerEnum player)
     {
+        RectTransform rt = tutoText[(int)player - 1].GetComponent<RectTransform>();
+        Vector3 localPos = rt.localPosition;
+        localPos.x = 0;
+        rt.localPosition = localPos;
+        
         tutoText[(int)player - 1].text = "YOU'RE READY !";
     }
 

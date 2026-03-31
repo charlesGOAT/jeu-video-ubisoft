@@ -17,9 +17,8 @@ public class TutoManager : MonoBehaviour
         {
             _playersBombed[player.Key] = false;
             _playersFinished[player.Key] = false;
-            
-            var moveAction = player.Value.actions["Move"];
-            moveAction.Disable();
+
+            Player.ActivePlayers[(int)player.Key - 1].CanMove = false; //PAS OUBLIER DE CHANGER CA POUR QUAND LA PR DE LEA AVEC DICTIONARY
         }
         
         GameManager.Instance.ScoreManager.OnScoreChanged += UpdateTuto;
@@ -27,8 +26,10 @@ public class TutoManager : MonoBehaviour
 
     private void UpdateTuto(PlayerEnum player, int score)
     {
-        if (player == PlayerEnum.None || score < 2) return;
+        if (player == PlayerEnum.None || score < 3) return;
 
+        Player.ActivePlayers[(int)player - 1].CanMove = true;
+        
         if (score < 9)
         {
             if (!_playersBombed[player])

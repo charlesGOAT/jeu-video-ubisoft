@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: GameplayAssembly::GameManager
   playerPrefab: {fileID: 8693886412537445449, guid: 48d5797564f6c444885cd8aecb605365, type: 3}
-  _gameDuration: 120
+  _gameDuration: 5
   snowflakeMaterial: {fileID: -876546973899608171, guid: af3cca17ba979d2448a483f1fbb843a3, type: 3}
   transparentMat: {fileID: 2100000, guid: 83362e70b2d66854f90bb73ac663e2d0, type: 2}
   highlightMat: {fileID: -876546973899608171, guid: 09382425bfd23854ebc0da323bff48b4, type: 3}
