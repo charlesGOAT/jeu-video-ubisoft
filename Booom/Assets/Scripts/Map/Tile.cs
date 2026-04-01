@@ -111,12 +111,12 @@ public class Tile : MonoBehaviour
 
     private void AddSnowflakeMaterial()
     {
-        ChangeTileMaterial(2, GameManager.Instance.snowflakeMaterial);
+        ChangeTileMaterial(3, GameManager.Instance.snowflakeMaterial);
     }
 
     private void RemoveSnowflakeMaterial()
     {
-        ChangeTileMaterial(2, GameManager.Instance.transparentMat);
+        ChangeTileMaterial(3, GameManager.Instance.transparentMat);
     }
 
     private void HighlightTile(PlayerEnum player, bool mutliplePlayers = false)
@@ -133,7 +133,7 @@ public class Tile : MonoBehaviour
             else newColor += _colorAdjust;
 
             _highlightMat.SetColor("_BorderColor", newColor);
-            ChangeTileMaterial(3, _highlightMat);
+            ChangeTileMaterial(4, _highlightMat);
         }
 
         if (_currentPlayersOnTile.Contains(player)) return;
@@ -145,7 +145,7 @@ public class Tile : MonoBehaviour
         _currentPlayersOnTile.Remove(player);
 
         if (_currentPlayersOnTile.Count == 0)
-            ChangeTileMaterial(3, GameManager.Instance.transparentMat);
+            ChangeTileMaterial(4, GameManager.Instance.transparentMat);
         else
             HighlightTile(_currentPlayersOnTile[0], true);
     }
@@ -158,6 +158,6 @@ public class Tile : MonoBehaviour
     public void AddWinnerBlink()
     {
         _blinkMat.SetColor("_TileColor", Player.PlayerColorDict[CurrentTileOwner]);
-        ChangeTileMaterial(4, _blinkMat);
+        ChangeTileMaterial(1, _blinkMat);
     }
 }

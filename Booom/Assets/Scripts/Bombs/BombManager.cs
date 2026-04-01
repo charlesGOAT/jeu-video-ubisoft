@@ -50,6 +50,8 @@ public class BombManager : MonoBehaviour
         {
             return false;
         }
+        
+        player.Animator.SetTrigger("DropBomb");
 
         BombEnum bombType = GameManager.Instance.EventManager.CurrentBombType;
         int intBombType = (int)bombType - 1;
@@ -60,7 +62,6 @@ public class BombManager : MonoBehaviour
         instantiatedBomb.AssociatedPlayer = playerEnum;
         instantiatedBomb.BombFusingStrategy = bombStrat;
         instantiatedBomb.IsFreezeBomb = bombItems.HasFlag(BombItems.FreezeBombs);
-        player.Animator.SetTrigger("DropBomb");
 
         foreach (Player p in Player.ActivePlayers.Values)
         {
