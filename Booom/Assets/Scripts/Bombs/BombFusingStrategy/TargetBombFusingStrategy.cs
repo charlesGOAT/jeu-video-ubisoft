@@ -84,6 +84,8 @@ public class TargetBombFusingStrategy : BombFusingStrategy
                     lock (_lock)
                     {
                         if (_bomb == null || Vector3.Distance(_bomb.transform.position, targetWorldPos) <= 0.01f) break;
+                        Vector3 moveDirection = (targetWorldPos - _bomb.transform.position).normalized;
+                        AnimateRotation(Vector3.Cross(Vector3.up, moveDirection));
                         MoveBomb(targetWorldPos);
                     }
                     
@@ -272,4 +274,11 @@ public class TargetBombFusingStrategy : BombFusingStrategy
             SoundManager.Instance.OnTargetBombMoving(false);
         }
     }
+
+    public void AnimateRotation(Vector3 rotationAxis)
+    {
+        if (_bomb == null) return;
+        _bomb.transform.Rotate(rotationAxis, 360f * Time.deltaTime, Space.World);
+    }
+
 }

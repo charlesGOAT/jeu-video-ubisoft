@@ -15,7 +15,7 @@ public class GameManager : MonoBehaviour
     private bool _timerRunning;
     
     [SerializeField]
-    private float _gameDuration = GameConstants.GAME_DURATION;
+    private float _gameDuration = 60f;
 
     [SerializeField] 
     public Material snowflakeMaterial;
@@ -97,17 +97,6 @@ public class GameManager : MonoBehaviour
         }
 
         GameUIManager.UpdateTimerDisplay();
-        
-        UpdateMusic();
-    }
-
-    private void UpdateMusic()
-    {
-        if (TimeRemaining <= 15 && !_hasChangedForFastMusic)
-        {
-            SoundManager.Instance.OnPlayAcceleratedGameMusic();
-            _hasChangedForFastMusic = true;
-        }
     }
 
     public void StartTimer()
@@ -206,12 +195,13 @@ public class GameManager : MonoBehaviour
         
         foreach (var playerInput in playersToSpawn)
         {
-            Vector2Int spawnPoint = GridManager.playerSpawnPoints[playerInput.playerIndex];
+            Vector2Int spawnPoint = GridManager.playerSpawnPoints[Player.ActivePlayers.Count];
             Vector3 worldPos = GridManagerStrategy.GridToWorldPosition(spawnPoint);
 
-            playerPrefab.layer = CollisionLayers[playerInput.playerIndex];
+            playerPrefab.layer = CollisionLayers[Player.ActivePlayers.Count];
             PlayerInput newInput = PlayerInput.Instantiate(playerPrefab, playerIndex:playerInput.playerIndex, pairWithDevices:playerInput.devices.ToArray());
             newInput.transform.position = new Vector3(worldPos.x, 0.0f, worldPos.z);
+            newInput.transform.rotation =  Quaternion.Euler(0f, -90f, 0f);
         }
     }
 
@@ -294,7 +284,7 @@ public class GameManager : MonoBehaviour
         RoundManager.CleanGame();
     }
 
-    private void NewRound()
+    public void NewRound()
     {
         Bomb.ActiveBombs.Clear();
         Player.ActivePlayers.Clear();

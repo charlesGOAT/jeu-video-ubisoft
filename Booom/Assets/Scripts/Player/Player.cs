@@ -35,7 +35,7 @@ public class Player : MonoBehaviour
     private int hitFlickerFrequency = 50;
 
     [SerializeField]
-    private float immuneTimer = 5;
+    private float immuneTimer = 3;
 
     [SerializeField]
     private float tileDetectionTolerance = 0.35f;
@@ -82,6 +82,7 @@ public class Player : MonoBehaviour
     private Vector3 _lastInput;
     
     public PlayerEnum PlayerNb => playerNb;
+    public bool CanMove = true;
 
     private CharacterController _characterController;
     private Vector3 _knockbackVelocity;
@@ -264,6 +265,7 @@ public class Player : MonoBehaviour
 
     public void OnMove(InputAction.CallbackContext ctx)
     {
+        if (!CanMove) return;
         _moveInput = ctx.ReadValue<Vector2>();
     }
     
@@ -351,6 +353,7 @@ public class Player : MonoBehaviour
     {
         if (_stateMachine.CurrentState is not JumpState)
         {
+            UpdatePlayerYRotation(new Vector2Int(-jumpDirection.y, jumpDirection.x));
             SoundManager.Instance.OnEnterTrampoline();
             _jumpVelocity = CalculateJumpForce(jumpDirection);
             _stateMachine.Trigger(GameConstants.PLAYER_JUMP_TRIGGER);

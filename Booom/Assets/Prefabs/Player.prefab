@@ -450,7 +450,7 @@ MonoBehaviour:
   playerItemsManager: {fileID: 1158385441533370530}
   knockbackForce: 10
   hitFlickerFrequency: 50
-  immuneTimer: 5
+  immuneTimer: 3
   tileDetectionTolerance: 0.35
   killStreakText: {fileID: 4074135819743726883}
   itemTextPopUpBackground: {fileID: 6955413020623605526}

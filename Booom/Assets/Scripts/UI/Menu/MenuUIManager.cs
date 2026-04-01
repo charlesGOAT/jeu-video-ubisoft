@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -39,6 +40,14 @@ public class MenuUIManager : MonoBehaviour
         }
     }
 
+    private void Update()
+    {
+        if (LobbyManager.JoinedPlayers.Count > 0 && EventSystem.current.currentSelectedGameObject == null)
+        {
+            StartCoroutine(ReselectButton());
+        }
+    }
+
     public void Settings()
     {
         isNotMainMenu = true;
@@ -56,20 +65,37 @@ public class MenuUIManager : MonoBehaviour
     public void PlayGame()
     {
         if (LobbyManager.JoinedPlayers.Count > 1)
-            _lobbyManager.GameStarted(RoundManager.FindNextMap());
+        {
+            int mapIndex = LobbyManager.TutorialActivated ? 1 : RoundManager.FindNextMap();
+            _lobbyManager.GameStarted(mapIndex);
+        }
         else
             StartCoroutine(ReselectButton());
     }
     
     private IEnumerator ReselectButton()
     {
-        EventSystem.current.SetSelectedGameObject(null);
         yield return null; // wait one frame
-        EventSystem.current.SetSelectedGameObject(playButton.gameObject);
+        if (EventSystem.current.currentSelectedGameObject == null)
+        {
+            EventSystem.current.SetSelectedGameObject(null);
+            yield return null; // wait one frame
+            EventSystem.current.SetSelectedGameObject(playButton.gameObject);
+        }
     }
 
     public void ToggleItems()
     {
         LobbyManager.ItemsActivated = !LobbyManager.ItemsActivated;
+    }
+    
+    public void ToggleTuto()
+    {
+        LobbyManager.TutorialActivated = !LobbyManager.TutorialActivated;
+    }
+    
+    public void ToggleCVD()
+    {
+        LobbyManager.CVDActivated = !LobbyManager.CVDActivated;
     }
 }

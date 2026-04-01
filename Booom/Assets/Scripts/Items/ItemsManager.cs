@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public enum SpawnMode
 {
@@ -60,7 +61,7 @@ public class ItemsManager : MonoBehaviour
 
     private void StartSpawning()
     {
-        if (!LobbyManager.ItemsActivated) return;
+        if (!LobbyManager.ItemsActivated || SceneManager.GetActiveScene().name == "Tuto") return;
         
         foreach (var itemSpawner in _itemSpawnerPerItemType)
         {

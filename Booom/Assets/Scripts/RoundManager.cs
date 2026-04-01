@@ -5,12 +5,15 @@ using UnityEngine;
 
 public static class RoundManager
 {
-    public static readonly List<int> MapsToPlay = new () {1,2,3,4,5};
+    public static readonly List<int> MapsToPlay = new () {2,3,4,5,6};
     private static readonly List<int> _mapsPlayed = new();
     private static readonly List<PlayerEnum> _gameWonPlayer = new();
 
     private static RuntimeConfigData _runtimeConfig;
+#if !UNITY_EDITOR
     private static bool _isRuntimeConfigSet = false;
+#endif
+        
     public static int LastMapIndex = 0;
     
     private static Dictionary<PlayerEnum, int> _playerWinsDict = new()

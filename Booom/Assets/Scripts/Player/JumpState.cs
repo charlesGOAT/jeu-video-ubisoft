@@ -8,6 +8,7 @@ public class JumpState : State
 
     public override void Enter()
     {
+        _player.Animator.ResetTrigger("DropBomb");
         _player.Animator.SetBool("IsJumping", true);
 
         _airDuration = GameConstants.AIR_STATE_DURATION;

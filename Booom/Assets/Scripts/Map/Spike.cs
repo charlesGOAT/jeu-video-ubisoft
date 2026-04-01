@@ -11,7 +11,7 @@ public class Spike : SpecialTile
 
     private void HitPlayer(in Player player)
     {
-        if (Vector3.Distance(transform.position, player.transform.position) <= 0.95f) return;
+        if (Vector3.Distance(transform.position, player.transform.position) >= 0.95f) return;
 
         var position = player.transform.position;
         float playerLengthToSpikeX = transform.position.x - position.x;

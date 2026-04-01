@@ -30,6 +30,7 @@ public class CVDButton : MonoBehaviour
 
     public void ChangeFilter(int index)
     {
+        LobbyManager.CVDIndex = index;
         OnChangeFilterCalled?.Invoke(index + 1);
     }
 
@@ -57,7 +58,14 @@ public class CVDButton : MonoBehaviour
             {
                 toggle.isOn = false;
             }
-            normalFilter.isOn = true;
+            if (LobbyManager.CVDIndex == 0)
+                normalFilter.isOn = true;
+            else
+                toggles[LobbyManager.CVDIndex].isOn = true;
+        }
+        else
+        {
+            ChangeFilter(0);
         }
     }
 }
