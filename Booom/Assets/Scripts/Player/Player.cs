@@ -35,7 +35,7 @@ public class Player : MonoBehaviour
     private int hitFlickerFrequency = 50;
 
     [SerializeField]
-    private float immuneTimer = 5;
+    private float immuneTimer = 3;
 
     [SerializeField]
     private float tileDetectionTolerance = 0.35f;
@@ -353,6 +353,7 @@ public class Player : MonoBehaviour
     {
         if (_stateMachine.CurrentState is not JumpState)
         {
+            UpdatePlayerYRotation(new Vector2Int(-jumpDirection.y, jumpDirection.x));
             SoundManager.Instance.OnEnterTrampoline();
             _jumpVelocity = CalculateJumpForce(jumpDirection);
             _stateMachine.Trigger(GameConstants.PLAYER_JUMP_TRIGGER);
