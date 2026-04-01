@@ -70,10 +70,6 @@ public class GameUIManager : MonoBehaviour
     {
         cube[(int)player - 1].objects[killStreakLevel - 1].SetActive(true);
         fire[(int)player - 1].objects[killStreakLevel - 1].SetActive(true);
-        if (killStreakLevel != 1)
-        {
-            fire[(int)player - 1].objects[killStreakLevel - 2].SetActive(false);
-        }
     }
     
     private void RefreshScore(PlayerEnum player, int score)
