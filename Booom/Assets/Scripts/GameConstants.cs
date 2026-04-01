@@ -30,8 +30,9 @@ public static class GameConstants
     public static readonly Dictionary<int, int> RangeBoostPerKill = new ()
     {
         {0, 0},
-        {2, 1},
-        {4, 2},
-        {6, 3}  // todo : add more or tweak
+        {1, 1},
+        {3, 2},
+        {5, 3}, // todo : add more or tweak
+        {7, 4}
     };
 }
