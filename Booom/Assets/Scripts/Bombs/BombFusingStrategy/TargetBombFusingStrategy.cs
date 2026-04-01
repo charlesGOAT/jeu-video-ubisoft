@@ -24,7 +24,7 @@ public class TargetBombFusingStrategy : BombFusingStrategy
         SoundManager.Instance.OnBombFused();
 
         _bomb = bomb;
-        _associatedPlayer = Player.ActivePlayers.First(player => player.PlayerNb == _bomb.AssociatedPlayer);
+        _associatedPlayer = Player.ActivePlayers[_bomb.AssociatedPlayer];
         _cts = new CancellationTokenSource();
 
         Vector2Int bombGridPos = GridManagerStrategy.WorldToGridCoordinates(_bomb.transform.position);
@@ -54,7 +54,10 @@ public class TargetBombFusingStrategy : BombFusingStrategy
         lock (_lock)
         {
             if (_bomb == null) return;
-            _bomb.SetBombCoordinates(GridManagerStrategy.WorldToGridCoordinates(_bomb.transform.position));
+            var gridPos = GridManagerStrategy.WorldToGridCoordinates(_bomb.transform.position);
+            Tile stepTile = GameManager.Instance.GridManager.GetTileAtCoordinates(gridPos);
+            if (stepTile != null) stepTile.ChangeTileColor(_bombTileOwner);
+            _bomb.SetBombCoordinates(gridPos);
             _bomb.Explode();
             SoundManager.Instance.OnTargetBombMoving(false);
         }
@@ -151,7 +154,7 @@ public class TargetBombFusingStrategy : BombFusingStrategy
     private void GetPlayerMinDistance(in Vector2Int gridBombPos, in List<PlayerEnum> notAvailablePlayers, ref float minDistance,
         ref PlayerEnum closestPlayer, ref Vector2Int targetGridPos)
     {
-        foreach (Player player in Player.ActivePlayers)
+        foreach (Player player in Player.ActivePlayers.Values)
         {
             if (_associatedPlayer.PlayerNb == player.PlayerNb
                 || notAvailablePlayers.Contains(player.PlayerNb)) continue;
@@ -195,7 +198,7 @@ public class TargetBombFusingStrategy : BombFusingStrategy
     
     private void ExplodeIfPlayerInSurroundings(in Vector2Int newPos)
     {
-        foreach (Player player in Player.ActivePlayers)
+        foreach (Player player in Player.ActivePlayers.Values)
         {
             if (_associatedPlayer.PlayerNb == player.PlayerNb) continue;
 

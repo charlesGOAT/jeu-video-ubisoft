@@ -14,16 +14,6 @@ public class PaintBrushItem : BaseItem
     
     private Player _player;
 
-    public void UseItem()
-    {
-        var gridPos = GridManagerStrategy.WorldToGridCoordinates(_player.gameObject.transform.position);
-        Tile tile = GameManager.Instance.GridManager.GetTileAtCoordinates(gridPos);
-
-        if (tile == null || tile.IsObstacle) return;
-        
-        tile.ChangeTileColor(_player.PlayerNb);
-    }
-
     public override async void RepickUpItem()
     {
         _cts.Cancel();
@@ -34,11 +24,11 @@ public class PaintBrushItem : BaseItem
     public override async void PickupItem(Player player)
     {
         _player = player;
-        player.OnMoveFunctionCalled += UseItem;
-        
         GameManager.Instance.BombManager.ActivatePaintBrush(_player.gameObject.layer);
         _player.ActivatePaintbrushEffect();
-        
+        _player.IsUsingPaintbrush = true;
+        player.CurrentTile.ChangeTileColor(player.PlayerNb);
+
         player.DisplayPopUp(ItemType, IconSprite);
 
         SoundManager.Instance.OnUsePaintBrush(true);
@@ -49,10 +39,10 @@ public class PaintBrushItem : BaseItem
     {
         SoundManager.Instance.OnUsePaintBrush(false);
         _player.ResetPlayerTexture();
+        _player.IsUsingPaintbrush = false;
         
         GameManager.Instance.BombManager.DeactivatePaintBrush(_player.gameObject.layer);
 
-        _player.OnMoveFunctionCalled -= UseItem;
         CallFinishUsingItemCallback();
     }
 

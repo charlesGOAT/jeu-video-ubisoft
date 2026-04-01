@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public enum SpawnMode
 {
@@ -12,8 +13,7 @@ public enum SpawnMode
 [RequireComponent(typeof(ItemSpawner))]
 public class ItemsManager : MonoBehaviour
 {
-    [SerializeField] 
-    private SpawnMode spawnMode = SpawnMode.Fixed;
+    private SpawnMode _spawnMode = SpawnMode.Random;
 
     private readonly ItemSpawner[] _itemSpawnerPerItemType = new ItemSpawner[Enum.GetValues(typeof(ItemType)).Length];
     
@@ -45,7 +45,7 @@ public class ItemsManager : MonoBehaviour
     private void ApplyRuntimeConfig()
     {
         RuntimeConfigData runtimeConfig = GameManager.Instance.RuntimeConfig;
-        spawnMode = runtimeConfig.SpawnMode;
+        _spawnMode = runtimeConfig.SpawnMode;
         isDropFromSky = runtimeConfig.IsDropFromSky;
     }
 
@@ -61,11 +61,11 @@ public class ItemsManager : MonoBehaviour
 
     private void StartSpawning()
     {
-        if (!LobbyManager.ItemsActivated) return;
+        if (!LobbyManager.ItemsActivated || SceneManager.GetActiveScene().name == "Tuto") return;
         
         foreach (var itemSpawner in _itemSpawnerPerItemType)
         {
-            itemSpawner.Spawn(spawnMode, isDropFromSky);
+            itemSpawner.Spawn(_spawnMode, isDropFromSky);
         }
     }
 }

@@ -11,11 +11,11 @@ public class GameManager : MonoBehaviour
 
     [SerializeField]
     private GameObject playerPrefab;
-    private float _timeRemaining;
+    public float TimeRemaining { get; private set; }
     private bool _timerRunning;
     
     [SerializeField]
-    private float _gameDuration = GameConstants.GAME_DURATION;
+    private float _gameDuration = 60f;
 
     [SerializeField] 
     public Material snowflakeMaterial;
@@ -30,8 +30,8 @@ public class GameManager : MonoBehaviour
     public Material paintBrushEffect;
 
     public float  GameDuration => _gameDuration;
-    public int CurrentMinutes => Mathf.FloorToInt(_timeRemaining / 60f);
-    public int CurrentSeconds => Mathf.FloorToInt(_timeRemaining % 60f);
+    public int CurrentMinutes => Mathf.FloorToInt(TimeRemaining / 60f);
+    public int CurrentSeconds => Mathf.FloorToInt(TimeRemaining % 60f);
     
     [SerializeField] 
     private bool _isSpreadingMode = true;
@@ -42,8 +42,7 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     private bool _isBonusSpeed = false;
 
-    [SerializeField] 
-    public int FrozenTileDuration = 30;
+    public int FrozenTileDuration = 10;
 
     public bool IsBonusSpeed => _isBonusSpeed;
 
@@ -87,11 +86,11 @@ public class GameManager : MonoBehaviour
     {
         if (!_timerRunning) return;
 
-        _timeRemaining -= Time.deltaTime;
+        TimeRemaining -= Time.deltaTime;
 
-        if (_timeRemaining <= 0f)
+        if (TimeRemaining <= 0f)
         {
-            _timeRemaining = 0f;
+            TimeRemaining = 0f;
             _timerRunning = false;
             GameUIManager.UpdateTimerDisplay();
             EndGame();
@@ -104,7 +103,7 @@ public class GameManager : MonoBehaviour
 
     private void UpdateMusic()
     {
-        if (_timeRemaining <= 30 && !_hasChangedForFastMusic)
+        if (TimeRemaining <= 30 && !_hasChangedForFastMusic)
         {
             SoundManager.Instance.OnPlayAcceleratedGameMusic();
             _hasChangedForFastMusic = true;
@@ -114,7 +113,7 @@ public class GameManager : MonoBehaviour
     public void StartTimer()
     {
         SoundManager.Instance.OnGameStarted();
-        _timeRemaining = _gameDuration;
+        TimeRemaining = _gameDuration;
         _timerRunning = true;
     }
     
@@ -207,12 +206,13 @@ public class GameManager : MonoBehaviour
         
         foreach (var playerInput in playersToSpawn)
         {
-            Vector2Int spawnPoint = GridManager.playerSpawnPoints[playerInput.playerIndex];
+            Vector2Int spawnPoint = GridManager.playerSpawnPoints[Player.ActivePlayers.Count];
             Vector3 worldPos = GridManagerStrategy.GridToWorldPosition(spawnPoint);
 
-            playerPrefab.layer = CollisionLayers[playerInput.playerIndex];
+            playerPrefab.layer = CollisionLayers[Player.ActivePlayers.Count];
             PlayerInput newInput = PlayerInput.Instantiate(playerPrefab, playerIndex:playerInput.playerIndex, pairWithDevices:playerInput.devices.ToArray());
             newInput.transform.position = new Vector3(worldPos.x, 0.0f, worldPos.z);
+            newInput.transform.rotation =  Quaternion.Euler(0f, -90f, 0f);
         }
     }
 
@@ -227,7 +227,7 @@ public class GameManager : MonoBehaviour
 
     private void RemoveAllItemsInPlayerInv()
     {
-        foreach (Player player in Player.ActivePlayers)
+        foreach (Player player in Player.ActivePlayers.Values)
         {
             player.ResetInventory();
         }
@@ -254,7 +254,7 @@ public class GameManager : MonoBehaviour
 
     public IEnumerator MakeWinnerColorBlink(PlayerEnum winner)
     {
-        var acquiredTiles = ScoreManager.GetAcquiredTilesByPlayer()[(int)winner - 1];
+        var acquiredTiles = ScoreManager.AcquiredTilesByPlayer[winner];
         foreach (var pos in acquiredTiles)
         {
             Tile tile = GridManager.GetTileAtCoordinates(pos);
@@ -268,22 +268,22 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator EndRoundCoroutine(PlayerEnum winner)
     {
-        Player.ActivePlayers.ForEach(x => x.DisableInputActions());
+        Player.ActivePlayers.Values.ToList().ForEach(x => x.DisableInputActions());
         RoundManager.LoadEndRoundData();
         SoundManager.Instance.OnColorAlternate();
         yield return StartCoroutine(MakeWinnerColorBlink(winner));
-        Player.ActivePlayers.ForEach(x => x.EnableInputActions());
+        Player.ActivePlayers.Values.ToList().ForEach(x => x.EnableInputActions());
         NewRound();
         SceneManager.LoadScene("EndGame");
     }
 
     private IEnumerator EndGameCoroutine(PlayerEnum winner)
     {
-        Player.ActivePlayers.ForEach(x => x.DisableInputActions());
+        Player.ActivePlayers.Values.ToList().ForEach(x => x.DisableInputActions());
         RoundManager.LoadEndGameData();
         SoundManager.Instance.OnColorAlternate();
         yield return StartCoroutine(MakeWinnerColorBlink(winner));
-        Player.ActivePlayers.ForEach(x => x.EnableInputActions());
+        Player.ActivePlayers.Values.ToList().ForEach(x => x.EnableInputActions());
         CleanGame();
         SceneManager.LoadScene("EndGame");
     }
@@ -295,7 +295,7 @@ public class GameManager : MonoBehaviour
         RoundManager.CleanGame();
     }
 
-    private void NewRound()
+    public void NewRound()
     {
         Bomb.ActiveBombs.Clear();
         Player.ActivePlayers.Clear();

@@ -5,12 +5,14 @@ using UnityEngine;
 
 public static class RoundManager
 {
-    private static readonly List<int> mapsToPlay = new () {1,2,3,4,5};
+    private static readonly List<int> mapsToPlay = new () {2,3,4,5,6};
     private static readonly List<int> _mapsPlayed = new();
     private static readonly List<PlayerEnum> _gameWonPlayer = new();
 
     private static RuntimeConfigData _runtimeConfig;
+#if !UNITY_EDITOR
     private static bool _isRuntimeConfigSet = false;
+#endif
     private static int _lastMapIndex = 0;
     
     private static Dictionary<PlayerEnum, int> _playerWinsDict = new()
@@ -60,7 +62,7 @@ public static class RoundManager
         }
         else
         {
-            newMapIndex = ++_lastMapIndex;
+            newMapIndex = _lastMapIndex++;
         }
 
         int nextMap = mapsToPlay[newMapIndex];
@@ -83,11 +85,12 @@ public static class RoundManager
     public static void LoadEndGameData()
     {
         var playerRanks = _playerWinsDict
+            .Where(x => Player.ActivePlayers.Keys.Contains(x.Key))
             .OrderByDescending(x => x.Value)
             .Select((x, index) => (Player: x.Key, Rank: index))
             .ToDictionary(item => item.Player, item => item.Rank);
         
-        foreach (Player player in Player.ActivePlayers)
+        foreach (Player player in Player.ActivePlayers.Values)
         {
             if (player.PlayerNb == PlayerEnum.None) continue;
             EndGameUIManager.PlayerRank[player.PlayerNb] = playerRanks[player.PlayerNb];
@@ -99,10 +102,11 @@ public static class RoundManager
 
     public static void LoadEndRoundData()
     {
-        foreach (Player player in Player.ActivePlayers)
+        int i = 0;
+        foreach (Player player in Player.ActivePlayers.Values)
         {
             if (player.PlayerNb == PlayerEnum.None) continue;
-            EndGameUIManager.PlayerRank[player.PlayerNb] = (int)player.PlayerNb - 1;
+            EndGameUIManager.PlayerRank[player.PlayerNb] = i++;
         }
 
         EndGameUIManager.NextSceneIndex = FindNextMap();

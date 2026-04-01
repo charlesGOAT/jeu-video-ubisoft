@@ -12,8 +12,8 @@ public static class GameConstants
     public const string PLAYER_JUMP_TRIGGER = "Jump";
     public const string PLAYER_BOMB_TRIGGER = "DropBomb";
     public const int UNITY_GRID_SIZE = 2;
-    public const float HIT_STATE_DURATION = 1.5f;
-    public const float GAME_DURATION = 120f;
+    public const int HIT_STATE_DURATION = 1.5f;
+    public const float GAME_DURATION = 60f;
     public const float AIR_STATE_DURATION = 1.0f;
     public const float POPUP_DURATION = 2.0f;
 
