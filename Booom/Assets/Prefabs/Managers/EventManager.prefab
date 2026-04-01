@@ -44,8 +44,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c1daa3aff15a481584289bf3783536b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: GameplayAssembly::EventManager
-  bombEvents: []
+  bombEvents:
+  - minutes: 0
+    seconds: 15
+    value: 2
   textEvents:
-  - minutes: 2
+  - minutes: 1
     seconds: 0
-    value: Start placing bombs to spread your zone !
+    LocalizationKey: StartText

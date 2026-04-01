@@ -16,30 +16,32 @@ MonoBehaviour:
     m_Code: fr
   m_SharedData: {fileID: 11400000, guid: 974626344acb48e4a9f0490d46618b79, type: 2}
   m_Metadata:
-    m_Items: []
+    m_Items:
+    - rid: 8723839753806676074
   m_TableData:
   - m_Id: 77574868992
     m_Localized: JOUER
     m_Metadata:
       m_Items: []
   - m_Id: 165357457408
-    m_Localized: Joueur
+    m_Localized: Joueur {0}
     m_Metadata:
       m_Items: []
   - m_Id: 329799340032
     m_Localized: Appuyez sur un bouton pour rejoindre
     m_Metadata:
-      m_Items: []
+      m_Items:
+      - rid: 8723839753806676074
   - m_Id: 513514049536
     m_Localized: TUTORIEL
     m_Metadata:
       m_Items: []
   - m_Id: 582384521216
-    m_Localized: ITEMS
+    m_Localized: OBJETS
     m_Metadata:
       m_Items: []
   - m_Id: 648998457344
-    m_Localized: LANGUAGE
+    m_Localized: LANGUE
     m_Metadata:
       m_Items: []
   - m_Id: 714568011776
@@ -47,11 +49,11 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 851096801280
-    m_Localized: ' <sprite name="downButton2"> PLACER BOMBE'
+    m_Localized: ' PLACER BOMBE'
     m_Metadata:
       m_Items: []
   - m_Id: 1179397558272
-    m_Localized: <sprite name=\"dpad\"> BOUGE ET REMPLIS LE RESTE DE TA ZONE
+    m_Localized: BOUGE ET REMPLIS LE RESTE DE TA ZONE
     m_Metadata:
       m_Items: []
   - m_Id: 1571065860096
@@ -59,7 +61,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 2051502411776
-    m_Localized: LE COMBAT COMMENCE DANS
+    m_Localized: LE COMBAT COMMENCE DANS {0}
     m_Metadata:
       m_Items: []
   - m_Id: 2335003807744
@@ -86,6 +88,28 @@ MonoBehaviour:
     m_Localized: "BONUS D'\xC9L\xC9MINATIONS"
     m_Metadata:
       m_Items: []
+  - m_Id: 363431820693504
+    m_Localized: Bombe Normale
+    m_Metadata:
+      m_Items: []
+  - m_Id: 363567158300672
+    m_Localized: Bombe Rapide
+    m_Metadata:
+      m_Items: []
+  - m_Id: 364116574375936
+    m_Localized: Le type de bombe est maintenant {0}!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 370315520806912
+    m_Localized: "Placez des bombes pour r\xE9pandre votre couleur!"
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
-    RefIds: []
+    RefIds:
+    - rid: 8723839753806676074
+      type: {class: SmartFormatTag, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_Entries: 
+        m_SharedEntries:
+        - id: 329799340032

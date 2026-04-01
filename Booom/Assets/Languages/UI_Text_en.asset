@@ -16,20 +16,22 @@ MonoBehaviour:
     m_Code: en
   m_SharedData: {fileID: 11400000, guid: 974626344acb48e4a9f0490d46618b79, type: 2}
   m_Metadata:
-    m_Items: []
+    m_Items:
+    - rid: 8723839753806676073
   m_TableData:
   - m_Id: 77574868992
     m_Localized: PLAY
     m_Metadata:
       m_Items: []
   - m_Id: 165357457408
-    m_Localized: Player
+    m_Localized: Player {0}
     m_Metadata:
       m_Items: []
   - m_Id: 329799340032
     m_Localized: Press any button to join
     m_Metadata:
-      m_Items: []
+      m_Items:
+      - rid: 8723839753806676073
   - m_Id: 513514049536
     m_Localized: TUTORIAL
     m_Metadata:
@@ -47,11 +49,11 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 851096801280
-    m_Localized: ' <sprite name="downButton2"> PLACE BOMB'
+    m_Localized: ' PLACE BOMB'
     m_Metadata:
       m_Items: []
   - m_Id: 1179397558272
-    m_Localized: <sprite name=\"dpad\"> MOVE AND FILL THE REST OF YOUR ZONE
+    m_Localized: MOVE AND FILL THE REST OF YOUR ZONE
     m_Metadata:
       m_Items: []
   - m_Id: 1571065860096
@@ -59,7 +61,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 2051502411776
-    m_Localized: GET READY TO FIGHT IN
+    m_Localized: GET READY TO FIGHT IN {0}
     m_Metadata:
       m_Items: []
   - m_Id: 2335003807744
@@ -86,6 +88,28 @@ MonoBehaviour:
     m_Localized: NEW KILL BONUS
     m_Metadata:
       m_Items: []
+  - m_Id: 363431820693504
+    m_Localized: Normal Bomb
+    m_Metadata:
+      m_Items: []
+  - m_Id: 363567158300672
+    m_Localized: Fast Bomb
+    m_Metadata:
+      m_Items: []
+  - m_Id: 364116574375936
+    m_Localized: Bomb type is now {0}!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 370315520806912
+    m_Localized: Start placing bombs to spread your zone!
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
-    RefIds: []
+    RefIds:
+    - rid: 8723839753806676073
+      type: {class: SmartFormatTag, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_Entries: 
+        m_SharedEntries:
+        - id: 329799340032

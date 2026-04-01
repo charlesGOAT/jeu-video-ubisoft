@@ -1,7 +1,8 @@
-using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Localization;
+using UnityEngine.Localization.Settings;
 using UnityEngine.UI;
 
 public class MenuUIManager : MonoBehaviour
@@ -12,6 +13,9 @@ public class MenuUIManager : MonoBehaviour
     [SerializeField] private Canvas mainMenuCanvas;
     
     [SerializeField] private Canvas settingsCanvas;
+    
+    [SerializeField] private Locale english;
+    [SerializeField] private Locale french;
 
     public bool isNotMainMenu;
     
@@ -20,6 +24,8 @@ public class MenuUIManager : MonoBehaviour
     private void Start()
     {
         _lobbyManager = LobbyManager.Instance;
+        
+        ToggleLanguage(false);
     }
 
     public void TogglePlayerUI(int playerCount)
@@ -28,13 +34,19 @@ public class MenuUIManager : MonoBehaviour
 
         if (slot.lockedImage.gameObject.activeSelf)
         {
-            slot.playerLabel.text = $"Player {playerCount}";
+            slot.playerLabel.Arguments = new object[] { playerCount };
+
+            slot.playerLabelLocalized.StringReference = slot.playerLabel;
+            slot.playerLabelLocalized.RefreshString();
+
             slot.lockedImage.gameObject.SetActive(false);
             slot.coloredCharacter.gameObject.SetActive(true);
         }
         else
         {
-            slot.playerLabel.text = $"Press any button to join";
+            slot.playerLabelLocalized.StringReference = slot.joinPrompt;
+            slot.playerLabelLocalized.RefreshString();
+
             slot.lockedImage.gameObject.SetActive(true);
             slot.coloredCharacter.gameObject.SetActive(false);
         }
@@ -97,5 +109,10 @@ public class MenuUIManager : MonoBehaviour
     public void ToggleCVD()
     {
         LobbyManager.CVDActivated = !LobbyManager.CVDActivated;
+    }
+
+    public void ToggleLanguage(bool active)
+    {
+        LocalizationSettings.SelectedLocale = active ? french : english;
     }
 }

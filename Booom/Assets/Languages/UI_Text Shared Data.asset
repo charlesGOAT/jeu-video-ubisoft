@@ -83,6 +83,22 @@ MonoBehaviour:
     m_Key: KillStreak
     m_Metadata:
       m_Items: []
+  - m_Id: 363431820693504
+    m_Key: NormalBomb
+    m_Metadata:
+      m_Items: []
+  - m_Id: 363567158300672
+    m_Key: FastBomb
+    m_Metadata:
+      m_Items: []
+  - m_Id: 364116574375936
+    m_Key: BombEvent
+    m_Metadata:
+      m_Items: []
+  - m_Id: 370315520806912
+    m_Key: StartText
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

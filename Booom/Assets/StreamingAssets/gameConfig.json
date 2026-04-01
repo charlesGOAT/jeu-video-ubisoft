@@ -49,13 +49,13 @@
   "BombEvents": [
     {
       "minutes": 0,
-      "seconds": 30,
+      "seconds": 15,
       "value": 2
     }
   ],
   "TextEvents": [
     {
-      "minutes": 2,
+      "minutes": 1,
       "seconds": 0,
       "value": "Start placing bombs to spread your zone!"
     }

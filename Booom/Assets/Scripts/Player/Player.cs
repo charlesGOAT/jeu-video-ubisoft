@@ -5,6 +5,7 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Localization.Components;
 using UnityEngine.UI;
 
 public delegate void MoveCalledEventHandler();
@@ -47,7 +48,7 @@ public class Player : MonoBehaviour
     private Image itemTextPopUpBackground;
     
     [SerializeField]
-    private TMP_Text itemTextPopUpText;
+    private LocalizeStringEvent itemTextPopUpLocalized;
 
     [SerializeField]
     private RawImage itemIconPrefab;
@@ -658,7 +659,10 @@ public class Player : MonoBehaviour
 
     public void DisplayPopUp(ItemType itemType, Sprite iconSprite)
     {
-        itemTextPopUpText.text = itemType.ToString().AddSpacesBeforeCaps().ToUpper();
+        itemTextPopUpLocalized.StringReference.TableReference = "UI_Text";
+        itemTextPopUpLocalized.StringReference.TableEntryReference = itemType.ToString();
+        itemTextPopUpLocalized.RefreshString();
+        
         AddIcon(itemType, iconSprite);
         
         if (_popUpCoroutine != null)

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using UnityEngine.Localization;
 
 [Serializable]
 public class ItemSpawnerData
@@ -71,7 +72,7 @@ public class RuntimeConfigData
     public List<KeyValuePair> BombEvents = new();
     public List<KeyValuePairText> TextEvents = new ()
     {
-        new (2,0, "Start placing bombs to spread your zone!")
+        new (2,0, "StartText")
     };
 }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Localization;
 
 
 [Serializable]
@@ -21,13 +22,13 @@ public class KeyValuePair {
 public class KeyValuePairText {
     public int minutes;
     public int seconds;
-    public string value;
+    public string LocalizationKey;
     
-    public KeyValuePairText(int mins, int secs, string val)
+    public KeyValuePairText(int mins, int secs, string key)
     {
         minutes = mins;
         seconds = secs;
-        value = val;
+        LocalizationKey = key;
     }
 }
 
@@ -59,7 +60,7 @@ public class EventManager : MonoBehaviour
         
         foreach (var pair in textEvents)
         {
-            _textEventsDict.TryAdd(new Tuple<int, int>(pair.minutes, pair.seconds), new Tuple<string, bool>(pair.value, false));
+            _textEventsDict.TryAdd(new Tuple<int, int>(pair.minutes, pair.seconds), new Tuple<string, bool>(pair.LocalizationKey, false));
         }
         
         if (_bombEventsDict.TryGetValue(new Tuple<int, int>(0, 0), out Tuple<BombEnum, bool> defaultBombType))
@@ -95,7 +96,13 @@ public class EventManager : MonoBehaviour
     {
         if (_textEventsDict.TryGetValue(timeTuple, out Tuple<string, bool> value) && !value.Item2)
         {
-            GameManager.Instance.GameUIManager.DisplayEventPanel(value.Item1.AddSpacesBeforeCaps());
+            LocalizedString eventText = new LocalizedString
+            {
+                TableReference = "UI_Text",
+                TableEntryReference = value.Item1
+            };
+            
+            GameManager.Instance.GameUIManager.DisplayEventPanel(eventText);
             _textEventsDict[timeTuple] = new Tuple<string, bool>(value.Item1, true);
             return true;
         } 

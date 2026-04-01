@@ -2,13 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Localization;
+using UnityEngine.Localization.Components;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class GameUIManager : MonoBehaviour
 {
     [SerializeField]
-    private TMP_Text eventPanelText;
+    private LocalizeStringEvent eventPanelTextLocalize;
     
     [SerializeField]
     private GameObject bombEventPanel;
@@ -83,13 +85,28 @@ public class GameUIManager : MonoBehaviour
 
     public void DisplayEventPanel()
     {
-        eventPanelText.text = $"Bomb type is now {_bombType}!";
+        LocalizedString locString = new LocalizedString
+        {
+            TableReference = "UI_Text",
+            TableEntryReference = "BombEvent"
+        };
+        LocalizedString bombType = new LocalizedString
+        {
+            TableReference = "UI_Text",
+            TableEntryReference = _bombType.Replace(" ", "")
+        };
+        locString.Arguments = new object[] { bombType.GetLocalizedString() };
+        
+        eventPanelTextLocalize.StringReference = locString;
+        eventPanelTextLocalize.RefreshString();
+        
         StartCoroutine(EventPanelCoroutine());
     }
     
-    public void DisplayEventPanel(string eventText)
+    public void DisplayEventPanel(LocalizedString eventText)
     {
-        eventPanelText.text = eventText;
+        eventPanelTextLocalize.StringReference = eventText;
+        eventPanelTextLocalize.RefreshString();
         StartCoroutine(EventPanelCoroutine());
     }
 
