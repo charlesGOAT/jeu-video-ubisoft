@@ -23,12 +23,13 @@ public class RuntimeConfigData
     public float MovementSpeed = 15f;
     public int FrozenTileDuration = 30;
     public float ColorBoost = 1.5f;
-    public float ColorDebuff = 0.7f;
+    public float ColorDebuff = 0.85f;
     public float NormalBombTimer = 3.0f;
     public float FastBombTimer = 1.0f;
     public float PopUpDuration = 2.0f;
     public bool ShouldBombCollideWithPlayers = true;
     public float AirStateDuration = 1.0f;
+    public float HitTimeDuration = 1.5f;
 
     public ItemSpawnerData PaintBrushItemSpawnerData = new()
     {
