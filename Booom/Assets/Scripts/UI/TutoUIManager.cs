@@ -1,17 +1,26 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Localization;
+using UnityEngine.Localization.Components;
 using UnityEngine.SceneManagement;
 using TMPro;
+using UnityEngine.UI;
 
 public class TutoUIManager : MonoBehaviour
 {
     [SerializeField] private GameObject tutoPanel;
     [SerializeField] private TMP_Text countdownText;
     [SerializeField] private TMP_Text[] tutoText;
-    [SerializeField] private TMP_SpriteAsset secondSpriteAsset;
+    [SerializeField] private Sprite dpadSprite;
+    [SerializeField] private Image[]  tutoImages;
+    
+    [SerializeField] private LocalizeStringEvent[] tutoLocalized;
+    [SerializeField] private LocalizedString placeBombInstruction;
+    [SerializeField] private LocalizedString moveInstruction;
+    [SerializeField] private LocalizedString readyText;
+    [SerializeField] private LocalizedString countdownTextLocalized;
+    [SerializeField] private LocalizedString fightText;
     
     private bool _tutoEnded;
 
@@ -21,25 +30,35 @@ public class TutoUIManager : MonoBehaviour
         {
             int index = Player.ActivePlayers.Keys.ToList().IndexOf(player);
             tutoText[index].transform.parent.gameObject.SetActive(true);
-            tutoText[index].spriteAsset.fallbackSpriteAssets.Add(secondSpriteAsset);
+            
+            tutoLocalized[index].StringReference = placeBombInstruction;
+            tutoLocalized[index].RefreshString();
         }
     }
 
     public void UpdatePlayerText(PlayerEnum player)
     {
-        tutoText[(int)player - 1].text = $"<sprite name=\"dpad\"> MOVE AND FILL THE REST OF YOUR ZONE";
+        int index = Player.ActivePlayers.Keys.ToList().IndexOf(player);
+
+        tutoImages[index].sprite = dpadSprite;
+        
+        tutoLocalized[index].StringReference = moveInstruction;
+        tutoLocalized[index].RefreshString();
     }
 
     public void PlayerEndTuto(PlayerEnum player)
     {
         int index = Player.ActivePlayers.Keys.ToList().IndexOf(player);
+        
+        tutoImages[index].gameObject.SetActive(false);
 
         RectTransform rt = tutoText[index].GetComponent<RectTransform>();
         Vector3 localPos = rt.localPosition;
         localPos.x = 0;
         rt.localPosition = localPos;
-        
-        tutoText[index].text = "YOU'RE READY !";
+
+        tutoLocalized[index].StringReference = readyText;
+        tutoLocalized[index].RefreshString();
     }
 
     public void EndTuto()
@@ -54,21 +73,25 @@ public class TutoUIManager : MonoBehaviour
     private IEnumerator EndTutoCoroutine()
     {
         tutoPanel.SetActive(true);
-        
+
         int countdown = 5;
 
         while (countdown > 0)
         {
-            countdownText.text = $"GET READY TO FIGHT IN {countdown}...";
+            countdownTextLocalized.Arguments = new object[] { countdown };
+            countdownText.GetComponent<LocalizeStringEvent>().StringReference = countdownTextLocalized;
+            countdownText.GetComponent<LocalizeStringEvent>().RefreshString();
+
             yield return new WaitForSeconds(1f);
             countdown--;
         }
 
-        countdownText.text = "FIGHT!";
+        countdownText.GetComponent<LocalizeStringEvent>().StringReference = fightText;
+        countdownText.GetComponent<LocalizeStringEvent>().RefreshString();
+
         yield return new WaitForSeconds(1f);
 
         GameManager.Instance.NewRound();
-
         SceneManager.LoadScene(RoundManager.FindNextMap());
     }
 }

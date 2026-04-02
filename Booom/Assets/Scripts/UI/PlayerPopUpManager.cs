@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Localization.Components;
 using UnityEngine.UI;
 
 public class PlayerPopUpManager : MonoBehaviour
@@ -12,11 +13,17 @@ public class PlayerPopUpManager : MonoBehaviour
     [SerializeField] 
     private TextMeshProUGUI killStreakInfoText;
     
+    [SerializeField] 
+    private TextMeshProUGUI killStreakTextFr;
+    
+    [SerializeField] 
+    private TextMeshProUGUI killStreakInfoTextFr;
+    
     [SerializeField]
     private Image itemTextPopUpBackground;
     
     [SerializeField]
-    private TMP_Text itemTextPopUpText;
+    private LocalizeStringEvent itemTextPopUpLocalized;
 
     [SerializeField]
     private RawImage itemIconPrefab;
@@ -45,16 +52,35 @@ public class PlayerPopUpManager : MonoBehaviour
     
     private IEnumerator DisplayKillStreakCoroutine(int rangeBonus)
     {
-        killStreakText.gameObject.SetActive(true);
-        killStreakInfoText.gameObject.SetActive(true);
+        if (LobbyManager.TokebaqueIcitte)
+        {
+            killStreakTextFr.gameObject.SetActive(true);
+            killStreakInfoTextFr.gameObject.SetActive(true);
+        }
+        else
+        {
+            killStreakText.gameObject.SetActive(true);
+            killStreakInfoText.gameObject.SetActive(true);
+        }
         yield return new WaitForSeconds(3f);
-        killStreakText.gameObject.SetActive(false);
-        killStreakInfoText.gameObject.SetActive(false);
+        if (LobbyManager.TokebaqueIcitte)
+        {
+            killStreakTextFr.gameObject.SetActive(false);
+            killStreakInfoTextFr.gameObject.SetActive(false);
+        }
+        else
+        {
+            killStreakText.gameObject.SetActive(false);
+            killStreakInfoText.gameObject.SetActive(false);
+        }
     }
     
     public void DisplayPopUp(in ItemType itemType, in Sprite iconSprite)
     {
-        itemTextPopUpText.text = itemType.ToString().AddSpacesBeforeCaps().ToUpper();
+        itemTextPopUpLocalized.StringReference.TableReference = "UI_Text";
+        itemTextPopUpLocalized.StringReference.TableEntryReference = itemType.ToString();
+        itemTextPopUpLocalized.RefreshString();
+        
         AddIcon(itemType, iconSprite);
         
         if (_popUpCoroutine != null)

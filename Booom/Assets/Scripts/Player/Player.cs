@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Localization.Components;
+using UnityEngine.UI;
 
 public delegate void PlaceBomb();
 public delegate void PlaceBombSuccessFul();
