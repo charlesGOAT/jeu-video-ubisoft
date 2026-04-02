@@ -116,6 +116,10 @@ MonoBehaviour:
     m_Localized: "BONUS \xC9LIMINATION"
     m_Metadata:
       m_Items: []
+  - m_Id: 742861478989824
+    m_Localized: FR
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds:

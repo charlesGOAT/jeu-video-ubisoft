@@ -111,6 +111,10 @@ MonoBehaviour:
     m_Key: KillStrea
     m_Metadata:
       m_Items: []
+  - m_Id: 742861478989824
+    m_Key: LanguageLetters
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:
