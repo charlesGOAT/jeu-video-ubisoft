@@ -265,7 +265,7 @@ MonoBehaviour:
     volume: 1
   pickUpItemSound:
     audioClip: {fileID: 8300000, guid: 10c6bb3a3f780244a864daddcedfa24d, type: 3}
-    volume: 0.468
+    volume: 0.29
   usePaintBrushSound: {fileID: 2949932126209092860}
   trampolineSound: {fileID: 1505143836689639150}
   spikeSound: {fileID: 5268592045543523727}
@@ -276,19 +276,19 @@ MonoBehaviour:
     audioClip: {fileID: 8300000, guid: b15a7c80887c268469f106e4a098bae5, type: 3}
     volume: 1
   battleMusic1:
-    audioClip: {fileID: 8300000, guid: a49d8d15a66d9fd4986af0d47e515f35, type: 3}
-    volume: 1
+    audioClip: {fileID: 8300000, guid: a4abeaf04ecf7e04e9fe36cc0b378bb6, type: 3}
+    volume: 0.5
   battleMusic2:
-    audioClip: {fileID: 8300000, guid: a49d8d15a66d9fd4986af0d47e515f35, type: 3}
+    audioClip: {fileID: 8300000, guid: 3f4c5c17b1cb7384cae607be4a9bfd78, type: 3}
     volume: 1
   battleMusic3:
-    audioClip: {fileID: 8300000, guid: a49d8d15a66d9fd4986af0d47e515f35, type: 3}
+    audioClip: {fileID: 8300000, guid: 3f4c5c17b1cb7384cae607be4a9bfd78, type: 3}
     volume: 1
   battleMusic4:
-    audioClip: {fileID: 8300000, guid: a49d8d15a66d9fd4986af0d47e515f35, type: 3}
+    audioClip: {fileID: 8300000, guid: 3f4c5c17b1cb7384cae607be4a9bfd78, type: 3}
     volume: 1
   battleMusic5:
-    audioClip: {fileID: 8300000, guid: a49d8d15a66d9fd4986af0d47e515f35, type: 3}
+    audioClip: {fileID: 8300000, guid: 3f4c5c17b1cb7384cae607be4a9bfd78, type: 3}
     volume: 1
   tutorialMusic:
     audio:
@@ -297,7 +297,7 @@ MonoBehaviour:
     loopStartTime: 89.6
     loopEndTime: 179.2
   acceleratedGameMusic:
-    audioClip: {fileID: 8300000, guid: a49d8d15a66d9fd4986af0d47e515f35, type: 3}
+    audioClip: {fileID: 8300000, guid: 7b364347fd6613b46ac301e8266dc9a9, type: 3}
     volume: 1
   colorAlternationMusic:
     audioClip: {fileID: 8300000, guid: 7b364347fd6613b46ac301e8266dc9a9, type: 3}

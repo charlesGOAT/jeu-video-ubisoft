@@ -462,6 +462,7 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 197af8cc7b5a46f4a8ccedf1d6d2fa56, type: 2}
   - {fileID: 2100000, guid: 38ad7e46751194c48a900c939d1569bd, type: 2}
   - {fileID: 2100000, guid: a13200828bcdc52408ba3365f477bd75, type: 2}
+  CanMove: 1
   NextBombBombItems: 0
   IsUsingPaintbrush: 0
 --- !u!114 &1141182974104389932
