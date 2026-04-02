@@ -126,24 +126,13 @@ public class LobbyManager : MonoBehaviour
         int intPlayerEnum = playerInput.playerIndex + 1;
         PlayerEnum playerEnum = (PlayerEnum) intPlayerEnum;
 
-        switch (playerEnum)
+        if (playerEnum is < PlayerEnum.Player1 or > PlayerEnum.Player4)
         {
-            case PlayerEnum.Player1:
-                Player.PlayerColorDict[playerEnum] = new Color(255f/255f, 41f/255f, 117f/255f); 
-                break;
-            case PlayerEnum.Player2:
-                Player.PlayerColorDict[playerEnum] = new Color(0f, 245f/255f, 212f/255f);
-                break;
-            case PlayerEnum.Player3:
-                Player.PlayerColorDict[playerEnum] = new Color(107f/255f, 44f/255f, 255f/255f);
-                break;
-            case PlayerEnum.Player4:
-                Player.PlayerColorDict[playerEnum] = new Color(255f/255f, 255f/255f, 33f/255f);
-                break;
-            default:
-                Debug.LogWarning("Maximum of " + GameConstants.NB_PLAYERS + " players reached. Extra device ignored.");
-                return;
+            Debug.LogWarning("Maximum of " + GameConstants.NB_PLAYERS + " players reached. Extra device ignored.");
+            return;
         }
+
+        Player.PlayerColorDict[playerEnum] = GameConstants.GetPlayerColor(playerEnum);
         
         DontDestroyOnLoad(playerInput.gameObject);
         JoinedPlayers[playerEnum] = playerInput;
