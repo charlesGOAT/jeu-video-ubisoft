@@ -4,7 +4,6 @@
   "IsBonusSpeed": false,
   "SpawnMode": 1,
   "IsDropFromSky": false,
-  "HighlightOwnColor": false,
   "GameDuration": 60,
   "MovementSpeed": 8,
   "FrozenTileDuration": 10,
@@ -13,7 +12,6 @@
   "NormalBombTimer": 2.0,
   "FastBombTimer": 1.0,
   "PopUpDuration": 2.0,
-  "ShouldBombCollideWithPlayers": true,
   "AirStateDuration": 1.0,
   "HitTimeDuration" : 1.5,
   "PaintBrushItemSpawnerData": {
