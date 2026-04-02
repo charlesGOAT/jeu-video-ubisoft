@@ -296,9 +296,6 @@ MonoBehaviour:
       volume: 1
     loopStartTime: 89.6
     loopEndTime: 179.2
-  acceleratedGameMusic:
-    audioClip: {fileID: 8300000, guid: 7b364347fd6613b46ac301e8266dc9a9, type: 3}
-    volume: 1
   colorAlternationMusic:
     audioClip: {fileID: 8300000, guid: 7b364347fd6613b46ac301e8266dc9a9, type: 3}
     volume: 1
