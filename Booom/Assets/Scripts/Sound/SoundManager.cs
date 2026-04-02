@@ -78,8 +78,6 @@ public class SoundManager : MonoBehaviour
     [SerializeField] 
     private Music tutorialMusic;
     [SerializeField] 
-    private Audio acceleratedGameMusic;
-    [SerializeField] 
     private Audio colorAlternationMusic;
     [SerializeField]
     private Audio victoryThemeMusic;
@@ -332,10 +330,6 @@ public class SoundManager : MonoBehaviour
         if (targetBombMovingSound == null)
         {
             throw new Exception($"Audio clip {nameof(targetBombMovingSound)} cannot be null");
-        }
-        if (acceleratedGameMusic.audioClip == null)
-        {
-            throw new Exception($"Audio clip {nameof(acceleratedGameMusic)} cannot be null");
         }
         if (gameStartsSound.audioClip == null)
         {
