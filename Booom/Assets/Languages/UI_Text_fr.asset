@@ -104,6 +104,10 @@ MonoBehaviour:
     m_Localized: "Placez des bombes pour r\xE9pandre votre couleur!"
     m_Metadata:
       m_Items: []
+  - m_Id: 437148118585344
+    m_Localized: Pointage
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds:

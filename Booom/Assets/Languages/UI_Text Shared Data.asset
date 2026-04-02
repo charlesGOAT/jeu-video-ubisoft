@@ -99,6 +99,10 @@ MonoBehaviour:
     m_Key: StartText
     m_Metadata:
       m_Items: []
+  - m_Id: 437148118585344
+    m_Key: ScoreText
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

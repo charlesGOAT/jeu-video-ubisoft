@@ -1,11 +1,17 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Localization;
 using UnityEngine.Localization.Components;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+
+[Serializable]
+public struct Objects
+{
+    public GameObject[] objects;
+}
 
 public class GameUIManager : MonoBehaviour
 {
@@ -20,6 +26,12 @@ public class GameUIManager : MonoBehaviour
 
     [SerializeField] 
     private List<TMP_Text> playerPercents;
+
+    [SerializeField] 
+    private List<Objects> cube;
+    
+    [SerializeField] 
+    private List<Objects> fire;
     
     private string _bombType = "";
 
@@ -29,8 +41,7 @@ public class GameUIManager : MonoBehaviour
     
     private void OnDestroy()
     {
-        if (SceneManager.GetActiveScene().name != "Tuto")
-            GameManager.Instance.ScoreManager.OnScoreChanged -= RefreshScore;
+        GameManager.Instance.ScoreManager.OnScoreChanged -= RefreshScore;
     }
 
     private void Start()
@@ -43,22 +54,26 @@ public class GameUIManager : MonoBehaviour
         _vinylAnimator = vinylImage.GetComponentInParent<Animator>();
         _vinylMaterial.SetFloat("_Speed", GameManager.Instance.GameDuration);
 
-        if (SceneManager.GetActiveScene().name != "Tuto")
-        {
-            GameManager.Instance.ScoreManager.OnScoreChanged += RefreshScore;
-            GameManager.Instance.StartTimer();
-            InitializeScorePlayers();
-        }
+        GameManager.Instance.ScoreManager.OnScoreChanged += RefreshScore;
+        GameManager.Instance.StartTimer();
+
+        InitializeScorePlayers();
     }
 
     private void InitializeScorePlayers()
     {
-        for (int i = 0; i < Player.ActivePlayers.Count; ++i)
+        foreach(PlayerEnum player in Player.ActivePlayers.Keys)
         {
-            playerPercents[i].transform.parent.gameObject.SetActive(true);
+            playerPercents[(int)player - 1].transform.parent.gameObject.SetActive(true);
         }
     }
 
+    public void NewKillStreak(in PlayerEnum player, int killStreakLevel)
+    {
+        cube[(int)player - 1].objects[killStreakLevel - 1].SetActive(true);
+        fire[(int)player - 1].objects[killStreakLevel - 1].SetActive(true);
+    }
+    
     private void RefreshScore(PlayerEnum player, int score)
     {
         int percent = (int)(((float)score / GameManager.Instance.GridManager.CapturableTilesCount) * 100);

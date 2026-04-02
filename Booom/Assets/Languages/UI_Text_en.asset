@@ -104,6 +104,10 @@ MonoBehaviour:
     m_Localized: Start placing bombs to spread your zone!
     m_Metadata:
       m_Items: []
+  - m_Id: 437148118585344
+    m_Localized: Score
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds:

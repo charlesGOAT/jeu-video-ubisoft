@@ -12,7 +12,7 @@ public class Bomb : MonoBehaviour
     private float _timer = 2f;
 
     [SerializeField]
-    protected int explosionRange = 3;
+    protected int explosionRange = 2;
 
     public int ExplosionRange => explosionRange;
 
