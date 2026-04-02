@@ -3,7 +3,6 @@ using UnityEngine;
 
 public static class GameConstants
 {
-    public const float PLAYER_COLOR_HDR_INTENSITY = 1.5f;
     public const short NB_PLAYERS = 4;
     public const float COLOR_BOOST = 1.5f;
     public const float COLOR_DEBUFF = 0.85f;
@@ -35,18 +34,4 @@ public static class GameConstants
         {4, 2},
         {6, 3}  // todo : add more or tweak
     };
-
-    public static Color GetPlayerColor(PlayerEnum player, bool hdr = true)
-    {
-        Color baseColor = player switch
-        {
-            PlayerEnum.Player1 => new Color(1f, 41f / 255f, 117f / 255f),
-            PlayerEnum.Player2 => new Color(0f, 245f / 255f, 212f / 255f),
-            PlayerEnum.Player3 => new Color(107f / 255f, 44f / 255f, 1f),
-            PlayerEnum.Player4 => new Color(1f, 1f, 33f / 255f),
-            _ => Color.white
-        };
-
-        return hdr ? baseColor * PLAYER_COLOR_HDR_INTENSITY : baseColor;
-    }
 }
