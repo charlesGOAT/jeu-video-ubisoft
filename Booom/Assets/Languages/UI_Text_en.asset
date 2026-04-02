@@ -108,6 +108,14 @@ MonoBehaviour:
     m_Localized: Score
     m_Metadata:
       m_Items: []
+  - m_Id: 448514606927872
+    m_Localized: NEW KILL STREAK
+    m_Metadata:
+      m_Items: []
+  - m_Id: 445450680438784
+    m_Localized: RANGE +1
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds:
