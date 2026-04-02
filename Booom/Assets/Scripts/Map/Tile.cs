@@ -157,6 +157,7 @@ public class Tile : MonoBehaviour
 
     public void AddWinnerBlink()
     {
+        if (CurrentTileOwner == PlayerEnum.None) return;
         _blinkMat.SetColor("_TileColor", Player.PlayerColorDict[CurrentTileOwner]);
         ChangeTileMaterial(1, _blinkMat);
     }
