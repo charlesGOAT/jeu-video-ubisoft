@@ -11,7 +11,7 @@ public static class RoundManager
 
     private static RuntimeConfigData _runtimeConfig;
 #if !UNITY_EDITOR
-    private static bool _isRuntimeConfigSet = false;
+    private static bool _isRuntimeConfigSet = true;
 #endif
     private static int _lastMapIndex = 0;
     

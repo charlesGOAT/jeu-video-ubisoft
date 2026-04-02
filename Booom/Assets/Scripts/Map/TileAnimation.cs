@@ -61,7 +61,7 @@ public class TileAnimation : MonoBehaviour
         }
     }
 
-    private IEnumerator AnimateColorTransition(Color previousColor, Color newColor, bool setInitialColor = false)
+    private IEnumerator AnimateColorTransition(Color previousColor, Color newColor, bool setInitialColor = true)
     {
         if (animationDuration <= 0f)
         {

@@ -28,7 +28,7 @@ namespace SOG.CVDFilter
             ChangeProfile();
         }
 
-        private void Awake()
+        private void Start()
         {
             if (Instance != null && Instance != this)
             {

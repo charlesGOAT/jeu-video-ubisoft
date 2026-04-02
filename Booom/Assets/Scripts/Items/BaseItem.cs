@@ -10,7 +10,7 @@ public abstract class BaseItem
     
     public virtual void RepickUpItem(){}
 
-    public abstract void FinishUsingItem(bool hasDied = false);
+    public abstract void FinishUsingItem(bool hasDied = true);
 
     protected void CallFinishUsingItemCallback()
     {

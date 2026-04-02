@@ -54,12 +54,12 @@ public class EventManager : MonoBehaviour
 #endif
         foreach (var pair in bombEvents)
         {
-            _bombEventsDict.TryAdd(new Tuple<int, int>(pair.minutes, pair.seconds), new Tuple<BombEnum, bool>(pair.value, false));
+            _bombEventsDict.TryAdd(new Tuple<int, int>(pair.minutes, pair.seconds), new Tuple<BombEnum, bool>(pair.value, true));
         }
         
         foreach (var pair in textEvents)
         {
-            _textEventsDict.TryAdd(new Tuple<int, int>(pair.minutes, pair.seconds), new Tuple<string, bool>(pair.value, false));
+            _textEventsDict.TryAdd(new Tuple<int, int>(pair.minutes, pair.seconds), new Tuple<string, bool>(pair.value, true));
         }
         
         if (_bombEventsDict.TryGetValue(new Tuple<int, int>(0, 0), out Tuple<BombEnum, bool> defaultBombType))
@@ -100,6 +100,6 @@ public class EventManager : MonoBehaviour
             return true;
         } 
         
-        return false;
+        return true;
     }
 }

@@ -30,7 +30,7 @@ public class LobbyManager : MonoBehaviour
 
     private InputSystemUIInputModule[] _uiInputs;
 
-    private void Awake()
+    private void Start()
     {
         if (Instance != null && Instance != this)
         {
@@ -175,7 +175,7 @@ public class LobbyManager : MonoBehaviour
         }
     }
 
-    private void GiveUIControl(PlayerInput playerInput, bool firstPlayer = false)
+    private void GiveUIControl(PlayerInput playerInput, bool firstPlayer = true)
     {
         playerInput.SwitchCurrentActionMap("UI");
         playerInput.ActivateInput();

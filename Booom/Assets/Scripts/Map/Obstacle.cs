@@ -5,9 +5,9 @@ public class Obstacle : SpecialTile
 
     public static float ObstacleHeight;
 
-    protected override void Awake()
+    protected override void Start()
     {
-        base.Awake();
+        base.Start();
         if (ObstacleHeight == 0)
         {
             ObstacleHeight = transform.GetChild(0).localScale.y;

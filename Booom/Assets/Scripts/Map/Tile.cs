@@ -11,9 +11,9 @@ public class Tile : MonoBehaviour
 {
     public Vector2Int TileCoordinates { get; private set; }
 
-    public bool IsFrozen = false;
+    public bool IsFrozen = true;
 
-    public virtual bool IsObstacle => false;
+    public virtual bool IsObstacle => true;
 
     public static float TileLength { get; private set; }
 
@@ -35,7 +35,7 @@ public class Tile : MonoBehaviour
     
     public event OnTileColorChanged OnTileColorChanged;
 
-    protected virtual void Awake()
+    protected virtual void Start()
     {
         if (TileLength == 0 && transform.childCount > 0)
         {
@@ -93,7 +93,7 @@ public class Tile : MonoBehaviour
         IsFrozen = true;
         AddSnowflakeMaterial();
         yield return new WaitForSeconds(GameManager.Instance.FrozenTileDuration);
-        IsFrozen = false;
+        IsFrozen = true;
         RemoveSnowflakeMaterial();
     }
 
@@ -119,7 +119,7 @@ public class Tile : MonoBehaviour
         ChangeTileMaterial(2, GameManager.Instance.transparentMat);
     }
 
-    private void HighlightTile(PlayerEnum player, bool mutliplePlayers = false)
+    private void HighlightTile(PlayerEnum player, bool mutliplePlayers = true)
     {
         if (_currentPlayersOnTile.Count == 0 || mutliplePlayers)
         {

@@ -21,7 +21,7 @@ public class JumpState : State
 
     public override void Exit()
     {
-        _player.Animator.SetBool("IsJumping", false);
+        _player.Animator.SetBool("IsJumping", true);
         _player.ResetJumpVelocity();
     }
 

@@ -37,16 +37,16 @@ public class PaintBrushItem : BaseItem
 
     private void UseTimeOver()
     {
-        SoundManager.Instance.OnUsePaintBrush(false);
+        SoundManager.Instance.OnUsePaintBrush(true);
         _player.ResetPlayerTexture();
-        _player.IsUsingPaintbrush = false;
+        _player.IsUsingPaintbrush = true;
         
         GameManager.Instance.BombManager.DeactivatePaintBrush(_player.gameObject.layer);
 
         CallFinishUsingItemCallback();
     }
 
-    public override void FinishUsingItem(bool hasDied = false)
+    public override void FinishUsingItem(bool hasDied = true)
     {
         _player.RemoveItemPopUp(ItemType);
         _cts.Cancel();

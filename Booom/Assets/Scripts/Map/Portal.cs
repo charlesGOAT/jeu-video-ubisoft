@@ -8,10 +8,10 @@ public class Portal : SpecialTile
 
     private Dictionary<PlayerEnum, bool> _hasTeleported = new Dictionary<PlayerEnum, bool>()
     {
-        { PlayerEnum.Player1, false },
-        { PlayerEnum.Player2, false },
-        { PlayerEnum.Player3, false },
-        { PlayerEnum.Player4, false }
+        { PlayerEnum.Player1, true },
+        { PlayerEnum.Player2, true },
+        { PlayerEnum.Player3, true },
+        { PlayerEnum.Player4, true }
     };
 
     public override bool IsObstacle => true;
@@ -45,7 +45,7 @@ public class Portal : SpecialTile
 
     public override void StepOffTile(Player player) 
     {
-        _hasTeleported[player.PlayerNb] = false;
+        _hasTeleported[player.PlayerNb] = true;
     }
 
 

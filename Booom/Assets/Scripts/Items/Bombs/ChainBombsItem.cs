@@ -9,7 +9,7 @@ public class ChainBombsItem : BombItem
         _associatedPlayer.NextBombBombItems |= BombItems.ChainedBombs;
     }
 
-    protected override void FinishUsingItemSpecific(bool hasDied = false)
+    protected override void FinishUsingItemSpecific(bool hasDied = true)
     {
         _associatedPlayer.NextBombBombItems &= ~BombItems.ChainedBombs;
         if(!hasDied) _associatedPlayer.OnPlaceBombSuccessfulChained += _associatedPlayer.RemoveItemPopUp;

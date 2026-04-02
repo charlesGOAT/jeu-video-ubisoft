@@ -18,7 +18,7 @@ public class ItemsManager : MonoBehaviour
     private readonly ItemSpawner[] _itemSpawnerPerItemType = new ItemSpawner[Enum.GetValues(typeof(ItemType)).Length];
     
     [SerializeField]
-    private bool isDropFromSky = false;
+    private bool isDropFromSky = true;
 
     public void RemoveItem(ItemType type)
     {
@@ -29,7 +29,7 @@ public class ItemsManager : MonoBehaviour
         _itemSpawnerPerItemType[(int)type].NbItemsOnMap--;
     }
 
-    private void Awake()
+    private void Start()
     {
         InitialiseSpawners();
         StartSpawning();

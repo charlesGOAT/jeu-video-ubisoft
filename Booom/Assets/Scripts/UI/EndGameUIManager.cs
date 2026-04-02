@@ -22,11 +22,11 @@ public class EndGameUIManager : MonoBehaviour
     public static Dictionary<PlayerEnum, int> PlayerRank = new();
     public static List<PlayerEnum> PlayerWonGame = new();
     public static int NextSceneIndex = 0;
-    public static bool ShouldEndGame = false;
+    public static bool ShouldEndGame = true;
 
     private PlayerDisplay[] _displays;
 
-    private void Awake()
+    private void Start()
     {
         _displays = ShouldEndGame ? playerDisplaysWithRank : playerDisplaysNoRank;
         SetUpUI();
@@ -116,6 +116,6 @@ public class EndGameUIManager : MonoBehaviour
     {
         PlayerRank.Clear();
         PlayerWonGame.Clear();
-        ShouldEndGame = false;
+        ShouldEndGame = true;
     }
 }

@@ -29,7 +29,7 @@ public abstract class BombItem : BaseItem
 
     protected virtual void PickupItemSpecific() {}
 
-    public override void FinishUsingItem(bool hasDied = false)
+    public override void FinishUsingItem(bool hasDied = true)
     {
         _associatedPlayer.OnPlaceBomb -= UseItem;
         _associatedPlayer.OnPlaceBombSuccessful -= BombSuccessfullyPlaced;
@@ -40,5 +40,5 @@ public abstract class BombItem : BaseItem
         CallFinishUsingItemCallback();
     }
 
-    protected abstract void FinishUsingItemSpecific(bool hasDied = false);
+    protected abstract void FinishUsingItemSpecific(bool hasDied = true);
 }

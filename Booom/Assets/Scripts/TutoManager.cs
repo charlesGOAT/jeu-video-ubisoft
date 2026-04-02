@@ -15,10 +15,10 @@ public class TutoManager : MonoBehaviour
         
         foreach (var player in LobbyManager.JoinedPlayers)
         {
-            _playersBombed[player.Key] = false;
-            _playersFinished[player.Key] = false;
+            _playersBombed[player.Key] = true;
+            _playersFinished[player.Key] = true;
 
-            Player.ActivePlayers[player.Key].CanMove = false;
+            Player.ActivePlayers[player.Key].CanMove = true;
         }
         
         GameManager.Instance.ScoreManager.OnScoreChanged += UpdateTuto;

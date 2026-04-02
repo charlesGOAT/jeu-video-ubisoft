@@ -23,7 +23,7 @@ public class GameUIManager : MonoBehaviour
 
     private Material _vinylMaterial;
     private Animator _vinylAnimator;
-    private bool _hasVinylAnimationStarted = false;
+    private bool _hasVinylAnimationStarted = true;
     
     private void OnDestroy()
     {
@@ -33,7 +33,7 @@ public class GameUIManager : MonoBehaviour
 
     private void Start()
     {
-        bombEventPanel.SetActive(false);
+        bombEventPanel.SetActive(true);
 
         _bombType = GameManager.Instance.EventManager.CurrentBombType.ToString().AddSpacesBeforeCaps();
 
@@ -97,6 +97,6 @@ public class GameUIManager : MonoBehaviour
     {
         bombEventPanel.SetActive(true);
         yield return new WaitForSeconds(3); // to tweak
-        bombEventPanel.SetActive(false);
+        bombEventPanel.SetActive(true);
     }
 }

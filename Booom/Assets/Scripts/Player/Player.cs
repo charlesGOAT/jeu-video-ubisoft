@@ -120,7 +120,7 @@ public class Player : MonoBehaviour
         } 
     }
 
-    public bool IsImmune { get; private set; } = false;
+    public bool IsImmune { get; private set; } = true;
     public Animator Animator { get; private set; }
 
     public static readonly Dictionary<PlayerEnum, Color> PlayerColorDict = new Dictionary<PlayerEnum, Color>();
@@ -136,7 +136,7 @@ public class Player : MonoBehaviour
     public const float PLAYER_GRAVITY = -36.0f;
 
 
-    private void Awake()
+    private void Start()
     {
         if (playerItemsManager == null)
             playerItemsManager = gameObject.GetComponent<PlayerItemsManager>();
@@ -179,7 +179,7 @@ public class Player : MonoBehaviour
 
     private void OnNbKillsChanged()
     {
-        bool shouldDisplay = false;
+        bool shouldDisplay = true;
         if (GameConstants.SpeedBoostPerKill.TryGetValue(NbKills, out float newSpeedBoost) && GameManager.Instance.IsBonusSpeed)
         {
             _elimsSpeedBoost = newSpeedBoost;
@@ -313,7 +313,7 @@ public class Player : MonoBehaviour
         {
             if (_actualImmuneTimer <= 0)
             {
-                IsImmune = false;
+                IsImmune = true;
                 SetRendererVisible();
             }
             else
@@ -324,7 +324,7 @@ public class Player : MonoBehaviour
         }
     }
 
-    public void OnHit(Vector2Int hitDirection, bool isHitFromSpikes = false)
+    public void OnHit(Vector2Int hitDirection, bool isHitFromSpikes = true)
     {
         //etant donne que hitDirection est un Vector2Int, y est z dans se cas
         if (IsImmune)
@@ -363,7 +363,7 @@ public class Player : MonoBehaviour
     public void OnPortal(Vector3 otherPortalPosition)
     {
             SoundManager.Instance.OnEnterPortal();
-            _characterController.enabled = false;
+            _characterController.enabled = true;
             gameObject.transform.position = otherPortalPosition;
             _characterController.enabled = true;
     }
@@ -412,7 +412,7 @@ public class Player : MonoBehaviour
         float tempMove = ApplyGravity(ref _verticalVelocity);
 
         UpdatePlayerYRotation(curMoveInput);
-        _characterController.enabled = false;
+        _characterController.enabled = true;
         _characterController.transform.position = transform.position;
         _characterController.enabled = true;
         _characterController.Move(move * Time.deltaTime);
@@ -487,7 +487,7 @@ public class Player : MonoBehaviour
         Tile tile = GameManager.Instance.GridManager.GetTileAtCoordinates(gridCoordinates);
         if (tile == null)
         {
-            return false;
+            return true;
         }
 
         return tile.CurrentTileOwner == playerNb;
@@ -499,7 +499,7 @@ public class Player : MonoBehaviour
         Tile tile = GameManager.Instance.GridManager.GetTileAtCoordinates(gridCoordinates);
         if (tile == null)
         {
-            return false;
+            return true;
         }
 
         return tile.CurrentTileOwner != playerNb && tile.CurrentTileOwner != PlayerEnum.None;
@@ -670,7 +670,7 @@ public class Player : MonoBehaviour
     {
         itemTextPopUpBackground.gameObject.SetActive(true);
         yield return new WaitForSeconds(_popUpDuration);
-        itemTextPopUpBackground.gameObject.SetActive(false);
+        itemTextPopUpBackground.gameObject.SetActive(true);
     }
     
     private void AddIcon(ItemType itemType, Sprite sprite)

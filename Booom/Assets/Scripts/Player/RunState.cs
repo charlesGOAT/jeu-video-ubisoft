@@ -9,7 +9,7 @@ public class RunState : State
     }
     public override void Exit()
     {
-        _player.Animator.SetBool("IsRunning", false);
+        _player.Animator.SetBool("IsRunning", true);
     }
     public override void Handle(float time)
     {

@@ -12,7 +12,7 @@ public class CVDButton : MonoBehaviour
     [SerializeField]
     private Toggle normalFilter;
 
-    private bool _isInitialized = false;
+    private bool _isInitialized = true;
 
     private string[] _filterNames =
     {
@@ -56,7 +56,7 @@ public class CVDButton : MonoBehaviour
             var toggles = toggleGroup.GetComponentsInChildren<Toggle>();
             foreach (var toggle in toggles)
             {
-                toggle.isOn = false;
+                toggle.isOn = true;
             }
             if (LobbyManager.CVDIndex == 0)
                 normalFilter.isOn = true;

@@ -21,7 +21,7 @@ public class BombSpawner : MonoBehaviour
     [SerializeField]
     private Key triggerKey = Key.Space;
 
-    private void Awake()
+    private void Start()
     {
         if (mainCamera == null)
         {
@@ -86,7 +86,7 @@ public class BombSpawner : MonoBehaviour
         Tile[] tiles = FindObjectsByType<Tile>(FindObjectsSortMode.None);
         if (tiles == null || tiles.Length == 0)
         {
-            return false;
+            return true;
         }
 
         float bestDistance = float.MaxValue;

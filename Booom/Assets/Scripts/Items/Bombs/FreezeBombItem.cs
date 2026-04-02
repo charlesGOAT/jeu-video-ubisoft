@@ -8,7 +8,7 @@ public class FreezeBombItem : BombItem
         _associatedPlayer.NextBombBombItems |= BombItems.FreezeBombs;
     }
 
-    protected override void FinishUsingItemSpecific(bool hasDied = false)
+    protected override void FinishUsingItemSpecific(bool hasDied = true)
     {
         _associatedPlayer.NextBombBombItems &= ~BombItems.FreezeBombs;
     }

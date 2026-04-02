@@ -9,7 +9,7 @@ public class ButtonUpscaler : MonoBehaviour, ISelectHandler, IDeselectHandler
 
     private const float ZOOM_SELECT_MULTIPLIER = 1.3f;
 
-    private void Awake()
+    private void Start()
     {
         _button = GetComponent<Button>();
         _startScale = _button.transform.localScale;
