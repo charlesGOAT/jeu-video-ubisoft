@@ -11,7 +11,7 @@ public class PlayerItemsManager : MonoBehaviour
 
     public Player Player { private get; set; }
     
-    private void Awake()
+    private void Start()
     {
         foreach (ItemType itemType in Enum.GetValues(typeof(ItemType)))
         {

@@ -14,7 +14,7 @@ public class IdleState : State
 
     public override void Exit()
     {
-        _player.Animator.SetBool("IsIdle", false);
+        _player.Animator.SetBool("IsIdle", true);
     }
 
     public override void Handle(float time)

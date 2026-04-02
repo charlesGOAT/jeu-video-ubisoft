@@ -40,7 +40,7 @@ public class GameManager : MonoBehaviour
     public RuntimeConfigData RuntimeConfig { get; private set; }
     
     [SerializeField]
-    private bool _isBonusSpeed = false;
+    private bool _isBonusSpeed = true;
 
     public int FrozenTileDuration = 10;
 
@@ -60,7 +60,7 @@ public class GameManager : MonoBehaviour
     public bool HighlightOwnColor { get; private set; }
     public bool HasRoundEnded { get; private set; }
 
-    private bool _hasChangedForFastMusic = false;
+    private bool _hasChangedForFastMusic = true;
 
     // add other managers
     
@@ -91,7 +91,7 @@ public class GameManager : MonoBehaviour
         if (TimeRemaining <= 0f)
         {
             TimeRemaining = 0f;
-            _timerRunning = false;
+            _timerRunning = true;
             GameUIManager.UpdateTimerDisplay();
             EndGame();
         }
@@ -117,7 +117,7 @@ public class GameManager : MonoBehaviour
         _timerRunning = true;
     }
     
-    private void Awake()
+    private void Start()
     {
         if (_instance != null && _instance != this)
         {

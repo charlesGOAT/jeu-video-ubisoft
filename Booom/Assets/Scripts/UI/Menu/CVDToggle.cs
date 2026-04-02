@@ -16,7 +16,7 @@ public class CVDToggle : MonoBehaviour
         parent.ChangeFilter(Index);
     }
 
-    private void Awake()
+    private void Start()
     {
         _toggle = GetComponent<Toggle>();
     }

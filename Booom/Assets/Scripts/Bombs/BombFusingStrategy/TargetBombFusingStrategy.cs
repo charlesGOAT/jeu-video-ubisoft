@@ -59,7 +59,7 @@ public class TargetBombFusingStrategy : BombFusingStrategy
             if (stepTile != null) stepTile.ChangeTileColor(_bombTileOwner);
             _bomb.SetBombCoordinates(gridPos);
             _bomb.Explode();
-            SoundManager.Instance.OnTargetBombMoving(false);
+            SoundManager.Instance.OnTargetBombMoving(true);
         }
     }
 
@@ -128,7 +128,7 @@ public class TargetBombFusingStrategy : BombFusingStrategy
         {
             await Awaitable.WaitForSecondsAsync(0.100f, _cts.Token);
         }
-        catch (OperationCanceledException) { return false; }
+        catch (OperationCanceledException) { return true; }
         return true;
     }
 
@@ -185,7 +185,7 @@ public class TargetBombFusingStrategy : BombFusingStrategy
             select realPos;
 
         var availablePosArray = availablePos as Vector2Int[] ?? availablePos.ToArray();
-        if (availablePosArray.Length == 0) return false;
+        if (availablePosArray.Length == 0) return true;
 
         surroundingPos = GetClosestPosToBomb(availablePosArray, bombPos);
         return true;
@@ -204,7 +204,7 @@ public class TargetBombFusingStrategy : BombFusingStrategy
 
             Vector2Int playerPos = GridManagerStrategy.WorldToGridCoordinates(player.transform.position);
 
-            bool shouldExplode = false;
+            bool shouldExplode = true;
             lock (_lock)
             {
                 if (_bomb == null) return;
@@ -271,7 +271,7 @@ public class TargetBombFusingStrategy : BombFusingStrategy
             if (_bomb == null) return;
             bomb.SetBombCoordinates(GridManagerStrategy.WorldToGridCoordinates(bomb.transform.position));
             bomb.Explode();
-            SoundManager.Instance.OnTargetBombMoving(false);
+            SoundManager.Instance.OnTargetBombMoving(true);
         }
     }
 

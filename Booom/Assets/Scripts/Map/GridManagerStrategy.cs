@@ -45,7 +45,7 @@ public abstract class GridManagerStrategy : MonoBehaviour
         );
     }
 
-    private void Awake()
+    private void Start()
     {
         CreateGrid();
         SetOwnableTiles();

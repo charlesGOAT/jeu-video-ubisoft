@@ -6,7 +6,7 @@ public class MapTestLobbyManager : MonoBehaviour
 {
     private PlayerInputManager _inputManager;
 
-    private void Awake()
+    private void Start()
     {
         _inputManager = GetComponent<PlayerInputManager>();
     }

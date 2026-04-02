@@ -8,7 +8,7 @@ public class TargetBombItem : BombItem
         _associatedPlayer.BombFusingType = BombFusingType.Target;
     }
     
-    protected override void FinishUsingItemSpecific(bool hasDied = false)
+    protected override void FinishUsingItemSpecific(bool hasDied = true)
     {
         _associatedPlayer.BombFusingType = BombFusingType.None;
     }

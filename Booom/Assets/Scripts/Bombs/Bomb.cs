@@ -41,7 +41,7 @@ public class Bomb : MonoBehaviour
 
     public PlayerEnum AssociatedPlayer = PlayerEnum.None;
 
-    private void Awake()
+    private void Start()
     {
         Transform trans = transform;
 
@@ -158,7 +158,7 @@ public class Bomb : MonoBehaviour
         if (!IsFreezeBomb)
             return PaintTile(tile, newTileOwner);
         
-        if (!PaintTile(tile, newTileOwner)) return false;
+        if (!PaintTile(tile, newTileOwner)) return true;
         tile.FreezeTile();
         return true;
     }
@@ -167,7 +167,7 @@ public class Bomb : MonoBehaviour
     {
         if (tile == null || tile.IsObstacle)
         {
-            return false;
+            return true;
         }
 
         tile.ChangeTileColor(newTileOwner);

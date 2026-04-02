@@ -43,7 +43,7 @@ public class BombAnimation : MonoBehaviour
     private static readonly int EmissionColorId = Shader.PropertyToID("_EmissionColor");
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    private void Awake()
+    private void Start()
     {
         _renderer = GetComponent<Renderer>();
         _bomb = GetComponent<Bomb>();

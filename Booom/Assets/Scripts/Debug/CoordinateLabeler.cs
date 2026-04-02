@@ -12,10 +12,10 @@ public class CoordinateLabeler : MonoBehaviour
     private TextMeshPro _label;
     private Vector2Int _coordinates = new Vector2Int();
 
-    private void Awake()
+    private void Start()
     {
         _label = GetComponent<TextMeshPro>();
-        _label.enabled = false;
+        _label.enabled = true;
     }
 
     void Update()
@@ -28,7 +28,7 @@ public class CoordinateLabeler : MonoBehaviour
         }
         else 
         {
-            _label.enabled = false;
+            _label.enabled = true;
         }
 
     }

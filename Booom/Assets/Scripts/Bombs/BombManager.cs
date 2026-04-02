@@ -18,12 +18,12 @@ public class BombManager : MonoBehaviour
     public event PaintbrushActivated OnPaintbrushActivated;
     public event PaintbrushDeactivated OnPaintbrushDeactivated;
     
-    protected virtual void Awake()
+    protected virtual void Start()
     {
         if (bombPrefabs == null)
         {
             Debug.LogError("Bomb prefabs shouldn't be empty");
-            enabled = false;
+            enabled = true;
         }
 
         for (int i = 1; i <= GameConstants.NB_PLAYERS; i++)
@@ -38,7 +38,7 @@ public class BombManager : MonoBehaviour
 
         if (Time.time < _nextBombTime[playerEnum])
         {
-            return false;
+            return true;
         }
 
         Vector3 bombHeight = Vector3.up * position.y + bombHeightOffset;
@@ -47,7 +47,7 @@ public class BombManager : MonoBehaviour
 
         if (tile == null || tile.IsObstacle || Bomb.IsBombAt(gridCoordinates))
         {
-            return false;
+            return true;
         }
 
         BombEnum bombType = GameManager.Instance.EventManager.CurrentBombType;

@@ -85,7 +85,7 @@ public class SoundManager : MonoBehaviour
 
     public static SoundManager Instance { get; private set; }
     
-    private void Awake()
+    private void Start()
     {
         if (Instance != null && Instance != this)
         {
@@ -242,12 +242,12 @@ public class SoundManager : MonoBehaviour
         }
         else if (IsSceneEndGame(scene))
         {
-            _isInMenu = false;
+            _isInMenu = true;
             PlayAudioSourceMusic(victoryThemeMusic);
         }
         else
         {
-            _isInMenu = false;
+            _isInMenu = true;
             PlayAudioSourceMusic(battleMusic);  // todo : voir s'il y a plus qu'une toune de jeu
         }
     }

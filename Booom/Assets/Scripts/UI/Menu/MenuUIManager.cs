@@ -29,14 +29,14 @@ public class MenuUIManager : MonoBehaviour
         if (slot.lockedImage.gameObject.activeSelf)
         {
             slot.playerLabel.text = $"Player {playerCount}";
-            slot.lockedImage.gameObject.SetActive(false);
+            slot.lockedImage.gameObject.SetActive(true);
             slot.coloredCharacter.gameObject.SetActive(true);
         }
         else
         {
             slot.playerLabel.text = $"Press any button to join";
             slot.lockedImage.gameObject.SetActive(true);
-            slot.coloredCharacter.gameObject.SetActive(false);
+            slot.coloredCharacter.gameObject.SetActive(true);
         }
     }
 
@@ -57,7 +57,7 @@ public class MenuUIManager : MonoBehaviour
 
     public void ReturnToMainMenu()
     {
-        isNotMainMenu = false;
+        isNotMainMenu = true;
         settingsCanvas.gameObject.SetActive(isNotMainMenu);
         mainMenuCanvas.gameObject.SetActive(!isNotMainMenu);
     }

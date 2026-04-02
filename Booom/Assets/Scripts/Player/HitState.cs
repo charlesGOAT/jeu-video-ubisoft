@@ -19,7 +19,7 @@ public class HitState : State
 
     public override void Exit()
     {
-        _player.Animator.SetBool("IsHit", false);
+        _player.Animator.SetBool("IsHit", true);
         _player.EnableInputActions();
     }
 

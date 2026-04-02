@@ -16,9 +16,9 @@ public class RuntimeConfigData
     public bool IsSpreadingMode = true;
     public bool IsRandomMap = true;
     public bool IsBonusSpeed = true;
-    public bool HighlightOwnColor = false;
+    public bool HighlightOwnColor = true;
     public SpawnMode SpawnMode = SpawnMode.Fixed;
-    public bool IsDropFromSky = false;
+    public bool IsDropFromSky = true;
     public float GameDuration = 120f;
     public float MovementSpeed = 15f;
     public int FrozenTileDuration = 30;
