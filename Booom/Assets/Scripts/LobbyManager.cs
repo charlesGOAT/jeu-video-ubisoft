@@ -27,6 +27,7 @@ public class LobbyManager : MonoBehaviour
     public static int CVDIndex = 0;
 
     private PlayerInputManager _inputManager;
+    private MenuManager _menuManager;
 
     private InputSystemUIInputModule[] _uiInputs;
 
@@ -63,6 +64,8 @@ public class LobbyManager : MonoBehaviour
     private void Start()
     {
        _uiInputs = FindObjectsByType<InputSystemUIInputModule>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+       _menuManager = FindAnyObjectByType<MenuManager>();
+       
        if (SceneManager.GetActiveScene().name == "Menu")
        {
            foreach (var player in JoinedPlayers)
@@ -82,7 +85,7 @@ public class LobbyManager : MonoBehaviour
         foreach (PlayerInput playerInput in JoinedPlayers.Values)
         {
             playerInput.SwitchCurrentActionMap("Player");
-            playerInput.ActivateInput();
+            // playerInput.ActivateInput();
         }
         
         SceneManager.LoadScene(levelIndex);
@@ -114,7 +117,8 @@ public class LobbyManager : MonoBehaviour
             GiveUIControl(newUI);
         }
         
-        menuUIManager.TogglePlayerUI(leavingIndex + 1);
+        // menuUIManager.TogglePlayerUI(leavingIndex + 1);
+        _menuManager.PlayerMenuLeft(leavingIndex);
     }
 
     private void OnPlayerJoined(PlayerInput playerInput)
@@ -158,7 +162,8 @@ public class LobbyManager : MonoBehaviour
             playerInput.DeactivateInput();
         }
 
-        menuUIManager.TogglePlayerUI(intPlayerEnum);
+        // menuUIManager.TogglePlayerUI(intPlayerEnum);
+        _menuManager.SpawnMenuPlayer(playerInput);
     }
     
     private void OnInputUserChange(InputUser user, InputUserChange change, InputDevice device)

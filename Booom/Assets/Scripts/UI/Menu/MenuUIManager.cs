@@ -66,6 +66,7 @@ public class MenuUIManager : MonoBehaviour
     {
         if (LobbyManager.JoinedPlayers.Count > 1)
         {
+            GameManager.Instance.EndGame();
             int mapIndex = LobbyManager.TutorialActivated ? 1 : RoundManager.FindNextMap();
             _lobbyManager.GameStarted(mapIndex);
         }

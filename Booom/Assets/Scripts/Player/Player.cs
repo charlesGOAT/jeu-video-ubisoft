@@ -5,6 +5,7 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public delegate void MoveCalledEventHandler();
@@ -103,6 +104,7 @@ public class Player : MonoBehaviour
 
     //nom de caca
     private float _actualImmuneTimer;
+    private bool _isActive = true;
 
     public static readonly Dictionary<PlayerEnum, Player> ActivePlayers = new();
 
@@ -259,8 +261,9 @@ public class Player : MonoBehaviour
     {
         Vector3 worldPos = GridManagerStrategy.GridToWorldPosition(gridPos);
         var trans = transform;
-        trans.position = new Vector3(worldPos.x, trans.position.y, worldPos.z);
+        trans.position = new Vector3(worldPos.x, 0.03f, worldPos.z);
         CurrentTile = GameManager.Instance.GridManager.GetTileAtCoordinates(gridPos);
+        EnablePlayer();
     }
 
     public void OnMove(InputAction.CallbackContext ctx)
@@ -293,6 +296,7 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
+        if (!_isActive) return;
         UpdateImmune();
 
         Tile tile = GetPlayerTile();
@@ -348,6 +352,41 @@ public class Player : MonoBehaviour
     }
 
     public void ResetInventory() => playerItemsManager.ResetInventory();
+
+    public void ResetForNextScene()
+    {
+        CurrentTile = null;
+        IsImmune = false;
+        _actualImmuneTimer = 0f;
+        _knockbackVelocity = Vector3.zero;
+        _jumpVelocity = Vector3.zero;
+        _verticalVelocity = 0f;
+
+        _stateMachine.SetInitialState(_idleState);
+        StartCoroutine(DelayedInitializeSpawner());
+    }
+
+    private IEnumerator DelayedInitializeSpawner()
+    {
+        // wait one frame
+        yield return null;
+        InitializeSpawner();
+    }
+
+    public void EnablePlayer()
+    {
+        _isActive = true;
+        if (SceneManager.GetActiveScene().name == "Menu") return;
+        EnableInputActions();
+    }
+    
+    public void DisablePlayer()
+    {
+        _isActive = false;
+        DisableInputActions();
+        transform.position *= 9000;
+        CurrentTile = null;
+    }
 
     public void OnJump(Vector2Int jumpDirection) 
     {

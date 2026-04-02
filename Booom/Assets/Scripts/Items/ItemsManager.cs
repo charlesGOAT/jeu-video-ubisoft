@@ -61,7 +61,7 @@ public class ItemsManager : MonoBehaviour
 
     private void StartSpawning()
     {
-        if (!LobbyManager.ItemsActivated || SceneManager.GetActiveScene().name == "Tuto") return;
+        if (!LobbyManager.ItemsActivated || SceneManager.GetActiveScene().name == "Tuto" || SceneManager.GetActiveScene().name == "Menu") return;
         
         foreach (var itemSpawner in _itemSpawnerPerItemType)
         {

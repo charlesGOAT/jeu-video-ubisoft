@@ -84,6 +84,7 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
+        if (SceneManager.GetActiveScene().name == "Menu") return;
         if (!_timerRunning) return;
 
         TimeRemaining -= Time.deltaTime;
@@ -206,13 +207,15 @@ public class GameManager : MonoBehaviour
         
         foreach (var playerInput in playersToSpawn)
         {
-            Vector2Int spawnPoint = GridManager.playerSpawnPoints[Player.ActivePlayers.Count];
-            Vector3 worldPos = GridManagerStrategy.GridToWorldPosition(spawnPoint);
-
-            playerPrefab.layer = CollisionLayers[Player.ActivePlayers.Count];
-            PlayerInput newInput = PlayerInput.Instantiate(playerPrefab, playerIndex:playerInput.playerIndex, pairWithDevices:playerInput.devices.ToArray());
-            newInput.transform.position = new Vector3(worldPos.x, 0.0f, worldPos.z);
-            newInput.transform.rotation =  Quaternion.Euler(0f, -90f, 0f);
+            Player player = playerInput.GetComponent<Player>();
+            player.ResetForNextScene();
+            // Vector2Int spawnPoint = GridManager.playerSpawnPoints[Player.ActivePlayers.Count];
+            // Vector3 worldPos = GridManagerStrategy.GridToWorldPosition(spawnPoint);
+            //
+            // // playerPrefab.layer = CollisionLayers[Player.ActivePlayers.Count];
+            // // PlayerInput newInput = PlayerInput.Instantiate(playerPrefab, playerIndex:playerInput.playerIndex, pairWithDevices:playerInput.devices.ToArray());
+            // playerInput.transform.position = new Vector3(worldPos.x, 0.0f, worldPos.z);
+            // playerInput.transform.rotation =  Quaternion.Euler(0f, -90f, 0f);
         }
     }
 
@@ -235,6 +238,11 @@ public class GameManager : MonoBehaviour
     
     public void EndGame()
     {
+        Player.ActivePlayers.Values.ToList().ForEach(p => p.DisablePlayer());
+
+        String scene = SceneManager.GetActiveScene().name;
+        if (scene == "Menu" || scene == "Tuto") return;
+        
         PlayerEnum winner = ScoreManager.FindPlayerWithMostGround();
         Bomb.ActiveBombsGO.ForEach(Destroy);
         HasRoundEnded = true;
@@ -290,7 +298,7 @@ public class GameManager : MonoBehaviour
 
     private void CleanGame()
     {
-        Player.ActivePlayers.Clear();
+        // Player.ActivePlayers.Clear();
         Bomb.ActiveBombs.Clear();
         RoundManager.CleanGame();
     }
@@ -298,6 +306,6 @@ public class GameManager : MonoBehaviour
     public void NewRound()
     {
         Bomb.ActiveBombs.Clear();
-        Player.ActivePlayers.Clear();
+        // Player.ActivePlayers.Clear();
     }
 }

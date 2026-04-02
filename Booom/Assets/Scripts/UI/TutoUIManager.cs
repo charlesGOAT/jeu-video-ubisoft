@@ -47,6 +47,7 @@ public class TutoUIManager : MonoBehaviour
         if (!_tutoEnded)
         {
             _tutoEnded = true;
+            GameManager.Instance.EndGame();
             StartCoroutine(EndTutoCoroutine());
         }
     }
