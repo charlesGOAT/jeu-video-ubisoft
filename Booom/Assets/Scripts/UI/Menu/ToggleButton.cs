@@ -36,6 +36,9 @@ public class ToggleButton : MonoBehaviour
             case "ToggleCVD":
                 _toggle.isOn = LobbyManager.CVDActivated;
                 break;
+            case "ToggleLanguage":
+                _toggle.isOn = LobbyManager.TokebaqueIcitte;
+                break;
         }
     }
 }

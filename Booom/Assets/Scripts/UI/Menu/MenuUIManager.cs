@@ -25,7 +25,7 @@ public class MenuUIManager : MonoBehaviour
     {
         _lobbyManager = LobbyManager.Instance;
         
-        ToggleLanguage(false);
+        ToggleLanguage(LobbyManager.TokebaqueIcitte);
     }
 
     public void TogglePlayerUI(int playerCount)
@@ -114,5 +114,6 @@ public class MenuUIManager : MonoBehaviour
     public void ToggleLanguage(bool active)
     {
         LocalizationSettings.SelectedLocale = active ? french : english;
+        LobbyManager.TokebaqueIcitte = active;
     }
 }
