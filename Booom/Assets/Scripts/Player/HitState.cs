@@ -20,7 +20,8 @@ public class HitState : State
     public override void Exit()
     {
         _player.Animator.SetBool("IsHit", false);
-        _player.EnableInputActions();
+        if(!GameManager.Instance.HasRoundEnded)
+            _player.EnableInputActions();
     }
 
     public override void Handle(float time)

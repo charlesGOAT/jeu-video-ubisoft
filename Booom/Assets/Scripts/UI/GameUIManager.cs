@@ -5,6 +5,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Localization;
 using UnityEngine.Localization.Components;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 [Serializable]
@@ -41,7 +42,8 @@ public class GameUIManager : MonoBehaviour
     
     private void OnDestroy()
     {
-        GameManager.Instance.ScoreManager.OnScoreChanged -= RefreshScore;
+        if (SceneManager.GetActiveScene().name != "Tuto")
+            GameManager.Instance.ScoreManager.OnScoreChanged -= RefreshScore;
     }
 
     private void Start()
@@ -54,10 +56,12 @@ public class GameUIManager : MonoBehaviour
         _vinylAnimator = vinylImage.GetComponentInParent<Animator>();
         _vinylMaterial.SetFloat("_Speed", GameManager.Instance.GameDuration);
 
-        GameManager.Instance.ScoreManager.OnScoreChanged += RefreshScore;
-        GameManager.Instance.StartTimer();
-
-        InitializeScorePlayers();
+        if (SceneManager.GetActiveScene().name != "Tuto")
+        {
+            GameManager.Instance.ScoreManager.OnScoreChanged += RefreshScore;
+            GameManager.Instance.StartTimer();
+            InitializeScorePlayers();
+        }
     }
 
     private void InitializeScorePlayers()
