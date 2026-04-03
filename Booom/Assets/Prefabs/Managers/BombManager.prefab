@@ -47,5 +47,4 @@ MonoBehaviour:
   bombPrefabs:
   - {fileID: 1532892993074124228, guid: 2d0bc29e4a728bd48b0b51c3480a5453, type: 3}
   - {fileID: 2147100444599465451, guid: 804bb791fb2d74248a2f505bde2f8fe4, type: 3}
-  ShouldBombCollideWithPlayers: 1
   LayersToExclude: 

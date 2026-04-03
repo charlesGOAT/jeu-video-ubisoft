@@ -23,6 +23,7 @@ public class LobbyManager : MonoBehaviour
 
     public static bool ItemsActivated = true;
     public static bool TutorialActivated = true;
+    public static bool TokebaqueIcitte = false;
     public static bool CVDActivated;
     public static int CVDIndex = 0;
 
