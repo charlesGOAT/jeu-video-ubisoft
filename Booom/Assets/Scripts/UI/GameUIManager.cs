@@ -1,14 +1,23 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Localization;
+using UnityEngine.Localization.Components;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+
+[Serializable]
+public struct Objects
+{
+    public GameObject[] objects;
+}
 
 public class GameUIManager : MonoBehaviour
 {
     [SerializeField]
-    private TMP_Text eventPanelText;
+    private LocalizeStringEvent eventPanelTextLocalize;
     
     [SerializeField]
     private GameObject bombEventPanel;
@@ -18,6 +27,12 @@ public class GameUIManager : MonoBehaviour
 
     [SerializeField] 
     private List<TMP_Text> playerPercents;
+
+    [SerializeField] 
+    private List<Objects> cube;
+    
+    [SerializeField] 
+    private List<Objects> fire;
     
     private string _bombType = "";
 
@@ -51,12 +66,18 @@ public class GameUIManager : MonoBehaviour
 
     private void InitializeScorePlayers()
     {
-        for (int i = 0; i < Player.ActivePlayers.Count; ++i)
+        foreach(PlayerEnum player in Player.ActivePlayers.Keys)
         {
-            playerPercents[i].transform.parent.gameObject.SetActive(true);
+            playerPercents[(int)player - 1].transform.parent.gameObject.SetActive(true);
         }
     }
 
+    public void NewKillStreak(in PlayerEnum player, int killStreakLevel)
+    {
+        cube[(int)player - 1].objects[killStreakLevel - 1].SetActive(true);
+        fire[(int)player - 1].objects[killStreakLevel - 1].SetActive(true);
+    }
+    
     private void RefreshScore(PlayerEnum player, int score)
     {
         int percent = (int)(((float)score / GameManager.Instance.GridManager.CapturableTilesCount) * 100);
@@ -83,13 +104,28 @@ public class GameUIManager : MonoBehaviour
 
     public void DisplayEventPanel()
     {
-        eventPanelText.text = $"Bomb type is now {_bombType}!";
+        LocalizedString locString = new LocalizedString
+        {
+            TableReference = "UI_Text",
+            TableEntryReference = "BombEvent"
+        };
+        LocalizedString bombType = new LocalizedString
+        {
+            TableReference = "UI_Text",
+            TableEntryReference = _bombType.Replace(" ", "")
+        };
+        locString.Arguments = new object[] { bombType.GetLocalizedString() };
+        
+        eventPanelTextLocalize.StringReference = locString;
+        eventPanelTextLocalize.RefreshString();
+        
         StartCoroutine(EventPanelCoroutine());
     }
     
-    public void DisplayEventPanel(string eventText)
+    public void DisplayEventPanel(LocalizedString eventText)
     {
-        eventPanelText.text = eventText;
+        eventPanelTextLocalize.StringReference = eventText;
+        eventPanelTextLocalize.RefreshString();
         StartCoroutine(EventPanelCoroutine());
     }
 

@@ -48,8 +48,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bc17d83b477d49deade97127763bb157, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ItemsManager
-  spawnMode: 0
-  isDropFromSky: 0
+  isDropFromSky: 1
 --- !u!114 &2483793299209764977
 MonoBehaviour:
   m_ObjectHideFlags: 0
