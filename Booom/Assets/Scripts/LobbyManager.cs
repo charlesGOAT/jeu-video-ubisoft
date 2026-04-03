@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.EventSystems;
@@ -105,7 +106,7 @@ public class LobbyManager : MonoBehaviour
     {
         if (scene.name == "Menu")
         {
-            AppearPlayers();
+            StartCoroutine(AppearPlayers());
         }
         else if (scene.name != "EndGame")
         {
@@ -222,22 +223,25 @@ public class LobbyManager : MonoBehaviour
         _playersDisappeared = true;
     }
     
-    private void AppearPlayers()
+    private IEnumerator AppearPlayers()
     {
+        yield return null;
         foreach (var player in JoinedPlayers)
         {
-            player.Value.gameObject.transform.position = _menuSpawnPoints[player.Key];
+            var p = player.Value.GetComponent<Player>();
+            Player.ActivePlayers[player.Key] = p;
+            player.Value.GetComponent<Player>().InitializeSpawner();
         }
         _playersDisappeared = false;
     }
 
-    public void SpawnMenuPlayer(in PlayerInput playerInput)
+    private void SpawnMenuPlayer(in PlayerInput playerInput)
     {
         playerPrefab.layer = GameManager.Instance.CollisionLayers[playerInput.playerIndex];
         playerInput.transform.rotation = Quaternion.Euler(0f, 180f, 0f);
     }
 
-    public void PlayerMenuLeft(in int leavingIndex)
+    private void PlayerMenuLeft(in int leavingIndex)
     {
         Vector2Int spawnPoint = GameManager.Instance.GridManager.playerSpawnPoints[leavingIndex];
         Tile tile = GameManager.Instance.GridManager.GetTileAtCoordinates(spawnPoint);

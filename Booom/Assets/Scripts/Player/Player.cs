@@ -181,7 +181,7 @@ public class Player : MonoBehaviour
 
     
 
-    private void InitializeSpawner()
+    public void InitializeSpawner()
     {
         if (GameManager.Instance.GridManager.playerSpawnPoints.Length < (int)playerNb)
         {
@@ -235,7 +235,7 @@ public class Player : MonoBehaviour
     {
         Vector3 worldPos = GridManagerStrategy.GridToWorldPosition(gridPos);
         var trans = transform;
-        trans.position = new Vector3(worldPos.x, trans.position.y, worldPos.z);
+        trans.position = new Vector3(worldPos.x, 0, worldPos.z);
         CurrentTile = GameManager.Instance.GridManager.GetTileAtCoordinates(gridPos);
     }
 
