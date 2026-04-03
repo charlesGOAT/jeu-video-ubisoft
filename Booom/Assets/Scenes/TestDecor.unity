@@ -1929,6 +1929,10 @@ PrefabInstance:
       propertyPath: m_RenderMode
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4113202097553523575, guid: 0d602448bd1f8d44793a5fc9f674005b, type: 3}
+      propertyPath: m_PlaneDistance
+      value: 11
+      objectReference: {fileID: 0}
     - target: {fileID: 4859394779205730426, guid: 0d602448bd1f8d44793a5fc9f674005b, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -2002,7 +2006,8 @@ PrefabInstance:
       value: Managers
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 2052125699488649060, guid: 0d602448bd1f8d44793a5fc9f674005b, type: 3}
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 1669064132996479789, guid: 0d602448bd1f8d44793a5fc9f674005b, type: 3}
       insertIndex: 0
