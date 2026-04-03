@@ -18,8 +18,6 @@ public class Obstacle : SpecialTile
             ObstacleHeight = transform.GetChild(0).localScale.y;
         
         }
-        Debug.Log(transform.GetChild(0).localScale.y - ObstacleHeight <= float.Epsilon ? "" : $"Weird Error: ObstacleHeight is {ObstacleHeight} but just detected {transform.GetChild(0).localScale.y}");
-
     }
 
     public override void StepOnTile(Player player) {}

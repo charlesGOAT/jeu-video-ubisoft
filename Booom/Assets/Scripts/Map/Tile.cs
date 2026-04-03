@@ -43,7 +43,6 @@ public class Tile : MonoBehaviour
             TileLength = transform.GetChild(0).localScale.x;
         }
         
-        Debug.LogWarning(transform.GetChild(0).localScale.x == TileLength ? "" : $"Weird Error: TileLength is {TileLength} but just detected {transform.GetChild(0).localScale.x}");
         _tileRenderer = GetComponentInChildren<Renderer>();
         _tileAnimation = GetComponent<TileAnimation>();
 

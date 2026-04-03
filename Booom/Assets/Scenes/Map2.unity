@@ -6045,6 +6045,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: Decor
       objectReference: {fileID: 0}
+    - target: {fileID: 2288293199001366273, guid: 86ba4bb6c8897b04aae98de160f6a94d, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 7.17
+      objectReference: {fileID: 0}
+    - target: {fileID: 2288293199001366273, guid: 86ba4bb6c8897b04aae98de160f6a94d, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 36.22
+      objectReference: {fileID: 0}
+    - target: {fileID: 2288293199001366273, guid: 86ba4bb6c8897b04aae98de160f6a94d, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 15.57
+      objectReference: {fileID: 0}
     - target: {fileID: 3563704731919008646, guid: 86ba4bb6c8897b04aae98de160f6a94d, type: 3}
       propertyPath: m_LocalPosition.x
       value: 14.76
