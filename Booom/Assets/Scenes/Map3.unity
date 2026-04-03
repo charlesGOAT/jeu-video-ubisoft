@@ -11547,8 +11547,8 @@ MonoBehaviour:
   mainCamera: {fileID: 563429073}
   playerSpawnPoints:
   - {x: -4, y: 9}
-  - {x: 4, y: -3}
-  - {x: 4, y: 9}
+  - {x: 5, y: -3}
+  - {x: 5, y: 9}
   - {x: -4, y: -3}
 --- !u!1001 &1893658094
 PrefabInstance:

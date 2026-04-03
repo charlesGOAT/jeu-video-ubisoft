@@ -13296,7 +13296,7 @@ MonoBehaviour:
   - {x: -5, y: 9}
   - {x: 5, y: -3}
   - {x: 5, y: 9}
-  - {x: -5, y: -4}
+  - {x: -5, y: -3}
 --- !u!1001 &1895018424
 PrefabInstance:
   m_ObjectHideFlags: 0
