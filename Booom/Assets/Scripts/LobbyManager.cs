@@ -31,7 +31,6 @@ public class LobbyManager : MonoBehaviour
     public static int CVDIndex = 0;
 
     private PlayerInputManager _inputManager;
-    private MenuManager _menuManager;
 
     private InputSystemUIInputModule[] _uiInputs;
 
@@ -72,7 +71,6 @@ public class LobbyManager : MonoBehaviour
     private void Start()
     {
        _uiInputs = FindObjectsByType<InputSystemUIInputModule>(FindObjectsInactive.Include, FindObjectsSortMode.None);
-       _menuManager = FindFirstObjectByType<MenuManager>();
        _inputManager.EnableJoining();
        
        if (SceneManager.GetActiveScene().name == "Menu")
@@ -107,7 +105,6 @@ public class LobbyManager : MonoBehaviour
     {
         if (scene.name == "Menu")
         {
-            _menuManager = FindFirstObjectByType<MenuManager>();
             AppearPlayers();
         }
         else if (scene.name != "EndGame")
