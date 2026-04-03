@@ -12,6 +12,9 @@ public class LobbyManager : MonoBehaviour
 {
     [SerializeField]
     private GameObject playButton;
+    
+    [SerializeField]
+    private GameObject playerPrefab;
 
     [SerializeField] 
     private MenuUIManager menuUIManager;
@@ -28,8 +31,12 @@ public class LobbyManager : MonoBehaviour
     public static int CVDIndex = 0;
 
     private PlayerInputManager _inputManager;
+    private MenuManager _menuManager;
 
     private InputSystemUIInputModule[] _uiInputs;
+
+    private static Dictionary<PlayerEnum, Vector3> _menuSpawnPoints = new();
+    private static bool _playersDisappeared;
 
     private void Awake()
     {
@@ -41,6 +48,7 @@ public class LobbyManager : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
         _inputManager = GetComponent<PlayerInputManager>();
+        _inputManager.DisableJoining();
     }
 
     private void OnEnable()
@@ -64,11 +72,15 @@ public class LobbyManager : MonoBehaviour
     private void Start()
     {
        _uiInputs = FindObjectsByType<InputSystemUIInputModule>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+       _menuManager = FindFirstObjectByType<MenuManager>();
+       _inputManager.EnableJoining();
+       
        if (SceneManager.GetActiveScene().name == "Menu")
        {
            foreach (var player in JoinedPlayers)
            {
                player.Value.DeactivateInput();
+               player.Value.gameObject.SetActive(true);
            }
            if (JoinedPlayers.Count != 0)
            {
@@ -80,6 +92,8 @@ public class LobbyManager : MonoBehaviour
     public void GameStarted(int levelIndex)
     {
         _inputManager.onPlayerJoined -= OnPlayerJoined; //Cannot join mid game
+        GameManager.Instance.CleanGame();
+        
         foreach (PlayerInput playerInput in JoinedPlayers.Values)
         {
             playerInput.SwitchCurrentActionMap("Player");
@@ -91,8 +105,14 @@ public class LobbyManager : MonoBehaviour
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        if (scene.name != "Menu"  && scene.name != "EndGame")
+        if (scene.name == "Menu")
         {
+            _menuManager = FindFirstObjectByType<MenuManager>();
+            AppearPlayers();
+        }
+        else if (scene.name != "EndGame")
+        {
+            DisappearPlayers();
             GameManager.Instance.SpawnPlayers();
         }
     }
@@ -115,7 +135,8 @@ public class LobbyManager : MonoBehaviour
             GiveUIControl(newUI);
         }
         
-        menuUIManager.TogglePlayerUI(leavingIndex + 1);
+        if (SceneManager.GetActiveScene().name == "Menu")
+            PlayerMenuLeft(leavingIndex);
     }
 
     private void OnPlayerJoined(PlayerInput playerInput)
@@ -159,7 +180,8 @@ public class LobbyManager : MonoBehaviour
             playerInput.DeactivateInput();
         }
 
-        menuUIManager.TogglePlayerUI(intPlayerEnum);
+        if (SceneManager.GetActiveScene().name == "Menu")
+            SpawnMenuPlayer(playerInput);
     }
     
     private void OnInputUserChange(InputUser user, InputUserChange change, InputDevice device)
@@ -189,5 +211,40 @@ public class LobbyManager : MonoBehaviour
         
         if (firstPlayer)
             EventSystem.current.SetSelectedGameObject(playButton);
+    }
+
+    private void DisappearPlayers()
+    {
+        if (_playersDisappeared) return;
+        foreach (var player in JoinedPlayers)
+        {
+            _menuSpawnPoints[player.Key] = player.Value.gameObject.transform.position;
+            player.Value.transform.position = new Vector3(999,0,999);
+        }
+
+        _playersDisappeared = true;
+    }
+    
+    private void AppearPlayers()
+    {
+        foreach (var player in JoinedPlayers)
+        {
+            player.Value.gameObject.transform.position = _menuSpawnPoints[player.Key];
+        }
+        _playersDisappeared = false;
+    }
+
+    public void SpawnMenuPlayer(in PlayerInput playerInput)
+    {
+        playerPrefab.layer = GameManager.Instance.CollisionLayers[playerInput.playerIndex];
+        playerInput.transform.rotation = Quaternion.Euler(0f, 180f, 0f);
+    }
+
+    public void PlayerMenuLeft(in int leavingIndex)
+    {
+        Vector2Int spawnPoint = GameManager.Instance.GridManager.playerSpawnPoints[leavingIndex];
+        Tile tile = GameManager.Instance.GridManager.GetTileAtCoordinates(spawnPoint);
+        tile.IsSpawn = false;
+        tile.ChangeTileColor(PlayerEnum.None);
     }
 }

@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.Localization.Components;
-using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public delegate void PlaceBomb();
 public delegate void PlaceBombSuccessFul();
@@ -242,12 +241,14 @@ public class Player : MonoBehaviour
 
     public void OnMove(InputAction.CallbackContext ctx)
     {
+        if (SceneManager.GetActiveScene().name == "EndGame") return;
         if (!CanMove) return;
         _moveInput = ctx.ReadValue<Vector2>();
     }
     
     public void OnBomb(InputAction.CallbackContext ctx)
     {
+        if (SceneManager.GetActiveScene().name == "EndGame") return;
         if (_stateMachine.CurrentState is JumpState) return;
 
         if (ctx.ReadValueAsButton())
@@ -269,10 +270,11 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
+        if (SceneManager.GetActiveScene().name == "EndGame") return;
         UpdateImmune();
 
         Tile tile = GetPlayerTile();
-        if (tile != null && (CurrentTile != tile || (tile is Spike && !IsImmune))) 
+        if (tile != null && (CurrentTile != tile || (tile is Spike && !IsImmune)) && CurrentTile != null) 
         {
             tile.StepOnTile(this);
 

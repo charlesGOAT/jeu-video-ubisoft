@@ -200,10 +200,11 @@ public class GameManager : MonoBehaviour
 
     public void SpawnPlayers()
     {
-        var playersToSpawn = LobbyManager.JoinedPlayers.Values.ToList();
+        var playersToSpawn = LobbyManager.JoinedPlayers.ToList();
         
-        foreach (var playerInput in playersToSpawn)
+        foreach (var player in playersToSpawn)
         {
+            PlayerInput playerInput = player.Value;
             Vector2Int spawnPoint = GridManager.playerSpawnPoints[Player.ActivePlayers.Count];
             Vector3 worldPos = GridManagerStrategy.GridToWorldPosition(spawnPoint);
 
@@ -211,6 +212,9 @@ public class GameManager : MonoBehaviour
             PlayerInput newInput = PlayerInput.Instantiate(playerPrefab, playerIndex:playerInput.playerIndex, pairWithDevices:playerInput.devices.ToArray());
             newInput.transform.position = new Vector3(worldPos.x, 0.0f, worldPos.z);
             newInput.transform.rotation =  Quaternion.Euler(0f, -90f, 0f);
+            
+            // LobbyManager.JoinedPlayers[player.Key] = newInput;
+            // playerInput.gameObject.SetActive(false);
         }
     }
 
@@ -286,14 +290,14 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene("EndGame");
     }
 
-    private void CleanGame()
+    public void CleanGame()
     {
         Player.ActivePlayers.Clear();
         Bomb.ActiveBombs.Clear();
         RoundManager.CleanGame();
     }
 
-    public void NewRound()
+    private void NewRound()
     {
         Bomb.ActiveBombs.Clear();
         Player.ActivePlayers.Clear();
