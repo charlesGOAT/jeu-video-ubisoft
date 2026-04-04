@@ -115,6 +115,10 @@ MonoBehaviour:
     m_Key: LanguageLetters
     m_Metadata:
       m_Items: []
+  - m_Id: 1198548352929792
+    m_Key: SettingButton
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

@@ -237,7 +237,7 @@ public class LobbyManager : MonoBehaviour
     private void SpawnMenuPlayer(in PlayerInput playerInput)
     {
         playerPrefab.layer = GameManager.Instance.CollisionLayers[playerInput.playerIndex];
-        playerInput.transform.rotation = Quaternion.Euler(0f, 180f, 0f);
+        playerInput.transform.rotation = Quaternion.Euler(0f, -90f, 0f);
     }
 
     private void PlayerMenuLeft(in int leavingIndex)

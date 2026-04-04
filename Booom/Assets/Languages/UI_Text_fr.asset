@@ -120,6 +120,10 @@ MonoBehaviour:
     m_Localized: FR
     m_Metadata:
       m_Items: []
+  - m_Id: 1198548352929792
+    m_Localized: "PARAM\xC8TRES"
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds:
