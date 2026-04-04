@@ -41,11 +41,11 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 648998457344
-    m_Localized: LANGUAGE
+    m_Localized: LANGUAGE EN
     m_Metadata:
       m_Items: []
   - m_Id: 714568011776
-    m_Localized: RETURN
+    m_Localized: BACK
     m_Metadata:
       m_Items: []
   - m_Id: 851096801280

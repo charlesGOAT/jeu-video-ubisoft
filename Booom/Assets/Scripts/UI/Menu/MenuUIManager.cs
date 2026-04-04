@@ -14,6 +14,9 @@ public class MenuUIManager : MonoBehaviour
     
     [SerializeField] private Canvas settingsCanvas;
     
+    [SerializeField] private GameObject mainMenuSpeaker;
+    [SerializeField] private GameObject settingsSpeaker;
+    
     [SerializeField] private Locale english;
     [SerializeField] private Locale french;
 
@@ -24,8 +27,8 @@ public class MenuUIManager : MonoBehaviour
     private void Start()
     {
         _lobbyManager = LobbyManager.Instance;
-        
-        ToggleLanguage(LobbyManager.TokebaqueIcitte);
+
+        LocalizationSettings.SelectedLocale = english;
     }
 
     public void TogglePlayerUI(int playerCount)
@@ -65,6 +68,9 @@ public class MenuUIManager : MonoBehaviour
         isNotMainMenu = true;
         mainMenuCanvas.gameObject.SetActive(!isNotMainMenu);
         settingsCanvas.gameObject.SetActive(isNotMainMenu);
+        
+        mainMenuSpeaker.gameObject.SetActive(!isNotMainMenu);
+        settingsSpeaker.gameObject.SetActive(isNotMainMenu);
     }
 
     public void ReturnToMainMenu()
@@ -72,6 +78,9 @@ public class MenuUIManager : MonoBehaviour
         isNotMainMenu = false;
         settingsCanvas.gameObject.SetActive(isNotMainMenu);
         mainMenuCanvas.gameObject.SetActive(!isNotMainMenu);
+        
+        settingsSpeaker.gameObject.SetActive(isNotMainMenu);
+        mainMenuSpeaker.gameObject.SetActive(!isNotMainMenu);
     }
 
     public void PlayGame()
@@ -96,14 +105,14 @@ public class MenuUIManager : MonoBehaviour
         }
     }
 
-    public void ToggleItems(bool isChecked)
+    public void ToggleItems()
     {
-        LobbyManager.ItemsActivated = isChecked;
+        LobbyManager.ItemsActivated = !LobbyManager.ItemsActivated;
     }
     
-    public void ToggleTuto(bool isChecked)
+    public void ToggleTuto()
     {
-        LobbyManager.TutorialActivated = isChecked;
+        LobbyManager.TutorialActivated = !LobbyManager.TutorialActivated;
     }
     
     public void ToggleCVD(bool isChecked)
@@ -111,10 +120,10 @@ public class MenuUIManager : MonoBehaviour
         LobbyManager.CVDActivated = isChecked;
     }
 
-    public void ToggleLanguage(bool active)
+    public void ToggleLanguage()
     {
-        LocalizationSettings.SelectedLocale = active ? french : english;
-        LobbyManager.TokebaqueIcitte = active;
+        LocalizationSettings.SelectedLocale = LobbyManager.TokebaqueIcitte ? english : french;
+        LobbyManager.TokebaqueIcitte = !LobbyManager.TokebaqueIcitte;
     }
 
     public void QuitButton()

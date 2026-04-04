@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -20,24 +21,42 @@ public class MenuButton : MonoBehaviour, ISubmitHandler
     }
 
     private void Start()
-    {// Cache the renderer to avoid calling GetComponent in Update
+    {
         if (speaker != null)
         {
             _speakerRenderer = speaker.GetComponent<Renderer>();
         }
+        
+        SetBoolValues();
     }
     
     public void OnSubmit(BaseEventData eventData)
     {
-        ApplyMaterial(1);
-        _isPressed = true;
-        _resetTimer = 0.15f;
+        if (gameObject.name == "PlayButton" || gameObject.name == "QuitButton" || gameObject.name == "LanguageButton")
+        {
+            ApplyMaterial(1);
+            _isPressed = true;
+            _resetTimer = 0.15f;
+        }
+        else if (gameObject.name != "SettingButton")
+        {
+            StartCoroutine(ValueChanged());
+        }
     }
 
     private void ApplyMaterial(int matIndex)
     {
         if (_speakerRenderer == null) return;
         Material[] currentMats = _speakerRenderer.materials;
+        currentMats[3] = materials[matIndex];
+        _speakerRenderer.materials = currentMats;
+    }
+    
+    private void ApplyMaterial(bool value)
+    {
+        if (_speakerRenderer == null) return;
+        Material[] currentMats = _speakerRenderer.materials;
+        int matIndex = value ? 1 : 0;
         currentMats[3] = materials[matIndex];
         _speakerRenderer.materials = currentMats;
     }
@@ -57,6 +76,28 @@ public class MenuButton : MonoBehaviour, ISubmitHandler
                 ApplyMaterial(0);
                 _isPressed = false;
             }
+        }
+    }
+
+    private IEnumerator ValueChanged()
+    {
+        yield return null;
+        SetBoolValues();
+    }
+    
+    private void SetBoolValues()
+    {
+        switch (gameObject.name)
+        {
+            case "ItemsButton":
+                ApplyMaterial(LobbyManager.ItemsActivated);
+                break;
+            case "TutorialButton":
+                ApplyMaterial(LobbyManager.TutorialActivated);
+                break;
+            case "LanguageButton":
+                ApplyMaterial(LobbyManager.TokebaqueIcitte);
+                break;
         }
     }
 }
