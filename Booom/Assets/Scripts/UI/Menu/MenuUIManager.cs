@@ -96,19 +96,19 @@ public class MenuUIManager : MonoBehaviour
         }
     }
 
-    public void ToggleItems()
+    public void ToggleItems(bool isChecked)
     {
-        LobbyManager.ItemsActivated = !LobbyManager.ItemsActivated;
+        LobbyManager.ItemsActivated = isChecked;
     }
     
-    public void ToggleTuto()
+    public void ToggleTuto(bool isChecked)
     {
-        LobbyManager.TutorialActivated = !LobbyManager.TutorialActivated;
+        LobbyManager.TutorialActivated = isChecked;
     }
     
-    public void ToggleCVD()
+    public void ToggleCVD(bool isChecked)
     {
-        LobbyManager.CVDActivated = !LobbyManager.CVDActivated;
+        LobbyManager.CVDActivated = isChecked;
     }
 
     public void ToggleLanguage(bool active)
