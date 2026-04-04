@@ -39,6 +39,12 @@ public class Player : MonoBehaviour
     [SerializeField]
     private float tileDetectionTolerance = 0.35f;
 
+    [SerializeField] 
+    private GameObject beam;
+    
+    [SerializeField] 
+    public GameObject SnowEffect;
+
     private PlayerPopUpManager _playerPopUpManager;
 
     private BombFusingStrategy[] _bombFusingStrategies = new []
@@ -130,6 +136,11 @@ public class Player : MonoBehaviour
         ConfigurePlayers();
         ActivePlayers[playerNb] = this;
         SetPlayerTexture();
+        
+        if (SceneManager.GetActiveScene().name.Equals("menu", StringComparison.OrdinalIgnoreCase))
+        {
+            InstantiateBeam();
+        }
     }
 
     private void Start()
@@ -139,6 +150,12 @@ public class Player : MonoBehaviour
 #endif
         CheckStartConditions();
         InitializeSpawner();
+    }
+
+    private void InstantiateBeam()
+    {
+        var instantiatedBeam = Instantiate(beam, transform);
+        instantiatedBeam.GetComponentInChildren<Renderer>().material.SetColor("_BeamColor", playerColor);
     }
 
     private void GetConfigValues()
@@ -543,7 +560,7 @@ public class Player : MonoBehaviour
     {
         List<Renderer> playerRenderers = new();
 
-        foreach (Renderer renderer in GetComponentsInChildren<Renderer>(true))
+        foreach (Renderer renderer in GetComponentsInChildren<Renderer>(false))
         {
             playerRenderers.Add(renderer);
         }
