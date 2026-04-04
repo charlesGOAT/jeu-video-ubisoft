@@ -83,7 +83,7 @@ public class SoundManager : MonoBehaviour
     [SerializeField] 
     private Audio colorAlternationMusic;
     [SerializeField]
-    private Audio victoryThemeMusic;
+    private Music victoryThemeMusic;
     [Space(3)]
 
     private AudioSource _audioSourceSFX;
@@ -306,7 +306,7 @@ public class SoundManager : MonoBehaviour
         {
             throw new Exception($"Audio clip {nameof(tutorialMusic)} cannot be null");
         }
-        if (victoryThemeMusic.audioClip == null)
+        if (victoryThemeMusic.audio.audioClip == null)
         {
             throw new Exception($"Audio clip {nameof(victoryThemeMusic)} cannot be null");
         }
