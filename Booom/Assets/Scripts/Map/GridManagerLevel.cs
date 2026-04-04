@@ -9,6 +9,10 @@ public class GridManagerLevel : GridManagerStrategy
         {
             tile.InitializeTileCoordinates();
             Vector2Int tileCoordinates = tile.TileCoordinates;
+            if (_tiles.ContainsKey(tileCoordinates)) 
+            {
+                Debug.LogWarning($"Duplicate tile coordinates found at {tileCoordinates}. Skipping this tile.");
+            }
             _tiles[tileCoordinates] = tile;
 
             if (tileCoordinates.x > MapUpperLimit.x || tileCoordinates.y > MapUpperLimit.y)
