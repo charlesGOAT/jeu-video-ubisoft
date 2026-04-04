@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -27,6 +28,8 @@ public class SoundManager : MonoBehaviour
     private Audio buttonClickedAudio;
     [SerializeField] 
     private Music mainTheme;
+    [SerializeField] 
+    private List<Audio> playerJoinedSound;
     [Space(3)]
     
     [Header("--- Bomb sounds ---")]
@@ -64,7 +67,7 @@ public class SoundManager : MonoBehaviour
 
     [Header("--- Game music ---")]
     [SerializeField] 
-    private Audio gameStartsSound;
+    private List<Audio> gameStartsSounds;
     [SerializeField] 
     private Audio battleMusic1;
     [SerializeField] 
@@ -217,9 +220,16 @@ public class SoundManager : MonoBehaviour
         PlayAudioSourceMusic(colorAlternationMusic);
     }
 
-    public void OnGameStarted()
+    public void OnGameStarted(int second)
     {
-        _audioSourceSFX.PlayOneShot(gameStartsSound.audioClip, gameStartsSound.volume);
+        _audioSourceSFX.PlayOneShot(gameStartsSounds[second].audioClip, gameStartsSounds[second].volume);
+    }
+
+    public void OnPlayerJoined(in PlayerEnum player)
+    {
+        int index = (int)player - 1;
+        if(playerJoinedSound != null && playerJoinedSound.Count > index)
+            _audioSourceSFX.PlayOneShot(playerJoinedSound[index].audioClip, playerJoinedSound[index].volume);
     }
 
     public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -331,9 +341,9 @@ public class SoundManager : MonoBehaviour
         {
             throw new Exception($"Audio clip {nameof(targetBombMovingSound)} cannot be null");
         }
-        if (gameStartsSound.audioClip == null)
+        if (gameStartsSounds == null)
         {
-            throw new Exception($"Audio clip {nameof(gameStartsSound)} cannot be null");
+            throw new Exception($"Audio clip {nameof(gameStartsSounds)} cannot be null");
         }
         if (newKillStreakSound == null)
         {

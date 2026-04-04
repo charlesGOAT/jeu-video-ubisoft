@@ -44,9 +44,21 @@ public class GameUIManager : MonoBehaviour
         if (SceneManager.GetActiveScene().name != "Tuto")
         {
             GameManager.Instance.ScoreManager.OnScoreChanged += RefreshScore;
-            GameManager.Instance.StartTimer();
+            StartCoroutine(Countdown());
             InitializeScorePlayers();
         }
+    }
+
+    private IEnumerator Countdown()
+    {
+        int second = 0;
+        while (second < 4)
+        {
+            SoundManager.Instance.OnGameStarted(second++);
+            // display text
+            yield return new WaitForSecondsRealtime(1f);
+        }
+        GameManager.Instance.StartTimer();
     }
 
     private void InitializeScorePlayers()

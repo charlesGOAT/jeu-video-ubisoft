@@ -5,6 +5,7 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public delegate void MoveCalledEventHandler();
@@ -148,6 +149,11 @@ public class Player : MonoBehaviour
         ConfigurePlayers();
         ActivePlayers[playerNb] = this;
         SetPlayerTexture();
+
+        if (SceneManager.GetActiveScene().name.Equals("menu", StringComparison.OrdinalIgnoreCase))
+        {
+            SoundManager.Instance.OnPlayerJoined(playerNb);
+        }
     }
 
     private void Start()

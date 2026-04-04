@@ -101,7 +101,6 @@ public class GameManager : MonoBehaviour
 
     public void StartTimer()
     {
-        SoundManager.Instance.OnGameStarted();
         TimeRemaining = _gameDuration;
         _timerRunning = true;
     }
