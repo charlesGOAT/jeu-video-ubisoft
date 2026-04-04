@@ -48,7 +48,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bc17d83b477d49deade97127763bb157, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ItemsManager
-  isDropFromSky: 0
+  isDropFromSky: 1
 --- !u!114 &2483793299209764977
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -81,7 +81,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ItemSpawner
   associatedItemType: 1
   maxItems: 2
-  timeBetweenSpawns: 10
+  timeBetweenSpawns: 1
   fixedPosList: []
   itemPrefab: {fileID: 4617351842077654283, guid: b540ad8f9c075e04697c73bfdc158273, type: 3}
   shadow: {fileID: 7094831668357091440, guid: 792934cba3e79694c89f39918923c806, type: 3}
@@ -117,7 +117,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: GameplayAssembly::ItemSpawner
   associatedItemType: 3
   maxItems: 2
-  timeBetweenSpawns: 4
+  timeBetweenSpawns: 25
   fixedPosList: []
   itemPrefab: {fileID: 4617351842077654283, guid: de258d199611f1141aa0183bba76ff7c, type: 3}
   shadow: {fileID: 7094831668357091440, guid: 792934cba3e79694c89f39918923c806, type: 3}

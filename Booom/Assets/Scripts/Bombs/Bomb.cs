@@ -127,6 +127,8 @@ public class Bomb : MonoBehaviour
     {
         if(!IsFreezeBomb) SoundManager.Instance.OnBombExploded();
         else SoundManager.Instance.OnDefenseBombExploded();
+        if(AssociatedPlayer != PlayerEnum.None)
+            Player.ActivePlayers[AssociatedPlayer].VibratePlayerController();
         PaintTiles();
         NotifyExplosionSubscribers();
         Destroy(gameObject);

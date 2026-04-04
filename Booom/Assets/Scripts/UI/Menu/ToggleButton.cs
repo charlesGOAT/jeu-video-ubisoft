@@ -19,7 +19,7 @@ public class ToggleButton : MonoBehaviour
 
     private void ValueChanged(bool isOn)
     {
-        if (_toggle != null)
+        if (_toggle != null && trueBackground != null)
             trueBackground.SetActive(_toggle.isOn);
     }
 
@@ -35,6 +35,9 @@ public class ToggleButton : MonoBehaviour
                 break;
             case "ToggleCVD":
                 _toggle.isOn = LobbyManager.CVDActivated;
+                break;
+            case "ToggleLanguage":
+                _toggle.isOn = LobbyManager.TokebaqueIcitte;
                 break;
         }
     }
