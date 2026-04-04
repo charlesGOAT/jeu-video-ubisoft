@@ -42,6 +42,7 @@ public class Tile : MonoBehaviour
         {
             TileLength = transform.GetChild(0).localScale.x;
         }
+        
         _tileRenderer = GetComponentInChildren<Renderer>();
         _tileAnimation = GetComponent<TileAnimation>();
 

@@ -1,4 +1,3 @@
-
 public class Obstacle : SpecialTile
 {
     public override bool IsObstacle => true;
@@ -10,7 +9,9 @@ public class Obstacle : SpecialTile
         base.Awake();
         if (ObstacleHeight == 0)
         {
+
             ObstacleHeight = transform.GetChild(0).localScale.y;
+        
         }
     }
 

@@ -624,6 +624,10 @@ public class Player : MonoBehaviour
                 {
                     mats[j] = playerMaterial;
                 }
+                else if (mats[j].name.Contains("Glasses") && !mats[j].name.Contains("GlassesFrame")) 
+                {
+                    mats[j].color = PlayerColorDict[playerNb]; 
+                }
             }
             
             if(_initialMats.Count <= i) _initialMats.Add(mats);
