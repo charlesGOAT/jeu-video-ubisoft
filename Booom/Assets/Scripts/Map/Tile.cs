@@ -20,6 +20,9 @@ public class Tile : MonoBehaviour
     private Renderer _tileRenderer;
     private TileAnimation _tileAnimation;
 
+    [SerializeField] 
+    private GameObject snowEffect;
+
     public PlayerEnum CurrentTileOwner { get; private set; } = PlayerEnum.None;
 
     private List<PlayerEnum> _currentPlayersOnTile = new List<PlayerEnum>(GameConstants.NB_PLAYERS);
@@ -131,11 +134,13 @@ public class Tile : MonoBehaviour
     private void AddSnowflakeMaterial()
     {
         ChangeTileMaterial(3, GameManager.Instance.snowflakeMaterial);
+        snowEffect.SetActive(true);
     }
 
     private void RemoveSnowflakeMaterial()
     {
         ChangeTileMaterial(3, GameManager.Instance.transparentMat);
+        snowEffect.SetActive(false);
     }
 
     private void HighlightTile(PlayerEnum player, bool mutliplePlayers = false)

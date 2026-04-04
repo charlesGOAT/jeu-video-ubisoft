@@ -27,7 +27,9 @@ public class PaintBrushItem : BaseItem
         GameManager.Instance.BombManager.ActivatePaintBrush(_player.gameObject.layer);
         _player.ActivatePaintbrushEffect();
         _player.IsUsingPaintbrush = true;
-        player.CurrentTile.ChangeTileColor(player.PlayerNb);
+        
+        if(player.CurrentTile is not SpecialTile)
+            player.CurrentTile.ChangeTileColor(player.PlayerNb);
 
         player.DisplayPopUp(ItemType, IconSprite);
 
