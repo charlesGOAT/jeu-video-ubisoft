@@ -5,6 +5,8 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
+public delegate void GameStarted();
+
 public class GameManager : MonoBehaviour
 {
     private static GameManager _instance;
@@ -60,6 +62,8 @@ public class GameManager : MonoBehaviour
     public bool HasRoundEnded { get; private set; }
 
     private bool _hasChangedForFastMusic = false;
+    
+    public GameStarted OnGameStarts;
 
     // add other managers
     
@@ -100,6 +104,7 @@ public class GameManager : MonoBehaviour
 
     public void StartTimer()
     {
+        OnGameStarts?.Invoke();
         TimeRemaining = _gameDuration;
         _timerRunning = true;
     }

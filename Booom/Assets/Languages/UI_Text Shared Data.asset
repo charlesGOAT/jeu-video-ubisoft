@@ -115,6 +115,10 @@ MonoBehaviour:
     m_Key: LanguageLetters
     m_Metadata:
       m_Items: []
+  - m_Id: 1444457382666240
+    m_Key: StartGameCountdown
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

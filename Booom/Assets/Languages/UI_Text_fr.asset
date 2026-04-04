@@ -120,6 +120,10 @@ MonoBehaviour:
     m_Localized: FR
     m_Metadata:
       m_Items: []
+  - m_Id: 1444457382666240
+    m_Localized: Commencez!
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds:

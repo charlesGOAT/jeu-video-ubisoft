@@ -22,6 +22,11 @@ public abstract class GridManagerStrategy : MonoBehaviour
     [SerializeField] 
     public Vector2Int[] playerSpawnPoints;
 
+    private GameUIManager _uiManager;
+    private bool _isCameraInPlace = false;
+    private bool _isUIManagerNull = true;
+    private float _startTime;
+
     public virtual Tile GetTileAtCoordinates(Vector2Int vector2Int)
     {
         _tiles.TryGetValue(vector2Int, out Tile tile);
@@ -47,10 +52,31 @@ public abstract class GridManagerStrategy : MonoBehaviour
 
     private void Awake()
     {
+        _uiManager = FindAnyObjectByType<GameUIManager>(FindObjectsInactive.Exclude);
+        if (_uiManager != null)
+        {
+            _uiManager.gameObject.SetActive(false);
+            _isUIManagerNull = false;
+        }
         CreateGrid();
         SetOwnableTiles();
         CapturableTilesCount = _ownableTiles.Count - (LobbyManager.JoinedPlayers.Count - 1);
         PositionCamera();
+        _startTime = Time.time;
+    }
+
+    private void Update()
+    {
+        if (Time.time - _startTime >= 0.5f && !_isCameraInPlace && !_isUIManagerNull)
+        {
+            mainCamera.fieldOfView -= 20 * Time.deltaTime;
+            if (mainCamera.fieldOfView <= 60)
+            {
+                mainCamera.fieldOfView = 60;
+                _isCameraInPlace = true;
+                _uiManager.gameObject.SetActive(true);
+            }
+        }
     }
 
     protected abstract void CreateGrid();
@@ -116,6 +142,7 @@ public abstract class GridManagerStrategy : MonoBehaviour
         float distance = camHeight / Mathf.Abs(forwardDir.y);
 
         mainCamera.transform.position = mapCenter - (forwardDir * distance);
+        mainCamera.fieldOfView = 86f;
     }
 
     public Vector3 GetRandomPosOnGridWithNoItem()

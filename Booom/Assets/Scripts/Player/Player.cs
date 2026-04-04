@@ -131,6 +131,11 @@ public class Player : MonoBehaviour
         ActivePlayers[playerNb] = this;
         SetPlayerTexture();
 
+        if (!SceneManager.GetActiveScene().name.Equals("Tuto", StringComparison.OrdinalIgnoreCase))
+        {
+            DisableInputActions();
+        }
+
         if (SceneManager.GetActiveScene().name.Equals("menu", StringComparison.OrdinalIgnoreCase))
         {
             SoundManager.Instance.OnPlayerJoined(playerNb);
@@ -144,6 +149,7 @@ public class Player : MonoBehaviour
 #endif
         CheckStartConditions();
         InitializeSpawner();
+        GameManager.Instance.OnGameStarts += EnableInputActions;
     }
 
     private void GetConfigValues()
@@ -184,8 +190,6 @@ public class Player : MonoBehaviour
         
         // todo : generate little animation or particle effect indicating kill streak
     }
-
-    
 
     private void InitializeSpawner()
     {
@@ -277,9 +281,12 @@ public class Player : MonoBehaviour
     private IEnumerator VibrateController()
     {
         var gamepad = _playerInput.GetDevice<Gamepad>();
-        gamepad.SetMotorSpeeds(0.7f, 0.7f);
-        yield return new WaitForSeconds(0.2f);
-        gamepad.SetMotorSpeeds(0, 0);
+        if (gamepad != null)
+        {
+            gamepad.SetMotorSpeeds(0.7f, 0.7f);
+            yield return new WaitForSeconds(0.2f);
+            gamepad.SetMotorSpeeds(0, 0);
+        }
     }
 
     public void DisableInputActions() => _playerInput.actions.Disable();
