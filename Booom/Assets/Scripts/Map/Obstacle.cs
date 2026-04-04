@@ -1,8 +1,3 @@
-
-
-
-using UnityEngine;
-
 public class Obstacle : SpecialTile
 {
     public override bool IsObstacle => true;
