@@ -38,7 +38,7 @@ public class MenuButton : MonoBehaviour, ISubmitHandler
             _isPressed = true;
             _resetTimer = 0.15f;
         }
-        else if (gameObject.name != "SettingButton")
+        else if (gameObject.name != "SettingButton" && gameObject.name != "ReturnButton")
         {
             StartCoroutine(ValueChanged());
         }

@@ -33647,8 +33647,8 @@ MonoBehaviour:
   playButton: {fileID: 1178041226}
   mainMenuCanvas: {fileID: 86794520}
   settingsCanvas: {fileID: 1488063821}
-  mainMenuSpeaker: {fileID: 0}
-  settingsSpeaker: {fileID: 0}
+  mainMenuSpeaker: {fileID: 1937800573}
+  settingsSpeaker: {fileID: 172590462}
   english: {fileID: 11400000, guid: e6e32fe6224e92d429880b6f931d170f, type: 2}
   french: {fileID: 11400000, guid: a9111f532be362f428eda325ef42390d, type: 2}
   isNotMainMenu: 0

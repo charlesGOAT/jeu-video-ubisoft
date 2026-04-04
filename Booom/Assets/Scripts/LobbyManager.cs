@@ -149,19 +149,25 @@ public class LobbyManager : MonoBehaviour
         int intPlayerEnum = playerInput.playerIndex + 1;
         PlayerEnum playerEnum = (PlayerEnum) intPlayerEnum;
 
+        float yRotation = 0f;
+
         switch (playerEnum)
         {
             case PlayerEnum.Player1:
                 Player.PlayerColorDict[playerEnum] = new Color(255f / 255f, 41f / 255f, 117f / 255f);
+                yRotation = -125f;
                 break;
             case PlayerEnum.Player2:
                 Player.PlayerColorDict[playerEnum] = new Color(0f, 245f / 255f, 212f / 255f);
+                yRotation = -105f;
                 break;
             case PlayerEnum.Player3:
                 Player.PlayerColorDict[playerEnum] = new Color(107f / 255f, 44f / 255f, 255f / 255f);
+                yRotation = -75f;
                 break;
             case PlayerEnum.Player4:
                 Player.PlayerColorDict[playerEnum] = new Color(255f / 255f, 255f / 255f, 33f / 255f);
+                yRotation = -55f;
                 break;
             default:
                 Debug.LogWarning("Maximum of " + GameConstants.NB_PLAYERS + " players reached. Extra device ignored.");
@@ -182,7 +188,7 @@ public class LobbyManager : MonoBehaviour
         }
 
         if (SceneManager.GetActiveScene().name == "Menu")
-            SpawnMenuPlayer(playerInput);
+            SpawnMenuPlayer(playerInput, yRotation);
     }
     private void OnInputUserChange(InputUser user, InputUserChange change, InputDevice device)
     {
@@ -237,10 +243,10 @@ public class LobbyManager : MonoBehaviour
         _playersDisappeared = false;
     }
 
-    private void SpawnMenuPlayer(in PlayerInput playerInput)
+    private void SpawnMenuPlayer(in PlayerInput playerInput, in float yRotation)
     {
         playerPrefab.layer = GameManager.Instance.CollisionLayers[playerInput.playerIndex];
-        playerInput.transform.rotation = Quaternion.Euler(0f, -90f, 0f);
+        playerInput.transform.rotation = Quaternion.Euler(0f, yRotation, 0f);
         playerLights[playerInput.playerIndex].SetActive(true);
     }
 
