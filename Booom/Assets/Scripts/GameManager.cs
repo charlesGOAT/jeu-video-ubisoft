@@ -57,7 +57,6 @@ public class GameManager : MonoBehaviour
 
     public float ColorDebuff { get; private set; } = GameConstants.COLOR_DEBUFF;
     public float ColorBoost { get; private set; } = GameConstants.COLOR_BOOST;
-    public bool HighlightOwnColor { get; private set; }
     public bool HasRoundEnded { get; private set; }
 
     private bool _hasChangedForFastMusic = false;
@@ -131,7 +130,6 @@ public class GameManager : MonoBehaviour
         FrozenTileDuration = RuntimeConfig.FrozenTileDuration;
         ColorBoost = RuntimeConfig.ColorBoost;
         ColorDebuff = RuntimeConfig.ColorDebuff;
-        HighlightOwnColor = RuntimeConfig.HighlightOwnColor;
     }
 
     public void RemoveItemFromGrid(Item item)
@@ -248,7 +246,7 @@ public class GameManager : MonoBehaviour
             Tile tile = GridManager.GetTileAtCoordinates(pos);
             if (tile == null) continue;
             
-            tile.AddWinnerBlink();
+            tile.AddWinnerBlink(winner);
         }
 
         yield return new WaitForSeconds(4f); // todo tweak

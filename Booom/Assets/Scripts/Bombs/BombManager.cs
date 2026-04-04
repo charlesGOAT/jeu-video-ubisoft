@@ -32,8 +32,9 @@ public class BombManager : MonoBehaviour
         }
     }
 
-    public virtual bool CreateBomb(in Vector3 position, in PlayerEnum playerEnum,in BombFusingStrategy bombStrat, in BombItems bombItems)
+    public virtual bool CreateBomb(in Vector3 position, in Player player,in BombFusingStrategy bombStrat, in BombItems bombItems)
     {
+        PlayerEnum playerEnum = player.PlayerNb;
         Vector3 bombHeightOffset = Vector3.up * 0.5f;
 
         if (Time.time < _nextBombTime[playerEnum])
@@ -49,6 +50,8 @@ public class BombManager : MonoBehaviour
         {
             return false;
         }
+        
+        player.Animator.SetTrigger("DropBomb");
 
         BombEnum bombType = GameManager.Instance.EventManager.CurrentBombType;
         int intBombType = (int)bombType - 1;

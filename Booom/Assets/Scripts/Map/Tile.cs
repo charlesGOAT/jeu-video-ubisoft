@@ -25,11 +25,12 @@ public class Tile : MonoBehaviour
     private List<PlayerEnum> _currentPlayersOnTile = new List<PlayerEnum>(GameConstants.NB_PLAYERS);
 
     public Color NeutralColor { get; private set; }
+    private Color _tileColor;
 
     private Material _highlightMat;
     private Material _blinkMat;
 
-    private readonly Color _colorAdjust = new Color(75f/255f, 75f/255f, 75f/255f);
+    private readonly Color _colorAdjust = new Color(90f/255f, 90f/255f, 90f/255f);
 
     public bool IsSpawn { get; set; }
     
@@ -41,6 +42,7 @@ public class Tile : MonoBehaviour
         {
             TileLength = transform.GetChild(0).localScale.x;
         }
+        
         _tileRenderer = GetComponentInChildren<Renderer>();
         _tileAnimation = GetComponent<TileAnimation>();
 
@@ -51,6 +53,7 @@ public class Tile : MonoBehaviour
     protected virtual void Start()
     {
         NeutralColor = _tileRenderer.material.color;
+        _tileColor = NeutralColor;
         IsSpawn = GameManager.Instance.GridManager.playerSpawnPoints.Contains(TileCoordinates);
         _highlightMat = new Material(GameManager.Instance.highlightMat);
         _blinkMat = GameManager.Instance.blinkMat;
@@ -58,21 +61,21 @@ public class Tile : MonoBehaviour
 
     public virtual void ChangeTileColor(PlayerEnum newOwner)
     {
-        Color tileColor = newOwner != PlayerEnum.None ? Player.PlayerColorDict[newOwner] : NeutralColor;
+        _tileColor = newOwner != PlayerEnum.None ? Player.PlayerColorDict[newOwner] : NeutralColor;
 
-        OnTileColorChanged?.Invoke(tileColor);
+        OnTileColorChanged?.Invoke(_tileColor);
 
         if (CurrentTileOwner != newOwner && (!IsSpawn || _tileRenderer.material.color == NeutralColor) && !IsFrozen)
         {
             GameManager.Instance.ScoreManager.LoseTile(CurrentTileOwner, TileCoordinates);
             GameManager.Instance.ScoreManager.AcquireNewTile(newOwner, TileCoordinates);
-            _tileAnimation.AnimateTileColorChange(tileColor);
+            _tileAnimation.AnimateTileColorChange(_tileColor);
             CurrentTileOwner = newOwner;
-            _highlightMat.SetColor("_BorderColor", tileColor + _colorAdjust);
+            _highlightMat.SetColor("_BorderColor", _tileColor + _colorAdjust);
         }
         else if (CurrentTileOwner == newOwner  && !IsFrozen && !IsSpawn)
         {
-            _tileAnimation.AnimateExplosionFeedback(tileColor);
+            _tileAnimation.AnimateExplosionFeedback(_tileColor);
         }
     }
 
@@ -111,29 +114,22 @@ public class Tile : MonoBehaviour
 
     private void AddSnowflakeMaterial()
     {
-        ChangeTileMaterial(2, GameManager.Instance.snowflakeMaterial);
+        ChangeTileMaterial(3, GameManager.Instance.snowflakeMaterial);
     }
 
     private void RemoveSnowflakeMaterial()
     {
-        ChangeTileMaterial(2, GameManager.Instance.transparentMat);
+        ChangeTileMaterial(3, GameManager.Instance.transparentMat);
     }
 
     private void HighlightTile(PlayerEnum player, bool mutliplePlayers = false)
     {
         if (_currentPlayersOnTile.Count == 0 || mutliplePlayers)
         {
-            Color newColor = _tileRenderer.material.color;
-            if (GameManager.Instance.HighlightOwnColor)
-            {
-                newColor = newColor == Player.PlayerColorDict[player]
-                    ? Player.PlayerColorDict[player] + _colorAdjust
-                    : Player.PlayerColorDict[player];
-            }
-            else newColor += _colorAdjust;
+            Color newColor = _tileColor + _colorAdjust;
 
             _highlightMat.SetColor("_BorderColor", newColor);
-            ChangeTileMaterial(3, _highlightMat);
+            ChangeTileMaterial(4, _highlightMat);
         }
 
         if (_currentPlayersOnTile.Contains(player)) return;
@@ -145,7 +141,7 @@ public class Tile : MonoBehaviour
         _currentPlayersOnTile.Remove(player);
 
         if (_currentPlayersOnTile.Count == 0)
-            ChangeTileMaterial(3, GameManager.Instance.transparentMat);
+            ChangeTileMaterial(4, GameManager.Instance.transparentMat);
         else
             HighlightTile(_currentPlayersOnTile[0], true);
     }
@@ -155,9 +151,10 @@ public class Tile : MonoBehaviour
         RemoveHighlight(player.PlayerNb);
     }
 
-    public void AddWinnerBlink()
+    public void AddWinnerBlink(in PlayerEnum winner)
     {
-        _blinkMat.SetColor("_TileColor", Player.PlayerColorDict[CurrentTileOwner]);
+        if (CurrentTileOwner != winner) return;
+        _blinkMat.SetColor("_TileColor", _tileColor);
         ChangeTileMaterial(4, _blinkMat);
     }
 }
