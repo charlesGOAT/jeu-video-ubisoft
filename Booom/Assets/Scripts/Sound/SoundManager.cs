@@ -232,6 +232,22 @@ public class SoundManager : MonoBehaviour
             _audioSourceSFX.PlayOneShot(playerJoinedSound[index].audioClip, playerJoinedSound[index].volume);
     }
 
+    public void PlayBattleMucic()
+    {
+        int i = SceneManager.GetActiveScene().buildIndex;
+        Audio? music = null;
+        if(RoundManager.MapsToPlay[0] == i) music = battleMusic1;
+        else if(RoundManager.MapsToPlay[1] == i) music = battleMusic2;
+        else if(RoundManager.MapsToPlay[2] == i) music = battleMusic3;
+        else if(RoundManager.MapsToPlay[3] == i) music = battleMusic4;
+        else if(RoundManager.MapsToPlay[4] == i) music = battleMusic5;
+            
+        if(!music.HasValue) PlayAudioSourceMusic(tutorialMusic);
+        else PlayAudioSourceMusic(music.Value);
+
+        _isInMenu = false;
+    }
+
     public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         if (IsSceneMenu(scene))
@@ -245,21 +261,6 @@ public class SoundManager : MonoBehaviour
         {
             _isInMenu = false;
             PlayAudioSourceMusic(victoryThemeMusic);
-        }
-        else
-        {
-            int i = scene.buildIndex;
-            Audio? music = null;
-            if(RoundManager.MapsToPlay[0] == i) music = battleMusic1;
-            else if(RoundManager.MapsToPlay[1] == i) music = battleMusic2;
-            else if(RoundManager.MapsToPlay[2] == i) music = battleMusic3;
-            else if(RoundManager.MapsToPlay[3] == i) music = battleMusic4;
-            else if(RoundManager.MapsToPlay[4] == i) music = battleMusic5;
-            
-            if(!music.HasValue) PlayAudioSourceMusic(tutorialMusic);
-            else PlayAudioSourceMusic(music.Value);
-
-            _isInMenu = false;
         }
     }
     

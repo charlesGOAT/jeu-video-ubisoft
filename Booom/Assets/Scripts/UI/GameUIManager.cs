@@ -58,6 +58,7 @@ public class GameUIManager : MonoBehaviour
             // display text
             yield return new WaitForSecondsRealtime(1f);
         }
+        SoundManager.Instance.PlayBattleMucic();
         GameManager.Instance.StartTimer();
     }
 
