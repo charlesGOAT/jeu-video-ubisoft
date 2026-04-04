@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -263,6 +264,19 @@ public class Player : MonoBehaviour
                 OnPlaceBombSuccessful?.Invoke();
             }
         }
+    }
+    
+    public void VibratePlayerController()
+    {
+        StartCoroutine(VibrateController());
+    }
+    
+    private IEnumerator VibrateController()
+    {
+        var gamepad = _playerInput.GetDevice<Gamepad>();
+        gamepad.SetMotorSpeeds(0.7f, 0.7f);
+        yield return new WaitForSeconds(0.2f);
+        gamepad.SetMotorSpeeds(0, 0);
     }
 
     public void DisableInputActions() => _playerInput.actions.Disable();
