@@ -116,4 +116,9 @@ public class MenuUIManager : MonoBehaviour
         LocalizationSettings.SelectedLocale = active ? french : english;
         LobbyManager.TokebaqueIcitte = active;
     }
+
+    public void QuitButton()
+    {
+        Application.Quit();
+    }
 }

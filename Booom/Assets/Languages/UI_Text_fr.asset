@@ -124,6 +124,10 @@ MonoBehaviour:
     m_Localized: "PARAM\xC8TRES"
     m_Metadata:
       m_Items: []
+  - m_Id: 1384022778482688
+    m_Localized: QUITTER
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds:

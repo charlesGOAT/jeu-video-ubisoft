@@ -20,6 +20,9 @@ public class LobbyManager : MonoBehaviour
     [SerializeField] 
     private MenuUIManager menuUIManager;
 
+    [SerializeField]
+    private GameObject[] playerLights;
+
     public static LobbyManager Instance { get; private set; }
 
     public static readonly Dictionary<PlayerInput, float> JoinTimes = new();
@@ -238,6 +241,7 @@ public class LobbyManager : MonoBehaviour
     {
         playerPrefab.layer = GameManager.Instance.CollisionLayers[playerInput.playerIndex];
         playerInput.transform.rotation = Quaternion.Euler(0f, -90f, 0f);
+        playerLights[playerInput.playerIndex].SetActive(true);
     }
 
     private void PlayerMenuLeft(in int leavingIndex)
@@ -246,5 +250,6 @@ public class LobbyManager : MonoBehaviour
         Tile tile = GameManager.Instance.GridManager.GetTileAtCoordinates(spawnPoint);
         tile.IsSpawn = false;
         tile.ChangeTileColor(PlayerEnum.None);
+        playerLights[leavingIndex].SetActive(false);
     }
 }
