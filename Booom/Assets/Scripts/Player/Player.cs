@@ -273,9 +273,12 @@ public class Player : MonoBehaviour
     private IEnumerator VibrateController()
     {
         var gamepad = _playerInput.GetDevice<Gamepad>();
-        gamepad.SetMotorSpeeds(0.7f, 0.7f);
-        yield return new WaitForSeconds(0.2f);
-        gamepad.SetMotorSpeeds(0, 0);
+        if (gamepad != null)
+        {
+            gamepad.SetMotorSpeeds(0.7f, 0.7f);
+            yield return new WaitForSeconds(0.2f);
+            gamepad.SetMotorSpeeds(0, 0);
+        }
     }
 
     public void DisableInputActions() => _playerInput.actions.Disable();
