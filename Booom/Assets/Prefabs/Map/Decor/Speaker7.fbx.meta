@@ -3,27 +3,7 @@ guid: 7b375e42aa0daa046ad96ffa57ef343d
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
-  externalObjects:
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: BlackStruss.001
-    second: {fileID: 2100000, guid: 92943ecb3def9f04eb64c68ecbab51fd, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Material.009
-    second: {fileID: 2100000, guid: c61b1f099ff0e674b8364f4604887ee3, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Material.013
-    second: {fileID: 2100000, guid: a7ec112cff96bdb46b9b0bcff4c0679e, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Material.014
-    second: {fileID: 2100000, guid: bfbcf76308ea69240a4a77357864717e, type: 2}
+  externalObjects: {}
   materials:
     materialImportMode: 2
     materialName: 0
