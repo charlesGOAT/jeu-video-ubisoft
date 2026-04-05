@@ -43,13 +43,17 @@ namespace SOG.CVDFilter
         private void Start()
         {
             _cvdButton = FindFirstObjectByType<CVDButton>(FindObjectsInactive.Include);
-            _cvdButton.OnChangeFilterCalled += SetVisionType;
+            if (_cvdButton != null)
+            {
+                _cvdButton.OnChangeFilterCalled += SetVisionType;
+            }
             ChangeProfile();
         }
 
         private void OnDestroy()
         {
-            _cvdButton.OnChangeFilterCalled -= SetVisionType;
+            if (_cvdButton != null)
+                _cvdButton.OnChangeFilterCalled -= SetVisionType;
         }
 
         // -------------------- Setup --------------------

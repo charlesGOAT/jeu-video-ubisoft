@@ -13,7 +13,7 @@ public class RaveText : MonoBehaviour
     [SerializeField] private float shakeAmount = 1f;
     [SerializeField] private float colorChangeSpeed = 3f;
     [SerializeField] private float pulseSpeed = 10f;
-    [SerializeField] private float pulseScale = 0.12f;
+    [SerializeField] private float pulseScale = 0f;
     [SerializeField] private float basicScale = 2.5f;
 
     private Color[] playerColors = new Color[]
@@ -62,7 +62,7 @@ public class RaveText : MonoBehaviour
 
             for (int i = 0; i < colors.Length; i++)
             {
-                colors[i] = Color.white;
+                colors[i] = new Color(186f / 255f, 186f / 255f, 186f / 255f);
             }
 
             meshInfo.mesh.colors32 = colors;

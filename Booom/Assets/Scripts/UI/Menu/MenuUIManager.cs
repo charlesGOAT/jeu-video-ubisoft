@@ -14,9 +14,6 @@ public class MenuUIManager : MonoBehaviour
     
     [SerializeField] private Canvas settingsCanvas;
     
-    [SerializeField] private GameObject mainMenuSpeaker;
-    [SerializeField] private GameObject settingsSpeaker;
-    
     [SerializeField] private Locale english;
     [SerializeField] private Locale french;
 
@@ -68,9 +65,6 @@ public class MenuUIManager : MonoBehaviour
         isNotMainMenu = true;
         mainMenuCanvas.gameObject.SetActive(!isNotMainMenu);
         settingsCanvas.gameObject.SetActive(isNotMainMenu);
-        
-        mainMenuSpeaker.gameObject.SetActive(!isNotMainMenu);
-        settingsSpeaker.gameObject.SetActive(isNotMainMenu);
     }
 
     public void ReturnToMainMenu()
@@ -78,9 +72,6 @@ public class MenuUIManager : MonoBehaviour
         isNotMainMenu = false;
         settingsCanvas.gameObject.SetActive(isNotMainMenu);
         mainMenuCanvas.gameObject.SetActive(!isNotMainMenu);
-        
-        settingsSpeaker.gameObject.SetActive(isNotMainMenu);
-        mainMenuSpeaker.gameObject.SetActive(!isNotMainMenu);
     }
 
     public void PlayGame()
