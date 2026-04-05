@@ -85,6 +85,34 @@ public class SoundManager : MonoBehaviour
 
     public static SoundManager Instance { get; private set; }
     
+    [Range(0f, 1f)]
+    private float _masterVolume = 1f;
+
+    public float MasterVolume => _masterVolume;
+
+    public void SetMasterVolume(float volume)
+    {
+        _masterVolume = Mathf.Clamp01(volume);
+
+        if (_audioSourceMusic != null) _audioSourceMusic.volume = _masterVolume;
+        if (_audioSourceMusic2 != null) _audioSourceMusic2.volume = _masterVolume;
+        if (_audioSourceSFX != null) _audioSourceSFX.volume = _masterVolume;
+
+        bombFusedAudio.volume = _masterVolume;
+        bombExplodedAudio.volume = _masterVolume;
+        genericBombEventSound.volume = _masterVolume;
+        targetBombMovingSound.volume = _masterVolume;
+        trampolineSound.volume = _masterVolume;
+        spikeSound.volume = _masterVolume;
+        portalSound.volume = _masterVolume;
+        bombHitPlayerSound.volume = _masterVolume;
+        newKillStreakSound.volume = _masterVolume;
+        usePaintBrushSound.volume = _masterVolume;
+
+        PlayerPrefs.SetFloat("MasterVolume", _masterVolume);
+        PlayerPrefs.Save();
+    }
+    
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -92,6 +120,9 @@ public class SoundManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
+        
+        _masterVolume = PlayerPrefs.GetFloat("MasterVolume", 1f);
+        SetMasterVolume(_masterVolume);
 
         Instance = this;
         DontDestroyOnLoad(gameObject);
