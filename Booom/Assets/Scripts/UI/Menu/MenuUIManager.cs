@@ -99,9 +99,9 @@ public class MenuUIManager : MonoBehaviour
         LobbyManager.TutorialActivated = !LobbyManager.TutorialActivated;
     }
     
-    public void ToggleCVD(bool isChecked)
+    public void ToggleCVD()
     {
-        LobbyManager.CVDActivated = isChecked;
+        LobbyManager.CVDActivated = !LobbyManager.CVDActivated;
     }
 
     public void ToggleLanguage()
