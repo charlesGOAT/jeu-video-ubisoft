@@ -81,11 +81,12 @@ public class GameUIManager : MonoBehaviour
             yield return new WaitForSecondsRealtime(1f);
         }
         countdownTextLocalized.RefreshString();
+        SoundManager.Instance.OnGameStarted(second);
         // todo : make text shake?
-        SoundManager.Instance.PlayBattleMucic();
         GameManager.Instance.StartTimer();
 
         yield return new WaitForSeconds(1f);
+        SoundManager.Instance.PlayBattleMucic();
         countdownText.gameObject.SetActive(false);
     }
 
