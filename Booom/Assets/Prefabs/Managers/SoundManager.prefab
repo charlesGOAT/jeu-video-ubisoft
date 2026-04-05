@@ -19,6 +19,7 @@ GameObject:
   - component: {fileID: 5237117000133333895}
   - component: {fileID: 5268592045543523727}
   - component: {fileID: 6914366767990255034}
+  - component: {fileID: 2513641824611132406}
   m_Layer: 0
   m_Name: SoundManager
   m_TagString: Untagged
@@ -248,7 +249,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: GameplayAssembly::SoundManager
   buttonClickedAudio:
-    audioClip: {fileID: 8300000, guid: 0240a31590f64d6418b1cc9f1d171c61, type: 3}
+    audioClip: {fileID: 8300000, guid: 6ef521770ab1ae34ca4c612cc09aa61f, type: 3}
     volume: 1
   mainTheme:
     audio:
@@ -256,6 +257,9 @@ MonoBehaviour:
       volume: 1
     loopStartTime: 96
     loopEndTime: 180.3
+  playerJoinedSound:
+  - audioClip: {fileID: 0}
+    volume: 0
   bombFusedAudio: {fileID: 5237117000133333895}
   bombExplodedAudio: {fileID: 3540998469405793209}
   genericBombEventSound: {fileID: 3390605035422505770}
@@ -264,17 +268,15 @@ MonoBehaviour:
     audioClip: {fileID: 8300000, guid: 856e0bf487cc12349b54bd41bbdfacbd, type: 3}
     volume: 1
   pickUpItemSound:
-    audioClip: {fileID: 8300000, guid: 10c6bb3a3f780244a864daddcedfa24d, type: 3}
+    audioClip: {fileID: 8300000, guid: 6f9cec7f988bac3459b2d26915671bb3, type: 3}
     volume: 0.29
   usePaintBrushSound: {fileID: 2949932126209092860}
   trampolineSound: {fileID: 1505143836689639150}
   spikeSound: {fileID: 5268592045543523727}
-  portalSound: {fileID: 2949932126209092860}
+  portalSound: {fileID: 2513641824611132406}
   bombHitPlayerSound: {fileID: 2758468352525312362}
   newKillStreakSound: {fileID: 2949932126209092860}
-  gameStartsSound:
-    audioClip: {fileID: 8300000, guid: b15a7c80887c268469f106e4a098bae5, type: 3}
-    volume: 1
+  gameStartsSounds: []
   battleMusic1:
     audioClip: {fileID: 8300000, guid: a4abeaf04ecf7e04e9fe36cc0b378bb6, type: 3}
     volume: 0.5
@@ -300,8 +302,11 @@ MonoBehaviour:
     audioClip: {fileID: 8300000, guid: 7b364347fd6613b46ac301e8266dc9a9, type: 3}
     volume: 1
   victoryThemeMusic:
-    audioClip: {fileID: 8300000, guid: 7b364347fd6613b46ac301e8266dc9a9, type: 3}
-    volume: 1
+    audio:
+      audioClip: {fileID: 0}
+      volume: 0
+    loopStartTime: 0
+    loopEndTime: 0
 --- !u!82 &3540998469405793209
 AudioSource:
   m_ObjectHideFlags: 0
@@ -897,3 +902,100 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: GameplayAssembly::LoopableMusic
   audioSource: {fileID: 805517881618141660}
+--- !u!82 &2513641824611132406
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5204349693924077689}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 6418180475301049370, guid: 0042597e2756a9740974f894630597c3, type: 2}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
