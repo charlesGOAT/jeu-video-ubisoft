@@ -14,6 +14,9 @@ public class Bomb : MonoBehaviour
     [SerializeField]
     protected int explosionRange = 2;
 
+    [SerializeField]
+    private ParticleSystem _spark;
+    
     public int ExplosionRange => explosionRange;
 
     public BombFusingStrategy BombFusingStrategy = new();
@@ -57,6 +60,7 @@ public class Bomb : MonoBehaviour
         GameManager.Instance.BombManager.OnPaintbrushActivated += RemoveColliderLayer;
         GameManager.Instance.BombManager.OnPaintbrushDeactivated += AddColliderLayer;
 
+
         foreach (int layer in GameManager.Instance.BombManager.LayersToExclude)
         {
             RemoveColliderLayer(layer);
@@ -72,22 +76,40 @@ public class Bomb : MonoBehaviour
         
         _bombManager = GameManager.Instance.BombManager;
         SubscribeToCurrentTileColor();
+        if (GameManager.Instance.EventManager.CurrentBombType == BombEnum.FastBomb)
+        {
+            _timer = 1f;
+        }
         BombFusingStrategy.Fuse(this);
+        _spark.gameObject.SetActive(true);
     }
 
-    public virtual float GetTimer()
+    public float GetTimer()
     {
         return _timer;
     }
 
-    public virtual void ConfigureValues()
+    public void ConfigureValues()
     {
-        _timer = GameManager.Instance.RuntimeConfig.NormalBombTimer;
+        if (GameManager.Instance.EventManager.CurrentBombType == BombEnum.FastBomb)
+        {
+            _timer = GameManager.Instance.RuntimeConfig.FastBombTimer;
+        }
+        else
+        {
+            _timer = GameManager.Instance.RuntimeConfig.NormalBombTimer;
+        }
     }
 
     public static bool IsBombAt(Vector2Int gridCoordinates)
     {
         return ActiveBombs.Contains(gridCoordinates);
+    }
+
+    private void ChangeSparkColor(Color color)
+    {
+        var main = _spark.main;
+        main.startColor = color;
     }
 
     public void StartBombCountDown()
