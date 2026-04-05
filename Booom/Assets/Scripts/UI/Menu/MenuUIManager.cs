@@ -17,6 +17,8 @@ public class MenuUIManager : MonoBehaviour
     [SerializeField] private Locale english;
     [SerializeField] private Locale french;
 
+    [SerializeField] private GameObject[] toggles;
+
     public bool isNotMainMenu;
     
     private LobbyManager _lobbyManager;
@@ -65,6 +67,8 @@ public class MenuUIManager : MonoBehaviour
         isNotMainMenu = true;
         mainMenuCanvas.gameObject.SetActive(!isNotMainMenu);
         settingsCanvas.gameObject.SetActive(isNotMainMenu);
+
+        HandleToggleGraffitis(isNotMainMenu);
     }
 
     public void ReturnToMainMenu()
@@ -72,6 +76,16 @@ public class MenuUIManager : MonoBehaviour
         isNotMainMenu = false;
         settingsCanvas.gameObject.SetActive(isNotMainMenu);
         mainMenuCanvas.gameObject.SetActive(!isNotMainMenu);
+        
+        HandleToggleGraffitis(isNotMainMenu);
+    }
+
+    private void HandleToggleGraffitis(bool value)
+    {
+        foreach (var toggle in toggles)
+        {
+            toggle.SetActive(value);
+        }
     }
 
     public void PlayGame()

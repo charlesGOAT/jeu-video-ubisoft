@@ -5,15 +5,13 @@ using UnityEngine.EventSystems;
 public class MenuButton : MonoBehaviour, ISubmitHandler
 {
     [SerializeField]
-    private GameObject speaker;
+    private GameObject quadGameObject;
     
     [SerializeField]
     private Material[] materials;
     
     private RaveText _text;
-    private Renderer _speakerRenderer;
-    private bool _isPressed;
-    private float _resetTimer;
+    private Renderer _quadRenderer;
     
     private void Awake()
     {
@@ -22,9 +20,9 @@ public class MenuButton : MonoBehaviour, ISubmitHandler
 
     private void Start()
     {
-        if (speaker != null)
+        if (quadGameObject != null)
         {
-            _speakerRenderer = speaker.GetComponent<Renderer>();
+            _quadRenderer = quadGameObject.GetComponent<Renderer>();
         }
         
         SetBoolValues();
@@ -32,33 +30,17 @@ public class MenuButton : MonoBehaviour, ISubmitHandler
     
     public void OnSubmit(BaseEventData eventData)
     {
-        if (gameObject.name == "PlayButton" || gameObject.name == "QuitButton" || gameObject.name == "LanguageButton")
-        {
-            ApplyMaterial(1);
-            _isPressed = true;
-            _resetTimer = 0.15f;
-        }
-        else if (gameObject.name != "SettingButton" && gameObject.name != "ReturnButton")
+        if (gameObject.name == "TutorialButton" || gameObject.name == "ItemsButton")
         {
             StartCoroutine(ValueChanged());
         }
     }
-
-    private void ApplyMaterial(int matIndex)
-    {
-        if (_speakerRenderer == null) return;
-        Material[] currentMats = _speakerRenderer.materials;
-        currentMats[3] = materials[matIndex];
-        _speakerRenderer.materials = currentMats;
-    }
     
     private void ApplyMaterial(bool value)
     {
-        if (_speakerRenderer == null) return;
-        Material[] currentMats = _speakerRenderer.materials;
-        int matIndex = value ? 1 : 0;
-        currentMats[3] = materials[matIndex];
-        _speakerRenderer.materials = currentMats;
+        if (_quadRenderer == null) return;
+        int matIndex = value ? 0 : 1;
+        _quadRenderer.material = materials[matIndex];
     }
 
     private void Update()
@@ -66,16 +48,6 @@ public class MenuButton : MonoBehaviour, ISubmitHandler
         if (EventSystem.current != null)
         {
             _text.isSelected = EventSystem.current.currentSelectedGameObject == gameObject;
-        }
-        
-        if (_isPressed)
-        {
-            _resetTimer -= Time.deltaTime;
-            if (_resetTimer <= 0)
-            {
-                ApplyMaterial(0);
-                _isPressed = false;
-            }
         }
     }
 
@@ -94,9 +66,6 @@ public class MenuButton : MonoBehaviour, ISubmitHandler
                 break;
             case "TutorialButton":
                 ApplyMaterial(LobbyManager.TutorialActivated);
-                break;
-            case "LanguageButton":
-                ApplyMaterial(LobbyManager.TokebaqueIcitte);
                 break;
         }
     }
