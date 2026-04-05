@@ -99,7 +99,6 @@ public class GameUIManager : MonoBehaviour
 
         if (!_hasVinylAnimationStarted && gameManager.TimeRemaining <= 30)
         {
-            
             _vinylAnimator.SetBool("lastStretch", true);
             _hasVinylAnimationStarted = true;
         }
