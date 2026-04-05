@@ -50,8 +50,6 @@ public class BombManager : MonoBehaviour
         {
             return false;
         }
-        
-        player.Animator.SetTrigger("DropBomb");
 
         BombEnum bombType = GameManager.Instance.EventManager.CurrentBombType;
         int intBombType = (int)bombType - 1;
