@@ -123,6 +123,10 @@ MonoBehaviour:
     m_Key: QuitButton
     m_Metadata:
       m_Items: []
+  - m_Id: 1852450240892928
+    m_Key: Music
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

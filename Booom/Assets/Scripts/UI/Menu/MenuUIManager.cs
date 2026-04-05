@@ -18,6 +18,7 @@ public class MenuUIManager : MonoBehaviour
     [SerializeField] private Locale french;
 
     [SerializeField] private GameObject[] toggles;
+    [SerializeField] private GameObject logo;
 
     public bool isNotMainMenu;
     
@@ -28,30 +29,6 @@ public class MenuUIManager : MonoBehaviour
         _lobbyManager = LobbyManager.Instance;
 
         LocalizationSettings.SelectedLocale = english;
-    }
-
-    public void TogglePlayerUI(int playerCount)
-    {
-        var slot = playerSlots[playerCount - 1];
-
-        if (slot.lockedImage.gameObject.activeSelf)
-        {
-            slot.playerLabel.Arguments = new object[] { playerCount };
-
-            slot.playerLabelLocalized.StringReference = slot.playerLabel;
-            slot.playerLabelLocalized.RefreshString();
-
-            slot.lockedImage.gameObject.SetActive(false);
-            slot.coloredCharacter.gameObject.SetActive(true);
-        }
-        else
-        {
-            slot.playerLabelLocalized.StringReference = slot.joinPrompt;
-            slot.playerLabelLocalized.RefreshString();
-
-            slot.lockedImage.gameObject.SetActive(true);
-            slot.coloredCharacter.gameObject.SetActive(false);
-        }
     }
 
     private void Update()
@@ -69,6 +46,7 @@ public class MenuUIManager : MonoBehaviour
         settingsCanvas.gameObject.SetActive(isNotMainMenu);
 
         HandleToggleGraffitis(isNotMainMenu);
+        logo.SetActive(false);
     }
 
     public void ReturnToMainMenu()
@@ -78,6 +56,7 @@ public class MenuUIManager : MonoBehaviour
         mainMenuCanvas.gameObject.SetActive(!isNotMainMenu);
         
         HandleToggleGraffitis(isNotMainMenu);
+        logo.SetActive(true);
     }
 
     private void HandleToggleGraffitis(bool value)
@@ -101,11 +80,11 @@ public class MenuUIManager : MonoBehaviour
     
     private IEnumerator ReselectButton()
     {
-        yield return null; // wait one frame
+        yield return null;
         if (EventSystem.current.currentSelectedGameObject == null)
         {
             EventSystem.current.SetSelectedGameObject(null);
-            yield return null; // wait one frame
+            yield return null;
             EventSystem.current.SetSelectedGameObject(playButton.gameObject);
         }
     }

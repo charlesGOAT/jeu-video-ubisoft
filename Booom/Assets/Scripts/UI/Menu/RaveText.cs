@@ -43,11 +43,6 @@ public class RaveText : MonoBehaviour
         }
     }
 
-    public void SetSelected(bool value)
-    {
-        isSelected = value;
-    }
-
     void ResetToDefault()
     {
         transform.localScale = Vector3.one * basicScale;
