@@ -57,7 +57,7 @@ public class RaveText : MonoBehaviour
 
             for (int i = 0; i < colors.Length; i++)
             {
-                colors[i] = new Color(186f / 255f, 186f / 255f, 186f / 255f);
+                colors[i] = new Color(226f / 255f, 226f / 255f, 226f / 255f);
             }
 
             meshInfo.mesh.colors32 = colors;
