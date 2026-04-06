@@ -85,6 +85,14 @@ public class SoundManager : MonoBehaviour
 
     public static SoundManager Instance { get; private set; }
     
+    [Range(0f, 1f)]
+    private float _musicVolume = 1f;
+    [Range(0f, 1f)]
+    private float _sfxVolume = 1f;
+
+    public float MusicVolume => _musicVolume;
+    public float SFXVolume => _sfxVolume;
+    
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -92,6 +100,11 @@ public class SoundManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
+        
+        _musicVolume = PlayerPrefs.GetFloat("MusicVolume", 1f);
+        SetMusicVolume(_musicVolume);
+        _sfxVolume = PlayerPrefs.GetFloat("SFXVolume", 1f);
+        SetSFXVolume(_sfxVolume);
 
         Instance = this;
         DontDestroyOnLoad(gameObject);
@@ -100,6 +113,37 @@ public class SoundManager : MonoBehaviour
         VerifyAudioClipsPresent();
         
         SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    public void SetMusicVolume(float volume)
+    {
+        _musicVolume = Mathf.Clamp01(volume);
+
+        if (_audioSourceMusic != null) _audioSourceMusic.volume = _musicVolume;
+        if (_audioSourceMusic2 != null) _audioSourceMusic2.volume = _musicVolume;
+        
+        PlayerPrefs.SetFloat("MusicVolume", _musicVolume);
+        PlayerPrefs.Save();
+    }
+    public void SetSFXVolume(float volume)
+    {
+        _sfxVolume = Mathf.Clamp01(volume);
+        
+        if (_audioSourceSFX != null) _audioSourceSFX.volume = _sfxVolume;
+
+        bombFusedAudio.volume = _sfxVolume;
+        bombExplodedAudio.volume = _sfxVolume;
+        genericBombEventSound.volume = _sfxVolume;
+        targetBombMovingSound.volume = _sfxVolume;
+        trampolineSound.volume = _sfxVolume;
+        spikeSound.volume = _sfxVolume;
+        portalSound.volume = _sfxVolume;
+        bombHitPlayerSound.volume = _sfxVolume;
+        newKillStreakSound.volume = _sfxVolume;
+        usePaintBrushSound.volume = _sfxVolume;
+
+        PlayerPrefs.SetFloat("SFXVolume", _sfxVolume);
+        PlayerPrefs.Save();
     }
 
     private void Start()
@@ -125,10 +169,10 @@ public class SoundManager : MonoBehaviour
         _audioSourceMusic2.Stop();
         
         _audioSourceMusic.clip = music.audio1.audioClip;
-        _audioSourceMusic.volume = music.audio1.volume;
+        _audioSourceMusic.volume = music.audio1.volume * _musicVolume;
 
         _audioSourceMusic2.clip = music.audio2.audioClip;
-        _audioSourceMusic2.volume = music.audio2.volume;
+        _audioSourceMusic2.volume = music.audio2.volume * _musicVolume;
 
         double startTime = AudioSettings.dspTime + 0.1;
         double duration = (double)music.audio1.audioClip.samples / music.audio1.audioClip.frequency;
@@ -143,7 +187,7 @@ public class SoundManager : MonoBehaviour
         _audioSourceMusic2.Stop();
 
         _audioSourceMusic.clip = audio.audioClip;
-        _audioSourceMusic.volume = audio.volume;
+        _audioSourceMusic.volume = audio.volume * _musicVolume;
         _audioSourceMusic.Play();
     }
 
@@ -159,7 +203,8 @@ public class SoundManager : MonoBehaviour
 
     public void OnMenuButtonPressed()
     {
-        _audioSourceSFX.PlayOneShot(buttonClickedAudio.audioClip, buttonClickedAudio.volume);
+        float volume = buttonClickedAudio.volume * _sfxVolume;
+        _audioSourceSFX.PlayOneShot(buttonClickedAudio.audioClip, volume);
     }
 
     public void OnBombEvent()
@@ -169,7 +214,8 @@ public class SoundManager : MonoBehaviour
 
     public void OnPickupItem()
     {
-        _audioSourceSFX.PlayOneShot(pickUpItemSound.audioClip, pickUpItemSound.volume);
+        float volume = pickUpItemSound.volume * _sfxVolume;
+        _audioSourceSFX.PlayOneShot(pickUpItemSound.audioClip, volume);
     }
 
     public void OnEnterTrampoline()

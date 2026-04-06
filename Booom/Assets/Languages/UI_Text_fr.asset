@@ -41,7 +41,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 648998457344
-    m_Localized: LANGUE
+    m_Localized: LANGUE FR
     m_Metadata:
       m_Items: []
   - m_Id: 714568011776
@@ -118,6 +118,18 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 742861478989824
     m_Localized: FR
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1198548352929792
+    m_Localized: "PARAM\xC8TRES"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1384022778482688
+    m_Localized: QUITTER
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1852450240892928
+    m_Localized: Musique
     m_Metadata:
       m_Items: []
   references:
