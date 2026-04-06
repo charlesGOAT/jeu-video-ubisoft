@@ -61,7 +61,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 2051502411776
-    m_Localized: GET READY TO FIGHT IN {0}
+    m_Localized: GET READY TO FIGHT IN {0}...
     m_Metadata:
       m_Items: []
   - m_Id: 2335003807744
