@@ -39,6 +39,12 @@ public class Player : MonoBehaviour
     [SerializeField]
     private float tileDetectionTolerance = 0.35f;
 
+    [SerializeField] 
+    private GameObject beam;
+    
+    [SerializeField] 
+    public GameObject SnowEffect;
+
     private PlayerPopUpManager _playerPopUpManager;
 
     private BombFusingStrategy[] _bombFusingStrategies = new []
@@ -139,6 +145,7 @@ public class Player : MonoBehaviour
         if (SceneManager.GetActiveScene().name.Equals("menu", StringComparison.OrdinalIgnoreCase))
         {
             SoundManager.Instance.OnPlayerJoined(playerNb);
+            InstantiateBeam();
         }
     }
 
@@ -149,7 +156,12 @@ public class Player : MonoBehaviour
 #endif
         CheckStartConditions();
         InitializeSpawner();
-        GameManager.Instance.OnGameStarts += EnableInputActions;
+    }
+
+    private void InstantiateBeam()
+    {
+        var instantiatedBeam = Instantiate(beam, transform);
+        instantiatedBeam.GetComponentInChildren<Renderer>().material.SetColor("_BeamColor", playerColor);
     }
 
     private void GetConfigValues()
@@ -191,7 +203,9 @@ public class Player : MonoBehaviour
         // todo : generate little animation or particle effect indicating kill streak
     }
 
-    private void InitializeSpawner()
+    
+
+    public void InitializeSpawner()
     {
         if (GameManager.Instance.GridManager.playerSpawnPoints.Length < (int)playerNb)
         {
@@ -251,12 +265,14 @@ public class Player : MonoBehaviour
 
     public void OnMove(InputAction.CallbackContext ctx)
     {
+        if (SceneManager.GetActiveScene().name == "EndGame") return;
         if (!CanMove) return;
         _moveInput = ctx.ReadValue<Vector2>();
     }
     
     public void OnBomb(InputAction.CallbackContext ctx)
     {
+        if (SceneManager.GetActiveScene().name == "EndGame") return;
         if (_stateMachine.CurrentState is JumpState) return;
 
         if (ctx.ReadValueAsButton())
@@ -294,10 +310,11 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
+        if (SceneManager.GetActiveScene().name == "EndGame") return;
         UpdateImmune();
 
         Tile tile = GetPlayerTile();
-        if (tile != null && (CurrentTile != tile || (tile is Spike && !IsImmune))) 
+        if (tile != null && (CurrentTile != tile || (tile is Spike && !IsImmune)) && CurrentTile != null) 
         {
             tile.StepOnTile(this);
 
@@ -552,7 +569,7 @@ public class Player : MonoBehaviour
     {
         List<Renderer> playerRenderers = new();
 
-        foreach (Renderer renderer in GetComponentsInChildren<Renderer>(true))
+        foreach (Renderer renderer in GetComponentsInChildren<Renderer>(false))
         {
             playerRenderers.Add(renderer);
         }

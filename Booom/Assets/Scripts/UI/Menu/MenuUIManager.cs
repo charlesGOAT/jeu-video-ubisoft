@@ -17,6 +17,9 @@ public class MenuUIManager : MonoBehaviour
     [SerializeField] private Locale english;
     [SerializeField] private Locale french;
 
+    [SerializeField] private GameObject[] toggles;
+    [SerializeField] private GameObject logo;
+
     public bool isNotMainMenu;
     
     private LobbyManager _lobbyManager;
@@ -24,32 +27,8 @@ public class MenuUIManager : MonoBehaviour
     private void Start()
     {
         _lobbyManager = LobbyManager.Instance;
-        
-        ToggleLanguage(LobbyManager.TokebaqueIcitte);
-    }
 
-    public void TogglePlayerUI(int playerCount)
-    {
-        var slot = playerSlots[playerCount - 1];
-
-        if (slot.lockedImage.gameObject.activeSelf)
-        {
-            slot.playerLabel.Arguments = new object[] { playerCount };
-
-            slot.playerLabelLocalized.StringReference = slot.playerLabel;
-            slot.playerLabelLocalized.RefreshString();
-
-            slot.lockedImage.gameObject.SetActive(false);
-            slot.coloredCharacter.gameObject.SetActive(true);
-        }
-        else
-        {
-            slot.playerLabelLocalized.StringReference = slot.joinPrompt;
-            slot.playerLabelLocalized.RefreshString();
-
-            slot.lockedImage.gameObject.SetActive(true);
-            slot.coloredCharacter.gameObject.SetActive(false);
-        }
+        LocalizationSettings.SelectedLocale = english;
     }
 
     private void Update()
@@ -65,6 +44,9 @@ public class MenuUIManager : MonoBehaviour
         isNotMainMenu = true;
         mainMenuCanvas.gameObject.SetActive(!isNotMainMenu);
         settingsCanvas.gameObject.SetActive(isNotMainMenu);
+
+        HandleToggleGraffitis(isNotMainMenu);
+        logo.SetActive(false);
     }
 
     public void ReturnToMainMenu()
@@ -72,6 +54,17 @@ public class MenuUIManager : MonoBehaviour
         isNotMainMenu = false;
         settingsCanvas.gameObject.SetActive(isNotMainMenu);
         mainMenuCanvas.gameObject.SetActive(!isNotMainMenu);
+        
+        HandleToggleGraffitis(isNotMainMenu);
+        logo.SetActive(true);
+    }
+
+    private void HandleToggleGraffitis(bool value)
+    {
+        foreach (var toggle in toggles)
+        {
+            toggle.SetActive(value);
+        }
     }
 
     public void PlayGame()
@@ -87,11 +80,11 @@ public class MenuUIManager : MonoBehaviour
     
     private IEnumerator ReselectButton()
     {
-        yield return null; // wait one frame
+        yield return null;
         if (EventSystem.current.currentSelectedGameObject == null)
         {
             EventSystem.current.SetSelectedGameObject(null);
-            yield return null; // wait one frame
+            yield return null;
             EventSystem.current.SetSelectedGameObject(playButton.gameObject);
         }
     }
@@ -111,9 +104,14 @@ public class MenuUIManager : MonoBehaviour
         LobbyManager.CVDActivated = !LobbyManager.CVDActivated;
     }
 
-    public void ToggleLanguage(bool active)
+    public void ToggleLanguage()
     {
-        LocalizationSettings.SelectedLocale = active ? french : english;
-        LobbyManager.TokebaqueIcitte = active;
+        LocalizationSettings.SelectedLocale = LobbyManager.TokebaqueIcitte ? english : french;
+        LobbyManager.TokebaqueIcitte = !LobbyManager.TokebaqueIcitte;
+    }
+
+    public void QuitButton()
+    {
+        Application.Quit();
     }
 }

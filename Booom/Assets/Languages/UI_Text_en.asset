@@ -41,11 +41,11 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 648998457344
-    m_Localized: LANGUAGE
+    m_Localized: LANGUAGE EN
     m_Metadata:
       m_Items: []
   - m_Id: 714568011776
-    m_Localized: RETURN
+    m_Localized: BACK
     m_Metadata:
       m_Items: []
   - m_Id: 851096801280
@@ -118,6 +118,18 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 742861478989824
     m_Localized: EN
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1198548352929792
+    m_Localized: SETTINGS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1384022778482688
+    m_Localized: QUIT
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1852450240892928
+    m_Localized: Music
     m_Metadata:
       m_Items: []
   - m_Id: 1444457382666240

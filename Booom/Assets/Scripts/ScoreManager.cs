@@ -10,7 +10,7 @@ public class ScoreManager : MonoBehaviour
     
     public event ScoreChangedEventHandler OnScoreChanged;
 
-    private void Start()
+    private void Awake()
     {
         foreach(PlayerEnum player in Enum.GetValues(typeof(PlayerEnum)))
         {

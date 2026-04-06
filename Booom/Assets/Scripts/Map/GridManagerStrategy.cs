@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public abstract class GridManagerStrategy : MonoBehaviour
 {
@@ -63,10 +64,13 @@ public abstract class GridManagerStrategy : MonoBehaviour
         CapturableTilesCount = _ownableTiles.Count - (LobbyManager.JoinedPlayers.Count - 1);
         PositionCamera();
         _startTime = Time.time;
+
+        _isCameraInPlace = SceneManager.GetActiveScene().name.Equals("Menu") || SceneManager.GetActiveScene().name.Equals("EndGame");
     }
 
     private void Update()
     {
+        
         if (Time.time - _startTime >= 0.5f && !_isCameraInPlace && !_isUIManagerNull)
         {
             mainCamera.fieldOfView -= 20 * Time.deltaTime;
@@ -109,6 +113,8 @@ public abstract class GridManagerStrategy : MonoBehaviour
 
     private void PositionCamera()
     {
+        if (SceneManager.GetActiveScene().name.Equals("Menu") ||
+            SceneManager.GetActiveScene().name.Equals("EndGame")) return;
         if (mainCamera == null) return;
 
         float centerX = ((MapUpperLimit.x + MapLowerLimit.x) / 2f) * GameConstants.UNITY_GRID_SIZE;
@@ -142,6 +148,7 @@ public abstract class GridManagerStrategy : MonoBehaviour
         float distance = camHeight / Mathf.Abs(forwardDir.y);
 
         mainCamera.transform.position = mapCenter - (forwardDir * distance);
+    
         mainCamera.fieldOfView = 86f;
     }
 
