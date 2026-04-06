@@ -14,6 +14,7 @@ public class TutoUIManager : MonoBehaviour
     [SerializeField] private TMP_Text[] tutoText;
     [SerializeField] private Sprite dpadSprite;
     [SerializeField] private Image[]  tutoImages;
+    [SerializeField] private GameObject[]  speechBubbles;
     
     [SerializeField] private LocalizeStringEvent[] tutoLocalized;
     [SerializeField] private LocalizedString placeBombInstruction;
@@ -31,6 +32,12 @@ public class TutoUIManager : MonoBehaviour
         {
             int index = Player.ActivePlayers.Keys.ToList().IndexOf(player);
             tutoText[index].transform.parent.gameObject.SetActive(true);
+
+            var images = speechBubbles[index].GetComponentsInChildren<Image>();
+            foreach (var image in images)
+            {
+                image.color = Player.PlayerColorDict[player];
+            }
             
             tutoLocalized[index].StringReference = placeBombInstruction;
             tutoLocalized[index].RefreshString();
@@ -54,13 +61,7 @@ public class TutoUIManager : MonoBehaviour
         tutoImages[index].gameObject.SetActive(false);
         
         RectTransform rt = tutoText[index].GetComponent<RectTransform>();
-        Vector3 localPos = rt.localPosition;
-        localPos.x = 0;
-        rt.localPosition = localPos;
-        
-        Vector2 size = rt.sizeDelta;
-        size.x = 60f;
-        rt.sizeDelta = size;
+        rt.anchorMin = new Vector2(0.13f, 0.01f);
         
         tutoLocalized[index].StringReference = spreadInstruction;
         tutoLocalized[index].RefreshString();
@@ -73,9 +74,7 @@ public class TutoUIManager : MonoBehaviour
         tutoImages[index].gameObject.SetActive(false);
 
         RectTransform rt = tutoText[index].GetComponent<RectTransform>();
-        Vector3 localPos = rt.localPosition;
-        localPos.x = 0;
-        rt.localPosition = localPos;
+        rt.anchorMin = new Vector2(0.13f, 0.01f);
 
         tutoLocalized[index].StringReference = readyText;
         tutoLocalized[index].RefreshString();
