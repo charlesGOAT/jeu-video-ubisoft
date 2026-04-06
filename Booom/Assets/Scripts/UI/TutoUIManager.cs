@@ -18,6 +18,7 @@ public class TutoUIManager : MonoBehaviour
     [SerializeField] private LocalizeStringEvent[] tutoLocalized;
     [SerializeField] private LocalizedString placeBombInstruction;
     [SerializeField] private LocalizedString moveInstruction;
+    [SerializeField] private LocalizedString spreadInstruction;
     [SerializeField] private LocalizedString readyText;
     [SerializeField] private LocalizedString countdownTextLocalized;
     [SerializeField] private LocalizedString fightText;
@@ -43,6 +44,25 @@ public class TutoUIManager : MonoBehaviour
         tutoImages[index].sprite = dpadSprite;
         
         tutoLocalized[index].StringReference = moveInstruction;
+        tutoLocalized[index].RefreshString();
+    }
+    
+    public void UpdatePlayerSpreadText(PlayerEnum player)
+    {
+        int index = Player.ActivePlayers.Keys.ToList().IndexOf(player);
+
+        tutoImages[index].gameObject.SetActive(false);
+        
+        RectTransform rt = tutoText[index].GetComponent<RectTransform>();
+        Vector3 localPos = rt.localPosition;
+        localPos.x = 0;
+        rt.localPosition = localPos;
+        
+        Vector2 size = rt.sizeDelta;
+        size.x = 60f;
+        rt.sizeDelta = size;
+        
+        tutoLocalized[index].StringReference = spreadInstruction;
         tutoLocalized[index].RefreshString();
     }
 

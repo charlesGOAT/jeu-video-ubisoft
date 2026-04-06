@@ -53,7 +53,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 1179397558272
-    m_Localized: BOUGE ET REMPLIS LE RESTE DE TA ZONE
+    m_Localized: "BOUGE ET R\xC9PANDS TA COULEUR"
     m_Metadata:
       m_Items: []
   - m_Id: 1571065860096
@@ -130,6 +130,10 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 1852450240892928
     m_Localized: Musique
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2137318262738944
+    m_Localized: "Place les bombes sur ta propre couleur pour la r\xE9pandre"
     m_Metadata:
       m_Items: []
   references:
