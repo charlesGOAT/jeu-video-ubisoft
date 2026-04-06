@@ -1260,9 +1260,21 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 8300000, guid: 33e913cebd8265347aee4e806982e5c8, type: 3}
     - target: {fileID: 2443516477206234823, guid: c9fd1a39a14cbf643911bf47e03937f9, type: 3}
+      propertyPath: victoryThemeMusic.loopEndTime
+      value: 34.909
+      objectReference: {fileID: 0}
+    - target: {fileID: 2443516477206234823, guid: c9fd1a39a14cbf643911bf47e03937f9, type: 3}
       propertyPath: acceleratedGameMusic.audioClip
       value: 
       objectReference: {fileID: 8300000, guid: a49d8d15a66d9fd4986af0d47e515f35, type: 3}
+    - target: {fileID: 2443516477206234823, guid: c9fd1a39a14cbf643911bf47e03937f9, type: 3}
+      propertyPath: victoryThemeMusic.audio.volume
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2443516477206234823, guid: c9fd1a39a14cbf643911bf47e03937f9, type: 3}
+      propertyPath: victoryThemeMusic.loopStartTime
+      value: 17.455
+      objectReference: {fileID: 0}
     - target: {fileID: 2443516477206234823, guid: c9fd1a39a14cbf643911bf47e03937f9, type: 3}
       propertyPath: backgroundMenuMusic.audio1.volume
       value: 1
@@ -1271,6 +1283,10 @@ PrefabInstance:
       propertyPath: backgroundMenuMusic.audio2.volume
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 2443516477206234823, guid: c9fd1a39a14cbf643911bf47e03937f9, type: 3}
+      propertyPath: victoryThemeMusic.audio.audioClip
+      value: 
+      objectReference: {fileID: 8300000, guid: 0231e9c8bbb693a41869f6c64a746399, type: 3}
     - target: {fileID: 2443516477206234823, guid: c9fd1a39a14cbf643911bf47e03937f9, type: 3}
       propertyPath: acceleratedGameMusic.audio1.volume
       value: 1
