@@ -11,6 +11,7 @@ public class TileAnimation : MonoBehaviour
 
     private Renderer _tileRenderer;
     private Coroutine _activeColorLerp;
+    private static readonly int TileColor = Shader.PropertyToID("_TileColor");
 
     public void Initialize(Renderer tileRenderer)
     {
@@ -29,7 +30,7 @@ public class TileAnimation : MonoBehaviour
             StopCoroutine(_activeColorLerp);
         }
 
-        _activeColorLerp = StartCoroutine(AnimateColorTransition(_tileRenderer.material.color, newColor));
+        _activeColorLerp = StartCoroutine(AnimateColorTransition(_tileRenderer.material.GetColor(TileColor), newColor));
     }
 
     public void AnimateExplosionFeedback(in Color targetColor)
@@ -57,7 +58,7 @@ public class TileAnimation : MonoBehaviour
 
         if (_tileRenderer != null)
         {
-            _tileRenderer.material.color = color;
+            _tileRenderer.material.SetColor(TileColor, color);
         }
     }
 
@@ -65,7 +66,7 @@ public class TileAnimation : MonoBehaviour
     {
         if (animationDuration <= 0f)
         {
-            _tileRenderer.material.color = newColor;
+            _tileRenderer.material.SetColor(TileColor, newColor);
             _activeColorLerp = null;
             yield break;
         }
@@ -75,7 +76,7 @@ public class TileAnimation : MonoBehaviour
 
         if (setInitialColor)
         {
-            material.color = previousColor;
+            material.SetColor(TileColor, previousColor);;
         }
 
         while (elapsed < animationDuration)
@@ -83,11 +84,11 @@ public class TileAnimation : MonoBehaviour
             elapsed += Time.deltaTime;
             float normalizedTime = Mathf.Clamp01(elapsed / animationDuration);
             float lerpFactor = animationCurve.Evaluate(normalizedTime);
-            material.color = Color.Lerp(previousColor, newColor, lerpFactor);
+            material.SetColor(TileColor, Color.Lerp(previousColor, newColor, lerpFactor));
             yield return null;
         }
 
-        material.color = newColor;
+        material.SetColor(TileColor, newColor);
         _activeColorLerp = null;
     }
 }

@@ -4,8 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.Localization.Components;
-using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public delegate void PlaceBomb();
 public delegate void PlaceBombSuccessFul();
@@ -39,6 +38,12 @@ public class Player : MonoBehaviour
 
     [SerializeField]
     private float tileDetectionTolerance = 0.35f;
+
+    [SerializeField] 
+    private GameObject beam;
+    
+    [SerializeField] 
+    public GameObject SnowEffect;
 
     private PlayerPopUpManager _playerPopUpManager;
 
@@ -131,6 +136,11 @@ public class Player : MonoBehaviour
         ConfigurePlayers();
         ActivePlayers[playerNb] = this;
         SetPlayerTexture();
+        
+        if (SceneManager.GetActiveScene().name.Equals("menu", StringComparison.OrdinalIgnoreCase))
+        {
+            InstantiateBeam();
+        }
     }
 
     private void Start()
@@ -140,6 +150,12 @@ public class Player : MonoBehaviour
 #endif
         CheckStartConditions();
         InitializeSpawner();
+    }
+
+    private void InstantiateBeam()
+    {
+        var instantiatedBeam = Instantiate(beam, transform);
+        instantiatedBeam.GetComponentInChildren<Renderer>().material.SetColor("_BeamColor", playerColor);
     }
 
     private void GetConfigValues()
@@ -183,7 +199,7 @@ public class Player : MonoBehaviour
 
     
 
-    private void InitializeSpawner()
+    public void InitializeSpawner()
     {
         if (GameManager.Instance.GridManager.playerSpawnPoints.Length < (int)playerNb)
         {
@@ -237,18 +253,20 @@ public class Player : MonoBehaviour
     {
         Vector3 worldPos = GridManagerStrategy.GridToWorldPosition(gridPos);
         var trans = transform;
-        trans.position = new Vector3(worldPos.x, trans.position.y, worldPos.z);
+        trans.position = new Vector3(worldPos.x, 0, worldPos.z);
         CurrentTile = GameManager.Instance.GridManager.GetTileAtCoordinates(gridPos);
     }
 
     public void OnMove(InputAction.CallbackContext ctx)
     {
+        if (SceneManager.GetActiveScene().name == "EndGame") return;
         if (!CanMove) return;
         _moveInput = ctx.ReadValue<Vector2>();
     }
     
     public void OnBomb(InputAction.CallbackContext ctx)
     {
+        if (SceneManager.GetActiveScene().name == "EndGame") return;
         if (_stateMachine.CurrentState is JumpState) return;
 
         if (ctx.ReadValueAsButton())
@@ -287,10 +305,11 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
+        if (SceneManager.GetActiveScene().name == "EndGame") return;
         UpdateImmune();
 
         Tile tile = GetPlayerTile();
-        if (tile != null && (CurrentTile != tile || (tile is Spike && !IsImmune))) 
+        if (tile != null && (CurrentTile != tile || (tile is Spike && !IsImmune)) && CurrentTile != null) 
         {
             tile.StepOnTile(this);
 
@@ -545,7 +564,7 @@ public class Player : MonoBehaviour
     {
         List<Renderer> playerRenderers = new();
 
-        foreach (Renderer renderer in GetComponentsInChildren<Renderer>(true))
+        foreach (Renderer renderer in GetComponentsInChildren<Renderer>(false))
         {
             playerRenderers.Add(renderer);
         }

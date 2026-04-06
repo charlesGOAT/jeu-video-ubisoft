@@ -226,6 +226,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 8436174591838330691}
   - {fileID: 2085839177051420344}
   - {fileID: 3410663068642315433}
   m_Father: {fileID: 0}
@@ -243,6 +244,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Tile
   IsFrozen: 0
+  snowEffect: {fileID: 5295698850384972361}
 --- !u!114 &5178349201943765123
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -347,7 +349,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 8f25574808671a24abff67861acd5bf5, type: 2}
+  - {fileID: -876546973899608171, guid: ea838f4ce5936cc4d8b5ebd05c0d6d40, type: 3}
   - {fileID: 2100000, guid: 83362e70b2d66854f90bb73ac663e2d0, type: 2}
   - {fileID: 2100000, guid: c361f5faee2d4214995f0d23138f7c77, type: 2}
   - {fileID: 2100000, guid: 83362e70b2d66854f90bb73ac663e2d0, type: 2}
@@ -396,3 +398,94 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!1001 &3727482125248845259
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 9017637209094971560}
+    m_Modifications:
+    - target: {fileID: -6512073073267699254, guid: 50ed1c6ebdc1dd647b30b8f4c1dc8396, type: 3}
+      propertyPath: EmissionModule.rateOverTime.scalar
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -6512073073267699254, guid: 50ed1c6ebdc1dd647b30b8f4c1dc8396, type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -6512073073267699254, guid: 50ed1c6ebdc1dd647b30b8f4c1dc8396, type: 3}
+      propertyPath: EmissionModule.rateOverTime.minScalar
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -6512073073267699254, guid: 50ed1c6ebdc1dd647b30b8f4c1dc8396, type: 3}
+      propertyPath: EmissionModule.rateOverTime.minMaxState
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5091879194973981320, guid: 50ed1c6ebdc1dd647b30b8f4c1dc8396, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5091879194973981320, guid: 50ed1c6ebdc1dd647b30b8f4c1dc8396, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5091879194973981320, guid: 50ed1c6ebdc1dd647b30b8f4c1dc8396, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5091879194973981320, guid: 50ed1c6ebdc1dd647b30b8f4c1dc8396, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 5091879194973981320, guid: 50ed1c6ebdc1dd647b30b8f4c1dc8396, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 5091879194973981320, guid: 50ed1c6ebdc1dd647b30b8f4c1dc8396, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5091879194973981320, guid: 50ed1c6ebdc1dd647b30b8f4c1dc8396, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5091879194973981320, guid: 50ed1c6ebdc1dd647b30b8f4c1dc8396, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: -90
+      objectReference: {fileID: 0}
+    - target: {fileID: 5091879194973981320, guid: 50ed1c6ebdc1dd647b30b8f4c1dc8396, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5091879194973981320, guid: 50ed1c6ebdc1dd647b30b8f4c1dc8396, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8318869920021112159, guid: 50ed1c6ebdc1dd647b30b8f4c1dc8396, type: 3}
+      propertyPath: EmissionModule.rateOverTime.scalar
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8846397008483147650, guid: 50ed1c6ebdc1dd647b30b8f4c1dc8396, type: 3}
+      propertyPath: m_Name
+      value: Snow
+      objectReference: {fileID: 0}
+    - target: {fileID: 8846397008483147650, guid: 50ed1c6ebdc1dd647b30b8f4c1dc8396, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 50ed1c6ebdc1dd647b30b8f4c1dc8396, type: 3}
+--- !u!1 &5295698850384972361 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8846397008483147650, guid: 50ed1c6ebdc1dd647b30b8f4c1dc8396, type: 3}
+  m_PrefabInstance: {fileID: 3727482125248845259}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &8436174591838330691 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5091879194973981320, guid: 50ed1c6ebdc1dd647b30b8f4c1dc8396, type: 3}
+  m_PrefabInstance: {fileID: 3727482125248845259}
+  m_PrefabAsset: {fileID: 0}
