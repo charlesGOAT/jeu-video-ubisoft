@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 58b11d55b2c7fa749b121365e15fedcf
+guid: bd4a6e8a676ccea4ba941895565cb1bc
 TrueTypeFontImporter:
   externalObjects: {}
   serializedVersion: 4
@@ -9,7 +9,7 @@ TrueTypeFontImporter:
   characterPadding: 1
   includeFontData: 1
   fontNames:
-  - DOCALLISME ON STREET
+  - BOZART
   fallbackFontReferences: []
   customCharacters: 
   fontRenderingMode: 0

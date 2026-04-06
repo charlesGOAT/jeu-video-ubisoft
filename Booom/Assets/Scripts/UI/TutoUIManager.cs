@@ -91,7 +91,7 @@ public class TutoUIManager : MonoBehaviour
 
         yield return new WaitForSeconds(1f);
 
-        GameManager.Instance.NewRound();
+        GameManager.Instance.CleanGame();
         SceneManager.LoadScene(RoundManager.FindNextMap());
     }
 }

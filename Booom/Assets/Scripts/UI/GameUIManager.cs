@@ -42,7 +42,8 @@ public class GameUIManager : MonoBehaviour
     
     private void OnDestroy()
     {
-        if (SceneManager.GetActiveScene().name != "Tuto")
+        String sceneName = SceneManager.GetActiveScene().name;
+        if (sceneName != "Tuto" &&  sceneName != "Menu")
             GameManager.Instance.ScoreManager.OnScoreChanged -= RefreshScore;
     }
 
@@ -56,7 +57,8 @@ public class GameUIManager : MonoBehaviour
         _vinylAnimator = vinylImage.GetComponentInParent<Animator>();
         _vinylMaterial.SetFloat("_Speed", GameManager.Instance.GameDuration);
 
-        if (SceneManager.GetActiveScene().name != "Tuto")
+        String sceneName = SceneManager.GetActiveScene().name;
+        if (sceneName != "Tuto" &&  sceneName != "Menu")
         {
             GameManager.Instance.ScoreManager.OnScoreChanged += RefreshScore;
             GameManager.Instance.StartTimer();
