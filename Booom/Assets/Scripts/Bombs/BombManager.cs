@@ -50,8 +50,6 @@ public class BombManager : MonoBehaviour
         {
             return false;
         }
-        
-        player.Animator.SetTrigger("DropBomb");
 
         
         Vector3 worldPosition = GridManagerStrategy.GridToWorldPosition(gridCoordinates, tile.transform.position.y);
