@@ -134,7 +134,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2263299632193020934, guid: 4a1fa1bcf89fb5c4e9797a015584aef5, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -169.42499
+      value: -149.42499
       objectReference: {fileID: 0}
     - target: {fileID: 3508498027631707120, guid: 4a1fa1bcf89fb5c4e9797a015584aef5, type: 3}
       propertyPath: m_margin.x
@@ -154,7 +154,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4945855695266881888, guid: 4a1fa1bcf89fb5c4e9797a015584aef5, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -302.375
+      value: -262.375
       objectReference: {fileID: 0}
     - target: {fileID: 4980499687594344691, guid: 4a1fa1bcf89fb5c4e9797a015584aef5, type: 3}
       propertyPath: m_Color.a
@@ -225,8 +225,16 @@ PrefabInstance:
       value: PauseMenu
       objectReference: {fileID: 0}
     - target: {fileID: 8355709495738949382, guid: 4a1fa1bcf89fb5c4e9797a015584aef5, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.01
+      objectReference: {fileID: 0}
+    - target: {fileID: 8355709495738949382, guid: 4a1fa1bcf89fb5c4e9797a015584aef5, type: 3}
       propertyPath: m_AnchoredPosition.x
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8355709495738949382, guid: 4a1fa1bcf89fb5c4e9797a015584aef5, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0.2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
