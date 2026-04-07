@@ -27,6 +27,8 @@ public class SoundManager : MonoBehaviour
     [SerializeField] 
     private Audio buttonClickedAudio;
     [SerializeField] 
+    private Audio SFXSliderChangedAudio;
+    [SerializeField] 
     private Music mainTheme;
     [SerializeField] 
     private List<Audio> playerJoinedSound;
@@ -248,6 +250,11 @@ public class SoundManager : MonoBehaviour
     {
         AudioSourceSFX.PlayOneShot(buttonClickedAudio.audioClip, buttonClickedAudio.volume * sfxVolume);
     }
+    
+    public void OnSFXSliderChanged()
+    {
+        AudioSourceSFX.PlayOneShot(SFXSliderChangedAudio.audioClip, SFXSliderChangedAudio.volume * sfxVolume);
+    }
 
     public void OnBombEvent()
     {
@@ -376,6 +383,10 @@ public class SoundManager : MonoBehaviour
         if (buttonClickedAudio.audioClip == null)
         {
             throw new Exception($"Audio clip {nameof(buttonClickedAudio)} cannot be null");
+        }
+        if (SFXSliderChangedAudio.audioClip == null)
+        {
+            throw new Exception($"Audio clip {nameof(SFXSliderChangedAudio)} cannot be null");
         }
         if (mainTheme.audio.audioClip == null)
         {
