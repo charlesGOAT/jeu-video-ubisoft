@@ -13,6 +13,8 @@ public class MenuButton : MonoBehaviour, ISubmitHandler
     private RaveText _text;
     private Renderer _quadRenderer;
     
+    private SoundManager _soundManager;
+    
     private void Awake()
     {
         _text = GetComponentInChildren<RaveText>();
@@ -25,6 +27,8 @@ public class MenuButton : MonoBehaviour, ISubmitHandler
             _quadRenderer = quadGameObject.GetComponent<Renderer>();
         }
         
+        _soundManager = SoundManager.Instance;
+        
         SetBoolValues();
     }
     
@@ -34,6 +38,8 @@ public class MenuButton : MonoBehaviour, ISubmitHandler
         {
             StartCoroutine(ValueChanged());
         }
+        
+        _soundManager.OnMenuButtonPressed();
     }
     
     private void ApplyMaterial(bool value)
