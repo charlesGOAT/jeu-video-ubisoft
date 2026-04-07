@@ -274,14 +274,14 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene("EndGame");
     }
 
-    private void CleanGame()
+    public void CleanGame()
     {
         Player.ActivePlayers.Clear();
         Bomb.ActiveBombs.Clear();
         RoundManager.CleanGame();
     }
 
-    public void NewRound()
+    private void NewRound()
     {
         Bomb.ActiveBombs.Clear();
         Player.ActivePlayers.Clear();

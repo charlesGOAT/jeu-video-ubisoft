@@ -41,11 +41,11 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 648998457344
-    m_Localized: LANGUAGE
+    m_Localized: LANGUAGE EN
     m_Metadata:
       m_Items: []
   - m_Id: 714568011776
-    m_Localized: RETURN
+    m_Localized: BACK
     m_Metadata:
       m_Items: []
   - m_Id: 851096801280
@@ -53,7 +53,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 1179397558272
-    m_Localized: MOVE AND FILL THE REST OF YOUR ZONE
+    m_Localized: MOVE AND SPREAD YOUR COLOR
     m_Metadata:
       m_Items: []
   - m_Id: 1571065860096
@@ -61,7 +61,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 2051502411776
-    m_Localized: GET READY TO FIGHT IN {0}
+    m_Localized: GET READY TO FIGHT IN {0}...
     m_Metadata:
       m_Items: []
   - m_Id: 2335003807744
@@ -118,6 +118,22 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 742861478989824
     m_Localized: EN
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1198548352929792
+    m_Localized: SETTINGS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1384022778482688
+    m_Localized: QUIT
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1852450240892928
+    m_Localized: Music
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2137318262738944
+    m_Localized: PLACE BOMBS ON YOUR OWN COLOR TO SPREAD IT
     m_Metadata:
       m_Items: []
   references:

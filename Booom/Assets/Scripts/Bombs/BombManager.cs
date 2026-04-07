@@ -8,7 +8,7 @@ public delegate void PaintbrushDeactivated(int layer);
 public class BombManager : MonoBehaviour
 {
     [SerializeField]
-    private Bomb[] bombPrefabs;
+    private Bomb bombPrefab;
 
     // Track each Player's bomb cooldown
     private readonly Dictionary<PlayerEnum, float> _nextBombTime = new (GameConstants.NB_PLAYERS);
@@ -20,7 +20,7 @@ public class BombManager : MonoBehaviour
     
     protected virtual void Awake()
     {
-        if (bombPrefabs == null)
+        if (bombPrefab == null)
         {
             Debug.LogError("Bomb prefabs shouldn't be empty");
             enabled = false;
@@ -50,15 +50,11 @@ public class BombManager : MonoBehaviour
         {
             return false;
         }
-        
-        player.Animator.SetTrigger("DropBomb");
 
-        BombEnum bombType = GameManager.Instance.EventManager.CurrentBombType;
-        int intBombType = (int)bombType - 1;
         
         Vector3 worldPosition = GridManagerStrategy.GridToWorldPosition(gridCoordinates, tile.transform.position.y);
 
-        Bomb instantiatedBomb = Instantiate(bombPrefabs[intBombType], worldPosition + bombHeight, Quaternion.identity);
+        Bomb instantiatedBomb = Instantiate(bombPrefab, worldPosition + bombHeight, Quaternion.identity);
         instantiatedBomb.AssociatedPlayer = playerEnum;
         instantiatedBomb.BombFusingStrategy = bombStrat;
         instantiatedBomb.IsFreezeBomb = bombItems.HasFlag(BombItems.FreezeBombs);

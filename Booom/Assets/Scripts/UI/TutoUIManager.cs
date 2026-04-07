@@ -14,10 +14,12 @@ public class TutoUIManager : MonoBehaviour
     [SerializeField] private TMP_Text[] tutoText;
     [SerializeField] private Sprite dpadSprite;
     [SerializeField] private Image[]  tutoImages;
+    [SerializeField] private GameObject[]  speechBubbles;
     
     [SerializeField] private LocalizeStringEvent[] tutoLocalized;
     [SerializeField] private LocalizedString placeBombInstruction;
     [SerializeField] private LocalizedString moveInstruction;
+    [SerializeField] private LocalizedString spreadInstruction;
     [SerializeField] private LocalizedString readyText;
     [SerializeField] private LocalizedString countdownTextLocalized;
     [SerializeField] private LocalizedString fightText;
@@ -30,6 +32,12 @@ public class TutoUIManager : MonoBehaviour
         {
             int index = Player.ActivePlayers.Keys.ToList().IndexOf(player);
             tutoText[index].transform.parent.gameObject.SetActive(true);
+
+            var images = speechBubbles[index].GetComponentsInChildren<Image>();
+            foreach (var image in images)
+            {
+                image.color = Player.PlayerColorDict[player];
+            }
             
             tutoLocalized[index].StringReference = placeBombInstruction;
             tutoLocalized[index].RefreshString();
@@ -45,6 +53,19 @@ public class TutoUIManager : MonoBehaviour
         tutoLocalized[index].StringReference = moveInstruction;
         tutoLocalized[index].RefreshString();
     }
+    
+    public void UpdatePlayerSpreadText(PlayerEnum player)
+    {
+        int index = Player.ActivePlayers.Keys.ToList().IndexOf(player);
+
+        tutoImages[index].gameObject.SetActive(false);
+        
+        RectTransform rt = tutoText[index].GetComponent<RectTransform>();
+        rt.anchorMin = new Vector2(0.13f, 0.01f);
+        
+        tutoLocalized[index].StringReference = spreadInstruction;
+        tutoLocalized[index].RefreshString();
+    }
 
     public void PlayerEndTuto(PlayerEnum player)
     {
@@ -53,9 +74,7 @@ public class TutoUIManager : MonoBehaviour
         tutoImages[index].gameObject.SetActive(false);
 
         RectTransform rt = tutoText[index].GetComponent<RectTransform>();
-        Vector3 localPos = rt.localPosition;
-        localPos.x = 0;
-        rt.localPosition = localPos;
+        rt.anchorMin = new Vector2(0.13f, 0.01f);
 
         tutoLocalized[index].StringReference = readyText;
         tutoLocalized[index].RefreshString();
@@ -91,7 +110,7 @@ public class TutoUIManager : MonoBehaviour
 
         yield return new WaitForSeconds(1f);
 
-        GameManager.Instance.NewRound();
+        GameManager.Instance.CleanGame();
         SceneManager.LoadScene(RoundManager.FindNextMap());
     }
 }

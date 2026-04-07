@@ -115,6 +115,22 @@ MonoBehaviour:
     m_Key: LanguageLetters
     m_Metadata:
       m_Items: []
+  - m_Id: 1198548352929792
+    m_Key: SettingButton
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1384022778482688
+    m_Key: QuitButton
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1852450240892928
+    m_Key: Music
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2137318262738944
+    m_Key: SpreadInstruction
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

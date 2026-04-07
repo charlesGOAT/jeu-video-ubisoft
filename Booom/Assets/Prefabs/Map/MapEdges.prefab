@@ -243,6 +243,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Obstacle
   IsFrozen: 0
+  snowEffect: {fileID: 0}
 --- !u!114 &4644372928508304730
 MonoBehaviour:
   m_ObjectHideFlags: 0

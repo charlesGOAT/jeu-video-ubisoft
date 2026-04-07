@@ -83,11 +83,12 @@ public class SoundManager : MonoBehaviour
     [SerializeField] 
     private Audio colorAlternationMusic;
     [SerializeField]
-    private Music victoryThemeMusic;
-    [Space(3)]
-
-    private AudioSource _audioSourceSFX;
-    private AudioSource _audioSourceMusic;
+    private Audio victoryThemeMusic;
+    [SerializeField] 
+    private Audio transitionSFX;
+    
+    public AudioSource AudioSourceSFX { get; private set; }
+    public AudioSource AudioSourceMusic { get; private set; }
 
     private static bool? _isInMenu = null;
 
@@ -98,6 +99,14 @@ public class SoundManager : MonoBehaviour
 
     public static SoundManager Instance { get; private set; }
     
+    [Range(0f, 1f)]
+    private float _musicVolume = 1f;
+    [Range(0f, 1f)]
+    private float _sfxVolume = 1f;
+
+    public float MusicVolume => _musicVolume;
+    public float SFXVolume => _sfxVolume;
+    
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -105,6 +114,11 @@ public class SoundManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
+        
+        _musicVolume = PlayerPrefs.GetFloat("MusicVolume", 1f);
+        SetMusicVolume(_musicVolume);
+        _sfxVolume = PlayerPrefs.GetFloat("SFXVolume", 1f);
+        SetSFXVolume(_sfxVolume);
 
         Instance = this;
         DontDestroyOnLoad(gameObject);
@@ -115,6 +129,67 @@ public class SoundManager : MonoBehaviour
         VerifyAudioClipsPresent();
         
         SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    public void SetMusicVolume(float volume)
+    {
+        _musicVolume = Mathf.Clamp01(volume);
+
+        if (AudioSourceMusic != null) AudioSourceMusic.volume *= _musicVolume;
+
+        battleMusic1.volume *= _musicVolume;
+        battleMusic2.volume *= _musicVolume;
+        battleMusic3.volume *= _musicVolume;
+        battleMusic4.volume *= _musicVolume;
+        battleMusic5.volume *= _musicVolume;
+        tutorialMusic.audio.volume *= _musicVolume;
+        colorAlternationMusic.volume *= _musicVolume;
+        victoryThemeMusic.volume *= _musicVolume;
+        mainTheme.audio.volume *= _musicVolume;
+
+        if (gameStartsSounds != null)
+        {
+            for (int i = 0; i < gameStartsSounds.Count; i++)
+            {
+                Audio sound = gameStartsSounds[i]; 
+                sound.volume *= _musicVolume; 
+                gameStartsSounds[i] = sound; 
+            }
+        }
+        
+        if (playerJoinedSound != null)
+        {
+            for (int i = 0; i < playerJoinedSound.Count; i++)
+            {
+                Audio sound = playerJoinedSound[i]; 
+                sound.volume *= _musicVolume; 
+                playerJoinedSound[i] = sound; 
+            }
+        }
+
+        PlayerPrefs.SetFloat("MusicVolume", _musicVolume);
+        PlayerPrefs.Save();
+    }
+    public void SetSFXVolume(float volume)
+    {
+        _sfxVolume = Mathf.Clamp01(volume);
+
+        if (AudioSourceSFX != null) AudioSourceSFX.volume *= _sfxVolume;
+
+        bombFusedAudio.volume *= _sfxVolume;
+        bombExplodedAudio.volume *= _sfxVolume;
+        genericBombEventSound.volume *= _sfxVolume;
+        targetBombMovingSound.volume *= _sfxVolume;
+        trampolineSound.volume *= _sfxVolume;
+        spikeSound.volume *= _sfxVolume;
+        portalSound.volume *= _sfxVolume;
+        bombHitPlayerSound.volume *= _sfxVolume;
+        newKillStreakSound.volume *= _sfxVolume;
+        usePaintBrushSound.volume *= _sfxVolume;
+        transitionSFX.volume *= _sfxVolume;
+        
+        PlayerPrefs.SetFloat("SFXVolume", _sfxVolume);
+        PlayerPrefs.Save();
     }
 
     private void Start()
@@ -129,12 +204,12 @@ public class SoundManager : MonoBehaviour
     {
         var audioSources = gameObject.GetComponents<AudioSource>();
         if (audioSources.Length < 2) throw new Exception("There should be at least two audio sources");
-        _audioSourceSFX = audioSources[0];
-        _audioSourceMusic = audioSources[1];
-        _audioSourceMusic.loop = true;
+        AudioSourceSFX = audioSources[0];
+        AudioSourceMusic = audioSources[1];
+        AudioSourceMusic.loop = true;
     }
 
-    private void PlayAudioSourceMusic(in Music music)
+    private void PlayAudioSourceMusic(Music music)
     {
         _loopableMusic.StopMusic();
         _loopableMusic.PlayMusic(music);
@@ -143,9 +218,9 @@ public class SoundManager : MonoBehaviour
     private void PlayAudioSourceMusic(in Audio audio)
     {
         _loopableMusic.StopMusic();
-        _audioSourceMusic.clip = audio.audioClip;
-        _audioSourceMusic.volume = audio.volume;
-        _audioSourceMusic.Play();
+        AudioSourceMusic.clip = audio.audioClip;
+        AudioSourceMusic.volume = audio.volume;
+        AudioSourceMusic.Play();
     }
 
     public void OnBombFused()
@@ -160,7 +235,7 @@ public class SoundManager : MonoBehaviour
 
     public void OnMenuButtonPressed()
     {
-        _audioSourceSFX.PlayOneShot(buttonClickedAudio.audioClip, buttonClickedAudio.volume);
+        AudioSourceSFX.PlayOneShot(buttonClickedAudio.audioClip, buttonClickedAudio.volume);
     }
 
     public void OnBombEvent()
@@ -170,7 +245,7 @@ public class SoundManager : MonoBehaviour
 
     public void OnPickupItem()
     {
-        _audioSourceSFX.PlayOneShot(pickUpItemSound.audioClip, pickUpItemSound.volume);
+        AudioSourceSFX.PlayOneShot(pickUpItemSound.audioClip, pickUpItemSound.volume);
     }
 
     public void OnEnterTrampoline()
@@ -201,7 +276,7 @@ public class SoundManager : MonoBehaviour
 
     public void OnDefenseBombExploded()
     {
-        _audioSourceSFX.PlayOneShot(defenseBombSound.audioClip, defenseBombSound.volume);
+        AudioSourceSFX.PlayOneShot(defenseBombSound.audioClip, defenseBombSound.volume);
     }
 
     public void OnUsePaintBrush(bool isUsing)
@@ -222,14 +297,19 @@ public class SoundManager : MonoBehaviour
 
     public void OnGameStarted(int second)
     {
-        _audioSourceSFX.PlayOneShot(gameStartsSounds[second].audioClip, gameStartsSounds[second].volume);
+        AudioSourceSFX.PlayOneShot(gameStartsSounds[second].audioClip, gameStartsSounds[second].volume);
     }
 
     public void OnPlayerJoined(in PlayerEnum player)
     {
         int index = (int)player - 1;
         if(playerJoinedSound != null && playerJoinedSound.Count > index)
-            _audioSourceSFX.PlayOneShot(playerJoinedSound[index].audioClip, playerJoinedSound[index].volume);
+            AudioSourceSFX.PlayOneShot(playerJoinedSound[index].audioClip, playerJoinedSound[index].volume);
+    }
+
+    public void OnSceneTransition()
+    {
+        AudioSourceSFX.PlayOneShot(transitionSFX.audioClip, transitionSFX.volume);
     }
 
     public void PlayBattleMucic()
@@ -306,7 +386,7 @@ public class SoundManager : MonoBehaviour
         {
             throw new Exception($"Audio clip {nameof(tutorialMusic)} cannot be null");
         }
-        if (victoryThemeMusic.audio.audioClip == null)
+        if (victoryThemeMusic.audioClip == null)
         {
             throw new Exception($"Audio clip {nameof(victoryThemeMusic)} cannot be null");
         }
