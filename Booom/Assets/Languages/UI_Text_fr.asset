@@ -53,7 +53,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 1179397558272
-    m_Localized: BOUGE ET REMPLIS LE RESTE DE TA ZONE
+    m_Localized: "BOUGE ET R\xC9PANDS TA COULEUR"
     m_Metadata:
       m_Items: []
   - m_Id: 1571065860096
@@ -61,7 +61,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 2051502411776
-    m_Localized: LE COMBAT COMMENCE DANS {0}
+    m_Localized: LE COMBAT COMMENCE DANS {0}...
     m_Metadata:
       m_Items: []
   - m_Id: 2335003807744
@@ -130,6 +130,10 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 1852450240892928
     m_Localized: Musique
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2137318262738944
+    m_Localized: "PLACE LES BOMBES SUR TA PROPRE COULEUR POUR LA R\xC9PANDRE"
     m_Metadata:
       m_Items: []
   references:
