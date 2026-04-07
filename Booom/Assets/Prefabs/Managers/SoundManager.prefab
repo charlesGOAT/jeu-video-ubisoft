@@ -318,11 +318,11 @@ MonoBehaviour:
     audioClip: {fileID: 8300000, guid: 28f6538119c74eb4a92569e4746bded1, type: 3}
     volume: 0.5
   victoryThemeMusic:
-    audioClip: {fileID: 0}
-    volume: 0
+    audioClip: {fileID: 8300000, guid: 0231e9c8bbb693a41869f6c64a746399, type: 3}
+    volume: 1
   transitionSFX:
     audioClip: {fileID: 8300000, guid: 20611a6dc6a850746a35e0a14795ed44, type: 3}
-    volume: 0.5
+    volume: 1
 --- !u!82 &3540998469405793209
 AudioSource:
   m_ObjectHideFlags: 0
@@ -1028,7 +1028,7 @@ AudioSource:
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 8300000, guid: f760c1e3b94413646b807f62dc0cc61a, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 1
+  m_Volume: 0.597
   m_Pitch: 1
   Loop: 0
   Mute: 0
