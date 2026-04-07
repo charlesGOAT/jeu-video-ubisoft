@@ -173,6 +173,6 @@ public class Tile : MonoBehaviour
     {
         if (CurrentTileOwner != winner) return;
         _blinkMat.SetColor(TileColor, _tileColor);
-        ChangeTileMaterial(2, _blinkMat);
+        ChangeTileMaterial(1, _blinkMat);
     }
 }
