@@ -84,9 +84,8 @@ public class Player : MonoBehaviour
     private RunState _runState;
     private JumpState _jumpState;
 
+    public Tile CurrentTile { get; set; }
     private bool _onPausedCalled;
-
-    public Tile CurrentTile { get; private set; }
     
     public BombFusingType BombFusingType { get; set; }
     public BombItems NextBombBombItems = 0;
@@ -157,7 +156,9 @@ public class Player : MonoBehaviour
         GetConfigValues();
 #endif
         CheckStartConditions();
-        InitializeSpawner();
+        
+        if(!SceneManager.GetActiveScene().name.Equals("EndGame"))
+            InitializeSpawner();
         GameManager.Instance.OnGameStarts += EnableInputActions;
     }
 
