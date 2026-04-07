@@ -252,15 +252,7 @@ public class GameManager : MonoBehaviour
 
     public IEnumerator MakeWinnerColorBlink(PlayerEnum winner)
     {
-        var acquiredTiles = ScoreManager.AcquiredTilesByPlayer[winner];
-        foreach (var pos in acquiredTiles)
-        {
-            Tile tile = GridManager.GetTileAtCoordinates(pos);
-            if (tile == null) continue;
-            
-            tile.AddWinnerBlink(winner);
-        }
-
+        GridManager.MakeAllPlayerTilesBlink(winner);
         yield return new WaitForSeconds(4f); // todo tweak
     }
 

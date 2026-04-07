@@ -34,7 +34,7 @@ public class PauseMenuManager : MonoBehaviour
 
     private void Awake()
     {
-        vPlayer.Prepare();
+        //vPlayer.Prepare();
         _targetImage = vPlayer.gameObject.GetComponent<RawImage>();
     }
 

@@ -88,6 +88,15 @@ public abstract class GridManagerStrategy : MonoBehaviour
     {
         return _itemTiles.ContainsKey(pos);
     }
+
+    public void MakeAllPlayerTilesBlink(PlayerEnum player)
+    {
+        var tiles = _tiles.Where(x => x.Value.CurrentTileOwner == player);
+        foreach (var keyValuePair in tiles.ToArray())
+        {
+            keyValuePair.Value.AddWinnerBlink(player);
+        }
+    }
     
     public void AddItemOnGrid(Item item)
     {
