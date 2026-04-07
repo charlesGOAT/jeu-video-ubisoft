@@ -21,9 +21,6 @@ public class PauseMenuManager : MonoBehaviour
     [SerializeField] 
     private Canvas canvas;
 
-    [SerializeField] 
-    private GameObject skipTuto;
-
     private PlayerInput _currentInput;
     private InputSystemUIInputModule[] _uiInputs;
 
@@ -39,12 +36,6 @@ public class PauseMenuManager : MonoBehaviour
     {
         vPlayer.Prepare();
         _targetImage = vPlayer.gameObject.GetComponent<RawImage>();
-
-        if (SceneManager.GetActiveScene().name.Equals("Tuto"))
-        {
-            skipTuto.SetActive(true);
-            _tutoUIManager = FindAnyObjectByType<TutoUIManager>();
-        }
     }
 
     private void Start()
@@ -133,20 +124,6 @@ public class PauseMenuManager : MonoBehaviour
         GameManager.Instance.CleanGame();        
         RoundManager.CleanGame();
         SceneManager.LoadScene("Menu");
-    }
-
-    public void SkipTuto()
-    {
-        if (!_tutoUIManager.TutoEnded)
-        {
-            _tutoUIManager.TutoEnded = true;
-            GameManager.Instance.CleanGame();
-            SceneManager.LoadScene(RoundManager.FindNextMap());
-        }
-        else
-        {
-            ToggleOffMenu();
-        }
     }
 
     public void OnQuit()
