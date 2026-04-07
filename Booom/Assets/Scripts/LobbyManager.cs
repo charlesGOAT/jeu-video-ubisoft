@@ -77,7 +77,7 @@ public class LobbyManager : MonoBehaviour
        _uiInputs = FindObjectsByType<InputSystemUIInputModule>(FindObjectsInactive.Include, FindObjectsSortMode.None);
        _inputManager.EnableJoining();
        
-       if (SceneManager.GetActiveScene().name == "Menu")
+       if (SceneManager.GetActiveScene().name.Equals("Menu") || SceneManager.GetActiveScene().name.Equals("EndGame"))
        {
            foreach (var player in JoinedPlayers)
            {
@@ -107,11 +107,11 @@ public class LobbyManager : MonoBehaviour
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        if (scene.name == "Menu")
+        if (scene.name.Equals("Menu") || scene.name.Equals("EndGame"))
         {
             StartCoroutine(AppearPlayers());
         }
-        else if (scene.name != "EndGame")
+        else
         {
             DisappearPlayers();
             GameManager.Instance.SpawnPlayers();
@@ -215,7 +215,7 @@ public class LobbyManager : MonoBehaviour
             uiInput.actionsAsset = playerInput.actions;
         }
         
-        if (firstPlayer)
+        if (firstPlayer && !SceneManager.GetActiveScene().name.Equals("EndGame"))
             EventSystem.current.SetSelectedGameObject(playButton);
     }
 
