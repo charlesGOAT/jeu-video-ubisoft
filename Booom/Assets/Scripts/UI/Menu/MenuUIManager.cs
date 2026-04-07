@@ -27,8 +27,7 @@ public class MenuUIManager : MonoBehaviour
     private void Start()
     {
         _lobbyManager = LobbyManager.Instance;
-
-        LocalizationSettings.SelectedLocale = english;
+        LocalizationSettings.SelectedLocale = LobbyManager.TokebaqueIcitte ? french : english;
     }
 
     private void Update()
