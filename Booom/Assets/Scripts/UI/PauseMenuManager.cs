@@ -122,6 +122,7 @@ public class PauseMenuManager : MonoBehaviour
     public void GoBackToMenu()
     {
         Time.timeScale = 1;
+        SoundManager.Instance.AudioSourceMusic.UnPause();
         GameManager.Instance.CleanGame();        
         RoundManager.CleanGame();
         SceneManager.LoadScene("Menu");
