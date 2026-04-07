@@ -115,6 +115,10 @@ MonoBehaviour:
     m_Key: LanguageLetters
     m_Metadata:
       m_Items: []
+  - m_Id: 1444457382666240
+    m_Key: StartGameCountdown
+    m_Metadata:
+      m_Items: []
   - m_Id: 1198548352929792
     m_Key: SettingButton
     m_Metadata:
@@ -125,6 +129,22 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 1852450240892928
     m_Key: Music
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2109688740044800
+    m_Key: Continue
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2109806608375808
+    m_Key: Quit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2109855526543360
+    m_Key: Main menu
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2248789128634368
+    m_Key: skip tuto
     m_Metadata:
       m_Items: []
   - m_Id: 2137318262738944

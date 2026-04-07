@@ -7,7 +7,7 @@ public static class RoundManager
 {
     public static readonly List<int> MapsToPlay = new () {2,3,4,5,6};
     private static readonly List<int> _mapsPlayed = new();
-    private static readonly List<PlayerEnum> _gameWonPlayer = new();
+    public static readonly List<PlayerEnum> GameWonPlayer = new();
 
     private static RuntimeConfigData _runtimeConfig;
 #if !UNITY_EDITOR
@@ -79,7 +79,7 @@ public static class RoundManager
         {
             _playerWinsDict[player] = 0;
         }
-        _gameWonPlayer.Clear();
+        GameWonPlayer.Clear();
         LastMapIndex = 0;
     }
 
@@ -98,7 +98,7 @@ public static class RoundManager
         }
 
         EndGameUIManager.ShouldEndGame = true;
-        EndGameUIManager.PlayerWonGame = new(_gameWonPlayer);
+        EndGameUIManager.PlayerWonGame = new(GameWonPlayer);
     }
 
     public static void LoadEndRoundData()
@@ -111,13 +111,13 @@ public static class RoundManager
         }
 
         EndGameUIManager.NextSceneIndex = FindNextMap();
-        EndGameUIManager.PlayerWonGame = new(_gameWonPlayer);
+        EndGameUIManager.PlayerWonGame = new(GameWonPlayer);
     }
 
     public static bool ShouldEndGame(in PlayerEnum winner)
     {
         _playerWinsDict[winner]++;
-        _gameWonPlayer.Add(winner);
+        GameWonPlayer.Add(winner);
         return _playerWinsDict[winner] == 2;
     }
 }

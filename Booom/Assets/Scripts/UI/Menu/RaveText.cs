@@ -67,7 +67,7 @@ public class RaveText : MonoBehaviour
 
     void AnimateTransform()
     {
-        float scale = basicScale + Mathf.Sin(Time.time * pulseSpeed) * pulseScale;
+        float scale = basicScale + Mathf.Sin(Time.unscaledTime * pulseSpeed) * pulseScale;
         transform.localScale = Vector3.one * scale;
     }
 
@@ -76,7 +76,7 @@ public class RaveText : MonoBehaviour
         _text.ForceMeshUpdate();
         var textInfo = _text.textInfo;
 
-        float t = Time.time * colorChangeSpeed;
+        float t = Time.unscaledTime * colorChangeSpeed;
         int colorIndex = Mathf.FloorToInt(t) % playerColors.Length;
         Color32 c32 = playerColors[colorIndex];
 
