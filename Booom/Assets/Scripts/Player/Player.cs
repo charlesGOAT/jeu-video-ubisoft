@@ -275,7 +275,8 @@ public class Player : MonoBehaviour
     
     public void OnBomb(InputAction.CallbackContext ctx)
     {
-        if (SceneManager.GetActiveScene().name == "EndGame") return;
+        String scene = SceneManager.GetActiveScene().name;
+        if (scene == "EndGame" || scene == "Menu") return;
         if (_stateMachine.CurrentState is JumpState) return;
 
         if (ctx.started)
