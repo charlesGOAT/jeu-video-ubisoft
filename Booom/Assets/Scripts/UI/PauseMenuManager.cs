@@ -68,8 +68,8 @@ public class PauseMenuManager : MonoBehaviour
 
     private IEnumerator ToggleOffCoroutine()
     {
-        if(_coroutine != null) StopCoroutine(_coroutine);
-        vPlayer.Play();
+        //if(_coroutine != null) StopCoroutine(_coroutine);
+        //vPlayer.Play();
         yield return new WaitForSecondsRealtime(0.2f);
         maskAnimator.gameObject.SetActive(false);
         yield return new WaitForSecondsRealtime(1.2f);
@@ -83,15 +83,15 @@ public class PauseMenuManager : MonoBehaviour
         SoundManager.Instance.AudioSourceMusic.UnPause();
         _currentInput.SwitchCurrentActionMap("Player");
 
-        if (vPlayer.time <= 3.6f) vPlayer.time = 3.6667f;
+        //if (vPlayer.time <= 3.6f) vPlayer.time = 3.6667f;
     }
 
     private void ToggleOnMenu()
     {
-        vPlayer.time = 0f;
-        vPlayer.Play();
-        _targetImage.texture = vPlayer.texture;
-        _coroutine = StartCoroutine(StopAnim());
+        // vPlayer.time = 0f;
+        // vPlayer.Play();
+        // _targetImage.texture = vPlayer.texture;
+        //_coroutine = StartCoroutine(StopAnim());
         maskAnimator.gameObject.SetActive(true);
 
         foreach (Player player in Player.ActivePlayers.Values)
@@ -113,11 +113,11 @@ public class PauseMenuManager : MonoBehaviour
         EventSystem.current.SetSelectedGameObject(continueButton);
     }
 
-    private IEnumerator StopAnim()
-    {
-        yield return new WaitForSecondsRealtime(1.4f);
-        vPlayer.Pause();
-    }
+    // private IEnumerator StopAnim()
+    // {
+    //     // yield return new WaitForSecondsRealtime(1.4f);
+    //     // vPlayer.Pause();
+    // }
 
     public void GoBackToMenu()
     {
