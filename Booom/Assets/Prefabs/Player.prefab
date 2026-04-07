@@ -798,7 +798,7 @@ GameObject:
   - component: {fileID: 1158385441533370530}
   - component: {fileID: 2355489495213929110}
   - component: {fileID: 5432659421853635247}
-  m_Layer: 8
+  m_Layer: 9
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -976,10 +976,18 @@ MonoBehaviour:
     m_ActionId: 9caa3d8a-6b2f-4e8e-8bad-6ede561bd9be
     m_ActionName: UI/TrackedDeviceOrientation
   - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: c3490868-bd20-4116-b374-3e59da42a747
+    m_ActionName: 'Player/ChangeBomb[/XInputControllerWindows/buttonEast,/Mouse/rightButton]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 87d070c9-8001-4b03-9ccf-3e234de38c59
+    m_ActionName: 'Global/Return[/Keyboard/escape]'
+  - m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 7148449890927070707}
-        m_TargetAssemblyTypeName: Player, Assembly-CSharp
-        m_MethodName: OnChangeBomb
+        m_TargetAssemblyTypeName: Player, GameplayAssembly
+        m_MethodName: OnPause
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -989,12 +997,24 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-    m_ActionId: c3490868-bd20-4116-b374-3e59da42a747
-    m_ActionName: 'Player/ChangeBomb[/XInputControllerWindows/buttonEast,/Mouse/rightButton]'
+    m_ActionId: a0c3c0af-7c42-460f-abb1-4fb3537bf2c4
+    m_ActionName: 'Player/Pause[/DualShock4GamepadHID/start]'
   - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: 87d070c9-8001-4b03-9ccf-3e234de38c59
-    m_ActionName: 'Global/Return[/Keyboard/escape]'
+      m_Calls:
+      - m_Target: {fileID: 7148449890927070707}
+        m_TargetAssemblyTypeName: Player, GameplayAssembly
+        m_MethodName: OnPause
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 1ff24374-db5b-4127-b32b-02379e6e28a7
+    m_ActionName: 'UI/Pause[/DualShock4GamepadHID/start]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player

@@ -45,7 +45,7 @@ public class GameUIManager : MonoBehaviour
     private Material _vinylMaterial;
     private Animator _vinylAnimator;
     private bool _hasVinylAnimationStarted = false;
-    
+
     private void OnDestroy()
     {
         String sceneName = SceneManager.GetActiveScene().name;
@@ -80,15 +80,16 @@ public class GameUIManager : MonoBehaviour
         {
             countdownText.text = $"{3 - second}";
             SoundManager.Instance.OnGameStarted(second++);
-            yield return new WaitForSecondsRealtime(1f);
+            yield return new WaitForSeconds(1f);
         }
         countdownTextLocalized.RefreshString();
         SoundManager.Instance.OnGameStarted(second);
         // todo : make text shake?
         GameManager.Instance.StartTimer();
 
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(0.5f);
         SoundManager.Instance.PlayBattleMucic();
+        yield return new WaitForSeconds(0.5f);
         countdownText.gameObject.SetActive(false);
     }
 

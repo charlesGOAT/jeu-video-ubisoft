@@ -84,6 +84,8 @@ public class Player : MonoBehaviour
     private RunState _runState;
     private JumpState _jumpState;
 
+    private bool _onPausedCalled;
+
     public Tile CurrentTile { get; private set; }
     
     public BombFusingType BombFusingType { get; set; }
@@ -137,15 +139,15 @@ public class Player : MonoBehaviour
         ActivePlayers[playerNb] = this;
         SetPlayerTexture();
 
-        if (!SceneManager.GetActiveScene().name.Equals("Tuto", StringComparison.OrdinalIgnoreCase))
-        {
-            DisableInputActions();
-        }
-
-        if (SceneManager.GetActiveScene().name.Equals("menu", StringComparison.OrdinalIgnoreCase))
+        Scene activeScene = SceneManager.GetActiveScene();
+        if (activeScene.name.Equals("menu", StringComparison.OrdinalIgnoreCase))
         {
             SoundManager.Instance.OnPlayerJoined(playerNb);
             InstantiateBeam();
+        }
+        else if (RoundManager.MapsToPlay.Contains(activeScene.buildIndex))
+        {
+            DisableInputActions();
         }
     }
 
@@ -156,6 +158,7 @@ public class Player : MonoBehaviour
 #endif
         CheckStartConditions();
         InitializeSpawner();
+        GameManager.Instance.OnGameStarts += EnableInputActions;
     }
 
     private void InstantiateBeam()
@@ -259,7 +262,7 @@ public class Player : MonoBehaviour
     {
         Vector3 worldPos = GridManagerStrategy.GridToWorldPosition(gridPos);
         var trans = transform;
-        trans.position = new Vector3(worldPos.x, trans.position.y, worldPos.z);
+        trans.position = new Vector3(worldPos.x, 0, worldPos.z);
         CurrentTile = GameManager.Instance.GridManager.GetTileAtCoordinates(gridPos);
     }
 
@@ -275,7 +278,7 @@ public class Player : MonoBehaviour
         if (SceneManager.GetActiveScene().name == "EndGame") return;
         if (_stateMachine.CurrentState is JumpState) return;
 
-        if (ctx.ReadValueAsButton())
+        if (ctx.started)
         {
             OnPlaceBomb?.Invoke();
 
@@ -307,9 +310,12 @@ public class Player : MonoBehaviour
 
     public void DisableInputActions() => _playerInput.actions.Disable();
     public void EnableInputActions() => _playerInput.actions.Enable();
+    public void ChangeInputAction(string inputType) => _playerInput.SwitchCurrentActionMap(inputType);
 
     private void Update()
     {
+        _onPausedCalled = false;
+
         if (SceneManager.GetActiveScene().name == "EndGame") return;
         UpdateImmune();
 
@@ -686,6 +692,13 @@ public class Player : MonoBehaviour
     public void RemoveItemPopUp(in ItemType itemType)
     {
         _playerPopUpManager.RemoveItemPopUp(itemType);
+    }
+
+    public void OnPause(InputAction.CallbackContext ctx)
+    {
+        if (SceneManager.GetActiveScene().name.Equals("Menu") || !ctx.ReadValueAsButton() || _onPausedCalled) return;
+        _onPausedCalled = true;
+        GameManager.Instance.PauseMenuManager.TogglePauseMenu(playerNb, _playerInput);
     }
 }
 

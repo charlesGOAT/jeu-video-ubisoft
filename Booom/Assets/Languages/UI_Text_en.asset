@@ -136,6 +136,22 @@ MonoBehaviour:
     m_Localized: Start!
     m_Metadata:
       m_Items: []
+  - m_Id: 2109688740044800
+    m_Localized: CONTINUE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2109806608375808
+    m_Localized: QUIT
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2109855526543360
+    m_Localized: MAIN MENU
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2248789128634368
+    m_Localized: SKIP TUTO
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds:

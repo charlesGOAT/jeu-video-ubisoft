@@ -22,7 +22,7 @@ public class TutoUIManager : MonoBehaviour
     [SerializeField] private LocalizedString countdownTextLocalized;
     [SerializeField] private LocalizedString fightText;
     
-    private bool _tutoEnded;
+    public bool TutoEnded;
 
     private void Start()
     {
@@ -63,9 +63,9 @@ public class TutoUIManager : MonoBehaviour
 
     public void EndTuto()
     {
-        if (!_tutoEnded)
+        if (!TutoEnded)
         {
-            _tutoEnded = true;
+            TutoEnded = true;
             StartCoroutine(EndTutoCoroutine());
         }
     }

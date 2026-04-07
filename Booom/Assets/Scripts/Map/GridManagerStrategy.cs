@@ -65,13 +65,12 @@ public abstract class GridManagerStrategy : MonoBehaviour
         PositionCamera();
         _startTime = Time.time;
 
-        _isCameraInPlace = SceneManager.GetActiveScene().name.Equals("Menu") || SceneManager.GetActiveScene().name.Equals("EndGame");
+        _isCameraInPlace = !RoundManager.MapsToPlay.Contains(SceneManager.GetActiveScene().buildIndex);
     }
 
     private void Update()
     {
-        
-        if (Time.time - _startTime >= 0.5f && !_isCameraInPlace && !_isUIManagerNull)
+        if (Time.time - _startTime >= 0.25f && !_isCameraInPlace && !_isUIManagerNull)
         {
             mainCamera.fieldOfView -= 20 * Time.deltaTime;
             if (mainCamera.fieldOfView <= 60)
@@ -149,7 +148,7 @@ public abstract class GridManagerStrategy : MonoBehaviour
 
         mainCamera.transform.position = mapCenter - (forwardDir * distance);
     
-        mainCamera.fieldOfView = 86f;
+        mainCamera.fieldOfView = SceneManager.GetActiveScene().name.Equals("Tuto") ? 67 : 86f;
     }
 
     public Vector3 GetRandomPosOnGridWithNoItem()
