@@ -2778,6 +2778,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 1369919045}
+        m_TargetAssemblyTypeName: SoundManager, GameplayAssembly
+        m_MethodName: OnMenuButtonPressed
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &243369711
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4100,6 +4112,18 @@ MonoBehaviour:
       - m_Target: {fileID: 1933444547}
         m_TargetAssemblyTypeName: MenuUIManager, GameplayAssembly
         m_MethodName: ToggleItems
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1369919045}
+        m_TargetAssemblyTypeName: SoundManager, GameplayAssembly
+        m_MethodName: OnMenuButtonPressed
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -5731,6 +5755,18 @@ MonoBehaviour:
       - m_Target: {fileID: 1933444547}
         m_TargetAssemblyTypeName: MenuUIManager, GameplayAssembly
         m_MethodName: ToggleTuto
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1369919045}
+        m_TargetAssemblyTypeName: SoundManager, GameplayAssembly
+        m_MethodName: OnMenuButtonPressed
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -21297,6 +21333,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 1369919045}
+        m_TargetAssemblyTypeName: SoundManager, GameplayAssembly
+        m_MethodName: OnMenuButtonPressed
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1178041227
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -22157,6 +22205,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 1369919045}
+        m_TargetAssemblyTypeName: SoundManager, GameplayAssembly
+        m_MethodName: OnMenuButtonPressed
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1326354249
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -22397,6 +22457,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 1369919045}
+        m_TargetAssemblyTypeName: SoundManager, GameplayAssembly
+        m_MethodName: OnMenuButtonPressed
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1339772840
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -22508,6 +22580,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 9017637209094971560, guid: 48d0be96f349ccc4983f8cc4ead433ad, type: 3}
   m_PrefabInstance: {fileID: 1347479008}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1369919045 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2443516477206234823, guid: c9fd1a39a14cbf643911bf47e03937f9, type: 3}
+  m_PrefabInstance: {fileID: 158037575}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3708f6989a414693903821b139604a1a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: GameplayAssembly::SoundManager
 --- !u!1001 &1390832439
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -25692,7 +25775,19 @@ MonoBehaviour:
   m_Value: 1
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1369919045}
+        m_TargetAssemblyTypeName: SoundManager, GameplayAssembly
+        m_MethodName: OnMenuButtonPressed
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1001 &1890658494
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -31709,6 +31804,18 @@ MonoBehaviour:
       - m_Target: {fileID: 1933444547}
         m_TargetAssemblyTypeName: MenuUIManager, GameplayAssembly
         m_MethodName: ToggleLanguage
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1369919045}
+        m_TargetAssemblyTypeName: SoundManager, GameplayAssembly
+        m_MethodName: OnMenuButtonPressed
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
