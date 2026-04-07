@@ -121,6 +121,7 @@ public class PauseMenuManager : MonoBehaviour
 
     public void GoBackToMenu()
     {
+        Time.timeScale = 1;
         GameManager.Instance.CleanGame();        
         RoundManager.CleanGame();
         SceneManager.LoadScene("Menu");
