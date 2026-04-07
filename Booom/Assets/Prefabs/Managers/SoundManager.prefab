@@ -252,7 +252,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: GameplayAssembly::SoundManager
   buttonClickedAudio:
     audioClip: {fileID: 8300000, guid: 6ef521770ab1ae34ca4c612cc09aa61f, type: 3}
-    volume: 1
+    volume: 0.8
   mainTheme:
     audio:
       audioClip: {fileID: 8300000, guid: 8f9dbe1e7de17e84b90cd62c724d14a8, type: 3}
