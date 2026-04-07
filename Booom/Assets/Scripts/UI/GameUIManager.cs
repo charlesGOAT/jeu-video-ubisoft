@@ -89,7 +89,6 @@ public class GameUIManager : MonoBehaviour
 
         yield return new WaitForSeconds(0.5f);
         SoundManager.Instance.PlayBattleMucic();
-        yield return new WaitForSeconds(0.5f);
         countdownText.gameObject.SetActive(false);
     }
 
