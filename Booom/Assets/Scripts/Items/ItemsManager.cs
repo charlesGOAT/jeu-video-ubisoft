@@ -32,7 +32,6 @@ public class ItemsManager : MonoBehaviour
     private void Awake()
     {
         InitialiseSpawners();
-        StartSpawning();
     }
 
     private void Start()
@@ -59,7 +58,7 @@ public class ItemsManager : MonoBehaviour
         }
     }
 
-    private void StartSpawning()
+    public void StartSpawning()
     {
         String sceneName = SceneManager.GetActiveScene().name;
         if (!LobbyManager.ItemsActivated || sceneName == "Tuto" || sceneName == "Menu") return;

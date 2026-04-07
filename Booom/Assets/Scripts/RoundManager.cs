@@ -5,15 +5,16 @@ using UnityEngine;
 
 public static class RoundManager
 {
-    private static readonly List<int> mapsToPlay = new () {2,3,4,5,6};
+    public static readonly List<int> MapsToPlay = new () {2,3,4,5,6};
     private static readonly List<int> _mapsPlayed = new();
-    private static readonly List<PlayerEnum> _gameWonPlayer = new();
+    public static readonly List<PlayerEnum> GameWonPlayer = new();
 
     private static RuntimeConfigData _runtimeConfig;
 #if !UNITY_EDITOR
     private static bool _isRuntimeConfigSet = false;
 #endif
-    private static int _lastMapIndex = 0;
+        
+    public static int LastMapIndex = 0;
     
     private static Dictionary<PlayerEnum, int> _playerWinsDict = new()
     {
@@ -50,22 +51,22 @@ public static class RoundManager
             int count = 0;
             do
             {
-                newMapIndex = rand.Next(0, mapsToPlay.Count);
+                newMapIndex = rand.Next(0, MapsToPlay.Count);
 
-                if (count++ >= mapsToPlay.Count)
+                if (count++ >= MapsToPlay.Count)
                 {
                     Debug.LogError("There's not enough maps, playing already played random map");
                     break;
                 }
             } 
-            while (_mapsPlayed.Contains(mapsToPlay[newMapIndex]));
+            while (_mapsPlayed.Contains(MapsToPlay[newMapIndex]));
         }
         else
         {
-            newMapIndex = _lastMapIndex++;
+            newMapIndex = LastMapIndex++;
         }
 
-        int nextMap = mapsToPlay[newMapIndex];
+        int nextMap = MapsToPlay[newMapIndex];
         _mapsPlayed.Add(nextMap);
         return nextMap;
     }
@@ -78,8 +79,8 @@ public static class RoundManager
         {
             _playerWinsDict[player] = 0;
         }
-        _gameWonPlayer.Clear();
-        _lastMapIndex = 0;
+        GameWonPlayer.Clear();
+        LastMapIndex = 0;
     }
 
     public static void LoadEndGameData()
@@ -97,7 +98,7 @@ public static class RoundManager
         }
 
         EndGameUIManager.ShouldEndGame = true;
-        EndGameUIManager.PlayerWonGame = new(_gameWonPlayer);
+        EndGameUIManager.PlayerWonGame = new(GameWonPlayer);
     }
 
     public static void LoadEndRoundData()
@@ -110,13 +111,13 @@ public static class RoundManager
         }
 
         EndGameUIManager.NextSceneIndex = FindNextMap();
-        EndGameUIManager.PlayerWonGame = new(_gameWonPlayer);
+        EndGameUIManager.PlayerWonGame = new(GameWonPlayer);
     }
 
     public static bool ShouldEndGame(in PlayerEnum winner)
     {
         _playerWinsDict[winner]++;
-        _gameWonPlayer.Add(winner);
+        GameWonPlayer.Add(winner);
         return _playerWinsDict[winner] == 2;
     }
 }

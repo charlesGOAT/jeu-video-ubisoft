@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public abstract class GridManagerStrategy : MonoBehaviour
 {
@@ -21,6 +22,11 @@ public abstract class GridManagerStrategy : MonoBehaviour
     
     [SerializeField] 
     public Vector2Int[] playerSpawnPoints;
+
+    private GameUIManager _uiManager;
+    private bool _isCameraInPlace = false;
+    private bool _isUIManagerNull = true;
+    private float _startTime;
 
     public virtual Tile GetTileAtCoordinates(Vector2Int vector2Int)
     {
@@ -47,10 +53,33 @@ public abstract class GridManagerStrategy : MonoBehaviour
 
     private void Awake()
     {
+        // _uiManager = FindAnyObjectByType<GameUIManager>(FindObjectsInactive.Exclude);
+        // if (_uiManager != null)
+        // {
+        //     _uiManager.gameObject.SetActive(false);
+        //     _isUIManagerNull = false;
+        // }
         CreateGrid();
         SetOwnableTiles();
         CapturableTilesCount = _ownableTiles.Count - (LobbyManager.JoinedPlayers.Count - 1);
         PositionCamera();
+        _startTime = Time.time;
+
+        _isCameraInPlace = !RoundManager.MapsToPlay.Contains(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    private void Update()
+    {
+        // if (Time.time - _startTime >= 0.25f && !_isCameraInPlace && !_isUIManagerNull)
+        // {
+        //     mainCamera.fieldOfView -= 20 * Time.deltaTime;
+        //     if (mainCamera.fieldOfView <= 60)
+        //     {
+        //         mainCamera.fieldOfView = 60;
+        //         _isCameraInPlace = true;
+        //         _uiManager.gameObject.SetActive(true);
+        //     }
+        // }
     }
 
     protected abstract void CreateGrid();
@@ -83,6 +112,8 @@ public abstract class GridManagerStrategy : MonoBehaviour
 
     private void PositionCamera()
     {
+        if (SceneManager.GetActiveScene().name.Equals("Menu") ||
+            SceneManager.GetActiveScene().name.Equals("EndGame")) return;
         if (mainCamera == null) return;
 
         float centerX = ((MapUpperLimit.x + MapLowerLimit.x) / 2f) * GameConstants.UNITY_GRID_SIZE;
@@ -116,6 +147,8 @@ public abstract class GridManagerStrategy : MonoBehaviour
         float distance = camHeight / Mathf.Abs(forwardDir.y);
 
         mainCamera.transform.position = mapCenter - (forwardDir * distance);
+    
+        mainCamera.fieldOfView = SceneManager.GetActiveScene().name.Equals("Tuto") ? 67 : 60f;
     }
 
     public Vector3 GetRandomPosOnGridWithNoItem()
