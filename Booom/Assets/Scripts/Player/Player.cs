@@ -222,7 +222,11 @@ public class Player : MonoBehaviour
 
     private void InitializeSpawnerWithDynamicSpawnPos()
     {
-        int intPlayerNb = ActivePlayers.Keys.ToList().IndexOf(playerNb);;
+        var sortedKeys = ActivePlayers.Keys
+            .OrderBy(k => k)
+            .ToList();
+
+        int intPlayerNb = sortedKeys.IndexOf(playerNb);
         bool isMod2Zero = intPlayerNb % 2 == 0;
         
         int posY = isMod2Zero
@@ -244,7 +248,14 @@ public class Player : MonoBehaviour
 
     private void InitializeSpawnerWithFixedSpawnPos()
     {
-        Vector2Int spawnPointGrid = GameManager.Instance.GridManager.playerSpawnPoints[ActivePlayers.Keys.ToList().IndexOf(playerNb)];
+        var sortedKeys = ActivePlayers.Keys
+            .OrderBy(k => k)
+            .ToList();
+
+        int index = sortedKeys.IndexOf(playerNb);
+
+        Vector2Int spawnPointGrid =
+            GameManager.Instance.GridManager.playerSpawnPoints[index];
         Tile tile = GameManager.Instance.GridManager.GetTileAtCoordinates(spawnPointGrid);
         
         if (tile == null)
