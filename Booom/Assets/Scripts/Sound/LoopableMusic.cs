@@ -10,6 +10,8 @@ public class LoopableMusic : MonoBehaviour
     private AudioSource audioSource;
 
     private bool _isMusicPlaying = false;
+    
+    private float musicVolume => PlayerPrefs.GetFloat("MusicVolume", 1f);
 
     private void Start()
     {
@@ -37,6 +39,7 @@ public class LoopableMusic : MonoBehaviour
 
     private void Update()
     {
+        audioSource.volume = musicVolume;
         if (_isMusicPlaying && audioSource.timeSamples >= _loopEndSamples)
         {
             audioSource.timeSamples -= _loopLengthSamples;

@@ -69,7 +69,7 @@ public class TransitionsManager : MonoBehaviour
         image.texture = fadeOut.texture;
         image.material.SetColor(TransitionColor, Player.PlayerColorDict[_lastWinner]);
         _shouldContinueTransition = true;
-        yield return new WaitForSecondsRealtime(1.2f);
+        yield return new WaitUntil(() => fadeOut.time >= 1.4f);
         fadeOut.Pause();
         if (sceneName.Equals(String.Empty)) SceneManager.LoadScene(sceneIndex);
         else SceneManager.LoadScene(sceneName);

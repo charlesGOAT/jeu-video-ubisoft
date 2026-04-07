@@ -1698,6 +1698,10 @@ PrefabInstance:
       value: 96
       objectReference: {fileID: 0}
     - target: {fileID: 2443516477206234823, guid: c9fd1a39a14cbf643911bf47e03937f9, type: 3}
+      propertyPath: transitionSFX.audioClip
+      value: 
+      objectReference: {fileID: 8300000, guid: 8b23585861a898141ba57b2d74cf8021, type: 3}
+    - target: {fileID: 2443516477206234823, guid: c9fd1a39a14cbf643911bf47e03937f9, type: 3}
       propertyPath: mainTheme.audio.audioClip
       value: 
       objectReference: {fileID: 8300000, guid: 8f9dbe1e7de17e84b90cd62c724d14a8, type: 3}

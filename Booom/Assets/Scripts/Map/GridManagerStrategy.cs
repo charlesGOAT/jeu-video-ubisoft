@@ -53,12 +53,12 @@ public abstract class GridManagerStrategy : MonoBehaviour
 
     private void Awake()
     {
-        _uiManager = FindAnyObjectByType<GameUIManager>(FindObjectsInactive.Exclude);
-        if (_uiManager != null)
-        {
-            _uiManager.gameObject.SetActive(false);
-            _isUIManagerNull = false;
-        }
+        // _uiManager = FindAnyObjectByType<GameUIManager>(FindObjectsInactive.Exclude);
+        // if (_uiManager != null)
+        // {
+        //     _uiManager.gameObject.SetActive(false);
+        //     _isUIManagerNull = false;
+        // }
         CreateGrid();
         SetOwnableTiles();
         CapturableTilesCount = _ownableTiles.Count - (LobbyManager.JoinedPlayers.Count - 1);
@@ -70,16 +70,16 @@ public abstract class GridManagerStrategy : MonoBehaviour
 
     private void Update()
     {
-        if (Time.time - _startTime >= 0.25f && !_isCameraInPlace && !_isUIManagerNull)
-        {
-            mainCamera.fieldOfView -= 20 * Time.deltaTime;
-            if (mainCamera.fieldOfView <= 60)
-            {
-                mainCamera.fieldOfView = 60;
-                _isCameraInPlace = true;
-                _uiManager.gameObject.SetActive(true);
-            }
-        }
+        // if (Time.time - _startTime >= 0.25f && !_isCameraInPlace && !_isUIManagerNull)
+        // {
+        //     mainCamera.fieldOfView -= 20 * Time.deltaTime;
+        //     if (mainCamera.fieldOfView <= 60)
+        //     {
+        //         mainCamera.fieldOfView = 60;
+        //         _isCameraInPlace = true;
+        //         _uiManager.gameObject.SetActive(true);
+        //     }
+        // }
     }
 
     protected abstract void CreateGrid();
@@ -148,7 +148,7 @@ public abstract class GridManagerStrategy : MonoBehaviour
 
         mainCamera.transform.position = mapCenter - (forwardDir * distance);
     
-        mainCamera.fieldOfView = SceneManager.GetActiveScene().name.Equals("Tuto") ? 67 : 86f;
+        mainCamera.fieldOfView = SceneManager.GetActiveScene().name.Equals("Tuto") ? 67 : 60f;
     }
 
     public Vector3 GetRandomPosOnGridWithNoItem()
