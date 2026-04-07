@@ -255,7 +255,7 @@ MonoBehaviour:
     volume: 0.8
   SFXSliderChangedAudio:
     audioClip: {fileID: 8300000, guid: b5267279886a5084b9e253d52b513aae, type: 3}
-    volume: 0
+    volume: 0.1
   mainTheme:
     audio:
       audioClip: {fileID: 8300000, guid: 8f9dbe1e7de17e84b90cd62c724d14a8, type: 3}
@@ -297,7 +297,7 @@ MonoBehaviour:
   - audioClip: {fileID: 8300000, guid: 63cb7e8f1b2f1aa439d50257d4e062b3, type: 3}
     volume: 0.5
   battleMusic1:
-    audioClip: {fileID: 8300000, guid: a4abeaf04ecf7e04e9fe36cc0b378bb6, type: 3}
+    audioClip: {fileID: 8300000, guid: 1ce7e7a6431e54949ae6e49ed190ca90, type: 3}
     volume: 0.5
   battleMusic2:
     audioClip: {fileID: 8300000, guid: ce3f7db3119d5ac4898503546d394a4a, type: 3}
