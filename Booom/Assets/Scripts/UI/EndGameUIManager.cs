@@ -109,7 +109,7 @@ public class EndGameUIManager : MonoBehaviour
     {
         yield return new WaitForSeconds(6f);
         if (ShouldEndGame) SceneManager.LoadScene("Menu");
-        else SceneManager.LoadScene(NextSceneIndex);
+        else TransitionsManager.Instance.LoadSceneFadeOut(NextSceneIndex, PlayerWonGame[^1]);
     }
     
     private void OnDestroy()

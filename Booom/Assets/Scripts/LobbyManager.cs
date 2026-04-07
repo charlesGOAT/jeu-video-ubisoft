@@ -224,6 +224,7 @@ public class LobbyManager : MonoBehaviour
         if (_playersDisappeared) return;
         foreach (var player in JoinedPlayers)
         {
+            player.Value.actions.Disable();
             _menuSpawnPoints[player.Key] = player.Value.gameObject.transform.position;
             player.Value.transform.position = new Vector3(999,0,999);
         }
@@ -236,7 +237,9 @@ public class LobbyManager : MonoBehaviour
         yield return null;
         foreach (var player in JoinedPlayers)
         {
+            player.Value.actions.Enable();
             var p = player.Value.GetComponent<Player>();
+            p.CanMove = false;
             Player.ActivePlayers[player.Key] = p;
             player.Value.GetComponent<Player>().InitializeSpawner();
         }
