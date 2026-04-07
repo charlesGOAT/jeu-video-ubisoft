@@ -61,7 +61,7 @@ public class ItemsManager : MonoBehaviour
     public void StartSpawning()
     {
         String sceneName = SceneManager.GetActiveScene().name;
-        if (!LobbyManager.ItemsActivated || sceneName == "Tuto" || sceneName == "Menu") return;
+        if (!LobbyManager.ItemsActivated || sceneName == "Tuto" || sceneName == "Menu" || sceneName == "EndGame") return;
         
         foreach (var itemSpawner in _itemSpawnerPerItemType)
         {
