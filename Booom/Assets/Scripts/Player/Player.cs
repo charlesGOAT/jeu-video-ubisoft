@@ -285,6 +285,7 @@ public class Player : MonoBehaviour
             if (GameManager.Instance.BombManager.CreateBomb(transform.position,
                     this, _bombFusingStrategies[(int)BombFusingType], NextBombBombItems))
             {
+                Animator.SetTrigger("DropBomb");
                 OnPlaceBombSuccessfulChained?.Invoke(ItemType.ChainBombs);
                 OnPlaceBombSuccessfulChained -= RemoveItemPopUp;
                 OnPlaceBombSuccessful?.Invoke();
