@@ -65,7 +65,7 @@ public class BombAnimation : MonoBehaviour
 
     private void InitializeMaterialAnimationCurve()
     {
-        _materialAnimationCurve = new(animationCurve.keys.Select(k => new Keyframe(k.time * _animationDuration, k.value * YFACTOR)).ToArray());
+        _materialAnimationCurve = new(animationCurve.keys.Select(k => new Keyframe(k.time * _animationDuration, k.value * (YFACTOR * 1.5f))).ToArray());
     }
 
     private void InitializeScaleAnimationCurve()

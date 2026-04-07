@@ -15,7 +15,7 @@ public class Tile : MonoBehaviour
 
     public virtual bool IsObstacle => false;
 
-    public static float TileLength { get; private set; }
+    public static float TileLength  = GameConstants.UNITY_GRID_SIZE;
 
     private Renderer _tileRenderer;
     private TileAnimation _tileAnimation;
@@ -41,12 +41,7 @@ public class Tile : MonoBehaviour
     public event OnTileColorChanged OnTileColorChanged;
 
     protected virtual void Awake()
-    {
-        if (TileLength == 0 && transform.childCount > 0)
-        {
-            TileLength = transform.GetChild(0).localScale.x;
-        }
-        
+    {   
         _tileRenderer = GetComponentInChildren<Renderer>();
         _tileAnimation = GetComponent<TileAnimation>();
 
@@ -178,6 +173,6 @@ public class Tile : MonoBehaviour
     {
         if (CurrentTileOwner != winner) return;
         _blinkMat.SetColor(TileColor, _tileColor);
-        ChangeTileMaterial(2, _blinkMat);
+        ChangeTileMaterial(1, _blinkMat);
     }
 }

@@ -84,9 +84,8 @@ public class Player : MonoBehaviour
     private RunState _runState;
     private JumpState _jumpState;
 
+    public Tile CurrentTile { get; set; }
     private bool _onPausedCalled;
-
-    public Tile CurrentTile { get; private set; }
     
     public BombFusingType BombFusingType { get; set; }
     public BombItems NextBombBombItems = 0;
@@ -157,7 +156,9 @@ public class Player : MonoBehaviour
         GetConfigValues();
 #endif
         CheckStartConditions();
-        InitializeSpawner();
+        
+        if(!SceneManager.GetActiveScene().name.Equals("EndGame"))
+            InitializeSpawner();
         GameManager.Instance.OnGameStarts += EnableInputActions;
     }
 
@@ -244,7 +245,15 @@ public class Player : MonoBehaviour
 
     private void InitializeSpawnerWithFixedSpawnPos()
     {
-        Vector2Int spawnPointGrid = GameManager.Instance.GridManager.playerSpawnPoints[ActivePlayers.Keys.ToList().IndexOf(playerNb)];
+        Vector2Int spawnPointGrid;
+        if (SceneManager.GetActiveScene().name == "Menu")
+        {
+            spawnPointGrid = GameManager.Instance.GridManager.playerSpawnPoints[(int)playerNb - 1];
+        }
+        else
+        {
+            spawnPointGrid = GameManager.Instance.GridManager.playerSpawnPoints[ActivePlayers.Keys.ToList().IndexOf(playerNb)];
+        }
         Tile tile = GameManager.Instance.GridManager.GetTileAtCoordinates(spawnPointGrid);
         
         if (tile == null)
@@ -275,7 +284,8 @@ public class Player : MonoBehaviour
     
     public void OnBomb(InputAction.CallbackContext ctx)
     {
-        if (SceneManager.GetActiveScene().name == "EndGame") return;
+        String scene = SceneManager.GetActiveScene().name;
+        if (scene == "EndGame" || scene == "Menu") return;
         if (_stateMachine.CurrentState is JumpState) return;
 
         if (ctx.started)

@@ -65,14 +65,15 @@ public class TransitionsManager : MonoBehaviour
     private IEnumerator ManageFadeOut(int sceneIndex, string sceneName = "")
     {
         SoundManager.Instance.OnSceneTransition();
-        fadeOut.Play();
-        image.texture = fadeOut.texture;
-        image.material.SetColor(TransitionColor, Player.PlayerColorDict[_lastWinner]);
-        _shouldContinueTransition = true;
-        yield return new WaitUntil(() => fadeOut.time >= 1.4f);
-        fadeOut.Pause();
+        // fadeOut.Play();
+        // image.texture = fadeOut.texture;
+        // image.material.SetColor(TransitionColor, Player.PlayerColorDict[_lastWinner]);
+        // _shouldContinueTransition = true;
+        // yield return new WaitUntil(() => fadeOut.time >= 1.4f);
+        // fadeOut.Pause();
         if (sceneName.Equals(String.Empty)) SceneManager.LoadScene(sceneIndex);
         else SceneManager.LoadScene(sceneName);
+        yield return new WaitForSeconds(0.1f);
     }
 
     private void OnDestroy()

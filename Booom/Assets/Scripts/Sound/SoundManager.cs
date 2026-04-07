@@ -248,6 +248,7 @@ public class SoundManager : MonoBehaviour
 
     public void OnMenuButtonPressed()
     {
+        if (AudioSourceSFX == null) return;
         AudioSourceSFX.PlayOneShot(buttonClickedAudio.audioClip, buttonClickedAudio.volume * sfxVolume);
     }
     
