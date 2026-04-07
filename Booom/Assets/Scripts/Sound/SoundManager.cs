@@ -84,7 +84,9 @@ public class SoundManager : MonoBehaviour
     private Audio colorAlternationMusic;
     [SerializeField]
     private Audio victoryThemeMusic;
-
+    [SerializeField] 
+    private Audio transitionSFX;
+    
     public AudioSource AudioSourceSFX { get; private set; }
     public AudioSource AudioSourceMusic { get; private set; }
 
@@ -184,7 +186,8 @@ public class SoundManager : MonoBehaviour
         bombHitPlayerSound.volume *= _sfxVolume;
         newKillStreakSound.volume *= _sfxVolume;
         usePaintBrushSound.volume *= _sfxVolume;
-
+        transitionSFX.volume *= _sfxVolume;
+        
         PlayerPrefs.SetFloat("SFXVolume", _sfxVolume);
         PlayerPrefs.Save();
     }
@@ -302,6 +305,11 @@ public class SoundManager : MonoBehaviour
         int index = (int)player - 1;
         if(playerJoinedSound != null && playerJoinedSound.Count > index)
             AudioSourceSFX.PlayOneShot(playerJoinedSound[index].audioClip, playerJoinedSound[index].volume);
+    }
+
+    public void OnSceneTransition()
+    {
+        AudioSourceSFX.PlayOneShot(transitionSFX.audioClip, transitionSFX.volume);
     }
 
     public void PlayBattleMucic()

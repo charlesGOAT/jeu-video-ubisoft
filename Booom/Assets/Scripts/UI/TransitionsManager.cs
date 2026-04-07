@@ -25,6 +25,8 @@ public class TransitionsManager : MonoBehaviour
     
     public static TransitionsManager Instance { get; private set; }
 
+    private bool _shouldContinueTransition = false;
+
 
     private void Awake()
     {
@@ -46,6 +48,12 @@ public class TransitionsManager : MonoBehaviour
     private void OnSceneLoaded(Scene scene, Scene scene2)
     {
         canvas.worldCamera = Camera.main;
+
+        if (_shouldContinueTransition)
+        {
+            _shouldContinueTransition = false;
+            fadeOut.Play();
+        }
     }
 
     public void LoadSceneFadeOut(int sceneIndex, in PlayerEnum winner, in string sceneName = "")
@@ -56,14 +64,15 @@ public class TransitionsManager : MonoBehaviour
 
     private IEnumerator ManageFadeOut(int sceneIndex, string sceneName = "")
     {
+        SoundManager.Instance.OnSceneTransition();
         fadeOut.Play();
         image.texture = fadeOut.texture;
         image.material.SetColor(TransitionColor, Player.PlayerColorDict[_lastWinner]);
-        yield return new WaitForSecondsRealtime(1.1f);
-
+        _shouldContinueTransition = true;
+        yield return new WaitForSecondsRealtime(1.2f);
+        fadeOut.Pause();
         if (sceneName.Equals(String.Empty)) SceneManager.LoadScene(sceneIndex);
         else SceneManager.LoadScene(sceneName);
-        yield return new WaitForSecondsRealtime(1f);
     }
 
     private void OnDestroy()
