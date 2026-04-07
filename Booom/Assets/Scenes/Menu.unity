@@ -1224,7 +1224,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: JOUER
+  m_text: PLAY
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: dfbb75be6263cc64b970292222abe325, type: 2}
   m_sharedMaterial: {fileID: -3573883019906783515, guid: dfbb75be6263cc64b970292222abe325, type: 2}
@@ -5557,7 +5557,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: QUITTER
+  m_text: QUIT
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: dfbb75be6263cc64b970292222abe325, type: 2}
   m_sharedMaterial: {fileID: -3573883019906783515, guid: dfbb75be6263cc64b970292222abe325, type: 2}
@@ -24536,7 +24536,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: PARAMETRES
+  m_text: SETTINGS
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: dfbb75be6263cc64b970292222abe325, type: 2}
   m_sharedMaterial: {fileID: -3573883019906783515, guid: dfbb75be6263cc64b970292222abe325, type: 2}
@@ -26394,7 +26394,7 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
-  playButton: {fileID: 0}
+  playButton: {fileID: 1178041224}
   mainMenuCanvas: {fileID: 86794520}
   settingsCanvas: {fileID: 1488063821}
   english: {fileID: 11400000, guid: e6e32fe6224e92d429880b6f931d170f, type: 2}
