@@ -9,6 +9,7 @@ using UnityEngine.SceneManagement;
 public delegate void PlaceBomb();
 public delegate void PlaceBombSuccessFul();
 public delegate void PlaceBombSuccessFulChained(in ItemType itemType);
+public delegate void OnHit(in ItemType itemType);
 
 [RequireComponent(typeof(PlayerItemsManager))]
 [RequireComponent(typeof(PlayerInput))]
@@ -119,6 +120,7 @@ public class Player : MonoBehaviour
     public event PlaceBomb OnPlaceBomb;
     public event PlaceBombSuccessFul OnPlaceBombSuccessful;
     public event PlaceBombSuccessFulChained OnPlaceBombSuccessfulChained;
+    public event OnHit OnHitCalled;
 
     public const float JUMP_HEIGHT_OFFSET = 2.5f;
     public const float JUMP_NUMBER_OF_TILES = 3.5f;
@@ -366,6 +368,9 @@ public class Player : MonoBehaviour
         {
             return;
         }
+        
+        OnHitCalled?.Invoke(ItemType.ChainBombs);
+        OnHitCalled -= RemoveItemPopUp;
         
         if(isHitFromSpikes)
             SoundManager.Instance.OnEnterSpikes();
