@@ -130,13 +130,13 @@ public class Tile : MonoBehaviour
     private void AddSnowflakeMaterial()
     {
         ChangeTileMaterial(3, GameManager.Instance.snowflakeMaterial);
-        snowEffect.SetActive(true);
+       // snowEffect.SetActive(true);
     }
 
     private void RemoveSnowflakeMaterial()
     {
         ChangeTileMaterial(3, GameManager.Instance.transparentMat);
-        snowEffect.SetActive(false);
+       // snowEffect.SetActive(false);
     }
 
     private void HighlightTile(PlayerEnum player, bool mutliplePlayers = false)

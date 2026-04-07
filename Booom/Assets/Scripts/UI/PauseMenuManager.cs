@@ -70,9 +70,10 @@ public class PauseMenuManager : MonoBehaviour
     {
         //if(_coroutine != null) StopCoroutine(_coroutine);
         //vPlayer.Play();
+        maskAnimator.SetTrigger("Exit");
         yield return new WaitForSecondsRealtime(0.2f);
         maskAnimator.gameObject.SetActive(false);
-        yield return new WaitForSecondsRealtime(1.2f);
+        //yield return new WaitForSecondsRealtime(1.2f);
 
         foreach (Player player in Player.ActivePlayers.Values)
         {
