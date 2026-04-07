@@ -84,6 +84,8 @@ public class Player : MonoBehaviour
     private RunState _runState;
     private JumpState _jumpState;
 
+    private bool _onPausedCalled;
+
     public Tile CurrentTile { get; private set; }
     
     public BombFusingType BombFusingType { get; set; }
@@ -136,10 +138,16 @@ public class Player : MonoBehaviour
         ConfigurePlayers();
         ActivePlayers[playerNb] = this;
         SetPlayerTexture();
-        
-        if (SceneManager.GetActiveScene().name.Equals("menu", StringComparison.OrdinalIgnoreCase))
+
+        Scene activeScene = SceneManager.GetActiveScene();
+        if (activeScene.name.Equals("menu", StringComparison.OrdinalIgnoreCase))
         {
+            SoundManager.Instance.OnPlayerJoined(playerNb);
             InstantiateBeam();
+        }
+        else if (RoundManager.MapsToPlay.Contains(activeScene.buildIndex))
+        {
+            DisableInputActions();
         }
     }
 
@@ -150,6 +158,7 @@ public class Player : MonoBehaviour
 #endif
         CheckStartConditions();
         InitializeSpawner();
+        GameManager.Instance.OnGameStarts += EnableInputActions;
     }
 
     private void InstantiateBeam()
@@ -269,13 +278,14 @@ public class Player : MonoBehaviour
         if (SceneManager.GetActiveScene().name == "EndGame") return;
         if (_stateMachine.CurrentState is JumpState) return;
 
-        if (ctx.ReadValueAsButton())
+        if (ctx.started)
         {
             OnPlaceBomb?.Invoke();
 
             if (GameManager.Instance.BombManager.CreateBomb(transform.position,
                     this, _bombFusingStrategies[(int)BombFusingType], NextBombBombItems))
             {
+                Animator.SetTrigger("DropBomb");
                 OnPlaceBombSuccessfulChained?.Invoke(ItemType.ChainBombs);
                 OnPlaceBombSuccessfulChained -= RemoveItemPopUp;
                 OnPlaceBombSuccessful?.Invoke();
@@ -301,9 +311,12 @@ public class Player : MonoBehaviour
 
     public void DisableInputActions() => _playerInput.actions.Disable();
     public void EnableInputActions() => _playerInput.actions.Enable();
+    public void ChangeInputAction(string inputType) => _playerInput.SwitchCurrentActionMap(inputType);
 
     private void Update()
     {
+        _onPausedCalled = false;
+
         if (SceneManager.GetActiveScene().name == "EndGame") return;
         UpdateImmune();
 
@@ -680,6 +693,13 @@ public class Player : MonoBehaviour
     public void RemoveItemPopUp(in ItemType itemType)
     {
         _playerPopUpManager.RemoveItemPopUp(itemType);
+    }
+
+    public void OnPause(InputAction.CallbackContext ctx)
+    {
+        if (SceneManager.GetActiveScene().name.Equals("Menu") || !ctx.ReadValueAsButton() || _onPausedCalled) return;
+        _onPausedCalled = true;
+        GameManager.Instance.PauseMenuManager.TogglePauseMenu(playerNb, _playerInput);
     }
 }
 

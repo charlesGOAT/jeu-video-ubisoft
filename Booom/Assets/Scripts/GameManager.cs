@@ -5,6 +5,8 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
+public delegate void GameStarted();
+
 public class GameManager : MonoBehaviour
 {
     private static GameManager _instance;
@@ -52,6 +54,7 @@ public class GameManager : MonoBehaviour
     public ScoreManager ScoreManager { get; private set; }
     public GameUIManager GameUIManager { get; private set; }
     public EventManager EventManager { get; private set; }
+    public PauseMenuManager PauseMenuManager { get; private set; }
 
     public readonly int[] CollisionLayers = new int[GameConstants.NB_PLAYERS] { 8, 9, 10, 11 };
 
@@ -60,6 +63,8 @@ public class GameManager : MonoBehaviour
     public bool HasRoundEnded { get; private set; }
 
     private bool _hasChangedForFastMusic = false;
+    
+    public GameStarted OnGameStarts;
 
     // add other managers
     
@@ -96,24 +101,14 @@ public class GameManager : MonoBehaviour
         }
 
         GameUIManager.UpdateTimerDisplay();
-        
-        UpdateMusic();
-    }
-
-    private void UpdateMusic()
-    {
-        if (TimeRemaining <= 30 && !_hasChangedForFastMusic)
-        {
-            SoundManager.Instance.OnPlayAcceleratedGameMusic();
-            _hasChangedForFastMusic = true;
-        }
     }
 
     public void StartTimer()
     {
-        SoundManager.Instance.OnGameStarted();
+        OnGameStarts?.Invoke();
         TimeRemaining = _gameDuration;
         _timerRunning = true;
+        ItemsManager.StartSpawning();
     }
     
     private void Awake()
@@ -158,6 +153,7 @@ public class GameManager : MonoBehaviour
         ScoreManager = FindFirstObjectByType<ScoreManager>();
         GameUIManager = FindFirstObjectByType<GameUIManager>();
         EventManager = FindFirstObjectByType<EventManager>();
+        PauseMenuManager = FindFirstObjectByType<PauseMenuManager>();
 
         if (GridManager == null)
         {
@@ -194,6 +190,10 @@ public class GameManager : MonoBehaviour
         if (paintBrushEffect == null)
         {
             throw new Exception("Paintbrush effect cannot be null");
+        }
+        if (PauseMenuManager == null && !SceneManager.GetActiveScene().name.Equals("Menu"))
+        {
+            throw new Exception("There's no active pause menu manager");
         }
         // add other managers
     }
@@ -272,7 +272,7 @@ public class GameManager : MonoBehaviour
         yield return StartCoroutine(MakeWinnerColorBlink(winner));
         Player.ActivePlayers.Values.ToList().ForEach(x => x.EnableInputActions());
         NewRound();
-        SceneManager.LoadScene("EndGame");
+        TransitionsManager.Instance.LoadSceneFadeOut(0, winner, "EndGame");
     }
 
     private IEnumerator EndGameCoroutine(PlayerEnum winner)
@@ -283,7 +283,7 @@ public class GameManager : MonoBehaviour
         yield return StartCoroutine(MakeWinnerColorBlink(winner));
         Player.ActivePlayers.Values.ToList().ForEach(x => x.EnableInputActions());
         CleanGame();
-        SceneManager.LoadScene("EndGame");
+        TransitionsManager.Instance.LoadSceneFadeOut(0, winner, "EndGame");
     }
 
     public void CleanGame()

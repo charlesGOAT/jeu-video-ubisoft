@@ -33,13 +33,19 @@ public class GameUIManager : MonoBehaviour
     
     [SerializeField] 
     private List<Objects> fire;
+
+    [SerializeField] 
+    private TextMeshProUGUI countdownText;
     
+    [SerializeField] 
+    private LocalizeStringEvent countdownTextLocalized;
+
     private string _bombType = "";
 
     private Material _vinylMaterial;
     private Animator _vinylAnimator;
     private bool _hasVinylAnimationStarted = false;
-    
+
     private void OnDestroy()
     {
         String sceneName = SceneManager.GetActiveScene().name;
@@ -56,14 +62,35 @@ public class GameUIManager : MonoBehaviour
         _vinylMaterial = vinylImage.material;
         _vinylAnimator = vinylImage.GetComponentInParent<Animator>();
         _vinylMaterial.SetFloat("_Speed", GameManager.Instance.GameDuration);
+        _vinylMaterial.SetFloat("_Timey", -2);
 
         String sceneName = SceneManager.GetActiveScene().name;
         if (sceneName != "Tuto" &&  sceneName != "Menu")
         {
             GameManager.Instance.ScoreManager.OnScoreChanged += RefreshScore;
-            GameManager.Instance.StartTimer();
             InitializeScorePlayers();
+            StartCoroutine(Countdown());
         }
+    }
+
+    private IEnumerator Countdown()
+    {
+        int second = 0;
+        while (second < 3)
+        {
+            countdownText.text = $"{3 - second}";
+            SoundManager.Instance.OnGameStarted(second++);
+            yield return new WaitForSeconds(1f);
+        }
+        countdownTextLocalized.RefreshString();
+        SoundManager.Instance.OnGameStarted(second);
+        // todo : make text shake?
+        GameManager.Instance.StartTimer();
+
+        yield return new WaitForSeconds(0.5f);
+        SoundManager.Instance.PlayBattleMucic();
+        yield return new WaitForSeconds(0.5f);
+        countdownText.gameObject.SetActive(false);
     }
 
     private void InitializeScorePlayers()
@@ -71,6 +98,7 @@ public class GameUIManager : MonoBehaviour
         foreach(PlayerEnum player in Player.ActivePlayers.Keys)
         {
             playerPercents[(int)player - 1].transform.parent.gameObject.SetActive(true);
+            RefreshScore(player, 0);
         }
     }
 
@@ -97,7 +125,7 @@ public class GameUIManager : MonoBehaviour
         var gameManager = GameManager.Instance;
         _vinylMaterial.SetFloat("_Timey", gameManager.GameDuration - gameManager.TimeRemaining);
 
-        if (!_hasVinylAnimationStarted && gameManager.TimeRemaining <= 30)
+        if (!_hasVinylAnimationStarted && gameManager.TimeRemaining <= 15)
         {
             _vinylAnimator.SetBool("lastStretch", true);
             _hasVinylAnimationStarted = true;
