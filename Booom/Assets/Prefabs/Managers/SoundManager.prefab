@@ -300,10 +300,10 @@ MonoBehaviour:
     audioClip: {fileID: 8300000, guid: 1ce7e7a6431e54949ae6e49ed190ca90, type: 3}
     volume: 0.5
   battleMusic2:
-    audioClip: {fileID: 8300000, guid: ce3f7db3119d5ac4898503546d394a4a, type: 3}
+    audioClip: {fileID: 8300000, guid: 36ca2614457e6ed4691ee418bd960e36, type: 3}
     volume: 0.5
   battleMusic3:
-    audioClip: {fileID: 8300000, guid: c9a80fa00e2e12a4d9e7a7f5eca70428, type: 3}
+    audioClip: {fileID: 8300000, guid: 3a589ffb71374484a8d0ebbeb5a68da0, type: 3}
     volume: 0.5
   battleMusic4:
     audioClip: {fileID: 8300000, guid: d4730ef6ef0f9904982928e33ec8e198, type: 3}
