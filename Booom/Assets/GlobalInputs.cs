@@ -35,13 +35,10 @@ public class GlobalInputs : MonoBehaviour
         float joinTime = LobbyManager.JoinTimes[player];
         if (Time.time - joinTime < 0.1f)
             return;
-
-        if (_menuUI.isNotMainMenu)
+        
+        if (player.inputIsActive && _menuUI.isNotMainMenu)
         {
-            if (player.inputIsActive)
-            {
-                _menuUI.ReturnToMainMenu();
-            }
+            _menuUI.ReturnToMainMenu();
         }
         else
         {

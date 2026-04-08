@@ -27,6 +27,9 @@ public class PauseMenuManager : MonoBehaviour
     [SerializeField] 
     private GameObject continueButton;
     
+    [SerializeField] 
+    private GameObject skipTuto;
+    
     private RawImage _targetImage;
     private Coroutine _coroutine;
 
@@ -42,6 +45,11 @@ public class PauseMenuManager : MonoBehaviour
     {
         canvas.worldCamera = Camera.main;
         _uiInputs = FindObjectsByType<InputSystemUIInputModule>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        if (SceneManager.GetActiveScene().name.Equals("Tuto"))
+        {
+            skipTuto.SetActive(true);
+            _tutoUIManager = FindAnyObjectByType<TutoUIManager>();
+        }
     }
     
     public void TogglePauseMenu(in PlayerEnum playerNb, PlayerInput playerInput)
@@ -64,6 +72,21 @@ public class PauseMenuManager : MonoBehaviour
     public void ToggleOffMenu()
     {
         StartCoroutine(ToggleOffCoroutine());
+    }
+    
+    public void SkipTuto()
+    {
+        Time.timeScale = 1;
+        if (!_tutoUIManager.TutoEnded)
+        {
+            _tutoUIManager.TutoEnded = true;
+            GameManager.Instance.CleanGame();
+            SceneManager.LoadScene(RoundManager.FindNextMap());
+        }
+        else
+        {
+            ToggleOffMenu();
+        }
     }
 
     private IEnumerator ToggleOffCoroutine()
@@ -100,7 +123,6 @@ public class PauseMenuManager : MonoBehaviour
             if (player.PlayerNb == _playerInControl) continue;
             player.DisableInputActions();
         }
-        Time.timeScale = 0;
         SoundManager.Instance.AudioSourceMusic.Pause();
         _currentInput.SwitchCurrentActionMap("UI");
         _currentInput.ActivateInput();
@@ -110,6 +132,7 @@ public class PauseMenuManager : MonoBehaviour
             if (uiInput == null) return;
             uiInput.actionsAsset = _currentInput.actions;
         }
+        Time.timeScale = 0;
 
         EventSystem.current.SetSelectedGameObject(continueButton);
     }

@@ -16,7 +16,7 @@
   "HitTimeDuration" : 1.5,
   "PaintBrushItemSpawnerData": {
     "MaxItems": 1,
-    "TimeBetweenSpawns": 20.0
+    "TimeBetweenSpawns": 18.0
   },
   "ChainedBombItemSpawnerData": {
     "MaxItems": 2,
@@ -45,18 +45,6 @@
     "5": 3,
     "7": 4
   },
-  "BombEvents": [
-    {
-      "minutes": 0,
-      "seconds": 15,
-      "value": 2
-    }
-  ],
-  "TextEvents": [
-    {
-      "minutes": 1,
-      "seconds": 0,
-      "value": "Start placing bombs to spread your zone!"
-    }
-  ]
+  "BombEvents": [],
+  "TextEvents": []
 }
