@@ -336,7 +336,7 @@ public class SoundManager : MonoBehaviour
 
     public void OnSceneTransition()
     {
-        AudioSourceSFX.PlayOneShot(transitionSFX.audioClip, transitionSFX.volume * sfxVolume);
+        // AudioSourceSFX.PlayOneShot(transitionSFX.audioClip, transitionSFX.volume * sfxVolume);
     }
 
     public void PlayBattleMucic()

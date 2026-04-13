@@ -204,10 +204,10 @@ public class GameManager : MonoBehaviour
         
         foreach (var playerInput in playersToSpawn)
         {
-            Vector2Int spawnPoint = GridManager.playerSpawnPoints[Player.ActivePlayers.Count];
+            Vector2Int spawnPoint = GridManager.playerSpawnPoints[playerInput.playerIndex];
             Vector3 worldPos = GridManagerStrategy.GridToWorldPosition(spawnPoint);
 
-            playerPrefab.layer = CollisionLayers[Player.ActivePlayers.Count];
+            playerPrefab.layer = CollisionLayers[playerInput.playerIndex];
             PlayerInput newInput = PlayerInput.Instantiate(playerPrefab, playerIndex:playerInput.playerIndex, pairWithDevices:playerInput.devices.ToArray());
             newInput.transform.position = new Vector3(worldPos.x, 0.0f, worldPos.z);
             newInput.transform.rotation =  Quaternion.Euler(0f, -90f, 0f);

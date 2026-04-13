@@ -1,6 +1,7 @@
 using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class GlobalInputs : MonoBehaviour
 {
@@ -27,6 +28,7 @@ public class GlobalInputs : MonoBehaviour
 
     private void OnReturn(UnityEngine.InputSystem.InputAction.CallbackContext ctx)
     {
+        if (SceneManager.GetActiveScene().name == "EndGame") return;
         InputDevice device = ctx.control.device;
         var player = PlayerInput.all.FirstOrDefault(p => p.devices.Contains(device));
 

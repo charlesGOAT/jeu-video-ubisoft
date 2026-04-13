@@ -62,9 +62,10 @@ public class RuntimeConfigData
     public Dictionary<int, int> RangeBoostPerKill = new ()
     {
         {0, 0},
-        {2, 1},
-        {4, 2},
-        {6, 3}
+        {1, 1},
+        {2, 2},
+        {3, 3},
+        {4, 4}
     };
 
     public List<KeyValuePair> BombEvents = new();

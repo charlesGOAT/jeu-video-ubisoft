@@ -94,6 +94,7 @@ public class LobbyManager : MonoBehaviour
     public void GameStarted(int levelIndex)
     {
         _inputManager.onPlayerJoined -= OnPlayerJoined; //Cannot join mid game
+        _inputManager.onPlayerJoined -= OnPlayerLeft; //Cannot leave mid game
         GameManager.Instance.CleanGame();
         
         foreach (PlayerInput playerInput in JoinedPlayers.Values)

@@ -189,6 +189,12 @@ public class Player : MonoBehaviour
 
     private void OnNbKillsChanged()
     {
+        // Debug.LogError(NbKills);
+        // foreach (var range in _rangeBoostPerKill)
+        // {
+        //     Debug.LogError("Range Key : " + range.Key);
+        //     Debug.LogError("Range Value : " + range.Value);
+        // }
         bool shouldDisplay = false;
         if (_speedBoostPerKill.TryGetValue(NbKills, out float newSpeedBoost) && GameManager.Instance.IsBonusSpeed)
         {

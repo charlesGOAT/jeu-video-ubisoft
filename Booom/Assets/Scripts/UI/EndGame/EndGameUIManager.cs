@@ -184,7 +184,6 @@ public class EndGameUIManager : MonoBehaviour
         foreach (var player in LobbyManager.JoinedPlayers)
         {
             var p = player.Value.GetComponent<Player>();
-            Player.ActivePlayers[player.Key] = p;
             
             Vector2Int spawnPointGrid = GameManager.Instance.GridManager.playerSpawnPoints[PlayerRank[p.PlayerNb]];
             Tile tile = GameManager.Instance.GridManager.GetTileAtCoordinates(spawnPointGrid);

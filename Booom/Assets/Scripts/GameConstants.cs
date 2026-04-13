@@ -30,8 +30,8 @@ public static class GameConstants
     {
         {0, 0},
         {1, 1},
-        {3, 2},
-        {5, 3}, // todo : add more or tweak
-        {7, 4}
+        {2, 2},
+        {3, 3}, // todo : add more or tweak
+        {4, 4}
     };
 }
