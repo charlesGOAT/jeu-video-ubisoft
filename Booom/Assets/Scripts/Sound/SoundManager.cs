@@ -146,38 +146,6 @@ public class SoundManager : MonoBehaviour
     {
         _musicVolume = Mathf.Clamp01(volume);
 
-       // // if (AudioSourceMusic != null) AudioSourceMusic.volume *= _musicVolume;
-       //
-       //  battleMusic1.volume *= _musicVolume;
-       //  battleMusic2.volume *= _musicVolume;
-       //  battleMusic3.volume *= _musicVolume;
-       //  battleMusic4.volume *= _musicVolume;
-       //  battleMusic5.volume *= _musicVolume;
-       //  tutorialMusic.audio.volume *= _musicVolume;
-       //  colorAlternationMusic.volume *= _musicVolume;
-       //  victoryThemeMusic.volume *= _musicVolume;
-       //  mainTheme.audio.volume *= _musicVolume;
-       //
-       //  if (gameStartsSounds != null)
-       //  {
-       //      for (int i = 0; i < gameStartsSounds.Count; i++)
-       //      {
-       //          Audio sound = gameStartsSounds[i]; 
-       //          sound.volume *= _musicVolume; 
-       //          gameStartsSounds[i] = sound; 
-       //      }
-       //  }
-       //  
-       //  if (playerJoinedSound != null)
-       //  {
-       //      for (int i = 0; i < playerJoinedSound.Count; i++)
-       //      {
-       //          Audio sound = playerJoinedSound[i]; 
-       //          sound.volume *= _musicVolume; 
-       //          playerJoinedSound[i] = sound; 
-       //      }
-       //  }
-
         PlayerPrefs.SetFloat("MusicVolume", _musicVolume);
         PlayerPrefs.Save();
     }
@@ -185,20 +153,6 @@ public class SoundManager : MonoBehaviour
     {
         _sfxVolume = Mathf.Clamp01(volume);
 
-        // if (AudioSourceSFX != null) AudioSourceSFX.volume *= _sfxVolume;
-        //
-        // bombFusedAudio.volume *= _sfxVolume;
-        // bombExplodedAudio.volume *= _sfxVolume;
-        // genericBombEventSound.volume *= _sfxVolume;
-        // targetBombMovingSound.volume *= _sfxVolume;
-        // trampolineSound.volume *= _sfxVolume;
-        // spikeSound.volume *= _sfxVolume;
-        // portalSound.volume *= _sfxVolume;
-        // bombHitPlayerSound.volume *= _sfxVolume;
-        // newKillStreakSound.volume *= _sfxVolume;
-        // usePaintBrushSound.volume *= _sfxVolume;
-        // transitionSFX.volume *= _sfxVolume;
-        //
         PlayerPrefs.SetFloat("SFXVolume", _sfxVolume);
         PlayerPrefs.Save();
     }
@@ -349,8 +303,8 @@ public class SoundManager : MonoBehaviour
         else if(RoundManager.MapsToPlay[3] == i) music = battleMusic4;
         else if(RoundManager.MapsToPlay[4] == i) music = battleMusic5;
             
-        if(!music.HasValue) PlayAudioSourceMusic(tutorialMusic);
-        else PlayAudioSourceMusic(music.Value);
+        if(music.HasValue) 
+            PlayAudioSourceMusic(music.Value);
 
         _isInMenu = false;
     }
@@ -368,6 +322,11 @@ public class SoundManager : MonoBehaviour
         {
             _isInMenu = false;
             PlayAudioSourceMusic(victoryThemeMusic);
+        }
+        else if(scene.name.Equals("Tuto", StringComparison.OrdinalIgnoreCase))
+        {
+            _isInMenu = false;
+            PlayAudioSourceMusic(tutorialMusic);
         }
     }
     

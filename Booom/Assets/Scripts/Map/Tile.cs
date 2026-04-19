@@ -53,9 +53,20 @@ public class Tile : MonoBehaviour
     {
         NeutralColor = _tileRenderer.material.GetColor("_TileColor");
         _tileColor = NeutralColor;
-        IsSpawn = GameManager.Instance.GridManager.playerSpawnPoints.Contains(TileCoordinates);
+        IsSpawn = FindIfIsSpawn();
         _highlightMat = new Material(GameManager.Instance.highlightMat);
         _blinkMat = GameManager.Instance.blinkMat;
+    }
+
+    private bool FindIfIsSpawn()
+    {
+        for (int i = 0; i < Player.ActivePlayers.Count; i++)
+        {
+            if (TileCoordinates.Equals(GameManager.Instance.GridManager.playerSpawnPoints[i]))
+                return true;
+        }
+
+        return false;
     }
 
     public virtual void ChangeTileColor(PlayerEnum newOwner)
@@ -80,7 +91,7 @@ public class Tile : MonoBehaviour
         }
         else
         {
-            _tileAnimation.AnimateTileColorChange(_tileColor); // faire l'animation tout de même pour montrer une continuation
+            _tileAnimation.AnimateTileColorChange(_tileColor);
         }
     }
 
