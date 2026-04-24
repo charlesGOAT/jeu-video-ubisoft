@@ -48,7 +48,7 @@ public class EventManager : MonoBehaviour
     private readonly Dictionary<Tuple<int, int>, Tuple<BombEnum, bool>> _bombEventsDict = new();  // <minutes, seconds> -> <bomb type, hasEventHappened>
     private readonly Dictionary<Tuple<int, int>, Tuple<string, bool>> _textEventsDict = new();  // <minutes, seconds> -> <string, hasEventHappened>
 
-    private void Start()
+    public void Start()
     {
 #if !UNITY_EDITOR
     SetUpConfigValues();
